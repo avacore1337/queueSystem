@@ -1,0 +1,18 @@
+{
+  "name": "queue",
+  "version": "0.1.0",
+  "description": "prototype queue system",
+  "main": "index.js",
+  "dependencies": {
+    "express.io": "^1.1.13",
+    "mongoose": "^3.8.22"
+  },
+  "devDependencies": {},
+  "scripts": {
+    "test": "runtest",
+    "start": "node --harmony index.js"
+  },
+  "author": "Robert Welin-Berger",
+  "license": "mit"
+}
+
