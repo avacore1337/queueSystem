@@ -4,8 +4,7 @@
   "description": "prototype queue system",
   "main": "index.js",
   "dependencies": {
-    "express.io": "^1.1.13",
-    "mongoose": "^3.8.22"
+    "express.io": "^1.1.13"
   },
   "devDependencies": {},
   "scripts": {

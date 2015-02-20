@@ -11,13 +11,14 @@ app.io.on('connection', function(socket){
 });
 
 // Setup the ready route, join room and broadcast to room.
-app.io.route('ready', function(req) {
-	req.io.join(req.data);
-	app.io.room(req.data).broadcast('announce', {
-    name:'Anders',
-    place:'Green 07',
-    comment:'hejsan'
-  });
+app.io.route('listen', function(req) {
+  console.log('a user added to ' + req.data);
+  req.io.join(req.data);
+})
+
+app.io.route('join', function(req) {
+  console.log('a user joined to ' + req.data.queue);
+  app.io.room(req.data.queue).broadcast('join', req.data.user);
 })
 
 app.listen(8080);
