@@ -25,6 +25,18 @@ app.io.route('listen', function(req) {
 app.io.route('join', function(req) {
   console.log('a user joined to ' + req.data.queue);
   app.io.room(req.data.queue).broadcast('join', req.data.user);
+  list.push(req.data.user);
+})
+
+app.io.route('leave', function(req) {
+  console.log('a user left ' + req.data.queue);
+  app.io.room(req.data.queue).broadcast('leave', req.data.user);
+
+  for(var i = list.length - 1; i >= 0; i--) {
+      if(list[i].name === req.data.user.name) {
+        list.splice(i, 1);
+      }
+  }
 })
 
 // returns the queue-list
@@ -33,10 +45,6 @@ app.get('/API/getQueue', function(req, res) {
     res.end(JSON.stringify(list));
 })
 
-// adds user to the queue and updates the list
-app.get('/API/enterQueue', function(req, res) {
-
-})
 
 app.listen(8080);
 
