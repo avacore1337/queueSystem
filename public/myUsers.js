@@ -2,11 +2,7 @@ function userController($scope,$http) {
 $scope.name = '';
 $scope.place = '';
 $scope.comment = '';
-$scope.users = [
-{id:1, name:'Hege',  place:"Pege" , comment:"Green"},
-{id:2, name:'Kim',   place:"Pim" , comment:"Brown"},
-{id:3, name:'Sal',   place:"Smith" , comment:"Red"}
-];
+$scope.users = [];
 $http.get('/API/getQueue')
 .success(function(response) {
   $scope.users=response;
@@ -19,27 +15,41 @@ $scope.io = io.connect();
 $scope.io.emit('listen', 'dbas')
 
 console.log('testing')
-// Listen for the announce event.
+
+// Listen for the person joining a queue event.
 $scope.io.on('join', function(data) {
     console.log(data);
-    console.log($scope.users[0]);
-    $scope.$apply($scope.users.push({id:$scope.users.length, name:data.name, place:data.place, comment:data.comment}));
+    $scope.$apply($scope.users.push({name:data.name, place:data.place, comment:data.comment}));
     console.log($scope.users);
 })
 
-
-$scope.editUser = function(id) {
-  if (id == 'new') {
+// Listen for the person leaving a queue event.
+$scope.io.on('leave', function(data) {
+  for(var i = $scope.users.length - 1; i >= 0; i--) {
+      if($scope.users[i].name === data.name) {
+        $scope.users.splice(i, 1);
+      }
+  }
+});
+$scope.newUser = function() { 
     $scope.edit = true;
     $scope.name = '';
     $scope.comment = '';
     $scope.place = '';
-  } else {
-    $scope.edit = false;
-    $scope.name = $scope.users[id-1].name;
-    $scope.place = $scope.users[id-1].place;
-    $scope.comment = $scope.users[id-1].comment;
-  }
+}
+
+$scope.editUser = function(name) {
+  var user;
+  for (var i = 0; i < $scope.users.length; i++) {
+    if($scope.users[i].name == name){
+      user=$scope.users[i];
+    }
+  };
+  $scope.edit = false;
+  $scope.name = user.name;
+  $scope.place = user.place;
+  $scope.comment = user.comment;
+
 };
 $scope.addUser = function(){
   // $scope.users.push({id:$scope.users.length, name:$scope.name, place:$scope.place, comment:$scope.comment});
@@ -52,27 +62,15 @@ $scope.addUser = function(){
     $scope.comment = '';
     $scope.place = '';
 };
-$scope.select = function(id){
-  if($scope.selected == id){
-    $scope.selected = -1;
-  }else{
-    $scope.selected = id;
-    //document.getElementById(id.toString()).background = "#FF7070";
-  }
-};
+
 $scope.removeUser = function(){
-  if($scope.selected != -1){
-    var temp = [];
-    var counter = 1;
-    for(var i = 0; i < $scope.users.length; i++){
-      if(i != $scope.selected-1){
-        temp.push($scope.users[i]);
-        temp[temp.length-1].id = counter;
-        counter++;
-      }
-    }
-    $scope.users = temp;
-  }
-  $scope.selected = -1;
-};
+  $scope.io.emit('leave', {
+        queue:'dbas',
+        user:{name:$scope.name, place:$scope.place, comment:$scope.comment}
+      });
+    $scope.name = '';
+    $scope.comment = '';
+    $scope.place = '';
+}
+
 }

@@ -4,9 +4,9 @@ var app = expressio();
 app.http().io();
 
 var list = [
-{id:1, name:'Helge',  place:"Pege" , comment:"Green"},
-{id:2, name:'King',   place:"Pim" , comment:"Brown"},
-{id:3, name:'Salad',   place:"Smith" , comment:"Red"}
+{name:'Helge',  place:"Pege" , comment:"Green"},
+{name:'King',   place:"Pim" , comment:"Brown"},
+{name:'Salad',   place:"Smith" , comment:"Red"}
 ];
 
 app.use(expressio.static(__dirname + '/public'));
@@ -50,27 +50,3 @@ app.get('/API/getQueue', function(req, res) {
 
 
 app.listen(8080);
-
-
-
-
-
-
-
-var queue = [
-{
-  name:'Anders',
-  place:'Green 07',
-  comment:'hejsan'
-},
-{
-  name:'Erik',
-  place:'Green 06',
-  comment:'svejsan'
-},
-{
-  name:'Majsan',
-  place:'Brun 09',
-  comment:'lingonfejsan'
-}];
-
