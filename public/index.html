@@ -18,10 +18,10 @@
     <th>Place</th>
     <th>Comment</th>
   </tr></thead>
-  <tbody><tr ng-repeat="user in users">
+  <tbody><tr id="user.id" ng-repeat="user in users" ng-click="select(user.id)">
     <td>
       <button class="btn" ng-click="editUser(user.id)">
-      <span class="glyphicon glyphicon-pencil"></span>&nbsp;&nbsp;Edit
+      <span class="glyphicon glyphicon-pencil"></span>&nbsp;&nbsp;Make me this user
       </button>
     </td>
     <td>{{ user.name }}</td>
@@ -63,6 +63,9 @@
 <hr>
 <button class="btn btn-success" ng-click="addUser()">
   <span class="glyphicon glyphicon-save"></span> Save Changes
+</button>
+<button class="btn btn-success" ng-click="removeUser()">
+  <span class="glyphicon glyphicon-warning-sign"></span> Remove user
 </button>
 
 <script src="/socket.io/socket.io.js"></script>

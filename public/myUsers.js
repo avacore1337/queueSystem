@@ -1,4 +1,5 @@
 function userController($scope) {
+$scope.selected = -1;
 $scope.name = '';
 $scope.place = '';
 $scope.comment = '';
@@ -46,5 +47,28 @@ $scope.addUser = function(){
     $scope.name = '';
     $scope.comment = '';
     $scope.place = '';
+};
+$scope.select = function(id){
+  if($scope.selected == id){
+    $scope.selected = -1;
+  }else{
+    $scope.selected = id;
+    //document.getElementById(id.toString()).background = "#FF7070";
+  }
+};
+$scope.removeUser = function(){
+  if($scope.selected != -1){
+    var temp = [];
+    var counter = 1;
+    for(var i = 0; i < $scope.users.length; i++){
+      if(i != $scope.selected-1){
+        temp.push($scope.users[i]);
+        temp[temp.length-1].id = counter;
+        counter++;
+      }
+    }
+    $scope.users = temp;
+  }
+  $scope.selected = -1;
 };
 }
