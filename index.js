@@ -28,11 +28,14 @@ app.io.route('join', function(req) {
 })
 
 // returns the queue-list
-app.get('api/getQueue', function(req, res) {
+app.get('/API/getQueue', function(req, res) {
     res.setHeader('Content-Type', 'application/json');
     res.end(JSON.stringify(list));
-//    console.log('queue sent! ' + req.data.queue);
-//  app.io.room(req.data.queue).broadcast('join', req.data.user);
+})
+
+// adds user to the queue and updates the list
+app.get('/API/enterQueue', function(req, res) {
+
 })
 
 app.listen(8080);
