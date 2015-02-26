@@ -22,12 +22,14 @@ app.io.route('listen', function(req) {
   req.io.join(req.data);
 })
 
+// user joins queue
 app.io.route('join', function(req) {
   console.log('a user joined to ' + req.data.queue);
   app.io.room(req.data.queue).broadcast('join', req.data.user);
   list.push(req.data.user);
 })
 
+// user leaves queue
 app.io.route('leave', function(req) {
   console.log('a user left ' + req.data.queue);
   app.io.room(req.data.queue).broadcast('leave', req.data.user);
@@ -43,6 +45,7 @@ app.io.route('leave', function(req) {
 app.get('/API/getQueue', function(req, res) {
     res.setHeader('Content-Type', 'application/json');
     res.end(JSON.stringify(list));
+    console.log('list requested');
 })
 
 
