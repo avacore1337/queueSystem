@@ -1,5 +1,4 @@
-function userController($scope) {
-$scope.selected = -1;
+function userController($scope,$http) {
 $scope.name = '';
 $scope.place = '';
 $scope.comment = '';
@@ -8,6 +7,11 @@ $scope.users = [
 {id:2, name:'Kim',   place:"Pim" , comment:"Brown"},
 {id:3, name:'Sal',   place:"Smith" , comment:"Red"}
 ];
+$http.get('/API/getQueue')
+.success(function(response) {
+  $scope.users=response;
+});
+
 $scope.edit = true;
 
 $scope.io = io.connect();
