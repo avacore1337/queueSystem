@@ -3,6 +3,12 @@ var expressio = require('express.io');
 var app = expressio();
 app.http().io();
 
+var list = [
+{id:1, name:'Helge',  place:"Pege" , comment:"Green"},
+{id:2, name:'King',   place:"Pim" , comment:"Brown"},
+{id:3, name:'Salad',   place:"Smith" , comment:"Red"}
+];
+
 app.use(expressio.static(__dirname + '/public'));
 
 
@@ -19,6 +25,14 @@ app.io.route('listen', function(req) {
 app.io.route('join', function(req) {
   console.log('a user joined to ' + req.data.queue);
   app.io.room(req.data.queue).broadcast('join', req.data.user);
+})
+
+// returns the queue-list
+app.get('api/getQueue', function(req, res) {
+    res.setHeader('Content-Type', 'application/json');
+    res.end(JSON.stringify(list));
+//    console.log('queue sent! ' + req.data.queue);
+//  app.io.room(req.data.queue).broadcast('join', req.data.user);
 })
 
 app.listen(8080);
