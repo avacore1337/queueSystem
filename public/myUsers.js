@@ -18,7 +18,7 @@ console.log('testing')
 $scope.io.on('join', function(data) {
     console.log(data);
     console.log($scope.users[0]);
-    $scope.users.push({id:$scope.users.length, name:data.name, place:data.place, comment:data.comment});
+    $scope.$apply($scope.users.push({id:$scope.users.length, name:data.name, place:data.place, comment:data.comment}));
     console.log($scope.users);
 })
 
