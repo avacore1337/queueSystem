@@ -22,19 +22,19 @@
 </table>
 
 <hr>
-<button class="btn btn-success" ng-click="newUser()">
+<button class="btn btn-success" ng-click="createNewUser()">
   <span class="glyphicon glyphicon-user"></span> Create New User
 </button>
 <hr>
 
-<h3 ng-show="edit">Create New User:</h3>
-<h3 ng-hide="edit">Edit User:</h3>
+<h3 ng-show="newUser">Create New User:</h3>
+<h3 ng-hide="newUser">Edit User:</h3>
 
 <form class="form-horizontal">
 <div class="form-group">
   <label class="col-sm-2 control-label">Name:</label>
   <div class="col-sm-10">
-    <input type="text" ng-model="name" ng-disabled="!edit" placeholder="Magnus">
+    <input type="text" ng-model="name" ng-disabled="!newUser" placeholder="Magnus">
   </div>
 </div>
 <div class="form-group">
@@ -52,9 +52,12 @@
 </form>
 
 <hr>
-<button class="btn btn-success" ng-click="addUser()" ng-disabled="!edit" >
-  <span class="glyphicon glyphicon-save"></span> Create User
+<button class="btn btn-success" ng-show="newUser" ng-click="addUser()">
+  <span class="glyphicon glyphicon-save"></span>Create User
 </button>
-<button class="btn btn-success" ng-click="removeUser()"  ng-disabled="edit" >
+<button class="btn btn-success" ng-show="!newUser" ng-click="updateUser()">
+  <span class="glyphicon glyphicon-save"></span>Update User
+</button>
+<button class="btn btn-success" ng-click="removeUser()"  ng-disabled="newUser" >
   <span class="glyphicon glyphicon-warning-sign"></span> Remove user
 </button>

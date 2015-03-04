@@ -11,7 +11,7 @@ function ($scope,$http,$routeParams) {
     $scope.users=response;
   });
 
-  $scope.edit = true;
+  $scope.newUser = true;
 
   $scope.io = io.connect();
 
@@ -34,11 +34,12 @@ function ($scope,$http,$routeParams) {
         }
     }
   });
-  $scope.newUser = function() { 
-      $scope.edit = true;
+  $scope.createNewUser = function() { 
+      $scope.newUser = true;
       $scope.name = '';
       $scope.comment = '';
       $scope.place = '';
+      console.log("Called createNewUser");
   }
 
   $scope.editUser = function(name) {
@@ -48,11 +49,11 @@ function ($scope,$http,$routeParams) {
         user=$scope.users[i];
       }
     };
-    $scope.edit = false;
+    $scope.newUser = false;
     $scope.name = user.name;
     $scope.place = user.place;
     $scope.comment = user.comment;
-
+    console.log("Called editUser");
   };
   $scope.addUser = function(){
     // $scope.users.push({id:$scope.users.length, name:$scope.name, place:$scope.place, comment:$scope.comment});
@@ -64,6 +65,21 @@ function ($scope,$http,$routeParams) {
       $scope.name = '';
       $scope.comment = '';
       $scope.place = '';
+      console.log("Called addUser");
+  };
+  $scope.updateUser = function(){
+    // $scope.users.push({id:$scope.users.length, name:$scope.name, place:$scope.place, comment:$scope.comment});
+      $scope.io.emit('update', 
+        {
+          queue:$routeParams.course,
+          user:{name:$scope.name, place:$scope.place, comment:$scope.comment}
+        })
+      $scope.name = '';
+      $scope.comment = '';
+      $scope.place = '';
+      $scope.newUser = true;
+      console.log("Called updateUser");
+
   };
 
   $scope.removeUser = function(){
@@ -74,11 +90,20 @@ function ($scope,$http,$routeParams) {
       $scope.name = '';
       $scope.comment = '';
       $scope.place = '';
+      console.log("Called removeUser");
   }
 
 }]);
 
+queueControllers.controller('listController', ['$scope', '$http',
+function ($scope, $http) {
+  // This should be taken from the backend
+  $scope.courses = ["dbas", "inda", "logik", "numme", "mvk"];
 
-queueControllers.controller('queueListController', ['$scope',
-  function($scope) {
+  console.log('testing');
+
+  // This function should direct the user to the wanted page
+  $scope.redirect = function(course){
+    console.log("User wants to enter " + course);
+  }
 }]);
