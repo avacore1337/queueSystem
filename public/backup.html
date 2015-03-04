@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html ng-app="">
+<head>
+  <link rel="stylesheet" href="http://maxcdn.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap.min.css">
+  <script src="http://ajax.googleapis.com/ajax/libs/angularjs/1.2.26/angular.min.js"></script>
+  <script src="//ajax.googleapis.com/ajax/libs/angularjs/1.2.14/angular-route.min.js"></script>
+</head>
+
+<body ng-controller="userController">
+<div class="container">
+
+<h3>Users</h3>
+
+<table class="table table-striped">
+  <thead><tr>
+    <th>Edit</th>
+    <th>Name</th>
+    <th>Place</th>
+    <th>Comment</th>
+  </tr></thead>
+  <tbody><tr id="user.name" ng-repeat="user in users">
+    <td>
+      <button class="btn" ng-click="editUser(user.name)">
+      <span class="glyphicon glyphicon-pencil"></span>&nbsp;&nbsp;Make me this user
+      </button>
+    </td>
+    <td>{{ user.name }}</td>
+    <td>{{ user.place }}</td>
+    <td>{{ user.comment }}</td>
+  </tr></tbody>
+</table>
+
+<hr>
+<button class="btn btn-success" ng-click="newUser()">
+  <span class="glyphicon glyphicon-user"></span> Create New User
+</button>
+<hr>
+
+<h3 ng-show="edit">Create New User:</h3>
+<h3 ng-hide="edit">Edit User:</h3>
+
+<form class="form-horizontal">
+<div class="form-group">
+  <label class="col-sm-2 control-label">Name:</label>
+  <div class="col-sm-10">
+    <input type="text" ng-model="name" ng-disabled="!edit" placeholder="Magnus">
+  </div>
+</div>
+<div class="form-group">
+  <label class="col-sm-2 control-label">Place:</label>
+  <div class="col-sm-10">
+    <input type="text" ng-model="place" placeholder="Green">
+  </div>
+</div>
+<div class="form-group">
+  <label class="col-sm-2 control-label">Comment:</label>
+  <div class="col-sm-10">
+    <input type="text" ng-model="comment" placeholder="Redovisa Labb 1">
+  </div>
+</div>
+</form>
+
+<hr>
+<button class="btn btn-success" ng-click="addUser()" ng-disabled="!edit" >
+  <span class="glyphicon glyphicon-save"></span> Create User
+</button>
+<button class="btn btn-success" ng-click="removeUser()"  ng-disabled="edit" >
+  <span class="glyphicon glyphicon-warning-sign"></span> Remove user
+</button>
+
+<script src="/socket.io/socket.io.js"></script>
+<script src = "myUsers.js"></script>
+</body>
+</html>
