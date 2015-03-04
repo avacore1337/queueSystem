@@ -1,0 +1,11 @@
+<link rel="stylesheet" type="text/css" href="main.css">
+<div class="container">
+
+<div class="row">
+	<section class="col-md-10 col-md-offset-1">
+		<h1>Courses</h1>
+		<div class="well clickable" ng-repeat="course in courses">
+			<h4 class="text-left" ng-click="redirect(course)"><a href="">{{course}}</a></h4>
+		</div>
+	</section>
+</div>
