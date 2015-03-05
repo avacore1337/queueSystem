@@ -8,7 +8,7 @@
   function($routeProvider) {
     $routeProvider.
       when('/list', {
-        templateUrl: 'queueListing.html',
+        templateUrl: 'list.html',
         controller: 'queueListController'
       }).
       when('/course/:course', {
