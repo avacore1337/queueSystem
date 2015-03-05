@@ -41,6 +41,22 @@ app.io.route('leave', function(req) {
   }
 })
 
+// user gets put at the bottom of the queue
+  // försökte implementera en funktion att placera någon längst ner i kön
+  // reason: se ifall det gick att implementera nya metoder, det gick inte
+app.io.route('bottom', function(req) {
+  console.log('a user was put at the bottom ' + req.data.queue);
+  app.io.room(req.data.queue).broadcast('bottom', req.data.user);
+
+  for(var i = list.length - 1; i >= 0; i--) {
+      if(list[i].name === req.data.user.name) {
+        var user = list.splice(i, 1);
+        list.push(user)
+        break
+      }
+  }
+})
+
 // returns the queue-list
 app.get('/API/getQueue', function(req, res) {
     res.setHeader('Content-Type', 'application/json');

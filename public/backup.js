@@ -73,4 +73,16 @@ $scope.removeUser = function(){
     $scope.place = '';
 }
 
+  // försökte implementera en funktion att placera någon längst ner i kön
+  // reason: se ifall det gick att implementera nya metoder, det gick inte
+$scope.bottomUser = function(){
+  $scope.io.emit('bottom', {
+        queue:'dbas',
+        user:{name:$scope.name, place:$scope.place, comment:$scope.comment}
+      });
+    $scope.name = '';
+    $scope.comment = '';
+    $scope.place = '';
+}
+
 }

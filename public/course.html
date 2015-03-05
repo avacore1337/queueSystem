@@ -1,5 +1,12 @@
 <div class="container">
 
+<!--länkar inte till något atm -->
+<hr>
+<button class="btn btn-success" ng-click="">
+  <span class="glyphicon glyphicon-arrow-left"></span> Back to queues!
+</button>
+<hr>
+
 <h3>Users</h3>
 
 <table class="table table-striped">
@@ -12,7 +19,7 @@
   <tbody><tr id="user.name" ng-repeat="user in users">
     <td>
       <button class="btn" ng-click="editUser(user.name)">
-      <span class="glyphicon glyphicon-pencil"></span>&nbsp;&nbsp;Make me this user
+      <span class="glyphicon glyphicon-pencil"></span>&nbsp;&nbsp;Edit this user
       </button>
     </td>
     <td>{{ user.name }}</td>
@@ -57,4 +64,7 @@
 </button>
 <button class="btn btn-success" ng-click="removeUser()"  ng-disabled="edit" >
   <span class="glyphicon glyphicon-warning-sign"></span> Remove user
+</button>
+<button class="btn btn-success" ng-click="bottomUser()"  ng-disabled="edit" >
+  <span class="glyphicon glyphicon-warning-sign"></span> Put to bottom of list
 </button>
