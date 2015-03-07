@@ -15,6 +15,14 @@
         templateUrl: 'course.html',
         controller: 'courseController'
       }).
+      when('/about', {
+        templateUrl: 'about.html',
+        controller: 'aboutController'
+      }).
+      when('/help', {
+        templateUrl: 'help.html',
+        controller: 'helpController'
+      }).
       otherwise({
         redirectTo: '/list'
       });

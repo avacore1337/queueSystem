@@ -6,6 +6,7 @@ function ($scope,$http,$routeParams) {
   $scope.place = '';
   $scope.comment = '';
   $scope.users = [];
+  $scope.admin = true;
   $http.get('/API/getQueue')
   .success(function(response) {
     $scope.users=response;
@@ -93,10 +94,14 @@ function ($scope,$http,$routeParams) {
       console.log("Called removeUser");
   }
 
+  $scope.adminify = function(){
+    $scope.admin = !$scope.admin;
+  }
+
 }]);
 
-queueControllers.controller('listController', ['$scope', '$http',
-function ($scope, $http) {
+queueControllers.controller('listController', ['$scope', '$http', '$location',
+function ($scope, $http, $location) {
   // This should be taken from the backend
   $scope.courses = ["dbas", "inda", "logik", "numme", "mvk"];
 
@@ -104,6 +109,17 @@ function ($scope, $http) {
 
   // This function should direct the user to the wanted page
   $scope.redirect = function(course){
-    console.log("User wants to enter " + course);
+    $location.path('/course/' + course);
+    //console.log("User wants to enter " + course);
   }
+}]);
+
+queueControllers.controller('aboutController', ['$scope', '$http',
+function ($scope, $http) {
+  console.log('entered about.html');
+}]);
+
+queueControllers.controller('helpController', ['$scope', '$http',
+function ($scope, $http) {
+  console.log('entered help.html');
 }]);

@@ -1,3 +1,13 @@
-.clickable:hover{
+.clickable:hover
+{
 	background-color: rgba(0,0,0,0.1);
+	cursor: pointer;
+}
+.navbar-brand
+{
+    position: absolute;
+    width: 100%;
+    left: 0;
+    text-align: center;
+    margin: auto;
 }
