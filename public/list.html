@@ -3,13 +3,28 @@
 <div class="row">
 	<section class="col-md-10 col-md-offset-1">
 		<h1>Courses</h1>
-		<div class="well clickable" ng-repeat="course in courses" ng-click="redirect(course)" clear:both>
-			<!--<h4 class="text-left" float:left><a href="" >{{course}}</a></h4>-->
-			<h4><a href="" classs="text-left">{{course}}</a></h4>
-			<!--
-			<i class="glyphicon glyphicon-user"></i>
-			<i class="glyphicon glyphicon-lock"></i>
-			-->
+		<div class="well clickable row" ng-repeat="course in courses" ng-click="redirect(course)" clear:both>
+			<div class="col-md-6">
+				<!--
+				<h4 class="red" ng-show="course.locked">
+					<i class="glyphicon glyphicon-lock"></i>
+					<a href="">{{course}}</a>
+				</h4>
+				
+				<h4 ng-show="!course.locked">
+				-->
+				<h4>
+					<a href="">{{course}}</a>
+				</h4>
+			</div>
+			<div class="col-md-6">
+				<span class="pull-right">
+					<h4>
+						1
+						<i class="glyphicon glyphicon-user"></i>
+					</h4>
+				</span>
+			</div>
 		</div>
 	</section>
 </div>
