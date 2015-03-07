@@ -11,3 +11,7 @@
     text-align: center;
     margin: auto;
 }
+.btn.red
+{
+	background-color: #f54f36;
+}

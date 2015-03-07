@@ -22,26 +22,31 @@ function ($scope,$http,$routeParams) {
 
   // Listen for the person joining a queue event.
   $scope.io.on('join', function(data) {
-      console.log(data);
-      $scope.$apply($scope.users.push({name:data.name, place:data.place, comment:data.comment}));
-      console.log($scope.users);
+    console.log(data);
+    $scope.$apply($scope.users.push({name:data.name, place:data.place, comment:data.comment}));
+    console.log($scope.users);
   })
 
   // Listen for the person leaving a queue event.
   $scope.io.on('leave', function(data) {
     for(var i = $scope.users.length - 1; i >= 0; i--) {
-        if($scope.users[i].name === data.name) {
-          $scope.users.splice(i, 1);
-        }
+      if($scope.users[i].name === data.name) {
+        $scope.$apply($scope.users.splice(i, 1));
+      }
     }
-  });
-  $scope.createNewUser = function() { 
-      $scope.newUser = true;
-      $scope.name = '';
-      $scope.comment = '';
-      $scope.place = '';
-      console.log("Called createNewUser");
-  }
+  })
+
+  // Listen for the person updateing a queue event.
+  $scope.io.on('update', function(data) {
+    console.log(data);
+    for(var i = $scope.users.length - 1; i >= 0; i--) {
+      if($scope.users[i].name === data.name) {
+        $scope.$apply($scope.users[i].comment = data.comment);
+        $scope.$apply($scope.users[i].place = data.place);
+      }
+    }
+    console.log($scope.users);
+  })
 
   $scope.editUser = function(name) {
     var user;
@@ -55,7 +60,8 @@ function ($scope,$http,$routeParams) {
     $scope.place = user.place;
     $scope.comment = user.comment;
     console.log("Called editUser");
-  };
+  }
+
   $scope.addUser = function(){
     // $scope.users.push({id:$scope.users.length, name:$scope.name, place:$scope.place, comment:$scope.comment});
       $scope.io.emit('join', 
@@ -67,31 +73,40 @@ function ($scope,$http,$routeParams) {
       $scope.comment = '';
       $scope.place = '';
       console.log("Called addUser");
-  };
+  }
+
   $scope.updateUser = function(){
     // $scope.users.push({id:$scope.users.length, name:$scope.name, place:$scope.place, comment:$scope.comment});
-      $scope.io.emit('update', 
-        {
-          queue:$routeParams.course,
-          user:{name:$scope.name, place:$scope.place, comment:$scope.comment}
-        })
-      $scope.name = '';
-      $scope.comment = '';
-      $scope.place = '';
-      $scope.newUser = true;
-      console.log("Called updateUser");
+    $scope.io.emit('update', {
+      queue:$routeParams.course,
+      user:{name:$scope.name, place:$scope.place, comment:$scope.comment}
+    })
+    $scope.name = '';
+    $scope.comment = '';
+    $scope.place = '';
+    $scope.newUser = true;
+    console.log("Called updateUser");
+  }
 
-  };
-
-  $scope.removeUser = function(){
+  $scope.removeUser = function(name){
+    var tempPlace = '';
+    var tempComment = '';
+    for(user in $scope.users){
+      if(name == user.name){
+        tempPlace = user.place;
+        tempComment = user.comment;
+        break;
+      }
+    }
+    console.log("tempPlace = " + tempPlace + " :  tempPlace = " + tempComment);
     $scope.io.emit('leave', {
-          queue:$routeParams.course,
-          user:{name:$scope.name, place:$scope.place, comment:$scope.comment}
-        });
-      $scope.name = '';
-      $scope.comment = '';
-      $scope.place = '';
-      console.log("Called removeUser");
+      queue:$routeParams.course,
+      user:{name:name, place:tempPlace, comment:tempComment}
+    });
+    $scope.name = '';
+    $scope.comment = '';
+    $scope.place = '';
+    console.log("Called removeUser");
   }
 
   $scope.adminify = function(){
@@ -102,12 +117,12 @@ function ($scope,$http,$routeParams) {
   // reason: se ifall det gick att implementera nya metoder, det gick inte
   $scope.bottomUser = function(){
     $scope.io.emit('bottom', {
-          queue:$routeParams.course,
-          user:{name:$scope.name, place:$scope.place, comment:$scope.comment}
-        });
-      $scope.name = '';
-      $scope.comment = '';
-      $scope.place = '';
+      queue:$routeParams.course,
+      user:{name:$scope.name, place:$scope.place, comment:$scope.comment}
+    });
+    $scope.name = '';
+    $scope.comment = '';
+    $scope.place = '';
   }
 
 }]);
@@ -116,6 +131,10 @@ queueControllers.controller('listController', ['$scope', '$http', '$location',
 function ($scope, $http, $location) {
   // This should be taken from the backend
   $scope.courses = ["dbas", "inda", "logik", "numme", "mvk"];
+  //$scope.courses = [];
+  //$http.get('/API/courseList').success(function(response){
+  //  $scope.courses = response;
+  //});
 
   console.log('testing');
 

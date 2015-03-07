@@ -1,43 +1,27 @@
 <div class="container">
 
-<nav class="navbar navbar-default navbar-inverse">
-  <a class="navbar-brand" href="#">UWait</a>
-  <ul class="nav navbar-nav navbar-left">
-    <li class="active"><a href="#">Queue</a></li>
-    <li><a href="#about">About</a></li>
-    <li><a href="#help">Help</a></li>
-  </ul>
-  <ul class="nav navbar-nav navbar-right">
-    <li><a href="">Circle</a></li>
-    <li><a href="https://login.kth.se/login?service=http%3A%2F%2Fqwait.csc.kth.se%3A8080%2Fauthenticate">Log in</a></li>
-  </ul>
-</nav>
-
 <h3>Users</h3>
 
 <table class="table table-striped">
   <thead><tr>
-    <th>Edit</th>
-    <th>Name</th>
-    <th>Place</th>
+    <th>#</th>
+    <th>User</th>
+    <th>Location</th>
     <th>Comment</th>
   </tr></thead>
-  <tbody><tr id="user.name" ng-repeat="user in users">
+  <tbody><tr id="user.name" ng-repeat="user in users track by $index">
+    <td>{{ $index + 1 }}</td>
     <td>
-      <button class="btn" ng-click="editUser(user.name)">
-      <span class="glyphicon glyphicon-pencil"></span>&nbsp;&nbsp;Edit this user
+      {{ user.name }}
+      <button class="btn red" ng-click="removeUser(user.name)" ng-show="admin">
+        <span class="glyphicon glyphicon-trash"></span>&nbsp;&nbsp;Remove user
       </button>
     </td>
-    <td>{{ user.name }}</td>
     <td>{{ user.place }}</td>
     <td>{{ user.comment }}</td>
   </tr></tbody>
 </table>
 
-<hr>
-<button class="btn btn-success" ng-click="createNewUser()">
-  <span class="glyphicon glyphicon-user"></span> Create New User
-</button>
 <hr>
 
 <h3 ng-show="newUser">Create New User:</h3>
@@ -71,7 +55,7 @@
 <button class="btn btn-success" ng-show="!newUser" ng-click="updateUser()">
   <span class="glyphicon glyphicon-save"></span>Update User
 </button>
-<button class="btn btn-success" ng-click="removeUser()"  ng-disabled="newUser" ng-show="admin">
+<button class="btn btn-success" ng-click="removeUser(name)" ng-show="admin">
   <span class="glyphicon glyphicon-warning-sign"></span> Remove user
 </button>
 <button class="btn btn-success" ng-click="adminify()"  ng-show="!admin" >
@@ -79,6 +63,10 @@
 </button>
 <button class="btn btn-success" ng-click="adminify()"  ng-show="admin" >
   <span class="glyphicon glyphicon-warning-sign"></span> Make me an user
+</button>
 <button class="btn btn-success" ng-click="bottomUser()"  ng-disabled="edit" >
   <span class="glyphicon glyphicon-warning-sign"></span> Put to bottom of list
+</button>
+<button class="btn btn-success" ng-click="updateUser()"  ng-disabled="edit" >
+  <span class="glyphicon glyphicon-pencil"></span> Edit user
 </button>

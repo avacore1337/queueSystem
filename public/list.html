@@ -1,26 +1,15 @@
 <div class="container">
 
-<!--
-<navigation-bar></navigation-bar>
--->
-<nav class="navbar navbar-default navbar-inverse">
-	<a class="navbar-brand" href="#">UWait</a>
-	<ul class="nav navbar-nav navbar-left">
-		<li class="active"><a href="#">Queue</a></li>
-		<li><a href="#about">About</a></li>
-		<li><a href="#help">Help</a></li>
-	</ul>
-	<ul class="nav navbar-nav navbar-right">
-		<li><a href="">Circle</a></li>
-		<li><a href="https://login.kth.se/login?service=http%3A%2F%2Fqwait.csc.kth.se%3A8080%2Fauthenticate">Log in</a></li>
-	</ul>
-</nav>
-
 <div class="row">
 	<section class="col-md-10 col-md-offset-1">
 		<h1>Courses</h1>
-		<div class="well clickable" ng-repeat="course in courses">
-			<h4 class="text-left" ng-click="redirect(course)"><a href="">{{course}}</a></h4>
+		<div class="well clickable" ng-repeat="course in courses" ng-click="redirect(course)" clear:both>
+			<!--<h4 class="text-left" float:left><a href="" >{{course}}</a></h4>-->
+			<h4><a href="" classs="text-left">{{course}}</a></h4>
+			<!--
+			<i class="glyphicon glyphicon-user"></i>
+			<i class="glyphicon glyphicon-lock"></i>
+			-->
 		</div>
 	</section>
 </div>
