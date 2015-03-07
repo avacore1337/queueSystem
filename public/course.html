@@ -25,7 +25,7 @@
   <tbody><tr id="user.name" ng-repeat="user in users">
     <td>
       <button class="btn" ng-click="editUser(user.name)">
-      <span class="glyphicon glyphicon-pencil"></span>&nbsp;&nbsp;Make me this user
+      <span class="glyphicon glyphicon-pencil"></span>&nbsp;&nbsp;Edit this user
       </button>
     </td>
     <td>{{ user.name }}</td>
@@ -79,4 +79,6 @@
 </button>
 <button class="btn btn-success" ng-click="adminify()"  ng-show="admin" >
   <span class="glyphicon glyphicon-warning-sign"></span> Make me an user
+<button class="btn btn-success" ng-click="bottomUser()"  ng-disabled="edit" >
+  <span class="glyphicon glyphicon-warning-sign"></span> Put to bottom of list
 </button>
