@@ -7,7 +7,7 @@ function ($scope,$http,$routeParams) {
   $scope.comment = '';
   $scope.users = [];
   $scope.admin = true;
-  $http.get('/API/getQueue')
+  $http.get('/API/queue/' + $routeParams.course)
   .success(function(response) {
     $scope.users=response;
   });
@@ -130,11 +130,11 @@ function ($scope,$http,$routeParams) {
 queueControllers.controller('listController', ['$scope', '$http', '$location',
 function ($scope, $http, $location) {
   // This should be taken from the backend
-  $scope.courses = ["dbas", "inda", "logik", "numme", "mvk"];
-  //$scope.courses = [];
-  //$http.get('/API/courseList').success(function(response){
-  //  $scope.courses = response;
-  //});
+//  $scope.courses = ["dbas", "inda", "logik", "numme", "mvk"];                 //  <====== ersätt detta med backen, läsa?
+  $scope.courses = [];
+  $http.get('/API/courseList').success(function(response){
+    $scope.courses = response;
+  });
 
   console.log('testing');
 
