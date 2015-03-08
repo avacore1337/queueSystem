@@ -105,8 +105,13 @@ app.get('/API/queue/:queue', function(req, res) {
 // /API/list
 // => returnerar alla kurser som finns (lista av strängar)
 app.get('/API/courseList', function(req, res) {
+    var ret = [];
+    for (i = 0 ; i < courseList.length ; i++) {
+      var course = courseList[i];
+      ret.push({name: course, length: list[course].length});
+    }
     res.setHeader('Content-Type', 'application/json');
-    res.end(JSON.stringify(courseList));
+    res.end(JSON.stringify(ret));
     console.log('list of courses requested');
 })
 
