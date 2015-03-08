@@ -19,10 +19,11 @@ var list = new Map();
 // Map för varje rum
 // innehåller alla users som står i resp kö
 for (var i = 0 ; i < courseList.length ; i++) {
-  list[courseList[i]] = [
+  var course = courseList[i];
+  list[course] = [
     {name:'Helge',  place:"Pege" , comment:"Green"}
   ];
-  console.log(list[courseList[i]] + " " + courseList[i]);
+  console.log(list[course] + " " + course);
 }
 
 app.use(expressio.static(__dirname + '/public'));
@@ -39,31 +40,37 @@ app.io.route('listen', function(req) {
 
 // user joins queue
 app.io.route('join', function(req) {
-  console.log('a user joined to ' + req.data.queue);
-  app.io.room(req.data.queue).broadcast('join', req.data.user);
-  list[req.data.queue].push(req.data.user);
+  var queue = req.data.queue;
+  var user = req.data.user;
+  console.log('a user joined to ' + queue);
+  app.io.room(queue).broadcast('join', user);
+  list[queue].push(user);
 })
 
 // user gets updated
 app.io.route('update', function(req) {
-  console.log('a was updated in ' + req.data.queue);
-  app.io.room(req.data.queue).broadcast('update', req.data.user);
+  var queue = req.data.queue;
+  var user = req.data.user;
+  console.log('a was updated in ' + queue);
+  app.io.room(queue).broadcast('update', user);
 
-  for(var i = list[req.data.queue].length - 1; i >= 0; i--) {
-      if(list[req.data.queue][i].name === req.data.user.name) {
-        list[req.data.queue].splice(i, 1, req.data.user);
+  for(var i = list[queue].length - 1; i >= 0; i--) {
+      if(list[queue][i].name === user.name) {
+        list[queue].splice(i, 1, user);
       }
   }
 })
 
 // user leaves queue
 app.io.route('leave', function(req) {
-  console.log('a user left ' + req.data.queue);
-  app.io.room(req.data.queue).broadcast('leave', req.data.user);
+  var queue = req.data.queue;
+  var user = req.data.user;
+  console.log('a user left ' + queue);
+  app.io.room(queue).broadcast('leave', user);
 
-  for(var i = list[req.data.queue].length - 1; i >= 0; i--) {
-      if(list[req.data.queue][i].name === req.data.user.name) {
-        list[req.data.queue].splice(i, 1);
+  for(var i = list[queue].length - 1; i >= 0; i--) {
+      if(list[queue][i].name === user.name) {
+        list[queue].splice(i, 1);
       }
   }
 })
@@ -72,13 +79,15 @@ app.io.route('leave', function(req) {
   // försökte implementera en funktion att placera någon längst ner i kön
   // reason: se ifall det gick att implementera nya metoder, det gick inte
 app.io.route('bottom', function(req) {
-  console.log('a user was put at the bottom ' + req.data.queue);
-  app.io.room(req.data.queue).broadcast('bottom', req.data.user);
+  var queue = req.data.queue;
+  var user = req.data.user;
+  console.log('a user was put at the bottom ' + queue);
+  app.io.room(queue).broadcast('bottom', user);
 
-  for(var i = list[req.data.queue].length - 1; i >= 0; i--) {
-      if(list[req.data.queue][i].name === req.data.user.name) {
-        var user = list[req.data.queue].splice(i, 1);
-        list[req.data.queue].push(user)
+  for(var i = list[queue].length - 1; i >= 0; i--) {
+      if(list[queue][i].name === user.name) {
+        var newUser = list[queue].splice(i, 1);
+        list[queue].push(user)
         break
       }
   }
