@@ -8,17 +8,24 @@
     <th>User</th>
     <th>Location</th>
     <th>Comment</th>
+    <th ng-show="admin">Admin-options</th>
   </tr></thead>
   <tbody><tr id="user.name" ng-repeat="user in users track by $index">
-    <td>{{ $index + 1 }}</td>
+    <td>{{ $index + 1 }}
+    </td>
     <td>
       {{ user.name }}
-      <button class="btn red" ng-click="removeUser(user.name)" ng-show="admin">
-        <span class="glyphicon glyphicon-trash"></span>&nbsp;&nbsp;Remove user
-      </button>
     </td>
     <td>{{ user.place }}</td>
     <td>{{ user.comment }}</td>
+    <td>
+      <button class="btn red" ng-click="removeUser(user.name)" ng-show="admin">
+        <span class="glyphicon glyphicon-trash"></span>&nbsp;&nbsp;
+      </button>
+      <button class="btn red" style="color:blue" ng-click="removeUser(user.name)" ng-show="admin">
+        <span class="glyphicon glyphicon-envelope"></span>&nbsp;&nbsp;
+      </button>
+    </td>
   </tr></tbody>
 </table>
 
