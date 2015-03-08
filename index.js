@@ -21,7 +21,9 @@ var list = new Map();
 for (var i = 0 ; i < courseList.length ; i++) {
   var course = courseList[i];
   list[course] = [
-    {name:'Helge',  place:"Pege" , comment:"Green"}
+    {name:'Helge',  place:"Pege" , comment:"Green"},
+    {name:'Enis',  place:"Venis" , comment:"Fernis"},
+    {name:'Alpha',  place:"Beta" , comment:"Gaga"}
   ];
   console.log(list[course] + " " + course);
 }
@@ -86,8 +88,10 @@ app.io.route('bottom', function(req) {
 
   for(var i = list[queue].length - 1; i >= 0; i--) {
       if(list[queue][i].name === user.name) {
-        var newUser = list[queue].splice(i, 1);
-        list[queue].push(user)
+        var newUser = list[queue][i];
+        list[queue].splice(i, 1);
+        console.log(newUser);
+        list[queue].push(newUser)
         break
       }
   }

@@ -48,6 +48,20 @@ function ($scope,$http,$routeParams) {
     console.log($scope.users);
   })
 
+  // Listen for the person being put to the bottom of queue event.
+  $scope.io.on('bottom', function(data) {
+    for(var i = $scope.users.length - 1; i >= 0; i--) {
+      if($scope.users[i].name === data.name) {
+        var user = $scope.users[i];
+        $scope.$apply($scope.users.splice(i, 1));
+      }
+    }
+
+    console.log(data);
+    $scope.$apply($scope.users.push(user));
+    console.log($scope.users);
+  })
+
   $scope.editUser = function(name) {
     var user;
     for (var i = 0; i < $scope.users.length; i++) {
