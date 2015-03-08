@@ -3,12 +3,6 @@ var expressio = require('express.io');
 var app = expressio();
 app.http().io();
 
-/*var list = [
-{name:'Helge',  place:"Pege" , comment:"Green"},
-{name:'King',   place:"Pim" , comment:"Brown"},
-{name:'Salad',   place:"Smith" , comment:"Red"}
-];*/
-
 // HÅRDKODAD! => ska läsas ifrån databasen vid ett senare skede
 var courseList = [
   "dbas", 
@@ -22,16 +16,8 @@ var courseList = [
 
 var list = new Map();
 
-/*// initiera rummen (med egna köer)
-// => for-loopa igenom alla rummen (hårdkodad stränglista) och skapa tomma köer
-var course;
-for (course in courseList) {
-  app.io.room(course).queue = [
-  ];
-}*/
-
 // Map för varje rum
-// => innehåller alla users som står i resp kö
+// innehåller alla users som står i resp kö
 for (var i = 0 ; i < courseList.length ; i++) {
   list[courseList[i]] = [
     {name:'Helge',  place:"Pege" , comment:"Green"}
@@ -40,7 +26,6 @@ for (var i = 0 ; i < courseList.length ; i++) {
 }
 
 app.use(expressio.static(__dirname + '/public'));
-
 
 app.io.on('connection', function(socket){
   console.log('a user connected');
