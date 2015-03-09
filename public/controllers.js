@@ -69,7 +69,6 @@ function ($scope,$http,$routeParams) {
         $scope.$apply($scope.users.splice(i, 1));
       }
     }
-
     console.log(data);
     $scope.$apply($scope.users.push(user));
     console.log($scope.users);
@@ -150,6 +149,21 @@ function ($scope,$http,$routeParams) {
     $scope.name = '';
     $scope.comment = '';
     $scope.place = '';
+  }
+
+  // This function should remove every person in the queue
+  $scope.purge = function(){
+    console.log("Called purge");
+  }
+
+    // This function should lock the queue, preventing anyone from queueing
+  $scope.lock = function(){
+    console.log("Called lock");
+  }
+
+    // This function should remove the queue, and it should prompt the user for another accept
+  $scope.removeQueue = function(){
+    console.log("Called removeQueue");
   }
 
 }]);

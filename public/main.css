@@ -1,7 +1,17 @@
-.clickable:hover
+.white.clickable:hover
 {
 	background-color: rgba(0,0,0,0.1);
 	cursor: pointer;
+}
+.red.clickable:hover
+{
+  background-color: #D6432D;
+  cursor: pointer;
+}
+.green.clickable:hover
+{
+  background-color: #2BCF49;
+  cursor: pointer;
 }
 .navbar-brand
 {
@@ -11,9 +21,13 @@
     text-align: center;
     margin: auto;
 }
-.btn.red
+.red
 {
 	background-color: #f54f36;
+}
+.green
+{
+  background-color: #30E651;
 }
 .navbar.navbar-default
 {
@@ -21,9 +35,34 @@
 	-webkit-border-radius: 0px;
 	border-radius: 0px;
 }
-.table-striped.booked > tbody > tr:nth-child(odd) > td, .table-striped > tbody > tr:nth-child(odd) > th {
+.table-striped.booked > tbody > tr:nth-child(odd) > td{
    background-color: rgba(48,240,94,0.65);
 }
-.table-striped.booked > tbody > tr:nth-child(even) > td, .table-striped > tbody > tr:nth-child(even) > th {
+.table-striped.booked > tbody > tr:nth-child(even) > td{
    background-color: rgba(48,255,94,0.6);
+}
+.black
+{
+  background-color: rgb(50,50,50);
+}
+.text-white
+{
+  color: white;
+}
+.text-black
+{
+  color: black;
+}.buffer
+{
+  margin-bottom: 5%;
+}
+.pin-center
+{
+  position: fixed;
+  top: 40%;
+}
+.center-content
+{
+  text-align: center;
+  padding: 5%;
 }
