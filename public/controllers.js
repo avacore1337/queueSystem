@@ -2,15 +2,28 @@ var queueControllers = angular.module('queueControllers', []);
 
 queueControllers.controller('courseController', ['$scope', '$http', '$routeParams',
 function ($scope,$http,$routeParams) {
+  $scope.course = $routeParams.course;
   $scope.name = '';
   $scope.place = '';
   $scope.comment = '';
   $scope.users = [];
+  $scope.bookedUsers = [];
   $scope.admin = true;
   $http.get('/API/queue/' + $routeParams.course)
   .success(function(response) {
-    $scope.users=response;
+    $scope.users = response;
   });
+
+  $scope.bookedUsers = [
+    {name:'Anton',  place:"Red 01" , comment:"Labb 1", time:"15:00"},
+    {name:'Joakim',  place:"Red 06" , comment:"Labb 3", time:"15:30"},
+    {name:'Per',  place:"Red 07" , comment:"Labb 2", time:"16:00"}
+  ];
+  
+  //$http.get('/API/queue/booked/' + $routeParams.course)
+  //.success(function(response) {
+  //  $scope.bookedUsers = response;
+  //});
 
   $scope.newUser = true;
 

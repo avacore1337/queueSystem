@@ -1,6 +1,32 @@
+<!--
+byt "users" mot namn på kön | check
+skriv ut hur många som står i kön
+hårdkoda in test (som att vi t.ex. har 2 bokningar) | check
+admin/asse = (en knapp för att markera vem som får hjälp just nu)
+ska man ha en kompleteringskö?
+ska man kunna lämna in kommentarer som asse?
+-->
+
 <div class="container">
 
-<h3>Users</h3>
+<h3>{{course}}</h3>
+
+<table class="table table-striped booked" ng-hide="bookedUsers.length == 0">
+  <thead>
+    <th>User</th>
+    <th>Location</th>
+    <th>Comment</th>
+    <th>Time</th>
+  </thead>
+  <tbody>
+    <tr id="user.name" ng-repeat="user in bookedUsers">
+      <td>{{user.name}}</td>
+      <td>{{user.place}}</td>
+      <td>{{user.comment}}</td>
+      <td>{{user.time}}</td>
+    </tr>
+  </tbody>
+</table>
 
 <table class="table table-striped">
   <thead><tr>
