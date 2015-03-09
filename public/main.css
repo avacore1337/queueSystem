@@ -15,3 +15,9 @@
 {
 	background-color: #f54f36;
 }
+.navbar.navbar-default
+{
+	-moz-border-radius: 0px;
+	-webkit-border-radius: 0px;
+	border-radius: 0px;
+}

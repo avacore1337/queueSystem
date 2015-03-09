@@ -19,12 +19,16 @@
     <td>{{ user.place }}</td>
     <td>{{ user.comment }}</td>
     <td>
-      <button class="btn red" ng-click="removeUser(user.name)" ng-show="admin">
-        <span class="glyphicon glyphicon-trash"></span>&nbsp;&nbsp;
-      </button>
-      <button class="btn red" style="color:blue" ng-click="removeUser(user.name)" ng-show="admin">
-        <span class="glyphicon glyphicon-envelope"></span>&nbsp;&nbsp;
-      </button>
+      <span title="remove user">
+        <button class="btn red" ng-click="removeUser(user.name)" ng-show="admin">
+          <span class="glyphicon glyphicon-trash"></span>&nbsp;&nbsp;
+        </button>
+      </span>
+      <span title="send message">
+        <button class="btn red" style="color:blue" ng-click="removeUser(user.name)" ng-show="admin">
+          <span class="glyphicon glyphicon-envelope"></span>&nbsp;&nbsp;
+        </button>
+      </span>
     </td>
   </tr></tbody>
 </table>
