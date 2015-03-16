@@ -8,7 +8,7 @@
 </head>
 
 <body>
-
+<!--
 <nav class="navbar navbar-default navbar-inverse">
 	<a class="navbar-brand" href="#">UWait</a>
 	<ul class="nav navbar-nav navbar-left">
@@ -21,8 +21,43 @@
 		<li><a href="https://login.kth.se/login?service=http%3A%2F%2Fqwait.csc.kth.se%3A8080%2Fauthenticate">Log in&nbsp;</a></li>
 	</ul>
 </nav>
+-->
 
+<nav>
+	<div class="col-md-12 black zero-padding text-center">
+		<div class="col-md-3 zero-padding">
+			<a href="#">
+				<div ng-class="{location == '/list' ? selected : black}" class="col-md-4 clickable zero-padding">
+					<h3 class="text-white equal-margin">Queues</h3>
+				</div>
+			</a>
+			<a href="#about">
+				<div ng-class="{location == '/about' ? selected : black}" class="col-md-4 clickable zero-padding">
+					<h3 class="text-white equal-margin">About</h3>
+				</div>
+			</a>
+			<a href="#help">
+				<div ng-class="{location == '/help' ? selected : black}" class="col-md-4 clickable zero-padding">
+					<h3 class="text-white equal-margin">Help</h3>
+				</div>
+			</a>
+		</div>
+		<a href="#">
+			<div class="col-md-2 col-md-offset-2 zero-padding">
+				<h3 class="text-white equal-margin">UWait</h3>
+			</div>
+		</a>
+		<a href="https://login.kth.se/login?service=http%3A%2F%2Fqwait.csc.kth.se%3A8080%2Fauthenticate">
+			<div class="col-md-1 col-md-offset-4 text-right black clickable zero-padding">
+				<h3 class="text-white equal-margin">Log in&nbsp;&nbsp;</h3>
+			</div>
+		</a>
+	</div>
+</nav>
+
+<div class="main-body">
   <div ng-view></div>
+</div>
 
   <script src="/socket.io/socket.io.js"></script>
   <script src = "app.js"></script>

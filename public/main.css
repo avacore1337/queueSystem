@@ -3,31 +3,50 @@
 	background-color: rgba(0,0,0,0.1);
 	cursor: pointer;
 }
+.red
+{
+  background-color: #f54f36;
+}
 .red.clickable:hover
 {
   background-color: #D6432D;
   cursor: pointer;
+}
+.green
+{
+  background-color: #30E651;
 }
 .green.clickable:hover
 {
   background-color: #2BCF49;
   cursor: pointer;
 }
+.black
+{
+  background-color: rgb(50,50,50);
+}
+.black.clickable:hover
+{
+  background-color: rgb(30,30,30);
+  cursor: pointer;
+}
+.selected
+{
+  color: #387EFF;
+  background-color: #387EFF;
+}
+.selected.clickable:hover
+{
+  background-color: #1C65EB;
+  cursor: pointer;
+}
 .navbar-brand
 {
-    position: absolute;
-    width: 100%;
-    left: 0;
-    text-align: center;
-    margin: auto;
-}
-.red
-{
-	background-color: #f54f36;
-}
-.green
-{
-  background-color: #30E651;
+  position: absolute;
+  width: 100%;
+  left: 0;
+  text-align: center;
+  margin: auto;
 }
 .navbar.navbar-default
 {
@@ -40,10 +59,6 @@
 }
 .table-striped.booked > tbody > tr:nth-child(even) > td{
    background-color: rgba(48,255,94,0.6);
-}
-.black
-{
-  background-color: rgb(50,50,50);
 }
 .text-white
 {
@@ -59,10 +74,34 @@
 .pin-center
 {
   position: fixed;
-  top: 40%;
+  top: 33%;
 }
 .center-content
 {
   text-align: center;
   padding: 5%;
+}
+.zero-padding
+{
+  padding-top: 0px;
+  padding-bottom: 0px;
+  padding-right: 0px;
+  padding-left: 0px;
+}
+.main-body
+{
+  position: absolute;
+  top: 5em;
+  width: 100%;
+}
+.equal-margin
+{
+  margin-top: 0.5em;
+  margin-bottom: 0.5em;
+  margin-right: 0px;
+  margin-left: 0px;
+}
+.frame
+{
+  border: 1px solid rgb(50,50,50);
 }

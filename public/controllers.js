@@ -1,7 +1,15 @@
+// Robert, please check on this
+var topControllers = angular.module('topControllers', []);
+
+topControllers.controller('topController', ['$scope', '$location',
+function ($scope, $location) {
+  $scope.location = $location.path();
+}]);
+
 var queueControllers = angular.module('queueControllers', []);
 
 queueControllers.controller('courseController', ['$scope', '$http', '$routeParams',
-function ($scope,$http,$routeParams) {
+function ($scope, $http, $routeParams) {
   $scope.course = $routeParams.course;
   $scope.name = '';
   $scope.place = '';
@@ -19,7 +27,7 @@ function ($scope,$http,$routeParams) {
     {name:'Joakim',  place:"Red 06" , comment:"Labb 3", time:"15:30"},
     {name:'Per',  place:"Red 07" , comment:"Labb 2", time:"16:00"}
   ];
-  
+
   //$http.get('/API/queue/booked/' + $routeParams.course)
   //.success(function(response) {
   //  $scope.bookedUsers = response;
@@ -73,6 +81,26 @@ function ($scope,$http,$routeParams) {
     $scope.$apply($scope.users.push(user));
     console.log($scope.users);
   })
+
+  // Listen for and admin purging the queues.
+  $scope.io.on('purge', function(data) {
+    $scope.$apply($scope.users = data);
+  })
+
+  // Listen for an admin purging the queues.
+  $scope.io.on('purge', function(data) {
+    $scope.$apply($scope.users = data);
+  })
+
+  // Listen for a message
+  //$scope.io.on('messageUser', function(data) {
+  //  $scope.message = data;
+  //})
+
+  // Listen the help message.
+  //$scope.io.on('help', function(data) {
+  //  $scope.$apply($scope.users = data);
+  //})
 
   $scope.editUser = function(name) {
     var user;
@@ -153,17 +181,46 @@ function ($scope,$http,$routeParams) {
 
   // This function should remove every person in the queue
   $scope.purge = function(){
+    //$scope.io.emit('purge', {
+    //  queue:$routeParams.course
+    //});
     console.log("Called purge");
   }
 
     // This function should lock the queue, preventing anyone from queueing
   $scope.lock = function(){
+    //$scope.io.emit('lock', {
+    //  queue:$routeParams.course
+    //});
     console.log("Called lock");
   }
 
     // This function should remove the queue, and it should prompt the user for another accept
   $scope.removeQueue = function(){
+    //$scope.io.emit('removeQueue', {
+    //  queue:$routeParams.course
+    //});
     console.log("Called removeQueue");
+  }
+
+  // Mark the user as being helped
+  $scope.helpUser = function(name){
+    //$scope.io.emit('help', {
+    //  queue:$routeParams.course,
+    //  name
+    //});
+    console.log("Called helpUser");
+  }
+
+  // Function to send a message to a user
+  // TODO : Should also take an argument containing the message
+  $scope.messageUser = function(name){
+    //$scope.io.emit('messageUser', {
+    //  queue:$routeParams.course,
+    //  name,
+    //  message
+    //});
+    console.log("Called messageUser");
   }
 
 }]);
@@ -171,7 +228,7 @@ function ($scope,$http,$routeParams) {
 queueControllers.controller('listController', ['$scope', '$http', '$location',
 function ($scope, $http, $location) {
   // This should be taken from the backend
-//  $scope.courses = ["dbas", "inda", "logik", "numme", "mvk"];                 //  <====== ersätt detta med backen, läsa?
+//  $scope.courses = ["dbas", "inda", "logik", "numme", "mvk"];                 //  <====== ersätt detta med backend, läsa?
   $scope.courses = [];
   $http.get('/API/courseList').success(function(response){
     $scope.courses = response;

@@ -9,81 +9,81 @@ ska man kunna lämna in kommentarer som asse?
 
 <div class="container">
 
-<h1>{{course}}</h1>
+<div class="row col-md-2">
+  <h2 class="col-md-offset-6">{{course}}</h2>
+</div>
 
-<div class="row">
+<div class="row col-md-12">
   <!-- Menu on the left side -->
-  <div class="col-md-2 pin-center black">
-    <!-- The input -->
-    <form class="form-horizontal text-white">
-      <div class="form-group">
-        <label class="control-label col-md-offset-1">Name:</label>
-        <div class="text-black">
-          <input class="col-md-10 col-md-offset-1" type="text" ng-model="name" ng-disabled="!newUser" placeholder="Magnus">
+  <div class="col-md-2">
+    <div class="col-md-2 pin-center black">
+      <!-- The input -->
+      <form class="form-horizontal text-white">
+        <div class="form-group">
+          <label class="control-label col-md-offset-1">Name:</label>
+          <div class="text-black">
+            <input class="col-md-10 col-md-offset-1" type="text" ng-model="name" ng-disabled="!newUser" placeholder="Magnus" onfocus="this.placeholder = ''" onblur="this.placeholder = 'Magnus'">
+          </div>
         </div>
-      </div>
-      <div class="form-group">
-        <label class="control-label col-md-offset-1">Place:</label>
-        <div class="text-black">
-          <input class="col-md-10 col-md-offset-1" type="text" ng-model="place" placeholder="Red 01">
+        <div class="form-group">
+          <label class="control-label col-md-offset-1">Place:</label>
+          <div class="text-black">
+            <input class="col-md-10 col-md-offset-1" type="text" ng-model="place" placeholder="Red 01" onfocus="this.placeholder = ''" onblur="this.placeholder = 'Red 01'">
+          </div>
         </div>
-      </div>
-      <div class="form-group">
-        <label class="control-label col-md-offset-1">Comment:</label>
-        <div class="text-black">
-          <input class="col-md-10 col-md-offset-1" type="text" ng-model="comment" placeholder="Laboration 1">
+        <div class="form-group">
+          <label class="control-label col-md-offset-1">Comment:</label>
+          <div class="text-black">
+            <input class="col-md-10 col-md-offset-1" type="text" ng-model="comment" placeholder="Laboration 1" onfocus="this.placeholder = ''" onblur="this.placeholder = 'Laboration 1'">
+          </div>
         </div>
-      </div>
-    </form>
+      </form>
 
-    <!-- The buttons -->
-    <div class="green clickable center-content" ng-show="!admin" ng-click="addUser()">
-      <span class="glyphicon glyphicon-plus"></span>&nbsp;
-      Join queue
+      <!-- The buttons -->
+      <div class="green clickable center-content frame" ng-show="!admin" ng-click="addUser()">
+        <span class="glyphicon glyphicon-plus"></span>&nbsp;
+        Join queue
+      </div>
+      <div class="green clickable center-content frame" ng-show="!admin" ng-click="updateUser()">
+        <span class="glyphicon glyphicon-pencil"></span>&nbsp;
+        Edit
+      </div>
+      <div class="red clickable center-content frame" ng-click="removeUser(name)" ng-show="!admin">
+        <span class="glyphicon glyphicon-remove"></span>&nbsp;
+        Leave queue
+      </div>
+      <div class="red clickable center-content frame" ng-show="admin" ng-click="broadcast()">
+        <span class="glyphicon glyphicon-megaphone"></span>&nbsp;
+        Broadcast
+      </div>
+      <div class="red clickable center-content frame" ng-show="admin" ng-click="purge()">
+        <span class="glyphicon glyphicon-remove"></span>&nbsp;
+        Purge queue
+      </div>
+      <div class="red clickable center-content frame" ng-show="admin" ng-click="lock()">
+        <span class="glyphicon glyphicon-lock"></span>&nbsp;
+        Lock queue
+      </div>
+      <div class="buffer"></div>
+      <!--<button class="btn btn-success col-md-12 buffer-min" ng-show="!admin" ng-click="addUser()">
+        <span class="glyphicon glyphicon-plus"></span>&nbsp;Join queue
+      </button>
+      <button class="btn btn-success col-md-12 buffer-min" ng-show="!newUser" ng-click="updateUser()">
+        <span class="glyphicon glyphicon-save"></span>&nbsp;Update User
+      </button>
+      <button class="btn btn-success col-md-12 buffer-min" ng-click="removeUser(name)" ng-show="!admin">
+        <span class="glyphicon glyphicon-warning-sign"></span>&nbsp;Remove user
+      </button>
+      <button class="btn btn-success col-md-12 buffer-min" ng-show="admin" ng-click="bottomUser()"  ng-disabled="edit" >
+        <span class="glyphicon glyphicon-warning-sign"></span>&nbsp;Put to bottom of list
+      </button>
+      <button class="btn btn-success col-md-12 buffer-min" ng-show="!admin" ng-click="updateUser()"  ng-disabled="edit" >
+        <span class="glyphicon glyphicon-pencil"></span>&nbsp;Edit user
+      </button>
+      <button class="btn btn-success col-md-12 buffer red" ng-show="admin" ng-click="purge()">
+        <span class="glyphicon glyphicon-remove"></span>&nbsp;Purge queue
+      </button>-->
     </div>
-    <div class="green clickable center-content" ng-show="!admin" ng-click="updateUser()">
-      <span class="glyphicon glyphicon-pencil"></span>&nbsp;
-      Edit
-    </div>
-    <div class="red clickable center-content" ng-click="removeUser(name)" ng-show="!admin">
-      <span class="glyphicon glyphicon-remove"></span>&nbsp;
-      Leave queue
-    </div>
-    <div class="red clickable center-content" ng-show="admin" ng-click="bottomUser()">
-      <span class="glyphicon glyphicon-warning-sign"></span>&nbsp;
-      Put to bottom
-    </div>
-    <div class="red clickable center-content" ng-show="admin" ng-click="purge()">
-      <span class="glyphicon glyphicon-remove"></span>&nbsp;
-      Purge queue
-    </div>
-    <div class="red clickable center-content" ng-show="admin" ng-click="lock()">
-      <span class="glyphicon glyphicon-lock"></span>&nbsp;
-      Lock queue
-    </div>
-    <div class="red clickable center-content" ng-show="admin" ng-click="removeQueue()">
-      <span class="glyphicon glyphicon-remove"></span>&nbsp;
-      Remove queue
-    </div>
-    <div class="buffer"></div>
-    <!--<button class="btn btn-success col-md-12 buffer-min" ng-show="!admin" ng-click="addUser()">
-      <span class="glyphicon glyphicon-plus"></span>&nbsp;Join queue
-    </button>
-    <button class="btn btn-success col-md-12 buffer-min" ng-show="!newUser" ng-click="updateUser()">
-      <span class="glyphicon glyphicon-save"></span>&nbsp;Update User
-    </button>
-    <button class="btn btn-success col-md-12 buffer-min" ng-click="removeUser(name)" ng-show="!admin">
-      <span class="glyphicon glyphicon-warning-sign"></span>&nbsp;Remove user
-    </button>
-    <button class="btn btn-success col-md-12 buffer-min" ng-show="admin" ng-click="bottomUser()"  ng-disabled="edit" >
-      <span class="glyphicon glyphicon-warning-sign"></span>&nbsp;Put to bottom of list
-    </button>
-    <button class="btn btn-success col-md-12 buffer-min" ng-show="!admin" ng-click="updateUser()"  ng-disabled="edit" >
-      <span class="glyphicon glyphicon-pencil"></span>&nbsp;Edit user
-    </button>
-    <button class="btn btn-success col-md-12 buffer red" ng-show="admin" ng-click="purge()">
-      <span class="glyphicon glyphicon-remove"></span>&nbsp;Purge queue
-    </button>-->
   </div>
 
   <div class="col-md-9 pull-right">
@@ -124,18 +124,23 @@ ska man kunna lämna in kommentarer som asse?
           <td>{{ user.comment }}</td>
           <td ng-show="admin">
             <span title="remove user">
-              <button class="btn red" ng-click="removeUser(user.name)">
+              <button class="btn red clickable" ng-click="removeUser(user.name)">
                 <span class="glyphicon glyphicon-trash"></span>
               </button>
             </span>
             <span title="send message">
-              <button class="btn red" style="color:blue" ng-click="">
+              <button class="btn btn-success" ng-click="messageUser(user.name)">
                 <span class="glyphicon glyphicon-envelope"></span>
               </button>
             </span>
             <span title="help">
               <button class="btn btn-success" ng-click="">
                 <span class="glyphicon glyphicon-check"></span>
+              </button>
+            </span>
+            <span title="bad location">
+              <button class="btn btn-success" ng-click="badLocation(user.name)">
+                <span class="glyphicon glyphicon-question-sign"></span>
               </button>
             </span>
           </td>
@@ -146,11 +151,9 @@ ska man kunna lämna in kommentarer som asse?
   </div>
 </div>
 
-<hr>
-
-<button class="btn btn-success" ng-click="adminify()"  ng-show="!admin" >
+<button class="btn btn-success pull-right" ng-click="adminify()"  ng-show="!admin" >
   <span class="glyphicon glyphicon-warning-sign"></span> Admin interface
 </button>
-<button class="btn btn-success" ng-click="adminify()"  ng-show="admin" >
+<button class="btn btn-success pull-right" ng-click="adminify()"  ng-show="admin" >
   <span class="glyphicon glyphicon-warning-sign"></span> User interface
 </button>
