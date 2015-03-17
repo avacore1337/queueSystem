@@ -3,6 +3,13 @@ var expressio = require('express.io');
 var app = expressio();
 app.http().io();
 
+
+app.use(expressio.cookieParser());
+app.use(expressio.static(__dirname + '/public'));
+
+app.use(expressio.session({secret: 'express.io is the best framework ever!'}));
+app.use(expressio.bodyParser());
+
 // HÅRDKODAD! => ska läsas ifrån databasen vid ett senare skede
 var courseList = [
   "dbas", 
@@ -28,7 +35,6 @@ for (var i = 0 ; i < courseList.length ; i++) {
   console.log(list[course] + " " + course);
 }
 
-app.use(expressio.static(__dirname + '/public'));
 
 app.io.on('connection', function(socket){
   console.log('a user connected');
@@ -119,5 +125,21 @@ app.get('/API/courseList', function(req, res) {
     console.log('list of courses requested');
 })
 
+app.get('/API/userData', function(req, res) {
+    console.log("user data: ");
+    console.log(req.session.user);
+    console.log(req.session.test);
+    req.session.test = "Test is working";
+    res.setHeader('Content-Type', 'application/json');
+    res.end(JSON.stringify(req.session.user));
+})
+
+app.post('/API/setUser', function(req,res) {
+  // console.log(req.body);
+  req.session.user = req.body;
+  console.log("User settings set");
+  res.writeHead(200);
+  res.end();
+})
 
 app.listen(8080);

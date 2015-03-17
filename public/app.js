@@ -23,6 +23,10 @@
         templateUrl: 'help.html',
         controller: 'helpController'
       }).
+      when('/login', {
+        templateUrl: 'login.html',
+        controller: 'loginController'
+      }).
       otherwise({
         redirectTo: '/list'
       });

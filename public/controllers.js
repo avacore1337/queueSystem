@@ -8,19 +8,27 @@ function ($scope, $location) {
 
 var queueControllers = angular.module('queueControllers', []);
 
-queueControllers.controller('courseController', ['$scope', '$http', '$routeParams',
-function ($scope, $http, $routeParams) {
+queueControllers.controller('courseController', ['$scope', '$http', '$routeParams', 'WebSocketService', 'UserService',
+function ($scope, $http, $routeParams,socket, user) {
   $scope.course = $routeParams.course;
-  $scope.name = '';
+  $scope.name = user.getName();
   $scope.place = '';
   $scope.comment = '';
   $scope.users = [];
   $scope.bookedUsers = [];
-  $scope.admin = true;
+  $scope.admin = user.isAdmin();
+  $scope.loggedIn = !(user.getName() === "");
+  $scope.enqueued = false;
+
   $http.get('/API/queue/' + $routeParams.course)
   .success(function(response) {
     $scope.users = response;
   });
+  for (var i = 0; i < $scope.users.length; i++) {
+    if($scope.users[i].name = $scope.name){
+      $scope.enqueued = true;
+    }
+  };
 
   $scope.bookedUsers = [
     {name:'Anton',  place:"Red 01" , comment:"Labb 1", time:"15:00"},
@@ -28,28 +36,22 @@ function ($scope, $http, $routeParams) {
     {name:'Per',  place:"Red 07" , comment:"Labb 2", time:"16:00"}
   ];
 
-  //$http.get('/API/queue/booked/' + $routeParams.course)
-  //.success(function(response) {
-  //  $scope.bookedUsers = response;
-  //});
-
   $scope.newUser = true;
 
-  $scope.io = io.connect();
-
-  $scope.io.emit('listen', $routeParams.course)
+  socket.emit('listen', $routeParams.course)
 
   console.log('testing')
 
   // Listen for the person joining a queue event.
-  $scope.io.on('join', function(data) {
+  socket.on('join', function(data) {
     console.log(data);
     $scope.$apply($scope.users.push({name:data.name, place:data.place, comment:data.comment}));
     console.log($scope.users);
   })
 
   // Listen for the person leaving a queue event.
-  $scope.io.on('leave', function(data) {
+  socket.on('leave', function(data) {
+    $scope.enqueued = false;
     for(var i = $scope.users.length - 1; i >= 0; i--) {
       if($scope.users[i].name === data.name) {
         $scope.$apply($scope.users.splice(i, 1));
@@ -58,7 +60,7 @@ function ($scope, $http, $routeParams) {
   })
 
   // Listen for the person updateing a queue event.
-  $scope.io.on('update', function(data) {
+  socket.on('update', function(data) {
     console.log(data);
     for(var i = $scope.users.length - 1; i >= 0; i--) {
       if($scope.users[i].name === data.name) {
@@ -69,69 +71,25 @@ function ($scope, $http, $routeParams) {
     console.log($scope.users);
   })
 
-  // Listen for the person being put to the bottom of queue event.
-  $scope.io.on('bottom', function(data) {
-    for(var i = $scope.users.length - 1; i >= 0; i--) {
-      if($scope.users[i].name === data.name) {
-        var user = $scope.users[i];
-        $scope.$apply($scope.users.splice(i, 1));
-      }
-    }
-    console.log(data);
-    $scope.$apply($scope.users.push(user));
-    console.log($scope.users);
-  })
-
   // Listen for and admin purging the queues.
-  $scope.io.on('purge', function(data) {
+  socket.on('purge', function(data) {
     $scope.$apply($scope.users = data);
   })
-
-  // Listen for an admin purging the queues.
-  $scope.io.on('purge', function(data) {
-    $scope.$apply($scope.users = data);
-  })
-
-  // Listen for a message
-  //$scope.io.on('messageUser', function(data) {
-  //  $scope.message = data;
-  //})
-
-  // Listen the help message.
-  //$scope.io.on('help', function(data) {
-  //  $scope.$apply($scope.users = data);
-  //})
-
-  $scope.editUser = function(name) {
-    var user;
-    for (var i = 0; i < $scope.users.length; i++) {
-      if($scope.users[i].name == name){
-        user=$scope.users[i];
-      }
-    };
-    $scope.newUser = false;
-    $scope.name = user.name;
-    $scope.place = user.place;
-    $scope.comment = user.comment;
-    console.log("Called editUser");
-  }
 
   $scope.addUser = function(){
+    $scope.enqueued = true;
     // $scope.users.push({id:$scope.users.length, name:$scope.name, place:$scope.place, comment:$scope.comment});
-      $scope.io.emit('join', 
+      socket.emit('join', 
         {
           queue:$routeParams.course,
           user:{name:$scope.name, place:$scope.place, comment:$scope.comment}
         })
-      $scope.name = '';
-      $scope.comment = '';
-      $scope.place = '';
       console.log("Called addUser");
   }
 
   $scope.updateUser = function(){
     // $scope.users.push({id:$scope.users.length, name:$scope.name, place:$scope.place, comment:$scope.comment});
-    $scope.io.emit('update', {
+    socket.emit('update', {
       queue:$routeParams.course,
       user:{name:$scope.name, place:$scope.place, comment:$scope.comment}
     })
@@ -153,7 +111,7 @@ function ($scope, $http, $routeParams) {
       }
     }
     console.log("tempPlace = " + tempPlace + " :  tempPlace = " + tempComment);
-    $scope.io.emit('leave', {
+    socket.emit('leave', {
       queue:$routeParams.course,
       user:{name:name, place:tempPlace, comment:tempComment}
     });
@@ -167,21 +125,9 @@ function ($scope, $http, $routeParams) {
     $scope.admin = !$scope.admin;
   }
 
-  // försökte implementera en funktion att placera någon längst ner i kön
-  // reason: se ifall det gick att implementera nya metoder, det gick inte
-  $scope.bottomUser = function(){
-    $scope.io.emit('bottom', {
-      queue:$routeParams.course,
-      user:{name:$scope.name, place:$scope.place, comment:$scope.comment}
-    });
-    $scope.name = '';
-    $scope.comment = '';
-    $scope.place = '';
-  }
-
   // This function should remove every person in the queue
   $scope.purge = function(){
-    //$scope.io.emit('purge', {
+    //socket.emit('purge', {
     //  queue:$routeParams.course
     //});
     console.log("Called purge");
@@ -189,23 +135,15 @@ function ($scope, $http, $routeParams) {
 
     // This function should lock the queue, preventing anyone from queueing
   $scope.lock = function(){
-    //$scope.io.emit('lock', {
+    //socket.emit('lock', {
     //  queue:$routeParams.course
     //});
     console.log("Called lock");
   }
 
-    // This function should remove the queue, and it should prompt the user for another accept
-  $scope.removeQueue = function(){
-    //$scope.io.emit('removeQueue', {
-    //  queue:$routeParams.course
-    //});
-    console.log("Called removeQueue");
-  }
-
   // Mark the user as being helped
   $scope.helpUser = function(name){
-    //$scope.io.emit('help', {
+    //socket.emit('help', {
     //  queue:$routeParams.course,
     //  name
     //});
@@ -215,7 +153,7 @@ function ($scope, $http, $routeParams) {
   // Function to send a message to a user
   // TODO : Should also take an argument containing the message
   $scope.messageUser = function(name){
-    //$scope.io.emit('messageUser', {
+    //socket.emit('messageUser', {
     //  queue:$routeParams.course,
     //  name,
     //  message
@@ -225,13 +163,18 @@ function ($scope, $http, $routeParams) {
 
 }]);
 
-queueControllers.controller('listController', ['$scope', '$http', '$location',
-function ($scope, $http, $location) {
-  // This should be taken from the backend
-//  $scope.courses = ["dbas", "inda", "logik", "numme", "mvk"];                 //  <====== ersätt detta med backend, läsa?
+queueControllers.controller('listController', ['$scope', '$http', '$location', 'UserService',
+function ($scope, $http, $location, user) {
   $scope.courses = [];
   $http.get('/API/courseList').success(function(response){
     $scope.courses = response;
+  });
+
+  $http.get('/API/userData').success(function(response){
+    console.log("user data requested");
+    console.log(response);
+    user.setName(response.name);
+    user.setAdmin(response.admin);
   });
 
   console.log('testing');
@@ -252,3 +195,110 @@ queueControllers.controller('helpController', ['$scope', '$http',
 function ($scope, $http) {
   console.log('entered help.html');
 }]);
+
+queueControllers.controller('loginController', ['$scope', '$location', '$http',
+function ($scope, $location, $http) {
+
+  $scope.done = function () {
+    $http.post('/API/setUser', {
+      name: $scope.name,
+      admin: $scope.type === 'admin'
+    },
+    {withCredentials: true}).success(function(response){
+      console.log("with credentials success");
+      $location.path('search');
+      console.log("logged in");
+    });
+  };
+
+}])
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+/* other prototypes
+
+
+  // försökte implementera en funktion att placera någon längst ner i kön
+  // reason: se ifall det gick att implementera nya metoder, det gick inte
+  $scope.bottomUser = function(){
+    socket.emit('bottom', {
+      queue:$routeParams.course,
+      user:{name:$scope.name, place:$scope.place, comment:$scope.comment}
+    });
+    $scope.name = '';
+    $scope.comment = '';
+    $scope.place = '';
+  }
+
+
+    // This function should remove the queue, and it should prompt the user for another accept
+  $scope.removeQueue = function(){
+    //socket.emit('removeQueue', {
+    //  queue:$routeParams.course
+    //});
+    console.log("Called removeQueue");
+  }
+
+
+  // Listen for a message
+  //socket.on('messageUser', function(data) {
+  //  $scope.message = data;
+  //})
+
+  // Listen the help message.
+  //socket.on('help', function(data) {
+  //  $scope.$apply($scope.users = data);
+  //})
+
+  // Listen for the person being put to the bottom of queue event.
+  socket.on('bottom', function(data) {
+    for(var i = $scope.users.length - 1; i >= 0; i--) {
+      if($scope.users[i].name === data.name) {
+        var user = $scope.users[i];
+        $scope.$apply($scope.users.splice(i, 1));
+      }
+    }
+    console.log(data);
+    $scope.$apply($scope.users.push(user));
+    console.log($scope.users);
+  })
+
+  $scope.editUser = function(name) {
+    var user;
+    for (var i = 0; i < $scope.users.length; i++) {
+      if($scope.users[i].name == name){
+        user=$scope.users[i];
+      }
+    };
+    $scope.newUser = false;
+    $scope.name = user.name;
+    $scope.place = user.place;
+    $scope.comment = user.comment;
+    console.log("Called editUser");
+  }
+
+
+  //$http.get('/API/queue/booked/' + $routeParams.course)
+  //.success(function(response) {
+  //  $scope.bookedUsers = response;
+  //});
+
+
+*/

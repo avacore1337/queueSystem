@@ -22,7 +22,7 @@ ska man kunna lämna in kommentarer som asse?
         <div class="form-group">
           <label class="control-label col-md-offset-1">Name:</label>
           <div class="text-black">
-            <input class="col-md-10 col-md-offset-1" type="text" ng-model="name" ng-disabled="!newUser" placeholder="Magnus" onfocus="this.placeholder = ''" onblur="this.placeholder = 'Magnus'">
+            <input class="col-md-10 col-md-offset-1" type="text" ng-model="name" ng-disabled="loggedIn" placeholder="Magnus" onfocus="this.placeholder = ''" onblur="this.placeholder = 'Magnus'">
           </div>
         </div>
         <div class="form-group">
@@ -40,17 +40,17 @@ ska man kunna lämna in kommentarer som asse?
       </form>
 
       <!-- The buttons -->
-      <div class="green clickable center-content frame" ng-show="!admin" ng-click="addUser()">
+      <div class="green clickable center-content frame" ng-show="!admin && !enqueued" ng-click="addUser()">
         <span class="glyphicon glyphicon-plus"></span>&nbsp;
         Join queue
       </div>
-      <div class="green clickable center-content frame" ng-show="!admin" ng-click="updateUser()">
-        <span class="glyphicon glyphicon-pencil"></span>&nbsp;
-        Edit
-      </div>
-      <div class="red clickable center-content frame" ng-click="removeUser(name)" ng-show="!admin">
+      <div class="red clickable center-content frame" ng-click="removeUser(name)" ng-show="!admin && enqueued">
         <span class="glyphicon glyphicon-remove"></span>&nbsp;
         Leave queue
+      </div>
+      <div class="green clickable center-content frame" ng-show="!admin" ng-click="updateUser()">
+        <span class="glyphicon glyphicon-pencil"></span>&nbsp;
+        Update information
       </div>
       <div class="red clickable center-content frame" ng-show="admin" ng-click="broadcast()">
         <span class="glyphicon glyphicon-megaphone"></span>&nbsp;
