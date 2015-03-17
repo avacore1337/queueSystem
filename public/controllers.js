@@ -93,10 +93,6 @@ function ($scope, $http, $routeParams,socket, user) {
       queue:$routeParams.course,
       user:{name:$scope.name, place:$scope.place, comment:$scope.comment}
     })
-    $scope.name = '';
-    $scope.comment = '';
-    $scope.place = '';
-    $scope.newUser = true;
     console.log("Called updateUser");
   }
 
@@ -115,9 +111,7 @@ function ($scope, $http, $routeParams,socket, user) {
       queue:$routeParams.course,
       user:{name:name, place:tempPlace, comment:tempComment}
     });
-    $scope.name = '';
     $scope.comment = '';
-    $scope.place = '';
     console.log("Called removeUser");
   }
 

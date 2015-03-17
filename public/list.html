@@ -1,30 +1,26 @@
 <div class="container">
 
 <div class="row">
-	<section class="col-md-10 col-md-offset-1">
-		<h1>Courses</h1>
-		<div class="well white clickable row" ng-repeat="course in courses" ng-click="redirect(course.name)" clear:both>
-			<div class="col-md-6">
-				<!--
-				<h4 class="red" ng-show="course.locked">
-					<i class="glyphicon glyphicon-lock"></i>
-					<a href="">{{course}}</a>
-				</h4>
-				
-				<h4 ng-show="!course.locked">
-				-->
-				<h4>
-					<a href="">{{course.name}}</a> <!-- course.name -->
-				</h4>
-			</div>
-			<div class="col-md-6">
-				<span class="pull-right">
-					<h4>
-						{{course.length}}
-						<i class="glyphicon glyphicon-user"></i>
-					</h4>
-				</span>
-			</div>
-		</div>
-	</section>
+  <section class="col-md-10 col-md-offset-1">
+    <h1>Courses</h1>
+    <div class="well white clickable row" ng-repeat="course in courses" ng-click="redirect(course.name)" clear:both>
+      <div class="col-md-6">
+        <h4 ng-show="course.locked">
+          <i class="glyphicon glyphicon-lock"></i>
+          <a href="">{{course.name}}</a> <!-- course.name -->
+        </h4>
+        <h4 ng-show="!course.locked">
+          <a href="">{{course.name}}</a> <!-- course.name -->
+        </h4>
+      </div>
+      <div class="col-md-6">
+        <span class="pull-right">
+          <h4>
+            {{course.length}}
+            <i class="glyphicon glyphicon-user"></i>
+          </h4>
+        </span>
+      </div>
+    </div>
+  </section>
 </div>

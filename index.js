@@ -10,8 +10,24 @@ app.use(expressio.static(__dirname + '/public'));
 app.use(expressio.session({secret: 'express.io is the best framework ever!'}));
 app.use(expressio.bodyParser());
 
+
+function User(name,place,comment){
+  this.name = name;
+  this.place = place;
+  this.comment = comment;
+  this.beingHelped = false;
+}
+
+function Course(name){
+  this.name = name;
+  this.locked = false;
+  this.hidden = false;
+  this.admins = [];
+  this.length = 0;
+}
+
 // HÅRDKODAD! => ska läsas ifrån databasen vid ett senare skede
-var courseList = [
+var tmpList = [
   "dbas", 
   "inda", 
   "logik", 
@@ -20,17 +36,18 @@ var courseList = [
   "progp",
   "mdi"
 ];
-
+courseList = []
 var list = new Map();
 
 // Map för varje rum
 // innehåller alla users som står i resp kö
-for (var i = 0 ; i < courseList.length ; i++) {
-  var course = courseList[i];
+for (var i = 0 ; i < tmpList.length ; i++) {
+  var course = tmpList[i];
+  courseList.push(new Course(course));
   list[course] = [
-    {name:'Helge',  place:"Pege" , comment:"Green"},
-    {name:'Enis',  place:"Venis" , comment:"Fernis"},
-    {name:'Alpha',  place:"Beta" , comment:"Gaga"}
+    new User('Helge','Green', 'Pege'),
+    new User('Enis','Fernis', 'Venis'),
+    new User('Alpha','Gaga', 'Beta')
   ];
   console.log(list[course] + " " + course);
 }
@@ -52,7 +69,7 @@ app.io.route('join', function(req) {
   var user = req.data.user;
   console.log('a user joined to ' + queue);
   app.io.room(queue).broadcast('join', user);
-  list[queue].push(user);
+  list[queue].push(new User(user.name,user.place,user.comment));
 })
 
 // user gets updated
@@ -115,13 +132,12 @@ app.get('/API/queue/:queue', function(req, res) {
 // /API/list
 // => returnerar alla kurser som finns (lista av strängar)
 app.get('/API/courseList', function(req, res) {
-    var ret = [];
     for (i = 0 ; i < courseList.length ; i++) {
-      var course = courseList[i];
-      ret.push({name: course, length: list[course].length});
+      var course = courseList[i].name;
+      courseList[i].length = list[course].length;
     }
     res.setHeader('Content-Type', 'application/json');
-    res.end(JSON.stringify(ret));
+    res.end(JSON.stringify(courseList));
     console.log('list of courses requested');
 })
 
