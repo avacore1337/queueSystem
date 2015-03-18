@@ -23,12 +23,12 @@ function ($scope, $http, $routeParams,socket, user) {
   $http.get('/API/queue/' + $routeParams.course)
   .success(function(response) {
     $scope.users = response;
+    for (var i = 0; i < $scope.users.length; i++) {
+      if($scope.users[i].name === $scope.name){
+        $scope.enqueued = true;
+      }
+    };
   });
-  for (var i = 0; i < $scope.users.length; i++) {
-    if($scope.users[i].name = $scope.name){
-      $scope.enqueued = true;
-    }
-  };
 
   $scope.bookedUsers = [
     {name:'Anton',  place:"Red 01" , comment:"Labb 1", time:"15:00"},
@@ -171,7 +171,7 @@ function ($scope, $http, $location, user) {
     user.setAdmin(response.admin);
   });
 
-  console.log('testing');
+  console.log('listing');
 
   // This function should direct the user to the wanted page
   $scope.redirect = function(course){

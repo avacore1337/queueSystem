@@ -44,12 +44,17 @@ var list = new Map();
 for (var i = 0 ; i < tmpList.length ; i++) {
   var course = tmpList[i];
   courseList.push(new Course(course));
-  list[course] = [
-    new User('Helge','Green', 'Pege'),
-    new User('Enis','Fernis', 'Venis'),
-    new User('Alpha','Gaga', 'Beta')
-  ];
-  console.log(list[course] + " " + course);
+  var queues = Math.floor((Math.random() * 50) + 1);
+  list[course] = [];
+  for (var j = 0; j < queues; j++) {
+    list[course].push(new User(Math.random().toString(36).substring(7),'Green', 'lab1'));
+  };
+  // list[course] = [
+  //   new User(Math.random().toString(36).substring(7),'Green', 'lab1'),
+  //   new User('Enis','Fernis', 'Venis'),
+  //   new User('Alpha','Gaga', 'Beta')
+  // ];
+  console.log(course  + " " +  list[course].length);
 }
 
 
@@ -124,7 +129,7 @@ app.io.route('bottom', function(req) {
 // => returnera rätt kö (inte samma kö)
 app.get('/API/queue/:queue', function(req, res) {
     res.setHeader('Content-Type', 'application/json');
-    console.log(list[req.params.queue] + " " + req.params.queue);
+    // console.log(list[req.params.queue] + " " + req.params.queue);
     res.end(JSON.stringify(list[req.params.queue]));
     console.log('queue requested');
 })
@@ -144,8 +149,6 @@ app.get('/API/courseList', function(req, res) {
 app.get('/API/userData', function(req, res) {
     console.log("user data: ");
     console.log(req.session.user);
-    console.log(req.session.test);
-    req.session.test = "Test is working";
     res.setHeader('Content-Type', 'application/json');
     res.end(JSON.stringify(req.session.user));
 })
