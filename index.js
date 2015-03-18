@@ -103,12 +103,16 @@ app.io.route('update', function(req) {
 })
 
 // admin helps a user (marked in the queue)
-//  - do nothing in backend?
 app.io.route('help', function(req) {
   var queue = req.data.queue;
-  var user = req.data.user;
+  var name = req.data.name;
 
-  user.gettingHelp = true; // test
+  for(var i = list[queue].length - 1; i >= 0; i--) {
+      if(list[queue][i].name === name) {
+        list[queue][i].gettingHelp = true;
+        console.log("helptrue!!");
+      }
+  }
 
   app.io.room(queue).broadcast('help', name);
   console.log(name + ' is getting help in ' + queue);
