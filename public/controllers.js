@@ -199,8 +199,8 @@ function ($scope, $location, $http) {
 
 }])
 
-queueControllers.controller('navigationController', ['$scope', '$http', '$location', 'UserService', '$location',
-function ($scope, $http, $location, user, $location) {
+queueControllers.controller('navigationController', ['$scope', '$location',
+function ($scope, $location) {
   $scope.location = $location.path();
 
   // This function should direct the user to the wanted page
