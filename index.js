@@ -46,7 +46,7 @@ for (var i = 0 ; i < tmpList.length ; i++) {
   courseList.push(new Course(course));
   var queues = Math.floor((Math.random() * 50) + 1);
   list[course] = [];
-  for (var j = 0; j < queues; j++) {
+  for (var j = 0; j < queues; j++) {  
     list[course].push(new User(Math.random().toString(36).substring(7),'Green', 'lab1'));
   };
   // list[course] = [
@@ -91,6 +91,25 @@ app.io.route('update', function(req) {
   }
 })
 
+// admin messages a user
+app.io.route('messageUser', function(req) {
+  var queue = req.data.queue;
+  var name = req.data.name;
+  var message = req.data.message;
+
+  app.io.room(queue).broadcast('messageUser', name);
+  console.log('user' + name + ' was messaged at ' + queue + ' with: ' + message);
+})
+
+// admin broadcasts to all users
+app.io.route('broadcast', function(req) {
+  var queue = req.data.queue;
+  var message = req.data.message;
+
+  app.io.room(queue).broadcast('broadcast', queue); // is this right?
+  console.log('broadcast in ' + queue + ', msg: ' + message);
+})
+
 // user leaves queue
 app.io.route('leave', function(req) {
   var queue = req.data.queue;
@@ -103,6 +122,16 @@ app.io.route('leave', function(req) {
         list[queue].splice(i, 1);
       }
   }
+
+})
+
+// admin purges a queue
+app.io.route('purge', function(req) {
+  var queue = req.data.queue;
+
+  list[queue] = [];
+  app.io.room(queue).broadcast('purge', queue); // is this right?
+  console.log(req.data.queue + ' -list purged');
 })
 
 // returns the queue-list
