@@ -77,6 +77,11 @@ app.io.route('join', function(req) {
   list[queue].push(new User(user.name,user.place,user.comment));
 })
 
+// user tries to join a queue with a "bad location"
+app.io.route('badLocation', function(req) {
+  console.log("Bad location"); // what should I do with this information?
+})
+
 // user gets updated
 app.io.route('update', function(req) {
   var queue = req.data.queue;
