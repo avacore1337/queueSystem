@@ -10,7 +10,7 @@ ska man kunna lämna in kommentarer som asse?
 <div class="container">
 
 <div class="row col-md-2">
-  <h2 class="col-md-offset-6">{{course}}</h2>
+  <h2 class="col-md-offset-5">{{course}}</h2>
 </div>
 
 <div class="row col-md-12">
@@ -52,7 +52,7 @@ ska man kunna lämna in kommentarer som asse?
       Update information
     </div>
     <div class="red clickable center-content frame" ng-show="admin" ng-click="broadcast()">
-      <span class="glyphicon glyphicon-megaphone"></span>&nbsp;
+      <span class="glyphicon glyphicon-bullhorn"></span>&nbsp;
       Broadcast
     </div>
     <div class="red clickable center-content frame" ng-show="admin" ng-click="purge()">
@@ -155,10 +155,3 @@ ska man kunna lämna in kommentarer som asse?
 
   </div>
 </div>
-
-<button class="btn btn-success pull-right" ng-click="adminify()"  ng-show="!admin" >
-  <span class="glyphicon glyphicon-warning-sign"></span> Admin interface
-</button>
-<button class="btn btn-success pull-right" ng-click="adminify()"  ng-show="admin" >
-  <span class="glyphicon glyphicon-warning-sign"></span> User interface
-</button>

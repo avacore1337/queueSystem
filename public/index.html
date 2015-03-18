@@ -23,35 +23,27 @@
 </nav>
 -->
 
-<nav>
+<nav ng-controller="navigationController">
 	<div class="col-md-12 black zero-padding text-center">
 		<div class="col-md-3 zero-padding">
-			<a href="#">
-				<div class="col-md-4 clickable zero-padding">
-					<h3 class="text-white equal-margin">Queues</h3>
-				</div>
-			</a>
-			<a href="#about">
-				<div class="col-md-4 clickable zero-padding">
-					<h3 class="text-white equal-margin">About</h3>
-				</div>
-			</a>
-			<a href="#help">
-				<div class="col-md-4 clickable zero-padding">
-					<h3 class="text-white equal-margin">Help</h3>
-				</div>
-			</a>
+			<div ng-class="location == '/list' || location.match('/course/.*') ? 'selected' : 'black'" class="col-md-4 clickable zero-padding" ng-click="redirect('list')">
+				<h3 class="text-white equal-margin">Queues</h3>
+			</div>
+			<div ng-class="location == '/about' ? 'selected' : 'black'" class="col-md-4 clickable zero-padding" ng-click="redirect('about')">
+				<h3 class="text-white equal-margin">About</h3>
+			</div>
+			<div ng-class="location == '/help' ? 'selected' : 'black'" class="col-md-4 clickable zero-padding" ng-click="redirect('help')">
+				<h3 class="text-white equal-margin">Help</h3>
+			</div>
 		</div>
-		<a href="#">
-			<div class="col-md-2 col-md-offset-2 zero-padding">
+		<a href="">
+			<div class="col-md-2 col-md-offset-2 zero-padding" ng-click="redirect('list')">
 				<h3 class="text-white equal-margin">UWait</h3>
 			</div>
 		</a>
-		<a href="#login">
-			<div class="col-md-1 col-md-offset-4 text-right black clickable zero-padding">
-				<h3 class="text-white equal-margin">Log in&nbsp;&nbsp;</h3>
-			</div>
-		</a>
+		<div class="col-md-1 col-md-offset-4 text-right black clickable zero-padding" ng-click="redirect('login')">
+			<h3 class="text-white equal-margin">Log in&nbsp;&nbsp;</h3>
+		</div>
 	</div>
 </nav>
 

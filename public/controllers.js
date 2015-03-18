@@ -1,11 +1,3 @@
-// Robert, please check on this
-var topControllers = angular.module('topControllers', []);
-
-topControllers.controller('topController', ['$scope', '$location',
-function ($scope, $location) {
-  $scope.location = $location.path();
-}]);
-
 var queueControllers = angular.module('queueControllers', []);
 
 queueControllers.controller('courseController', ['$scope', '$http', '$routeParams', 'WebSocketService', 'UserService',
@@ -115,9 +107,9 @@ function ($scope, $http, $routeParams,socket, user) {
     console.log("Called removeUser");
   }
 
-  $scope.adminify = function(){
-    $scope.admin = !$scope.admin;
-  }
+  //$scope.adminify = function(){
+  //  $scope.admin = !$scope.admin;
+  //}
 
   // This function should remove every person in the queue
   $scope.purge = function(){
@@ -207,6 +199,17 @@ function ($scope, $location, $http) {
 
 }])
 
+queueControllers.controller('navigationController', ['$scope', '$http', '$location', 'UserService', '$location',
+function ($scope, $http, $location, user, $location) {
+  $scope.location = $location.path();
+
+  // This function should direct the user to the wanted page
+  $scope.redirect = function(address){
+    $location.path('/' + address);
+    $scope.location = $location.path();
+    console.log("location = " + $scope.location);
+  }
+}]);
 
 
 
