@@ -32,7 +32,7 @@ function ($scope, $http, $routeParams,socket, user) {
 
   socket.emit('listen', $routeParams.course)
 
-  console.log('testing')
+  console.log('testing');
 
   // Listen for the person joining a queue event.
   socket.on('join', function(data) {
@@ -63,20 +63,44 @@ function ($scope, $http, $routeParams,socket, user) {
     console.log($scope.users);
   })
 
-  // Listen for and admin purging the queues.
+  // Listen for an admin purging the queues.
   socket.on('purge', function(data) {
     $scope.$apply($scope.users = data);
   })
 
+  // Listen for a private message.
+  socket.on('message', function(data) {
+    alert(data);
+  })
+
+  // Listen for a person getting help.
+  socket.on('help', function(person) {
+    for(var i = 0; i < $scope.users.length; i++){
+      if($scope.users[i] === person){
+        $scope.$apply($scope.users[i].gettingHelp = true);
+        break;
+      }
+    }
+  })
+
+  // Listen for a badLocation warning
+  socket.on('badLocation', function() {
+    alert("You have to enter a more descriptive location.");
+  })
+
   $scope.addUser = function(){
-    $scope.enqueued = true;
-    // $scope.users.push({id:$scope.users.length, name:$scope.name, place:$scope.place, comment:$scope.comment});
+    if($scope.place === ""){
+      alert("You must enter a place.");
+    }else{
+      $scope.enqueued = true;
+      // $scope.users.push({id:$scope.users.length, name:$scope.name, place:$scope.place, comment:$scope.comment});
       socket.emit('join', 
         {
           queue:$routeParams.course,
           user:{name:$scope.name, place:$scope.place, comment:$scope.comment}
         })
       console.log("Called addUser");
+    }
   }
 
   $scope.updateUser = function(){
@@ -107,44 +131,64 @@ function ($scope, $http, $routeParams,socket, user) {
     console.log("Called removeUser");
   }
 
-  //$scope.adminify = function(){
-  //  $scope.admin = !$scope.admin;
-  //}
-
   // This function should remove every person in the queue
   $scope.purge = function(){
-    //socket.emit('purge', {
-    //  queue:$routeParams.course
-    //});
+    socket.emit('purge', {
+      queue:$routeParams.course
+    });
     console.log("Called purge");
   }
 
-    // This function should lock the queue, preventing anyone from queueing
-  $scope.lock = function(){
-    //socket.emit('lock', {
-    //  queue:$routeParams.course
-    //});
-    console.log("Called lock");
-  }
+  // This function should lock the queue, preventing anyone from queueing
+  //$scope.lock = function(){
+  //  socket.emit('lock', {
+  //    queue:$routeParams.course
+  //  });
+  //  console.log("Called lock");
+  //}
 
   // Mark the user as being helped
   $scope.helpUser = function(name){
-    //socket.emit('help', {
-    //  queue:$routeParams.course,
-    //  name
-    //});
+    socket.emit('help', {
+      queue:$routeParams.course,
+      name:name
+    });
     console.log("Called helpUser");
   }
 
   // Function to send a message to a user
-  // TODO : Should also take an argument containing the message
   $scope.messageUser = function(name){
-    //socket.emit('messageUser', {
-    //  queue:$routeParams.course,
-    //  name,
-    //  message
-    //});
+    var message = prompt("Enter a message for the user.","");
+    if(message != null){
+      socket.emit('messageUser', {
+        queue:$routeParams.course,
+        name:name,
+        message:message
+      });
+    }
     console.log("Called messageUser");
+  }
+
+  // Function to send a message to every user in the queue
+  $scope.broadcast = function(){
+    var message = prompt("Enter a message to broadcast.","");
+    if(message != null){
+      socket.emit('broadcast', {
+        queue:$routeParams.course,
+        message:message
+      });
+    }
+    console.log("Called broadcast");
+  }
+
+  // Function to send a message to a user
+  // TODO : Should also take an argument containing the message
+  $scope.badLocation = function(name){
+    socket.emit('badLocation', {
+      queue:$routeParams.course,
+      name:name
+    });
+    console.log("Called badLocation");
   }
 
 }]);

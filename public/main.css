@@ -105,3 +105,57 @@
 {
   border: 1px solid rgb(50,50,50);
 }
+.pulse {
+  -webkit-animation: pulse 3.8s linear infinite;
+  -moz-animation: pulse 3.8s linear infinite;
+  -ms-animation: pulse 3.8s linear infinite;
+  animation: pulse 3.8s linear infinite;
+}
+
+@keyframes "pulse" {
+ 0% {
+   color: rgba(0,0,0,0.4);
+ }
+ 50% {
+   color: rgba(0,0,0,1.0);
+ }
+ 100% {
+   color: rgba(0,0,0,0.4);
+ }
+}
+
+@-moz-keyframes pulse {
+ 0% {
+   color: rgba(0,0,0,0.4);
+ }
+ 50% {
+   color: rgba(0,0,0,1.0);
+ }
+ 100% {
+   color: rgba(0,0,0,0.4);
+ }
+}
+
+@-webkit-keyframes "pulse" {
+ 0% {
+   color: rgba(0,0,0,0.4);
+ }
+ 50% {
+   color: rgba(0,0,0,1.0);
+ }
+ 100% {
+   color: rgba(0,0,0,0.4);
+ }
+}
+
+@-ms-keyframes "pulse" {
+ 0% {
+   color: rgba(0,0,0,0.4);
+ }
+ 50% {
+   color: rgba(0,0,0,1.0);
+ }
+ 100% {
+   color: rgba(0,0,0,0.4);
+ }
+}

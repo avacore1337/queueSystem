@@ -47,7 +47,7 @@ ska man kunna lämna in kommentarer som asse?
       <span class="glyphicon glyphicon-remove"></span>&nbsp;
       Leave queue
     </div>
-    <div class="green clickable center-content frame" ng-show="!admin" ng-click="updateUser()">
+    <div class="green clickable center-content frame" ng-show="!admin && enqueued" ng-click="updateUser()">
       <span class="glyphicon glyphicon-pencil"></span>&nbsp;
       Update information
     </div>
@@ -122,7 +122,7 @@ ska man kunna lämna in kommentarer som asse?
         </tr>
       </thead>
       <tbody>
-        <tr id="user.name" ng-repeat="user in users track by $index">
+        <tr id="user.name" ng-repeat="user in users track by $index" ng-class="user.gettingHelp ? 'pulse' : ''">
           <td>{{ $index + 1 }}</td>
           <td>{{ user.name }}</td>
           <td>{{ user.place }}</td>
@@ -139,7 +139,7 @@ ska man kunna lämna in kommentarer som asse?
               </button>
             </span>
             <span title="help">
-              <button class="btn btn-success" ng-click="">
+              <button class="btn btn-success" ng-click="helpUser(user.name)">
                 <span class="glyphicon glyphicon-check"></span>
               </button>
             </span>
