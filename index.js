@@ -15,7 +15,7 @@ function User(name,place,comment){
   this.name = name;
   this.place = place;
   this.comment = comment;
-  this.beingHelped = false;
+  this.gettingHelp = false;
 }
 
 function Course(name){
@@ -101,26 +101,6 @@ app.io.route('leave', function(req) {
   for(var i = list[queue].length - 1; i >= 0; i--) {
       if(list[queue][i].name === user.name) {
         list[queue].splice(i, 1);
-      }
-  }
-})
-
-// user gets put at the bottom of the queue
-  // försökte implementera en funktion att placera någon längst ner i kön
-  // reason: se ifall det gick att implementera nya metoder, det gick inte
-app.io.route('bottom', function(req) {
-  var queue = req.data.queue;
-  var user = req.data.user;
-  console.log('a user was put at the bottom ' + queue);
-  app.io.room(queue).broadcast('bottom', user);
-
-  for(var i = list[queue].length - 1; i >= 0; i--) {
-      if(list[queue][i].name === user.name) {
-        var newUser = list[queue][i];
-        list[queue].splice(i, 1);
-        console.log(newUser);
-        list[queue].push(newUser)
-        break
       }
   }
 })
