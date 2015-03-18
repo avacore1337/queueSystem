@@ -79,6 +79,7 @@ app.io.route('join', function(req) {
 
 // user tries to join a queue with a "bad location"
 app.io.route('badLocation', function(req) {
+  app.io.room(queue).broadcast('badLocation'); // Antons request?
   console.log("Bad location"); // what should I do with this information?
 })
 
@@ -86,6 +87,7 @@ app.io.route('badLocation', function(req) {
 app.io.route('update', function(req) {
   var queue = req.data.queue;
   var user = req.data.user;
+
   console.log('a was updated in ' + queue);
   app.io.room(queue).broadcast('update', user);
 
@@ -96,13 +98,22 @@ app.io.route('update', function(req) {
   }
 })
 
+// admin helps a user (marked in the queue)
+app.io.route('help', function(req) {
+  var queue = req.data.queue;
+  var name = req.data.name;
+
+  app.io.room(queue).broadcast('update', name);
+  console.log(name + ' is getting help in ' + queue);
+})
+
 // admin messages a user
 app.io.route('messageUser', function(req) {
   var queue = req.data.queue;
   var name = req.data.name;
   var message = req.data.message;
 
-  app.io.room(queue).broadcast('messageUser', name);
+  app.io.room(queue).broadcast('message', message); // Antons request
   console.log('user' + name + ' was messaged at ' + queue + ' with: ' + message);
 })
 
@@ -111,7 +122,7 @@ app.io.route('broadcast', function(req) {
   var queue = req.data.queue;
   var message = req.data.message;
 
-  app.io.room(queue).broadcast('broadcast', queue); // is this right?
+  app.io.room(queue).broadcast('message', message); // Antons request
   console.log('broadcast in ' + queue + ', msg: ' + message);
 })
 
@@ -127,15 +138,15 @@ app.io.route('leave', function(req) {
         list[queue].splice(i, 1);
       }
   }
-
 })
 
 // admin purges a queue
+//  - alternatively send the list after the purge-try? 
 app.io.route('purge', function(req) {
   var queue = req.data.queue;
 
   list[queue] = [];
-  app.io.room(queue).broadcast('purge', queue); // is this right?
+  app.io.room(queue).broadcast('purge');
   console.log(req.data.queue + ' -list purged');
 })
 
