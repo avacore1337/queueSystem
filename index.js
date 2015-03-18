@@ -78,11 +78,13 @@ app.io.route('join', function(req) {
 })
 
 // user tries to join a queue with a "bad location"
+//  - do nothing in backend?
 app.io.route('badLocation', function(req) {
   var queue = req.data.queue;
+  var name = req.data.name;
 
-  app.io.room(queue).broadcast('badLocation'); // Antons request?
-  console.log("Bad location"); // what should I do with this information?
+  app.io.room(queue).broadcast('badLocation'); 
+  console.log("Bad location at " + queue + " for " + name);
 })
 
 // user gets updated
@@ -101,9 +103,12 @@ app.io.route('update', function(req) {
 })
 
 // admin helps a user (marked in the queue)
+//  - do nothing in backend?
 app.io.route('help', function(req) {
   var queue = req.data.queue;
-  var name = req.data.name;
+  var user = req.data.user;
+
+  user.gettingHelp = true; // test
 
   app.io.room(queue).broadcast('help', name);
   console.log(name + ' is getting help in ' + queue);
@@ -115,7 +120,7 @@ app.io.route('messageUser', function(req) {
   var name = req.data.name;
   var message = req.data.message;
 
-  app.io.room(queue).broadcast('message', message); // Antons request
+  app.io.room(queue).broadcast('message', message); // Not having user as an identifier?
   console.log('user ' + name + ' was messaged at ' + queue + ' with: ' + message);
 })
 
@@ -124,7 +129,7 @@ app.io.route('broadcast', function(req) {
   var queue = req.data.queue;
   var message = req.data.message;
 
-  app.io.room(queue).broadcast('message', message); // Antons request
+  app.io.room(queue).broadcast('message', message);
   console.log('broadcast in ' + queue + ', msg: ' + message);
 })
 
@@ -149,6 +154,13 @@ app.io.route('purge', function(req) {
   list[queue] = [];
   app.io.room(queue).broadcast('purge');
   console.log(req.data.queue + ' -list purged');
+})
+
+// admin locks a queue
+app.io.route('lock', function(req) {
+  var queue = req.data.queue;
+
+  console.log('trying to lock ' + queue);
 })
 
 // returns the queue-list
