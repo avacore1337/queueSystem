@@ -64,12 +64,13 @@ function ($scope, $http, $routeParams,socket, user) {
   })
 
   // Listen for an admin purging the queues.
-  socket.on('purge', function(data) {
-    $scope.$apply($scope.users = data);
+  socket.on('purge', function() {
+    $scope.$apply($scope.users = []);
   })
 
   // Listen for a private message.
   socket.on('message', function(data) {
+    console.log("data = " + data);
     alert(data);
   })
 
@@ -140,12 +141,12 @@ function ($scope, $http, $routeParams,socket, user) {
   }
 
   // This function should lock the queue, preventing anyone from queueing
-  //$scope.lock = function(){
-  //  socket.emit('lock', {
-  //    queue:$routeParams.course
-  //  });
-  //  console.log("Called lock");
-  //}
+  $scope.lock = function(){
+    socket.emit('lock', {
+      queue:$routeParams.course
+    });
+    console.log("Called lock");
+  }
 
   // Mark the user as being helped
   $scope.helpUser = function(name){
@@ -177,6 +178,7 @@ function ($scope, $http, $routeParams,socket, user) {
         queue:$routeParams.course,
         message:message
       });
+      console.log("Sent message : " + message);
     }
     console.log("Called broadcast");
   }
