@@ -79,6 +79,8 @@ app.io.route('join', function(req) {
 
 // user tries to join a queue with a "bad location"
 app.io.route('badLocation', function(req) {
+  var queue = req.data.queue;
+
   app.io.room(queue).broadcast('badLocation'); // Antons request?
   console.log("Bad location"); // what should I do with this information?
 })
@@ -103,7 +105,7 @@ app.io.route('help', function(req) {
   var queue = req.data.queue;
   var name = req.data.name;
 
-  app.io.room(queue).broadcast('update', name);
+  app.io.room(queue).broadcast('help', name);
   console.log(name + ' is getting help in ' + queue);
 })
 
@@ -114,7 +116,7 @@ app.io.route('messageUser', function(req) {
   var message = req.data.message;
 
   app.io.room(queue).broadcast('message', message); // Antons request
-  console.log('user' + name + ' was messaged at ' + queue + ' with: ' + message);
+  console.log('user ' + name + ' was messaged at ' + queue + ' with: ' + message);
 })
 
 // admin broadcasts to all users
@@ -141,7 +143,6 @@ app.io.route('leave', function(req) {
 })
 
 // admin purges a queue
-//  - alternatively send the list after the purge-try? 
 app.io.route('purge', function(req) {
   var queue = req.data.queue;
 
