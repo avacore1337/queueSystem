@@ -124,7 +124,7 @@ app.io.route('messageUser', function(req) {
   var name = req.data.name;
   var message = req.data.message;
 
-  app.io.room(queue).broadcast('message', message); // Not having user as an identifier?
+  app.io.room(queue).broadcast('msg', message); // Not having user as an identifier?
   console.log('user ' + name + ' was messaged at ' + queue + ' with: ' + message);
 })
 
@@ -133,7 +133,7 @@ app.io.route('broadcast', function(req) {
   var queue = req.data.queue;
   var message = req.data.message;
 
-  app.io.room(queue).broadcast('message', message);
+  app.io.room(queue).broadcast('msg', message);
   console.log('broadcast in ' + queue + ', msg: ' + message);
 })
 
