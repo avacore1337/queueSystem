@@ -68,9 +68,8 @@ function ($scope, $http, $routeParams,socket, user) {
     $scope.$apply($scope.users = []);
   })
 
-  // Listen for a private message.
-  socket.on('message', function(data) {
-    console.log("data = " + data);
+  // Listen for a message.
+  socket.on('msg', function(data) {
     alert(data);
   })
 
