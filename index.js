@@ -20,6 +20,13 @@ var async = require('async');
 //var fluent = util.fluent;
 //var saving = util.saving;
 
+mongoose.connect('mongodb://localhost/test');
+
+var db = mongoose.connection;
+db.on('error', console.error.bind(console, 'connection error:'));
+db.once('open', function callback () {
+  console.log("we te dubbel f");
+});
 
 var adminSchema = new Schema(({
   name: { type: String, default: '' },
@@ -125,10 +132,8 @@ courseSchema.statics.isAdmin = function (courseName, user, cb) {
 
 var User = mongoose.model("User", userSchema);
 
-/*
 var Course = mongoose.model("Course", courseSchema);
 
-*/
 var Admin = mongoose.model("Admin", adminSchema);
 
 var Statistic = mongoose.model("Statistic", statisticSchema);
@@ -187,8 +192,6 @@ statisticSchema.statics.getStatistics =  function (course, start, end, callbackD
 
 }
 
-
-
 module.exports = {
   User: User,
   Course: Course,
@@ -231,11 +234,11 @@ var list = new Map();
 // innehåller alla users som står i resp kö
 for (var i = 0 ; i < tmpList.length ; i++) {
   var course = tmpList[i];
-  courseList.push(new Course(course));
+  courseList.push(new Course({name: course}));
   var queues = Math.floor((Math.random() * 50) + 1);
   list[course] = [];
   for (var j = 0; j < queues; j++) {  
-    list[course].push(new User(Math.random().toString(36).substring(7),'Green', 'lab1'));
+    list[course].push(new User({name: Math.random().toString(36).substring(7), place: 'Green', comment: 'lab1'}));
   };
   // list[course] = [
   //   new User(Math.random().toString(36).substring(7),'Green', 'lab1'),
