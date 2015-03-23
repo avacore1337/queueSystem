@@ -51,7 +51,6 @@ userSchema.methods.toJSON = function () {
 	};
 };
 
-
 var courseSchema = new Schema({
 	name: String,
 	open: { type: Boolean, default: true },
@@ -59,6 +58,7 @@ var courseSchema = new Schema({
 	queue: [userSchema],
 	admin: {type:[adminSchema], default: []}
 });
+
 
 courseSchema.methods.addAdmin = fluent(saving(function (user, newAdmin) {
 	thisCourse = this.course;
