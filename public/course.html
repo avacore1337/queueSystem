@@ -93,22 +93,25 @@ ska man kunna lämna in kommentarer som asse?
 
   <div class="col-md-9 pull-right">
     <!-- Users with bookings -->
-    <table class="table table-striped booked" ng-hide="bookedUsers.length == 0">
-      <thead>
-        <th>User</th>
-        <th>Location</th>
-        <th>Comment</th>
-        <th>Time</th>
-      </thead>
-      <tbody>
-        <tr id="user.name" ng-repeat="user in bookedUsers">
-          <td>{{user.name}}</td>
-          <td>{{user.place}}</td>
-          <td>{{user.comment}}</td>
-          <td>{{user.time}}</td>
-        </tr>
-      </tbody>
-    </table>
+    <input class="spoilerbutton" type="button" value="Show booked users" onclick="this.value=this.value=='Show booked users' ? 'Hide booked users' : 'Show booked users';" class="spoilerbutton" ng-hide="bookedUsers.length == 0">
+    <div class="spoiler" ng-hide="bookedUsers.length == 0">
+      <table id="demo" class="table table-striped booked">
+        <thead>
+          <th>User</th>
+          <th>Location</th>
+          <th>Comment</th>
+          <th>Time</th>
+        </thead>
+        <tbody>
+          <tr id="user.name" ng-repeat="user in bookedUsers">
+            <td>{{user.name}}</td>
+            <td>{{user.place}}</td>
+            <td>{{user.comment}}</td>
+            <td>{{user.time}}</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>  
     
     <!-- Users without bookings -->
     <table class="table table-striped">
