@@ -159,3 +159,24 @@
    color: rgba(0,0,0,0.4);
  }
 }
+
+.spoiler
+{
+  overflow: hidden;
+  background: #f5f5f5;
+}
+.spoiler > table
+{
+  -webkit-transition: all 0.4s ease;
+  -moz-transition: margin 0.4s ease;
+  -o-transition: all 0.4s ease;
+  transition: margin 0.4s ease;
+}
+.spoilerbutton[value="Show booked users"] + .spoiler > table
+{
+  margin-top: -100%;
+}
+.spoilerbutton[value="Hide booked users"] + .spoiler > table
+{
+  padding: 5px;
+}
