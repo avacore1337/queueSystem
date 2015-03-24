@@ -30,23 +30,24 @@ db.once('open', function callback () {
 
 
 var userSchema = new Schema({
-  name: { type: String, default: '' },
+  name: String,
+  place: String,
   time: { type: Number, default: Date.now },
   action: { type: String, default: '' },
   comment: { type: String, default: '' }
 });
 
-// userSchema.methods.toJSON = function () {
-//   return {
-//     name: this.name,
-//     time: this.time,
-//     action: this.action,
-//     comment: this.comment
-//   };
-// };
+userSchema.methods.toJSON = function () {
+  return {
+    name: this.name,
+    time: this.time,
+    action: this.action,
+    comment: this.comment
+  };
+};
 
 var courseSchema = new Schema({
-  name: { type: String, default: '' },
+  name: String,
   open: { type: Boolean, default: true },
   active: { type: Boolean, default: true },
   queue: {type:[userSchema], default: []}
@@ -57,28 +58,31 @@ courseSchema.methods.addUser = function (user) {
   this.save();
 };
 
-// courseSchema.methods.removeUser = function (username) {
-//   this.queue = this.queue.filter(function (user) {
-//     return user.name !== username;
-//   });
-// };
+courseSchema.methods.removeUser = function (username) {
+  this.queue = this.queue.filter(function (user) {
+    return user.name !== username;
+  });
+  this.save();
+};
 
-// courseSchema.methods.forUser = function (fn) {
-//   this.queue.forEach(fn);
-// };
+courseSchema.methods.forUser = function (fn) {
+  this.queue.forEach(fn);
+  this.save();
+};
 
-// courseSchema.methods.updateUser = function (name, user) {
-//   this.queue.forEach(function (usr, i, queue) {
-//     if (usr.name === name) {
-//       _.extend(queue[i], user);
-//     }
-//   });
-// };
+courseSchema.methods.updateUser = function (name, user) {
+  this.queue.forEach(function (usr, i, queue) {
+    if (usr.name === name) {
+      _.extend(queue[i], user);
+    }
+  });
+  this.save();
+};
 
 
-var User = mongoose.model("User", userSchema);
+var User2 = mongoose.model("User", userSchema);
 
-var Course = mongoose.model("Course", courseSchema);
+var Course2 = mongoose.model("Course", courseSchema);
 
 /*
 */
@@ -119,28 +123,55 @@ var tmpList = [
   "progp",
   "mdi"
 ];
-courseList = []
-var list = new Map();
+ courseList = []
+// var cList = new Map();
 
 // Map för varje rum
 // innehåller alla users som står i resp kö
 // REFACTOR!
-for (var i = 0 ; i < tmpList.length ; i++) {
-  var course = tmpList[i];
-  courseList.push(new Course({name: course}));
-  var queues = Math.floor((Math.random() * 50) + 1);
-  list[course] = [];
-  for (var j = 0; j < queues; j++) {  
-    list[course].push(new User({name: Math.random().toString(36).substring(7), place: 'Green', comment: 'lab1'}));
-  };
-  // list[course] = [
-  //   new User(Math.random().toString(36).substring(7),'Green', 'lab1'),
-  //   new User('Enis','Fernis', 'Venis'),
-  //   new User('Alpha','Gaga', 'Beta')
-  // ];
-  console.log(course  + " " +  list[course].length);
+function setup(){
+  for (var i = 0 ; i < tmpList.length ; i++) {
+    var course = tmpList[i];
+    var newCourse = new Course2({name: course});
+    courseList.push(newCourse);
+    newCourse.save();
+
+    var queues = Math.floor((Math.random() * 50) + 1);
+    for (var j = 0; j < queues; j++) {  
+      var newUser = new User2({name: Math.random().toString(36).substring(7), place: 'Green', comment: 'lab1'});
+      newCourse.addUser(newUser);
+      newCourse.save();
+    };
+
+    console.log(course  + " " +  newCourse.queue.length);
+  }  
 }
 
+function readIn(){
+  Course2.find(function (err, courses) {
+    courses.forEach(function (course) {
+      //cList[course.name] = course;
+       courseList.push(course);
+      // console.log(courseList);
+
+      console.log(course.name + ' loaded: ' + course);
+    });
+  });
+}
+
+function findCourse(name) {
+  for (var i = 0; i < courseList.length; i++) {
+    if (courseList[i].name === name) {
+      return courseList[i];
+    }
+  };
+}
+
+/**
+ THIS IS IMPORTANT STUFF!!!
+*/
+//setup();
+readIn();
 
 app.io.on('connection', function(socket){
   console.log('a user connected');
@@ -158,7 +189,9 @@ app.io.route('join', function(req) {
   var user = req.data.user;
   console.log('a user joined to ' + queue);
   app.io.room(queue).broadcast('join', user);
-  list[queue].push(new User(user.name,user.place,user.comment));
+
+  var course = findCourse(queue);
+  course.addUser(new User2({name: user.name, place: user.place, comment: user.comment}));
 })
 
 // user tries to join a queue with a "bad location"
@@ -179,11 +212,8 @@ app.io.route('update', function(req) {
   console.log('a was updated in ' + queue);
   app.io.room(queue).broadcast('update', user);
 
-  for(var i = list[queue].length - 1; i >= 0; i--) {
-      if(list[queue][i].name === user.name) {
-        list[queue].splice(i, 1, user);
-      }
-  }
+  var course = findCourse(queue);
+  course.updateUser(user.name);
 })
 
 // admin helps a user (marked in the queue)
@@ -228,18 +258,16 @@ app.io.route('leave', function(req) {
   console.log('a user left ' + queue);
   app.io.room(queue).broadcast('leave', user);
 
-  for(var i = list[queue].length - 1; i >= 0; i--) {
-      if(list[queue][i].name === user.name) {
-        list[queue].splice(i, 1);
-      }
-  }
+  var course = findCourse(queue);
+  course.removeUser(user.name);
 })
 
 // admin purges a queue
 app.io.route('purge', function(req) {
   var queue = req.data.queue;
 
-  list[queue] = [];
+  var course = findCourse(queue);
+  course.queue = [];
   app.io.room(queue).broadcast('purge');
   console.log(req.data.queue + ' -list purged');
 })
@@ -256,20 +284,24 @@ app.io.route('lock', function(req) {
 app.get('/API/queue/:queue', function(req, res) {
     res.setHeader('Content-Type', 'application/json');
     // console.log(list[req.params.queue] + " " + req.params.queue);
-    res.end(JSON.stringify(list[req.params.queue]));
+    var course = findCourse(req.params.queue);
+    res.end(JSON.stringify(course.queue));
     console.log('queue requested');
 })
 
 // /API/list
 // => returnerar alla kurser som finns (lista av strängar)
 app.get('/API/courseList', function(req, res) {
-    for (i = 0 ; i < courseList.length ; i++) {
-      var course = courseList[i].name;
-      courseList[i].length = list[course].length;
-    }
-    res.setHeader('Content-Type', 'application/json');
-    res.end(JSON.stringify(courseList));
-    console.log('list of courses requested');
+  var retList = [];
+
+  for (i = 0 ; i < courseList.length ; i++) {
+    console.log("trying to get length of " + courseList[i].name + ": " + courseList[i].queue.length);
+    retList.push({name: courseList[i].name, length:courseList[i].queue.length});
+  }
+
+  res.setHeader('Content-Type', 'application/json');
+  res.end(JSON.stringify(retList));
+  console.log('list of courses requested');
 })
 
 app.get('/API/userData', function(req, res) {
