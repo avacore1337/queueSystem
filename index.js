@@ -199,6 +199,15 @@ module.exports = {
 };
 /*
 */
+
+var queues = {};
+
+Course.find(function (err, courses) {
+  courses.forEach(function (course) {
+    queues[course.name] = new QueueRoom(course);
+  });
+});
+
 // ENDTEST
 
 
