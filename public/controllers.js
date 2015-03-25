@@ -1,7 +1,7 @@
 var queueControllers = angular.module('queueControllers', []);
 
 queueControllers.controller('courseController', ['$scope', '$http', '$routeParams', 'WebSocketService', 'UserService',
-function ($scope, $http, $routeParams,socket, user) {
+function ($scope, $http, $routeParams, socket, user) {
   $scope.course = $routeParams.course;
   $scope.name = user.getName();
   $scope.place = '';
@@ -63,7 +63,7 @@ function ($scope, $http, $routeParams,socket, user) {
     console.log($scope.users);
   })
 
-  // Listen for an admin purging the queues.
+  // Listen for an admin purging the queue.
   socket.on('purge', function() {
     $scope.$apply($scope.users = []);
   })
@@ -217,6 +217,10 @@ function ($scope, $http, $location, user) {
     $location.path('/course/' + course);
     //console.log("User wants to enter " + course);
   }
+
+  $scope.unauthorized = function(){
+    alert("You do not have the rights to enter that page.");
+  }
 }]);
 
 queueControllers.controller('aboutController', ['$scope', '$http',
@@ -256,6 +260,72 @@ function ($scope, $location) {
     $scope.location = $location.path();
     console.log("location = " + $scope.location);
   }
+}]);
+
+queueControllers.controller('adminController', ['$scope', '$location', '$http', 'UserService',
+function ($scope, $location, $http, user) {
+  console.log("Entered admin.html");
+  $scope.admin = user.isAdmin();
+  $scope.selectedQueue = undefined;
+  $scope.dropdown = undefined;
+  $scope.queues = [];
+  $scope.newAdmin = ''; 
+  $http.get('/API/courseList').success(function(response){
+    $scope.queues = response;
+  });
+
+  if(!$scope.admin){
+    $location.path('/list');
+    //Call unauthorized in listController
+  }
+
+  $scope.createQueue = function(){
+    if($scope.courseName != ""){
+      //socket.emit('createQueue', {
+      //  name:queue
+      //});
+      console.log("Trying to create queue " + $scope.courseName);
+      $scope.courseName = '';
+    }
+  }
+
+  $scope.addAdmin = function(){
+    if($scope.newAdmin != ""){
+      //socket.emit('addAdmin', {
+      //  name:$scope.newAdmin
+      //});
+      console.log("Adding admin " + $scope.newAdmin);
+      $scope.newAdmin = '';
+    }
+  }
+
+  $scope.addTeacher = function(){
+    if($scope.newTeacher != "" && $scope.selectedQueue != undefined){
+      //socket.emit('addTeacher', {
+      //  name:$scope.newTeacher,
+      //  course:$scope.selectedQueue.name
+      //});
+      console.log("Adding teacher " + $scope.newTeacher + " in the course " + $scope.selectedQueue);
+      $scope.newTeacher = '';
+    }
+  }
+
+  $scope.addAssistant = function(){
+    if($scope.newAssistant != "" && $scope.selectedQueue != undefined){
+      //socket.emit('addAssistant', {
+      //  name:$scope.newAssistant,
+      //  course:$scope.selectedQueue.name
+      //});
+      console.log("Adding assistant " + $scope.newAssistant  + " in the course " + $scope.selectedQueue);
+      $scope.newAssistant = '';
+    }
+  }
+
+  $scope.selectQueue = function(queue){
+    $scope.selectedQueue = queue;
+    console.log("selected queue = " + $scope.selectedQueue);
+  }
+
 }]);
 
 

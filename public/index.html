@@ -1,59 +1,44 @@
 <!DOCTYPE html>
 <html ng-app="queue">
-<head>
-  <link rel="stylesheet" href="http://maxcdn.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap.min.css">
-  <link rel="stylesheet" type="text/css" href="main.css">
-  <script src="http://ajax.googleapis.com/ajax/libs/angularjs/1.2.26/angular.min.js"></script>
-  <script src="http://ajax.googleapis.com/ajax/libs/angularjs/1.2.26/angular-route.min.js"></script>
-</head>
+	<head>
+		<link rel="stylesheet" href="http://maxcdn.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap.min.css">
+		<link rel="stylesheet" type="text/css" href="main.css">
+		<script src="http://ajax.googleapis.com/ajax/libs/angularjs/1.2.26/angular.min.js"></script>
+		<script src="http://ajax.googleapis.com/ajax/libs/angularjs/1.2.26/angular-route.min.js"></script>
+	</head>
 
-<body>
-<!--
-<nav class="navbar navbar-default navbar-inverse">
-	<a class="navbar-brand" href="#">UWait</a>
-	<ul class="nav navbar-nav navbar-left">
-		<li class="active"><a href="#">Queue</a></li>
-		<li><a href="#about">About</a></li>
-		<li><a href="#help">Help</a></li>
-	</ul>
-	<ul class="nav navbar-nav navbar-right">
-		<li><a href="">Circle</a></li>
-		<li><a href="https://login.kth.se/login?service=http%3A%2F%2Fqwait.csc.kth.se%3A8080%2Fauthenticate">Log in&nbsp;</a></li>
-	</ul>
-</nav>
--->
-
-<nav ng-controller="navigationController">
-	<div class="col-md-12 black zero-padding text-center">
-		<div class="col-md-3 zero-padding">
-			<div ng-class="location == '/list' || location.match('/course/.*') ? 'selected' : 'black'" class="col-md-4 clickable zero-padding" ng-click="redirect('list')">
-				<h3 class="text-white equal-margin">Queues</h3>
+	<body>
+	<nav ng-controller="navigationController">
+		<div class="col-md-12 black zero-padding text-center">
+			<div class="col-md-3 zero-padding">
+				<div ng-class="location == '/list' || location.match('/course/.*') ? 'blue' : 'black'" class="col-md-4 clickable zero-padding" ng-click="redirect('list')">
+					<h3 class="text-white equal-margin">Queues</h3>
+				</div>
+				<div ng-class="location == '/about' ? 'blue' : 'black'" class="col-md-4 clickable zero-padding" ng-click="redirect('about')">
+					<h3 class="text-white equal-margin">About</h3>
+				</div>
+				<div ng-class="location == '/help' ? 'blue' : 'black'" class="col-md-4 clickable zero-padding" ng-click="redirect('help')">
+					<h3 class="text-white equal-margin">Help</h3>
+				</div>
 			</div>
-			<div ng-class="location == '/about' ? 'selected' : 'black'" class="col-md-4 clickable zero-padding" ng-click="redirect('about')">
-				<h3 class="text-white equal-margin">About</h3>
-			</div>
-			<div ng-class="location == '/help' ? 'selected' : 'black'" class="col-md-4 clickable zero-padding" ng-click="redirect('help')">
-				<h3 class="text-white equal-margin">Help</h3>
+			<a href="">
+				<div class="col-md-2 col-md-offset-2 zero-padding" ng-click="redirect('list')">
+					<h3 class="text-white equal-margin">UWait</h3>
+				</div>
+			</a>
+			<div class="col-md-1 col-md-offset-4 text-right black clickable zero-padding" ng-click="redirect('login')">
+				<h3 class="text-white equal-margin">Log in&nbsp;&nbsp;</h3>
 			</div>
 		</div>
-		<a href="">
-			<div class="col-md-2 col-md-offset-2 zero-padding" ng-click="redirect('list')">
-				<h3 class="text-white equal-margin">UWait</h3>
-			</div>
-		</a>
-		<div class="col-md-1 col-md-offset-4 text-right black clickable zero-padding" ng-click="redirect('login')">
-			<h3 class="text-white equal-margin">Log in&nbsp;&nbsp;</h3>
-		</div>
+	</nav>
+
+	<div class="main-body">
+		<div ng-view></div>
 	</div>
-</nav>
 
-<div class="main-body">
-  <div ng-view></div>
-</div>
-
-  <script src="/socket.io/socket.io.js"></script>
-  <script src = "app.js"></script>
-  <script src = "controllers.js"></script>
-  <script src = "services.js"></script>
-</body>
+		<script src="/socket.io/socket.io.js"></script>
+		<script src = "app.js"></script>
+		<script src = "controllers.js"></script>
+		<script src = "services.js"></script>
+	</body>
 </html>
