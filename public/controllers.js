@@ -74,10 +74,11 @@ function ($scope, $http, $routeParams,socket, user) {
   })
 
   // Listen for a person getting help.
-  socket.on('help', function(person) {
+  socket.on('help', function(data) {
     for(var i = 0; i < $scope.users.length; i++){
-      if($scope.users[i] === person){
+      if($scope.users[i] === data.person){
         $scope.$apply($scope.users[i].gettingHelp = true);
+        $scope.$apply($scope.users[i].helper = data.helper);
         break;
       }
     }
@@ -151,7 +152,8 @@ function ($scope, $http, $routeParams,socket, user) {
   $scope.helpUser = function(name){
     socket.emit('help', {
       queue:$routeParams.course,
-      name:name
+      name:name,
+      helper:$scope.name
     });
     console.log("Called helpUser");
   }
