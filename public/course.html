@@ -39,18 +39,19 @@ ska man kunna lämna in kommentarer som asse?
     </form>
 
     <!-- The buttons -->
-    <div class="green clickable center-content frame" ng-show="!admin && !enqueued" ng-click="addUser()">
+    <div class="green clickable center-content frame" ng-show="!enqueued" ng-click="addUser()">
       <span class="glyphicon glyphicon-plus"></span>&nbsp;
       Join queue
     </div>
-    <div class="red clickable center-content frame" ng-click="removeUser(name)" ng-show="!admin && enqueued">
+    <div class="red clickable center-content frame" ng-click="removeUser(name)" ng-show="enqueued">
       <span class="glyphicon glyphicon-remove"></span>&nbsp;
       Leave queue
     </div>
-    <div class="green clickable center-content frame" ng-show="!admin && enqueued" ng-click="updateUser()">
+    <div class="green clickable center-content frame" ng-show="enqueued" ng-click="updateUser()">
       <span class="glyphicon glyphicon-pencil"></span>&nbsp;
       Update information
     </div>
+    <div class="buffer" ng-show="admin"></div>
     <div class="red clickable center-content frame" ng-show="admin" ng-click="broadcast()">
       <span class="glyphicon glyphicon-bullhorn"></span>&nbsp;
       Broadcast
@@ -64,24 +65,7 @@ ska man kunna lämna in kommentarer som asse?
       Lock queue
     </div>
     <div class="buffer"></div>
-    <!--<button class="btn btn-success col-md-12 buffer-min" ng-show="!admin" ng-click="addUser()">
-      <span class="glyphicon glyphicon-plus"></span>&nbsp;Join queue
-    </button>
-    <button class="btn btn-success col-md-12 buffer-min" ng-show="!newUser" ng-click="updateUser()">
-      <span class="glyphicon glyphicon-save"></span>&nbsp;Update User
-    </button>
-    <button class="btn btn-success col-md-12 buffer-min" ng-click="removeUser(name)" ng-show="!admin">
-      <span class="glyphicon glyphicon-warning-sign"></span>&nbsp;Remove user
-    </button>
-    <button class="btn btn-success col-md-12 buffer-min" ng-show="admin" ng-click="bottomUser()"  ng-disabled="edit" >
-      <span class="glyphicon glyphicon-warning-sign"></span>&nbsp;Put to bottom of list
-    </button>
-    <button class="btn btn-success col-md-12 buffer-min" ng-show="!admin" ng-click="updateUser()"  ng-disabled="edit" >
-      <span class="glyphicon glyphicon-pencil"></span>&nbsp;Edit user
-    </button>
-    <button class="btn btn-success col-md-12 buffer red" ng-show="admin" ng-click="purge()">
-      <span class="glyphicon glyphicon-remove"></span>&nbsp;Purge queue
-    </button>-->
+
   </div>
   <div class="col-md-2 pin-center" ng-show="!loggedIn">
     <h3>You are currently<br> not logged in</h3>
@@ -111,7 +95,7 @@ ska man kunna lämna in kommentarer som asse?
           </tr>
         </tbody>
       </table>
-    </div>  
+    </div>
     
     <!-- Users without bookings -->
     <table class="table table-striped">
