@@ -181,7 +181,17 @@
   padding: 5px;
 }
 
-.postfix
+.round-right-corners
 {
-  margin-bottom: 0; 
+  border-top-right-radius: 3px;
+  border-bottom-right-radius: 3px;
+}
+.tableify
+{
+  display: table;
+}
+.cellify
+{
+  display: table-cell;
+  vertical-align: middle;
 }

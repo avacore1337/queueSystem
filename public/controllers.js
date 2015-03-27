@@ -303,7 +303,7 @@ function ($scope, $location, $http, user) {
     if($scope.newTeacher != "" && $scope.selectedQueue != undefined){
       //socket.emit('addTeacher', {
       //  name:$scope.newTeacher,
-      //  course:$scope.selectedQueue.name
+      //  course:$scope.selectedQueue
       //});
       console.log("Adding teacher " + $scope.newTeacher + " in the course " + $scope.selectedQueue);
       $scope.newTeacher = '';
@@ -314,7 +314,7 @@ function ($scope, $location, $http, user) {
     if($scope.newAssistant != "" && $scope.selectedQueue != undefined){
       //socket.emit('addAssistant', {
       //  name:$scope.newAssistant,
-      //  course:$scope.selectedQueue.name
+      //  course:$scope.selectedQueue
       //});
       console.log("Adding assistant " + $scope.newAssistant  + " in the course " + $scope.selectedQueue);
       $scope.newAssistant = '';

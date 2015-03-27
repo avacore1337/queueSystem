@@ -1,12 +1,18 @@
-<div ng-show="admin">
+<!--<div ng-show="admin">-->
+<div class="container">
 	<h1>Administration</h1>
 	<p>Please be careful on this page. Here, you have the power to change everything.</p>
-	
+	<h1>Admins of UWait&nbsp;<a href="/help">?</a></h1>
 
-	<div class="row col-md-4">
-		<input type="text" ng-model="newAdmin" class="col-md-9" placeholder="Add admin" onfocus="this.placeholder = ''" onblur="this.placeholder = 'Add admin'">
-		<div class="blue clickable text-white text-center col-md-3 postfix" ng-click="addAdmin()">
-			<span class="glyphicon glyphicon-plus"></span>Add
+	<div class="row col-md-12">
+		<div class="row col-md-offset-2">
+			<h5>New admins will have to log out and in again in order to get all of their new privileges.</h5>
+			<input type="text" ng-model="newAdmin" class="col-md-4" placeholder="Add admin" onfocus="this.placeholder = ''" onblur="this.placeholder = 'Add admin'">
+			<div class="blue clickable text-white text-center col-md-1 round-right-corners tableify" ng-click="addAdmin()">
+				<div class="cellify">
+					<span class="glyphicon glyphicon-plus"></span>Add
+				</div>
+			</div>
 		</div>
 	</div>
 
@@ -18,13 +24,13 @@
 	</div>
 	<div class="row col-md-4">
 		<input type="text" ng-model="newTeacher" class="col-md-9" placeholder="Add teacher" onfocus="this.placeholder = ''" onblur="this.placeholder = 'Add teacher'">
-		<div class="blue clickable text-white text-center col-md-3 postfix" ng-click="addTeacher()">
+		<div class="blue clickable text-white text-center col-md-3" ng-click="addTeacher()">
 			<span class="glyphicon glyphicon-plus"></span>Add
 		</div>
 	</div>
 	<div class="row col-md-4">
 		<input type="text" ng-model="newAssistant" class="col-md-9" placeholder="Add assistant" onfocus="this.placeholder = ''" onblur="this.placeholder = 'Add assistant'">
-		<div class="blue clickable text-white text-center col-md-3 postfix" ng-click="addAssistant()">
+		<div class="blue clickable text-white text-center col-md-3" ng-click="addAssistant()">
 			<span class="glyphicon glyphicon-plus"></span>Add
 		</div>
 	</div>
