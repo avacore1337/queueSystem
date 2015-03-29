@@ -270,14 +270,19 @@ function ($scope, $location, $http, user) {
   $scope.dropdown = undefined;
   $scope.queues = [];
   $scope.newAdmin = ''; 
+  $scope.admins = [
+    {name:'Anton',  id:'antbac'},
+    {name:'Robert',  id:'robertwb'},
+    {name:'Per',  id:'pernyb'}
+  ];
   $http.get('/API/courseList').success(function(response){
     $scope.queues = response;
   });
 
-  if(!$scope.admin){
-    $location.path('/list');
+  //if(!$scope.admin){
+  //  $location.path('/list');
     //Call unauthorized in listController
-  }
+  //}
 
   $scope.createQueue = function(){
     if($scope.courseName != ""){

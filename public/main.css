@@ -1,3 +1,9 @@
+.html, main-bod
+{
+  margin: 0;
+  padding: 0;
+  border: 0;
+}
 .white.clickable:hover
 {
 	background-color: rgba(0,0,0,0.1);
@@ -39,6 +45,11 @@
 {
   background-color: #1C65EB;
   cursor: pointer;
+}
+.dark-grey
+{
+  background-color: rgb(155,155,155);
+  border: .2em solid rgb(90, 90, 90);
 }
 .navbar-brand
 {
@@ -186,12 +197,8 @@
   border-top-right-radius: 3px;
   border-bottom-right-radius: 3px;
 }
-.tableify
+.input-height
 {
-  display: table;
-}
-.cellify
-{
-  display: table-cell;
-  vertical-align: middle;
+  padding-top: .21429em;
+  padding-bottom: .21429em;
 }

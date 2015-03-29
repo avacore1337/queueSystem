@@ -6,34 +6,90 @@
 
 	<div class="row col-md-12">
 		<div class="row col-md-offset-2">
-			<h5>New admins will have to log out and in again in order to get all of their new privileges.</h5>
-			<input type="text" ng-model="newAdmin" class="col-md-4" placeholder="Add admin" onfocus="this.placeholder = ''" onblur="this.placeholder = 'Add admin'">
-			<div class="blue clickable text-white text-center col-md-1 round-right-corners tableify" ng-click="addAdmin()">
-				<div class="cellify">
+			<!-- Adding new admins -->
+			<div class="col-md-12">
+				<h5>New admins will have to log out and in again in order to get all of their new privileges.</h5>
+				<input type="text" ng-model="newAdmin" class="col-md-4" placeholder="Add admin" onfocus="this.placeholder = ''" onblur="this.placeholder = 'Add admin'">
+				<div class="blue clickable text-white text-center col-md-1 round-right-corners input-height" ng-click="addAdmin()">
+					<span class="glyphicon glyphicon-plus"></span>Add
+				</div>
+			</div>
+
+			<!-- Removing admins -->
+			<div class="col-md-6">
+				<br>
+				Admins
+				<br>
+				<div ng-show="admins.length > 0">
+					<table class="table table-striped">
+		      			<thead class="dark-grey">
+		        			<tr>
+		          				<th>Name</th>
+		          				<th>KTH-id</th>
+			        		</tr>
+			      		</thead>
+			      		<tbody>
+			        		<tr id="admin.name" ng-repeat="admin in admins" ng-class="user.gettingHelp ? 'pulse' : ''">
+			          			<td>{{ admin.name }}</td>
+			          			<td>{{ admin.id }}
+									<button class="btn red clickable" ng-click="removeAdmin(user.name)">
+                						<span class="glyphicon glyphicon-trash"></span>
+              						</button>
+			          			</td>
+			          		</tr>
+			          	</tbody>
+					</table>
+				</div>
+				<div ng-show="admins.length == 0">
+					(No admins)
+				</div>
+			</div>
+		</div>
+	</div>
+
+	<h1>Teachers at UWait&nbsp;<a href="/help">?</a></h1>
+
+	<div class="row col-md-12">
+		<div class="row col-md-offset-2">
+			<!-- Adding new teachers -->
+			<div class="col-md-12">
+				<h5>New teachers will have to log out and in again in order to get all of their new privileges.</h5>
+				<div class="row col-md-12">
+					<!-- TODO : CSS the dropdown -->
+					<select ng-model="dropdown" ng-change="selectQueue(dropdown)">
+						<option disabled="disabled" selected="selected" value>Select Queue</option>
+						<option ng-repeat="queue in queues">{{queue.name}}</option>
+					</select>
+					<!-- Dropdown ends here -->
+				</div>
+				<input type="text" ng-model="newTeacher" class="col-md-4" placeholder="Add teacher" onfocus="this.placeholder = ''" onblur="this.placeholder = 'Add teacher'">
+				<div class="blue clickable text-white text-center col-md-1 round-right-corners input-height" ng-click="addTeacher()">
 					<span class="glyphicon glyphicon-plus"></span>Add
 				</div>
 			</div>
 		</div>
 	</div>
 
+	<h1>Assistants at UWait&nbsp;<a href="/help">?</a></h1>
+
 	<div class="row col-md-12">
-		<select ng-model="dropdown" ng-change="selectQueue(dropdown)">
-			<option disabled="disabled" selected="selected" value>Select Queue</option>
-			<option ng-repeat="queue in queues">{{queue.name}}</option>
-		</select>
-	</div>
-	<div class="row col-md-4">
-		<input type="text" ng-model="newTeacher" class="col-md-9" placeholder="Add teacher" onfocus="this.placeholder = ''" onblur="this.placeholder = 'Add teacher'">
-		<div class="blue clickable text-white text-center col-md-3" ng-click="addTeacher()">
-			<span class="glyphicon glyphicon-plus"></span>Add
+		<div class="row col-md-offset-2">
+			<!-- Adding new Assistants -->
+			<div class="col-md-12">
+				<h5>New Assistants will have to log out and in again in order to get all of their new privileges.</h5>
+				<div class="row col-md-12">
+					<!-- TODO : CSS the dropdown -->
+					<select ng-model="dropdown" ng-change="selectQueue(dropdown)">
+						<option disabled="disabled" selected="selected" value>Select Queue</option>
+						<option ng-repeat="queue in queues">{{queue.name}}</option>
+					</select>
+					<!-- Dropdown ends here -->
+				</div>
+				<input type="text" ng-model="newAssistant" class="col-md-4" placeholder="Add Assistant" onfocus="this.placeholder = ''" onblur="this.placeholder = 'Add Assistant'">
+				<div class="blue clickable text-white text-center col-md-1 round-right-corners input-height" ng-click="addAssistant()">
+					<span class="glyphicon glyphicon-plus"></span>Add
+				</div>
+			</div>
 		</div>
 	</div>
-	<div class="row col-md-4">
-		<input type="text" ng-model="newAssistant" class="col-md-9" placeholder="Add assistant" onfocus="this.placeholder = ''" onblur="this.placeholder = 'Add assistant'">
-		<div class="blue clickable text-white text-center col-md-3" ng-click="addAssistant()">
-			<span class="glyphicon glyphicon-plus"></span>Add
-		</div>
-	</div>
-
-
 </div>
