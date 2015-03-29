@@ -47,49 +47,43 @@
 		</div>
 	</div>
 
-	<h1>Teachers at UWait&nbsp;<a href="/help">?</a></h1>
+	<h1>Edit queue roles</h1>
+	<h5>Choose queue to administrate</h5>
+
+	<!-- Dropdown of courses -->
+	<div class="dropdown">
+        <button class="btn btn-default dropdown-toggle col-md-5" type="button" data-toggle="dropdown">
+        	<div class="col-md-11 text-left" id="dropdown">Select Queue</div> <span class="caret"></span>
+        </button>
+        <ul class="dropdown-menu" ng-repeat="course in courses">
+			<li><a href="" ng-click="selectQueue(course.name)">{{course.name}}</a></li>
+        </ul>
+	</div>
+	<!-- Dropdown ends here -->
 
 	<div class="row col-md-12">
-		<div class="row col-md-offset-2">
-			<!-- Adding new teachers -->
-			<div class="col-md-12">
-				<h5>New teachers will have to log out and in again in order to get all of their new privileges.</h5>
-				<div class="row col-md-12">
-					<!-- TODO : CSS the dropdown -->
-					<select ng-model="dropdown" ng-change="selectQueue(dropdown)">
-						<option disabled="disabled" selected="selected" value>Select Queue</option>
-						<option ng-repeat="queue in queues">{{queue.name}}</option>
-					</select>
-					<!-- Dropdown ends here -->
-				</div>
-				<div class="input-group col-md-5">
-					<input type="text" class="form-control" ng-model="newTeacher" placeholder="Add teacher" onfocus="this.placeholder = ''" onblur="this.placeholder = 'Add teacher'">
-					<span class="input-group-addon blue clickable text-white" style="border: 0px;" ng-click="addTeacher()"><span class="glyphicon glyphicon-plus"></span>Add</span>
-				</div>
+		<!-- Adding teachers -->
+		<div class="row col-md-6">
+			<h3>Teachers at UWait&nbsp;<a href="/help">?</a></h3>
+			<h5>New teachers will have to log out and in again in order to get all of their new privileges.</h5>
+			<div class="input-group col-md-6">
+				<input type="text" class="form-control" ng-model="newTeacher" placeholder="Add teacher" onfocus="this.placeholder = ''" onblur="this.placeholder = 'Add teacher'">
+				<span class="input-group-addon blue clickable text-white" style="border: 0px;" ng-click="addTeacher()"><span class="glyphicon glyphicon-plus"></span>Add</span>
 			</div>
+			<!-- TODO : Table of current teachers goes here -->
+			<!-- End of TODO (Table of current teachers goes here) -->
+		</div>
+		<!-- Adding teaching assistants -->
+		<div class="row col-md-6 left-divider">
+			<h3>Assistants at UWait&nbsp;<a href="/help">?</a></h3>
+			<h5>New assistants will have to log out and in again in order to get all of their new privileges.</h5>
+			<div class="input-group col-md-6">
+				<input type="text" class="form-control" ng-model="newAssistant" placeholder="Add assistant" onfocus="this.placeholder = ''" onblur="this.placeholder = 'Add assistant'">
+				<span class="input-group-addon blue clickable text-white" style="border: 0px;" ng-click="addAssistant()"><span class="glyphicon glyphicon-plus"></span>Add</span>
+			</div>
+			<!-- TODO : Table of current assistants goes here -->
+			<!-- End of TODO (Table of current assistants goes here) -->
 		</div>
 	</div>
-
-	<h1>Assistants at UWait&nbsp;<a href="/help">?</a></h1>
-
-	<div class="row col-md-12">
-		<div class="row col-md-offset-2">
-			<!-- Adding new Assistants -->
-			<div class="col-md-12">
-				<h5>New Assistants will have to log out and in again in order to get all of their new privileges.</h5>
-				<div class="row col-md-12">
-					<!-- TODO : CSS the dropdown -->
-					<select ng-model="dropdown" ng-change="selectQueue(dropdown)">
-						<option disabled="disabled" selected="selected" value>Select Queue</option>
-						<option ng-repeat="queue in queues">{{queue.name}}</option>
-					</select>
-					<!-- Dropdown ends here -->
-				</div>
-				<div class="input-group col-md-5">
-					<input type="text" class="form-control" ng-model="newAsistant" placeholder="Add asistant" onfocus="this.placeholder = ''" onblur="this.placeholder = 'Add asistant'">
-					<span class="input-group-addon blue clickable text-white" style="border: 0px;" ng-click="addAsistant()"><span class="glyphicon glyphicon-plus"></span>Add</span>
-				</div>
-			</div>
-		</div>
-	</div>
+	<div class="row buffer"></div>
 </div>

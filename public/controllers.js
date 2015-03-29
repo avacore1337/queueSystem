@@ -268,15 +268,15 @@ function ($scope, $location, $http, user) {
   $scope.admin = user.isAdmin();
   $scope.selectedQueue = undefined;
   $scope.dropdown = undefined;
-  $scope.queues = [];
   $scope.newAdmin = ''; 
   $scope.admins = [
     {name:'Anton',  id:'antbac'},
     {name:'Robert',  id:'robertwb'},
     {name:'Per',  id:'pernyb'}
   ];
+  $scope.courses = [];
   $http.get('/API/courseList').success(function(response){
-    $scope.queues = response;
+    $scope.courses = response;
   });
 
   //if(!$scope.admin){
@@ -328,6 +328,7 @@ function ($scope, $location, $http, user) {
 
   $scope.selectQueue = function(queue){
     $scope.selectedQueue = queue;
+    document.getElementById('dropdown').innerHTML = queue;
     console.log("selected queue = " + $scope.selectedQueue);
   }
 
