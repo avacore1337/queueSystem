@@ -9,9 +9,9 @@
 			<!-- Adding new admins -->
 			<div class="col-md-12">
 				<h5>New admins will have to log out and in again in order to get all of their new privileges.</h5>
-				<input type="text" ng-model="newAdmin" class="col-md-4" placeholder="Add admin" onfocus="this.placeholder = ''" onblur="this.placeholder = 'Add admin'">
-				<div class="blue clickable text-white text-center col-md-1 round-right-corners input-height" ng-click="addAdmin()">
-					<span class="glyphicon glyphicon-plus"></span>Add
+				<div class="input-group col-md-5">
+					<input type="text" class="form-control" ng-model="newAdmin" placeholder="Add admin" onfocus="this.placeholder = ''" onblur="this.placeholder = 'Add admin'">
+					<span class="input-group-addon blue clickable text-white" style="border: 0px;" ng-click="addAdmin()"><span class="glyphicon glyphicon-plus"></span>Add</span>
 				</div>
 			</div>
 
@@ -62,9 +62,9 @@
 					</select>
 					<!-- Dropdown ends here -->
 				</div>
-				<input type="text" ng-model="newTeacher" class="col-md-4" placeholder="Add teacher" onfocus="this.placeholder = ''" onblur="this.placeholder = 'Add teacher'">
-				<div class="blue clickable text-white text-center col-md-1 round-right-corners input-height" ng-click="addTeacher()">
-					<span class="glyphicon glyphicon-plus"></span>Add
+				<div class="input-group col-md-5">
+					<input type="text" class="form-control" ng-model="newTeacher" placeholder="Add teacher" onfocus="this.placeholder = ''" onblur="this.placeholder = 'Add teacher'">
+					<span class="input-group-addon blue clickable text-white" style="border: 0px;" ng-click="addTeacher()"><span class="glyphicon glyphicon-plus"></span>Add</span>
 				</div>
 			</div>
 		</div>
@@ -85,9 +85,9 @@
 					</select>
 					<!-- Dropdown ends here -->
 				</div>
-				<input type="text" ng-model="newAssistant" class="col-md-4" placeholder="Add Assistant" onfocus="this.placeholder = ''" onblur="this.placeholder = 'Add Assistant'">
-				<div class="blue clickable text-white text-center col-md-1 round-right-corners input-height" ng-click="addAssistant()">
-					<span class="glyphicon glyphicon-plus"></span>Add
+				<div class="input-group col-md-5">
+					<input type="text" class="form-control" ng-model="newAsistant" placeholder="Add asistant" onfocus="this.placeholder = ''" onblur="this.placeholder = 'Add asistant'">
+					<span class="input-group-addon blue clickable text-white" style="border: 0px;" ng-click="addAsistant()"><span class="glyphicon glyphicon-plus"></span>Add</span>
 				</div>
 			</div>
 		</div>

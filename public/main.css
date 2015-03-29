@@ -191,14 +191,3 @@
 {
   padding: 5px;
 }
-
-.round-right-corners
-{
-  border-top-right-radius: 3px;
-  border-bottom-right-radius: 3px;
-}
-.input-height
-{
-  padding-top: .21429em;
-  padding-bottom: .21429em;
-}
