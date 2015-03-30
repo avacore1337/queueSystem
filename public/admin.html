@@ -55,8 +55,8 @@
         <button class="btn btn-default dropdown-toggle col-md-5" type="button" data-toggle="dropdown">
         	<div class="col-md-11 text-left" id="dropdown">Select Queue</div> <span class="caret"></span>
         </button>
-        <ul class="dropdown-menu" ng-repeat="course in courses">
-			<li><a href="" ng-click="selectQueue(course.name)">{{course.name}}</a></li>
+        <ul class="dropdown-menu">
+			<li ng-repeat="course in courses"><a href="" ng-click="selectQueue(course.name)">{{course.name}}</a></li>
         </ul>
 	</div>
 	<!-- Dropdown ends here -->
@@ -85,5 +85,4 @@
 			<!-- End of TODO (Table of current assistants goes here) -->
 		</div>
 	</div>
-	<div class="row buffer"></div>
 </div>
