@@ -25,7 +25,7 @@ mongoose.connect('mongodb://localhost/test');
 var db = mongoose.connection;
 db.on('error', console.error.bind(console, 'connection error:'));
 db.once('open', function callback () {
-  console.log("we te dubbel f");
+  console.log("db open!");
 });
 
 
@@ -40,6 +40,7 @@ var userSchema = new Schema({
 userSchema.methods.toJSON = function () {
   return {
     name: this.name,
+    place: this.place,
     time: this.time,
     action: this.action,
     comment: this.comment
@@ -79,11 +80,27 @@ courseSchema.methods.updateUser = function (name, user) {
   this.save();
 };
 
+var messageSchema = new Schema({
+  course: String,
+  from: String,
+  to: String,
+  msg: String,
+});
+
+var broadcastSchema = new Schema({
+  course: String,
+  from: String,
+  msg: String,
+});
+
 
 var User2 = mongoose.model("User", userSchema);
 
 var Course2 = mongoose.model("Course", courseSchema);
 
+var Msg2 = mongoose.model("Message", messageSchema);
+
+var Broadcast2 = mongoose.model("Broadcast", messageSchema);
 /*
 */
 
@@ -124,6 +141,8 @@ var tmpList = [
   "mdi"
 ];
  courseList = []
+ messageList = []
+ broadcastList = []
 // var cList = new Map();
 
 // Map för varje rum
@@ -145,6 +164,11 @@ function setup(){
 
     console.log(course  + " " +  newCourse.queue.length);
   }  
+
+  var newMessage = new Msg2({course: 'course', from: 'from', to: 'to', msg: 'msg'});
+  newMessage.save();
+  var newBroadcast = new Broadcast2({course: 'course', from: 'from', msg: 'msg'});
+  newBroadcast.save();
 }
 
 function readIn(){
@@ -170,8 +194,8 @@ function findCourse(name) {
 /**
  THIS IS IMPORTANT STUFF!!!
 */
-//setup();
-readIn();
+setup();
+//readIn();
 
 app.io.on('connection', function(socket){
   console.log('a user connected');
@@ -213,7 +237,7 @@ app.io.route('update', function(req) {
   app.io.room(queue).broadcast('update', user);
 
   var course = findCourse(queue);
-  course.updateUser(user.name);
+  course.updateUser(user.name, user);
 })
 
 // admin helps a user (marked in the queue)
@@ -240,6 +264,10 @@ app.io.route('messageUser', function(req) {
 
   app.io.room(queue).broadcast('msg', message); // Not having user as an identifier?
   console.log('user ' + name + ' was messaged at ' + queue + ' with: ' + message);
+
+  var newMessage = new Msg2({course: queue, from: '', to: name, msg: message});
+  messageList.push(newMessage);
+  newMessage.save();
 })
 
 // admin broadcasts to all users
@@ -249,6 +277,10 @@ app.io.route('broadcast', function(req) {
 
   app.io.room(queue).broadcast('msg', message);
   console.log('broadcast in ' + queue + ', msg: ' + message);
+
+  var newBroadcast = new Broadcast2({course: queue, from: '', msg: message});
+  broadcastList.push(newBroadcast);
+  newBroadcast.save();
 })
 
 // user leaves queue
