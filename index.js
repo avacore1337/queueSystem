@@ -109,7 +109,7 @@ var messageSchema = new Schema({
   from: String,
   to: String,
   msg: String,
-  time: { type: Number, default: Date.now },
+  time: { type: Date, default: Date.now },
   comment: { type: String, default: '' }
 });
 
@@ -342,11 +342,15 @@ app.io.route('messageUser', function(req) {
   var name = req.data.name;
   var message = req.data.message;
   var sender = req.data.sender;
+  var time = new Date(new Date().getTime());
 
   app.io.room(queue).broadcast('msg', message); // Not having user as an identifier?
   console.log('user ' + name + ' was messaged from ' + sender + ' at ' + queue + ' with: ' + message);
 
-  var newMessage = new Msg2({course: queue, from: sender, to: name, msg: message});
+  var d = new Date(1382086394000);
+  console.log(time);
+
+  var newMessage = new Msg2({course: queue, from: sender, to: name, msg: message, time: time});
   messageList.push(newMessage);
   newMessage.save();
 })
