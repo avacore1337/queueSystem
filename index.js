@@ -10,15 +10,10 @@ app.use(expressio.static(__dirname + '/public'));
 app.use(expressio.session({secret: 'express.io is the best framework ever!'}));
 app.use(expressio.bodyParser());
 
-// STARTTEST
 var mongoose = require('mongoose');
 var Schema = mongoose.Schema;
 var _ = require('lodash');
 var async = require('async');
-
-//var util = require('./util.js');
-//var fluent = util.fluent;
-//var saving = util.saving;
 
 mongoose.connect('mongodb://localhost/test');
 
@@ -66,6 +61,17 @@ courseSchema.methods.removeUser = function (username) {
   this.save();
 };
 
+// => if we want to remove the queue from the database <=
+courseSchema.methods.purgeQueue = function (course) {
+  this.queue.forEach(function (usr, i, queue) {
+    var newUserStatistic = new UserStatistic2({student: usr.name, course: course, action: '?'});
+    newUserStatistic.save();
+  });
+
+  this.queue = [];
+  this.save();
+};
+
 courseSchema.methods.forUser = function (fn) {
   this.queue.forEach(fn);
   this.save();
@@ -80,19 +86,64 @@ courseSchema.methods.updateUser = function (name, user) {
   this.save();
 };
 
+/* => Is this code necessary?
+
+courseSchema.methods.helpUser = function (name, user) {
+  this.queue.forEach(function (usr, i, queue) {
+    if (usr.name === name) {
+      _.extend(queue[i], user);
+    }
+  });
+  this.save();
+};
+  for(var i = list[queue].length - 1; i >= 0; i--) {
+      if(list[queue][i].name === name) {
+        list[queue][i].gettingHelp = true;
+        console.log("helptrue!!");
+      }
+  }
+*/
+
 var messageSchema = new Schema({
   course: String,
   from: String,
   to: String,
   msg: String,
+  time: { type: Number, default: Date.now },
+  comment: { type: String, default: '' }
 });
 
 var broadcastSchema = new Schema({
   course: String,
   from: String,
   msg: String,
+  time: { type: Number, default: Date.now },
+  comment: { type: String, default: '' }
 });
 
+var helpSchema = new Schema({
+  course: String,
+  student: String,
+  assistant: String,
+  time: { type: Number, default: Date.now },
+  comment: { type: String, default: '' }
+});
+
+var badLocationSchema = new Schema({
+  course: String,
+  student: String,
+  assistant: String,
+  time: { type: Number, default: Date.now },
+  comment: { type: String, default: '' }
+});
+
+var courseActionSchema = new Schema({
+  course: String,
+  admin: String,
+  action: String,
+  time: { type: Number, default: Date.now },
+  comment: { type: String, default: '' }
+});
 
 var User2 = mongoose.model("User", userSchema);
 
@@ -101,18 +152,30 @@ var Course2 = mongoose.model("Course", courseSchema);
 var Msg2 = mongoose.model("Message", messageSchema);
 
 var Broadcast2 = mongoose.model("Broadcast", messageSchema);
-/*
-*/
 
-// var queues = {};
+var Help2 = mongoose.model("Help", helpSchema);
 
-// Course.find(function (err, courses) {
-//   courses.forEach(function (course) {
-//     queues[course.name] = new QueueRoom(course);
-//   });
-// });
+var BadLocation2 = mongoose.model("BadLocation", badLocationSchema);
 
-// ENDTEST
+var CourseAction2 = mongoose.model("CourseAction", courseActionSchema);
+
+/* STATISTICS */
+
+var userStatisticSchema = new Schema({
+  student: String,
+  course: String,
+  time: { type: Number, default: Date.now },
+  action: String,
+  leftQueue: { type: Boolean, default: false },
+  queueLength: { type: Number, default: 0},
+  timesHelped: { type: Number, default: 0},
+  timeAmountHelped: { type: Number, default: 0}
+});
+
+userStatisticSchema.index({time: 1});
+
+var UserStatistic2 = mongoose.model("UserStatistic", userStatisticSchema);
+
 
 
 function User(name,place,comment){
@@ -143,6 +206,8 @@ var tmpList = [
  courseList = []
  messageList = []
  broadcastList = []
+ helpList = []
+ badLocationList = []
 // var cList = new Map();
 
 // Map för varje rum
@@ -169,6 +234,14 @@ function setup(){
   newMessage.save();
   var newBroadcast = new Broadcast2({course: 'course', from: 'from', msg: 'msg'});
   newBroadcast.save();
+  var newHelp = new Help2({course: 'course', student: 'student', assistant: 'assistant'});
+  newHelp.save();
+  var newBadLocation = new BadLocation2({course: 'course', student: 'student', assistant: 'assistant'});
+  newBadLocation.save();
+  var newCourseAction = new CourseAction2({course: 'course', admin: 'admin', action: 'action'});
+  newCourseAction.save();
+  var newUserStatistic = new UserStatistic2({student: 'student', course: 'course', action: 'action'});
+  newUserStatistic.save();
 }
 
 function readIn(){
@@ -224,6 +297,11 @@ app.io.route('badLocation', function(req) {
   var queue = req.data.queue;
   var name = req.data.name;
 
+  var newBadLocation = new BadLocation2({course: queue, student: name, assistant: ''});
+  badLocationList.push(newBadLocation);
+  newBadLocation.save();
+  console.log(newBadLocation);
+
   app.io.room(queue).broadcast('badLocation'); 
   console.log("Bad location at " + queue + " for " + name);
 })
@@ -244,15 +322,17 @@ app.io.route('update', function(req) {
 app.io.route('help', function(req) {
   var queue = req.data.queue;
   var name = req.data.name;
+  var helper = req.data.helper;
 
-  for(var i = list[queue].length - 1; i >= 0; i--) {
-      if(list[queue][i].name === name) {
-        list[queue][i].gettingHelp = true;
-        console.log("helptrue!!");
-      }
-  }
+  var newHelp = new Help2({course: queue, student: name, assistant: ''});
+  helpList.push(newHelp);
+  newHelp.save();
 
-  app.io.room(queue).broadcast('help', name);
+// => is this part necessary or does the database handle this? <=
+//  var course = findCourse(queue);
+//  course.helpUser(user.name, user);
+
+  app.io.room(queue).broadcast('help', helper);
   console.log(name + ' is getting help in ' + queue);
 })
 
@@ -292,6 +372,12 @@ app.io.route('leave', function(req) {
 
   var course = findCourse(queue);
   course.removeUser(user.name);
+
+  var newUserStatistic = new UserStatistic2({student: user.name, course: queue, action: '?'});
+  newUserStatistic.save();
+
+  var newCourseAction = new CourseAction2({course: queue, admin: '', action: 'removed user: ' + user.name});
+  newCourseAction.save();
 })
 
 // admin purges a queue
@@ -299,7 +385,12 @@ app.io.route('purge', function(req) {
   var queue = req.data.queue;
 
   var course = findCourse(queue);
+  course.purgeQueue(); 
   course.queue = [];
+
+  var newCourseAction = new CourseAction2({course: queue, admin: '', action: 'purge'});
+  newCourseAction.save();
+
   app.io.room(queue).broadcast('purge');
   console.log(req.data.queue + ' -list purged');
 })
@@ -309,6 +400,9 @@ app.io.route('lock', function(req) {
   var queue = req.data.queue;
 
   console.log('trying to lock ' + queue);
+
+  var newCourseAction = new CourseAction2({course: queue, admin: '', action: 'lock'});
+  newCourseAction.save();
 })
 
 // returns the queue-list
