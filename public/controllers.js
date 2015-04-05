@@ -164,6 +164,7 @@ function ($scope, $http, $routeParams, socket, user) {
     if(message != null){
       socket.emit('messageUser', {
         queue:$routeParams.course,
+        sender:$scope.name,
         name:name,
         message:message
       });
