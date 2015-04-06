@@ -98,7 +98,7 @@ function ($scope, $http, $routeParams, socket, user) {
       socket.emit('join', 
         {
           queue:$routeParams.course,
-          user:{name:$scope.name, place:$scope.place, comment:$scope.comment}
+          user:{name:$scope.name, place:$scope.place, comment:$scope.comment, startTime:Date.now()}
         })
       console.log("Called addUser");
     }
@@ -170,6 +170,20 @@ function ($scope, $http, $routeParams, socket, user) {
       });
     }
     console.log("Called messageUser");
+  }
+
+  // Function to add a message about that user
+  $scope.flag = function(name){
+    var message = prompt("Enter a comment.","");
+    if(message != null){
+      socket.emit('flag', {
+        queue:$routeParams.course,
+        sender:$scope.name,
+        name:name,
+        message:message
+      });
+    }
+    console.log("Called flag user");
   }
 
   // Function to send a message to every user in the queue
