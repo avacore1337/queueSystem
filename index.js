@@ -413,6 +413,29 @@ app.io.route('lock', function(req) {
   newCourseAction.save();
 })
 
+/* STATISTICS */
+
+app.io.route('numbers helped', function(req) {
+  var queue = req.data.queue;
+  var starttime = req.data.starttime;
+  var endtime = req.data.endtime;
+
+  var helpedList = [];
+
+  // MAGIC WHERE WE GET ALL THE PEOPLE THAT LEFT THE QUEUE, BY AN ASSISTENT, BEFORE ENDTIME
+
+  app.io.room(queue).broadcast('numbers helped', helpedList);
+})
+
+app.io.route('queueing users', function(req) {
+  var queue = req.data.queue;
+  var time = req.data.time;
+  var course = findCourse(queue);
+  var length = course.queue.length;
+
+  app.io.room(queue).broadcast('queueing users', length);
+})
+
 // returns the queue-list
 // => returnera rätt kö (inte samma kö)
 app.get('/API/queue/:queue', function(req, res) {
