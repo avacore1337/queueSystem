@@ -267,8 +267,8 @@ function findCourse(name) {
 /**
  THIS IS IMPORTANT STUFF!!!
 */
-//setup();
-readIn();
+setup();
+//readIn();
 
 app.io.on('connection', function(socket){
   console.log('a user connected');

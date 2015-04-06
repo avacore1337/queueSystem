@@ -58,6 +58,7 @@ function ($scope, $http, $routeParams, socket, user) {
       if($scope.users[i].name === data.name) {
         $scope.$apply($scope.users[i].comment = data.comment);
         $scope.$apply($scope.users[i].place = data.place);
+        break;
       }
     }
     console.log($scope.users);
@@ -71,6 +72,16 @@ function ($scope, $http, $routeParams, socket, user) {
   // Listen for a message.
   socket.on('msg', function(data) {
     alert(data);
+  })
+
+  // Listen for a user getting flagged
+  socket.on('flag', function(data) {
+    for(var i = $scope.users.length - 1; i >= 0; i--) {
+      if($scope.users[i].name === data.name) {
+        $scope.$apply($scope.users[i].messages.push(data.message));
+        break;
+      }
+    }
   })
 
   // Listen for a person getting help.
@@ -98,7 +109,7 @@ function ($scope, $http, $routeParams, socket, user) {
       socket.emit('join', 
         {
           queue:$routeParams.course,
-          user:{name:$scope.name, place:$scope.place, comment:$scope.comment, startTime:Date.now()}
+          user:{name:$scope.name, place:$scope.place, comment:$scope.comment}
         })
       console.log("Called addUser");
     }
@@ -184,6 +195,21 @@ function ($scope, $http, $routeParams, socket, user) {
       });
     }
     console.log("Called flag user");
+  }
+
+  // Function to read comments about a user
+  $scope.readMessages = function(name){
+    var string = "";
+    for(user in $scope.users){
+      if(user.name == name){
+        for(s in user.comments){
+          string = string + s + "\n";
+        }
+        break;
+      }
+    }
+    alert(string);
+    console.log("Called readMessages");
   }
 
   // Function to send a message to every user in the queue
