@@ -15,7 +15,7 @@ var Schema = mongoose.Schema;
 var _ = require('lodash');
 var async = require('async');
 
-mongoose.connect('mongodb://localhost/test');
+mongoose.connect('mongodb://localhost/queueBase');
 
 var db = mongoose.connection;
 db.on('error', console.error.bind(console, 'connection error:'));
@@ -244,6 +244,7 @@ function setup(){
   newUserStatistic.save();
 }
 
+// => fungerar inte korrekt? <===
 function readIn(){
   Course2.find(function (err, courses) {
     courses.forEach(function (course) {
