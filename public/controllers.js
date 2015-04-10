@@ -38,7 +38,7 @@ function ($scope, $http, $routeParams, socket, user) {
   // Listen for the person joining a queue event.
   socket.on('join', function(data) {
     console.log(data);
-    $scope.$apply($scope.users.push({name:data.name, place:data.place, comment:data.comment}));
+    $scope.$apply($scope.users.push({name:data.name, place:data.place, comment:data.comment, startTime:data.startTime}));
     console.log($scope.users);
   })
 
@@ -106,18 +106,17 @@ function ($scope, $http, $routeParams, socket, user) {
       alert("You must enter a place.");
     }else{
       $scope.enqueued = true;
-      // $scope.users.push({id:$scope.users.length, name:$scope.name, place:$scope.place, comment:$scope.comment});
+      console.log("Current time = " + Date.now());
       socket.emit('join', 
         {
           queue:$routeParams.course,
-          user:{name:$scope.name, place:$scope.place, comment:$scope.comment}
+          user:{name:$scope.name, place:$scope.place, comment:$scope.comment, startTime:Math.round(Date.now()/1000)}
         })
       console.log("Called addUser");
     }
   }
 
   $scope.updateUser = function(){
-    // $scope.users.push({id:$scope.users.length, name:$scope.name, place:$scope.place, comment:$scope.comment});
     socket.emit('update', {
       queue:$routeParams.course,
       user:{name:$scope.name, place:$scope.place, comment:$scope.comment}
@@ -219,7 +218,8 @@ function ($scope, $http, $routeParams, socket, user) {
     if(message != null){
       socket.emit('broadcast', {
         queue:$routeParams.course,
-        message:message
+        message:message,
+        sender: $scope.name
       });
       console.log("Sent message : " + message);
     }
@@ -227,7 +227,6 @@ function ($scope, $http, $routeParams, socket, user) {
   }
 
   // Function to send a message to a user
-  // TODO : Should also take an argument containing the message
   $scope.badLocation = function(name){
     socket.emit('badLocation', {
       queue:$routeParams.course,
@@ -237,14 +236,19 @@ function ($scope, $http, $routeParams, socket, user) {
   }
 
   // When an admin wants to see the admin options
-   $scope.changeVisibility = function(id){
+   $scope.changeVisibility = function(name){
     for(var i = 0; i < $scope.users.length; i++){
-      if($scope.users[i].name === id){
-        $scope.apply($scope.users[i].optionsActivated = !$scope.users[i].optionsActivated);
+      if($scope.users[i].name === name){
+        $scope.users[i].optionsActivated = !$scope.users[i].optionsActivated;
         break;
       }
     }
   }
+
+  // Returns the time it has been since the user entered the queue
+  //$scope.timeDiff = function (time) {
+  //  return moment(time).from(Date.now(), true);
+  //};
 
 }]);
 

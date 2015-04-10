@@ -115,8 +115,8 @@ ska man kunna lämna in kommentarer som asse?
           <td>{{ user.name }}</td>
           <td>{{ user.place }}</td>
           <td>{{ user.comment }}</td>
-          <td>{{ moment(user.startTime).from(Date.now(), true) }}</td>
-          <td ng-show="admin" style="displaye: none;">
+          <td><span data-livestamp="{{user.startTime}}"></span></td>
+          <td ng-show="admin">
             <div ng-show="user.optionsActivated">
               <span title="remove user">
                 <button class="btn red clickable" ng-click="removeUser(user.name)">
@@ -149,6 +149,7 @@ ska man kunna lämna in kommentarer som asse?
                 </button>
               </span>
           </div>
+          <p ng-hide="user.optionsActivated">(Double-click for options)</p>
             <p ng-show="user.gettingHelp && admin">&nbsp;Currently helped by + {{user.helper}}</p>
           </td>
         </tr>
@@ -156,22 +157,4 @@ ska man kunna lämna in kommentarer som asse?
     </table>
 
   </div>
-
-<script>
-  function changeVisibility(id){
-    alert("hello");
-    var element = document.getElementById(id),
-    style = window.getComputedStyle(element),
-    top = style.getPropertyValue('display');
-    alert(top);
-    if(top === "none"){
-      alert("none : " + top);
-      element.style.display = "block";
-    }else{
-      alert("block : " + top);
-      element.style.display = "none";
-    }
-  }
-</script>
-
 </div>
