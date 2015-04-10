@@ -16,6 +16,7 @@ function ($scope, $http, $routeParams, socket, user) {
   .success(function(response) {
     $scope.users = response;
     for (var i = 0; i < $scope.users.length; i++) {
+      $scope.users[i].optionsActivated = false;
       if($scope.users[i].name === $scope.name){
         $scope.enqueued = true;
       }
@@ -233,6 +234,16 @@ function ($scope, $http, $routeParams, socket, user) {
       name:name
     });
     console.log("Called badLocation");
+  }
+
+  // When an admin wants to see the admin options
+   $scope.changeVisibility = function(id){
+    for(var i = 0; i < $scope.users.length; i++){
+      if($scope.users[i].name === id){
+        $scope.apply($scope.users[i].optionsActivated = !$scope.users[i].optionsActivated);
+        break;
+      }
+    }
   }
 
 }]);

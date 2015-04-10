@@ -78,7 +78,12 @@
 .text-black
 {
   color: black;
-}.buffer
+}
+.text-easteregg
+{
+  color: rgb(50, 50, 50);
+}
+.buffer
 {
   margin-bottom: 5%;
 }

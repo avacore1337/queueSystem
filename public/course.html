@@ -79,7 +79,7 @@ ska man kunna lämna in kommentarer som asse?
     <!-- Users with bookings -->
     <input class="spoilerbutton" type="button" value="Show booked users" onclick="this.value=this.value=='Show booked users' ? 'Hide booked users' : 'Show booked users';" class="spoilerbutton" ng-hide="bookedUsers.length == 0">
     <div class="spoiler" ng-hide="bookedUsers.length == 0">
-      <table id="demo" class="table table-striped booked">
+      <table class="table table-striped booked">
         <thead>
           <th>User</th>
           <th>Location</th>
@@ -87,7 +87,7 @@ ska man kunna lämna in kommentarer som asse?
           <th>Time</th>
         </thead>
         <tbody>
-          <tr id="user.name" ng-repeat="user in bookedUsers">
+          <tr ng-repeat="user in bookedUsers">
             <td>{{user.name}}</td>
             <td>{{user.place}}</td>
             <td>{{user.comment}}</td>
@@ -110,43 +110,45 @@ ska man kunna lämna in kommentarer som asse?
         </tr>
       </thead>
       <tbody>
-        <tr id="user.name" ng-repeat="user in users track by $index" ng-class="user.gettingHelp ? 'pulse' : ''">
+        <tr ng-repeat="user in users track by $index" ng-class="user.gettingHelp ? 'pulse' : ''" ng-dblclick="changeVisibility(user.name)">
           <td>{{ $index + 1 }}</td>
           <td>{{ user.name }}</td>
           <td>{{ user.place }}</td>
           <td>{{ user.comment }}</td>
           <td>{{ moment(user.startTime).from(Date.now(), true) }}</td>
-          <td ng-show="admin">
-            <span title="remove user">
-              <button class="btn red clickable" ng-click="removeUser(user.name)">
-                <span class="glyphicon glyphicon-trash"></span>
-              </button>
-            </span>
-            <span title="send message">
-              <button class="btn btn-success" ng-click="messageUser(user.name)">
-                <span class="glyphicon glyphicon-envelope"></span>
-              </button>
-            </span>
-            <span title="help">
-              <button class="btn btn-success" ng-click="helpUser(user.name)">
-                <span class="glyphicon glyphicon-check"></span>
-              </button>
-            </span>
-            <span title="bad location">
-              <button class="btn btn-success" ng-click="badLocation(user.name)">
-                <span class="glyphicon glyphicon-question-sign"></span>
-              </button>
-            </span>
-            <span title="add comment">
-              <button class="btn btn-success" ng-click="flag(user.name)">
-                <span class="glyphicon glyphicon-tag"></span>
-              </button>
-            </span>
-            <span ng-show="user.comments.length > 0" title="read comment">
-              <button class="btn btn-success" ng-click="readMessages(user.name)">
-                <span class="glyphicon glyphicon-search"></span>
-              </button>
-            </span>
+          <td ng-show="admin" style="displaye: none;">
+            <div ng-show="user.optionsActivated">
+              <span title="remove user">
+                <button class="btn red clickable" ng-click="removeUser(user.name)">
+                  <span class="glyphicon glyphicon-trash"></span>
+                </button>
+              </span>
+              <span title="send message">
+                <button class="btn btn-success" ng-click="messageUser(user.name)">
+                  <span class="glyphicon glyphicon-envelope"></span>
+                </button>
+              </span>
+              <span title="help">
+                <button class="btn btn-success" ng-click="helpUser(user.name)">
+                  <span class="glyphicon glyphicon-check"></span>
+                </button>
+              </span>
+              <span title="bad location">
+                <button class="btn btn-success" ng-click="badLocation(user.name)">
+                  <span class="glyphicon glyphicon-question-sign"></span>
+                </button>
+              </span>
+              <span title="add comment">
+                <button class="btn btn-success" ng-click="flag(user.name)">
+                  <span class="glyphicon glyphicon-tag"></span>
+                </button>
+              </span>
+              <span ng-show="user.comments.length > 0" title="read comment">
+                <button class="btn btn-success" ng-click="readMessages(user.name)">
+                  <span class="glyphicon glyphicon-search"></span>
+                </button>
+              </span>
+          </div>
             <p ng-show="user.gettingHelp && admin">&nbsp;Currently helped by + {{user.helper}}</p>
           </td>
         </tr>
@@ -154,4 +156,22 @@ ska man kunna lämna in kommentarer som asse?
     </table>
 
   </div>
+
+<script>
+  function changeVisibility(id){
+    alert("hello");
+    var element = document.getElementById(id),
+    style = window.getComputedStyle(element),
+    top = style.getPropertyValue('display');
+    alert(top);
+    if(top === "none"){
+      alert("none : " + top);
+      element.style.display = "block";
+    }else{
+      alert("block : " + top);
+      element.style.display = "none";
+    }
+  }
+</script>
+
 </div>
