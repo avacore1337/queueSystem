@@ -105,6 +105,7 @@ ska man kunna lämna in kommentarer som asse?
           <th>User</th>
           <th>Location</th>
           <th>Comment</th>
+          <th>Time</th>
           <th ng-show="admin">Admin options</th>
         </tr>
       </thead>
@@ -114,6 +115,7 @@ ska man kunna lämna in kommentarer som asse?
           <td>{{ user.name }}</td>
           <td>{{ user.place }}</td>
           <td>{{ user.comment }}</td>
+          <td>{{ moment(user.startTime).from(Date.now(), true) }}</td>
           <td ng-show="admin">
             <span title="remove user">
               <button class="btn red clickable" ng-click="removeUser(user.name)">
@@ -133,6 +135,16 @@ ska man kunna lämna in kommentarer som asse?
             <span title="bad location">
               <button class="btn btn-success" ng-click="badLocation(user.name)">
                 <span class="glyphicon glyphicon-question-sign"></span>
+              </button>
+            </span>
+            <span title="add comment">
+              <button class="btn btn-success" ng-click="flag(user.name)">
+                <span class="glyphicon glyphicon-tag"></span>
+              </button>
+            </span>
+            <span ng-show="user.comments.length > 0" title="read comment">
+              <button class="btn btn-success" ng-click="readMessages(user.name)">
+                <span class="glyphicon glyphicon-search"></span>
               </button>
             </span>
             <p ng-show="user.gettingHelp && admin">&nbsp;Currently helped by + {{user.helper}}</p>

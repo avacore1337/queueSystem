@@ -26,16 +26,18 @@
 		        			<tr>
 		          				<th>Name</th>
 		          				<th>KTH-id</th>
-			        		</tr>
-			      		</thead>
-			      		<tbody>
-			        		<tr id="admin.name" ng-repeat="admin in admins" ng-class="user.gettingHelp ? 'pulse' : ''">
-			          			<td>{{ admin.name }}</td>
-			          			<td>{{ admin.id }}
-									<button class="btn red clickable" ng-click="removeAdmin(user.name)">
-                						<span class="glyphicon glyphicon-trash"></span>
-              						</button>
-			          			</td>
+	          				<th>Remove</th>
+		        		</tr>
+		      		</thead>
+		      		<tbody>
+		        		<tr id="admin.name" ng-repeat="admin in admins" ng-class="user.gettingHelp ? 'pulse' : ''">
+		          			<td>{{ admin.name }}</td>
+		          			<td>{{ admin.id }}</td>
+		          			<td>
+		          				<button class="btn red clickable" ng-click="removeAdmin(user.name)">
+            						<span class="glyphicon glyphicon-trash"></span>
+          						</button>
+          					</td>
 			          		</tr>
 			          	</tbody>
 					</table>
@@ -66,22 +68,74 @@
 		<div class="row col-md-6">
 			<h3>Teachers at UWait&nbsp;<a href="/help">?</a></h3>
 			<h5>New teachers will have to log out and in again in order to get all of their new privileges.</h5>
-			<div class="input-group col-md-6">
+			<div class="input-group col-md-9">
 				<input type="text" class="form-control" ng-model="newTeacher" placeholder="Add teacher" onfocus="this.placeholder = ''" onblur="this.placeholder = 'Add teacher'">
 				<span class="input-group-addon blue clickable text-white" style="border: 0px;" ng-click="addTeacher()"><span class="glyphicon glyphicon-plus"></span>Add</span>
 			</div>
+			<div class="buffer"></div>
 			<!-- TODO : Table of current teachers goes here -->
+			<div class="col-md-10" ng-show="admins.length > 0" style="padding-left: 0px;">
+				<table class="table table-striped">
+	      			<thead class="dark-grey">
+	        			<tr>
+	          				<th>Name</th>
+	          				<th>KTH-id</th>
+	          				<th>Remove</th>
+		        		</tr>
+		      		</thead>
+		      		<tbody>
+		        		<tr id="admin.name" ng-repeat="admin in admins" ng-class="user.gettingHelp ? 'pulse' : ''">
+		          			<td>{{ admin.name }}</td>
+		          			<td>{{ admin.id }}</td>
+		          			<td>
+		          				<button class="btn red clickable" ng-click="removeAdmin(user.name)">
+            						<span class="glyphicon glyphicon-trash"></span>
+          						</button>
+          					</td>
+		          		</tr>
+		          	</tbody>
+				</table>
+			</div>
+			<div ng-show="admins.length == 0">
+				(No admins)
+			</div>
 			<!-- End of TODO (Table of current teachers goes here) -->
 		</div>
 		<!-- Adding teaching assistants -->
 		<div class="row col-md-6 left-divider">
 			<h3>Assistants at UWait&nbsp;<a href="/help">?</a></h3>
 			<h5>New assistants will have to log out and in again in order to get all of their new privileges.</h5>
-			<div class="input-group col-md-6">
+			<div class="input-group col-md-9">
 				<input type="text" class="form-control" ng-model="newAssistant" placeholder="Add assistant" onfocus="this.placeholder = ''" onblur="this.placeholder = 'Add assistant'">
 				<span class="input-group-addon blue clickable text-white" style="border: 0px;" ng-click="addAssistant()"><span class="glyphicon glyphicon-plus"></span>Add</span>
 			</div>
+			<div class="buffer"></div>
 			<!-- TODO : Table of current assistants goes here -->
+			<div class="col-md-10" ng-show="admins.length > 0" style="padding-left: 0px;">
+				<table class="table table-striped">
+	      			<thead class="dark-grey">
+	        			<tr>
+	          				<th>Name</th>
+	          				<th>KTH-id</th>
+	          				<th>Remove</th>
+		        		</tr>
+		      		</thead>
+		      		<tbody>
+		        		<tr id="admin.name" ng-repeat="admin in admins" ng-class="user.gettingHelp ? 'pulse' : ''">
+		          			<td>{{ admin.name }}</td>
+		          			<td>{{ admin.id }}</td>
+		          			<td>
+		          				<button class="btn red clickable" ng-click="removeAdmin(user.name)">
+            						<span class="glyphicon glyphicon-trash"></span>
+          						</button>
+		          			</td>
+		          		</tr>
+		          	</tbody>
+				</table>
+			</div>
+			<div ng-show="admins.length == 0">
+				(No admins)
+			</div>
 			<!-- End of TODO (Table of current assistants goes here) -->
 		</div>
 	</div>
