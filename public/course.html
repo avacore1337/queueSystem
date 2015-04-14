@@ -60,9 +60,21 @@ ska man kunna lämna in kommentarer som asse?
       <span class="glyphicon glyphicon-remove"></span>&nbsp;
       Purge queue
     </div>
-    <div class="red clickable center-content frame" ng-show="admin" ng-click="lock()">
+    <div class="red clickable center-content frame" ng-show="admin && !locked" ng-click="lock()">
       <span class="glyphicon glyphicon-lock"></span>&nbsp;
       Lock queue
+    </div>
+    <div class="green clickable center-content frame" ng-show="admin && locked" ng-click="unlock()">
+      <span class="glyphicon glyphicon-lock"></span>&nbsp;
+      Unlock queue
+    </div>
+    <div class="red clickable center-content frame" ng-show="admin && !hibernate" ng-click="hibernate()">
+      <span class="glyphicon glyphicon-off"></span>&nbsp;
+      Hibernate queue
+    </div>
+    <div class="green clickable center-content frame" ng-show="admin && hibernate" ng-click="wakeup()">
+      <span class="glyphicon glyphicon-off"></span>&nbsp;
+      Wakeup queue
     </div>
     <div class="buffer"></div>
 

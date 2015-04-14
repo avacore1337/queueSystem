@@ -12,6 +12,18 @@ function ($scope, $http, $routeParams, socket, user) {
   $scope.loggedIn = !(user.getName() === "");
   $scope.enqueued = false;
 
+  $scope.locked = true;
+  $scope.hibernate = true;
+  $http.get('/API/courseList').success(function(response){
+    for(index in response){
+      if(response[index].name === $scope.course){
+        $scope.locked = response[index].locked;
+        $scope.hibernate = response[index].locked;
+        break;
+      }
+    }
+  });
+
   $http.get('/API/queue/' + $routeParams.course)
   .success(function(response) {
     $scope.users = response;
@@ -96,6 +108,16 @@ function ($scope, $http, $routeParams, socket, user) {
     }
   })
 
+  // Listen for locking/unlocking the queue
+  socket.on('toggleLock', function(state){
+    $scope.locked = state;
+  })
+
+  // Listen for hibernateing/waking the queue
+  socket.on('toggleHibernate', function(state){
+    $scope.hibernate = state;
+  })
+
   // Listen for a badLocation warning
   socket.on('badLocation', function() {
     alert("You have to enter a more descriptive location.");
@@ -157,6 +179,30 @@ function ($scope, $http, $routeParams, socket, user) {
       queue:$routeParams.course
     });
     console.log("Called lock");
+  }
+
+  // This function should unlock the queue, alowing people to join the queue
+  $scope.unlock = function(){
+    socket.emit('unlock', {
+      queue:$routeParams.course
+    });
+    console.log("Called unlock");
+  }
+
+  // This function should hibernate the queue
+  $scope.hibernate = function(){
+    socket.emit('hibernate', {
+      queue:$routeParams.course
+    });
+    console.log("Called hibernate");
+  }
+
+  // This function should wakeup the queue
+  $scope.wakeup = function(){
+    socket.emit('wakeup', {
+      queue:$routeParams.course
+    });
+    console.log("Called wakeup");
   }
 
   // Mark the user as being helped
