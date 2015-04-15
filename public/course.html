@@ -18,12 +18,15 @@ ska man kunna lämna in kommentarer som asse?
   <div class="col-md-2 pin-center black" ng-show="loggedIn">
     <!-- The input -->
     <form class="form-horizontal text-white">
+      <!-- I need more space for the admins, so I removed the name, I mean, you should know your name anyway. -->
+      <!--
       <div class="form-group">
         <label class="control-label col-md-offset-1">Name:</label>
         <div class="text-black">
           <input class="col-md-10 col-md-offset-1" type="text" ng-model="name" ng-disabled="loggedIn" placeholder="Magnus" onfocus="this.placeholder = ''" onblur="this.placeholder = 'Magnus'">
         </div>
       </div>
+      -->
       <div class="form-group">
         <label class="control-label col-md-offset-1">Place:</label>
         <div class="text-black">
@@ -52,11 +55,15 @@ ska man kunna lämna in kommentarer som asse?
       Update information
     </div>
     <div class="buffer" ng-show="admin"></div>
-    <div class="red clickable center-content frame" ng-show="admin" ng-click="broadcast()">
+    <div class="blue clickable center-content frame" ng-show="admin" ng-click="broadcast()">
       <span class="glyphicon glyphicon-bullhorn"></span>&nbsp;
       Broadcast
     </div>
-    <div class="red clickable center-content frame" ng-show="admin" ng-click="purge()">
+    <div class="blue clickable center-content frame" ng-show="admin" ng-click="broadcastTA()">
+      <span class="glyphicon glyphicon-bullhorn"></span>&nbsp;
+      Broadcast to TAs
+    </div>
+    <div class="red clickable center-content frame text-black" ng-show="admin" ng-click="purge()">
       <span class="glyphicon glyphicon-remove"></span>&nbsp;
       Purge queue
     </div>
@@ -76,15 +83,15 @@ ska man kunna lämna in kommentarer som asse?
       <span class="glyphicon glyphicon-off"></span>&nbsp;
       Wakeup queue
     </div>
+    <div class="red clickable center-content frame" ng-show="admin" ng-click="removeQueue()">
+      <span class="glyphicon glyphicon-trash"></span>&nbsp;
+      Remove queue
+    </div>
     <div class="buffer"></div>
 
   </div>
   <div class="col-md-2 pin-center" ng-show="!loggedIn">
     <h3>You are currently<br> not logged in</h3>
-    <div class="green clickable center-content frame" ng-show="admin" ng-click="purge()">
-      <span class="glyphicon glyphicon-remove"></span>&nbsp;
-      Purge queue
-    </div>
   </div>
 
   <div class="col-md-9 pull-right">

@@ -38,7 +38,6 @@
 }
 .blue
 {
-  color: #387EFF;
   background-color: #387EFF;
 }
 .blue.clickable:hover
@@ -90,7 +89,7 @@
 .pin-center
 {
   position: fixed;
-  top: 33%;
+  top: 21%;
 }
 .center-content
 {

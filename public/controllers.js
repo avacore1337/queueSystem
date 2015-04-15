@@ -14,11 +14,13 @@ function ($scope, $http, $routeParams, socket, user) {
 
   $scope.locked = true;
   $scope.hibernate = true;
+  $scope.motd = "";
   $http.get('/API/courseList').success(function(response){
     for(index in response){
       if(response[index].name === $scope.course){
         $scope.locked = response[index].locked;
-        $scope.hibernate = response[index].locked;
+        $scope.hibernate = response[index].hibernate;
+        //$scope.motd = response[index].motd;
         break;
       }
     }
@@ -46,6 +48,10 @@ function ($scope, $http, $routeParams, socket, user) {
   socket.emit('listen', $routeParams.course)
 
   console.log('testing');
+
+  if($scope.motd != ""){
+    alert($scope.motd);
+  }
 
   // Listen for the person joining a queue event.
   socket.on('join', function(data) {
@@ -272,6 +278,20 @@ function ($scope, $http, $routeParams, socket, user) {
     console.log("Called broadcast");
   }
 
+  // Function to send a message to every TA handeling the queue
+  $scope.broadcastTA = function(){
+    var message = prompt("Enter a message to broadcast.","");
+    if(message != null){
+      socket.emit('broadcastTA', {
+        queue:$routeParams.course,
+        message:message,
+        sender: $scope.name
+      });
+      console.log("Sent message : " + message);
+    }
+    console.log("Called broadcast");
+  }
+
   // Function to send a message to a user
   $scope.badLocation = function(name){
     socket.emit('badLocation', {
@@ -291,6 +311,14 @@ function ($scope, $http, $routeParams, socket, user) {
     }
   }
 
+  // When aa teacher wants to remove the queue completely
+   $scope.removeQueue = function(){
+    if (confirm('Are you sure you want to remove this queue permanently?')) {
+      socket.emit('removeQueue', {
+        queue:$routeParams.course,
+      });
+    }
+  }
   // Returns the time it has been since the user entered the queue
   //$scope.timeDiff = function (time) {
   //  return moment(time).from(Date.now(), true);
