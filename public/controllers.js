@@ -4,7 +4,7 @@ queueControllers.controller('courseController', ['$scope', '$http', '$routeParam
 function ($scope, $http, $routeParams, socket, user) {
   $scope.course = $routeParams.course;
   $scope.name = user.getName();
-  $scope.place = '';
+  $scope.location = '';
   $scope.comment = '';
   $scope.users = [];
   $scope.bookedUsers = [];
@@ -130,7 +130,7 @@ function ($scope, $http, $routeParams, socket, user) {
   })
 
   $scope.addUser = function(){
-    if($scope.place === ""){
+    if($scope.location === ""){
       alert("You must enter a place.");
     }else{
       $scope.enqueued = true;
@@ -138,18 +138,22 @@ function ($scope, $http, $routeParams, socket, user) {
       socket.emit('join', 
         {
           queue:$routeParams.course,
-          user:{name:$scope.name, place:$scope.place, comment:$scope.comment, startTime:Math.round(Date.now()/1000)}
+          user:{name:$scope.name, place:$scope.location, comment:$scope.comment, startTime:Math.round(Date.now()/1000)}
         })
       console.log("Called addUser");
     }
   }
 
   $scope.updateUser = function(){
-    socket.emit('update', {
-      queue:$routeParams.course,
-      user:{name:$scope.name, place:$scope.place, comment:$scope.comment}
-    })
-    console.log("Called updateUser");
+    if($scope.location === ""){
+      alert("You must enter a place.");
+    }else{
+      socket.emit('update', {
+        queue:$routeParams.course,
+        user:{name:$scope.name, place:$scope.location, comment:$scope.comment}
+      })
+      console.log("Called updateUser");
+    }
   }
 
   $scope.removeUser = function(name){
@@ -496,11 +500,11 @@ function ($scope, $location, $http, user) {
   $scope.bottomUser = function(){
     socket.emit('bottom', {
       queue:$routeParams.course,
-      user:{name:$scope.name, place:$scope.place, comment:$scope.comment}
+      user:{name:$scope.name, place:$scope.location, comment:$scope.comment}
     });
     $scope.name = '';
     $scope.comment = '';
-    $scope.place = '';
+    $scope.location = '';
   }
 
 
@@ -545,7 +549,7 @@ function ($scope, $location, $http, user) {
     };
     $scope.newUser = false;
     $scope.name = user.name;
-    $scope.place = user.place;
+    $scope.location = user.place;
     $scope.comment = user.comment;
     console.log("Called editUser");
   }
