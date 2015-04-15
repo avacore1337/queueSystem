@@ -380,9 +380,15 @@ function ($scope, $location, $http) {
 
 }])
 
-queueControllers.controller('navigationController', ['$scope', '$location',
-function ($scope, $location) {
+queueControllers.controller('navigationController', ['$scope', '$location', 'UserService',
+function ($scope, $location, user) {
   $scope.location = $location.path();
+  
+  // Robert look from here
+  $scope.loggedIn = !(user.getName() === "");
+  $scope.name = user.getName();
+  console.log("user = " + $scope.name);
+  // Robert look to here
 
   // This function should direct the user to the wanted page
   $scope.redirect = function(address){
