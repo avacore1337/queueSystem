@@ -30,7 +30,7 @@
     $scope.motd = "";
     $http.get('/API/queue/' + $routeParams.course)
     .success(function(response) {
-      $scope.users = response;
+      $scope.users = response.queue;
       $scope.locked = response.locked;
       $scope.hibernating = response.hibernating;
       $scope.motd = response.motd;
