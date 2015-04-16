@@ -43,6 +43,66 @@ function ($scope, $http, $location, socket, user) {
     }
   });
 
+  console.log("purge");
+  // Listen for queue geting purged.
+  socket.on('purge', function(queue) {
+    console.log(queue + " was purged");
+    for(var index in $scope.courses){
+      if($scope.courses[index].name === queue){
+        $scope.$apply($scope.courses[index].length = 0);
+        break;
+      }
+    }
+  });
+
+  console.log("lock");
+  // Listen for a queue being locked.
+  socket.on('lock', function(queue) {
+    console.log(queue + " was locked");
+    for(var index in $scope.courses){
+      if($scope.courses[index].name === queue){
+        $scope.$apply($scope.courses[index].locked = true);
+        break;
+      }
+    }
+  });
+
+  console.log("unlock");
+  // Listen for a queue being unlocked.
+  socket.on('unlock', function(queue) {
+    console.log(queue + " was unlocked");
+    for(var index in $scope.courses){
+      if($scope.courses[index].name === queue){
+        $scope.$apply($scope.courses[index].locked = false);
+        break;
+      }
+    }
+  });
+
+  console.log("hibernate");
+  // Listen for a queue going to sleep.
+  socket.on('hibernate', function(queue) {
+    console.log(queue + " was sent to sleep");
+    for(var index in $scope.courses){
+      if($scope.courses[index].name === queue){
+        $scope.$apply($scope.courses[index].hibernating = true);
+        break;
+      }
+    }
+  });
+
+  console.log("unhibernate");
+  // Listen for a queue waking up.
+  socket.on('unhibernate', function(queue) {
+    console.log(queue + " was awoken");
+    for(var index in $scope.courses){
+      if($scope.courses[index].name === queue){
+        $scope.$apply($scope.courses[index].hibernating = false);
+        break;
+      }
+    }
+  });
+
   console.log('listing');
 
   // This function should direct the user to the wanted page
