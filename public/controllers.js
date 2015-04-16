@@ -4,7 +4,7 @@ queueControllers.controller('listController', ['$scope', '$http', '$location', '
 function ($scope, $http, $location, user) {
   $scope.courses = [];
   $http.get('/API/courseList').success(function(response){
-    $scope.courses = response;
+    $scope.courses = response.sort(function(a, b) {return a.name.localeCompare(b.name)});
   });
 
   $http.get('/API/userData').success(function(response){
@@ -18,7 +18,15 @@ function ($scope, $http, $location, user) {
 
   // This function should direct the user to the wanted page
   $scope.redirect = function(course){
-    $location.path('/course/' + course);
+    for(var index in $scope.courses){
+      console.log(course);
+      if($scope.courses[index].name === course){
+        if(!$scope.courses[index].locked){
+          $location.path('/course/' + course);
+        }
+        break;
+      }
+    }
     //console.log("User wants to enter " + course);
   };
 
