@@ -233,8 +233,14 @@ function setup(){
 
   var testAdmin = new Admin2({name: 'pernyb'});
   testAdmin.save();
+  adminList.push(testAdmin);
   testAdmin = new Admin2({name: 'antbac'});
   testAdmin.save();
+  adminList.push(testAdmin);
+
+  var testTeacher = new Teacher2({name : 'pernyb', course : 'dbas'});
+  testTeacher.save();
+  teacherList.push(testTeacher);
 }
 
 // Read in courses and admins from the database
@@ -252,6 +258,22 @@ function readIn(){
     admins.forEach(function (admin) {
        adminList.push(admin);
        console.log('Admin: ' + admin.name + ' loaded');
+    });
+  });
+
+  // All the admins
+  Teacher2.find(function (err, teachers) {
+    teachers.forEach(function (teacher) {
+       teacherList.push(teacher);
+       console.log('Teacher: ' + teacher.name + ' loaded');
+    });
+  });
+
+  // All the admins
+  Assistant2.find(function (err, assistants) {
+    assistants.forEach(function (assistant) {
+       assistantList.push(assistant);
+       console.log('Assistant: ' + assistant.name + ' loaded');
     });
   });
 }
@@ -275,6 +297,33 @@ function validate(name, type, course) {
 
   console.log(name + ' is not a valid admin');
   return false;
+}
+
+// list of courses that a user is admin, teacher or TA for
+function privilegeList(name) {
+  list = [];
+  for (var i = 0; i < adminList.length; i++) {
+    if (adminList[i].name === name) {
+      var obj = { "name" : adminList[i].name, "course" : "", "type" : "admin" };
+      list.push(obj);
+    }
+  }
+  
+  for (var i = 0; i < teacherList.length; i++) {
+    if (teacherList[i].name === name) {
+      var obj = { "name" : teacherList[i].name, "course" : teacherList[i].course, "type" : "teacher" };
+      list.push(obj);
+    }
+  }
+
+  for (var i = 0; i < assistantList.length; i++) {
+    if (assistantList[i].name === name) {
+      var obj = { "name" : assistantList[i].name, "course" : assistantList[i].course, "type" : "assistant" };
+      list.push(obj);
+    }
+  }
+  
+  return list;
 }
 
 //===============================================================
@@ -396,6 +445,10 @@ app.io.route('purge', function(req) {
   app.io.room(queue).broadcast('purge');
   console.log(req.data.queue + ' -list purged');
 
+  // ====== PrivList - testoutput =======
+  var usr = "pernyb";
+  var list = privilegeList(usr);
+  console.log("PrivList for " + usr + ": " + JSON.stringify(list));
 });
 
 //===============================================================
