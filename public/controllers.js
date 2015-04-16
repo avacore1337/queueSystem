@@ -16,6 +16,28 @@ function ($scope, $http, $location, user) {
     $scope.admin = user.isAdmin();
   });
 
+  // Listen for a person joining a queue.
+  socket.on('join', function(queue) {
+    console.log("A user joined " + queue);
+    for(var index in $scope.courses){
+      if($scope.courses[index].name === queue){
+        $scope.$apply($scope.courses[index].length++);
+        break;
+      }
+    }
+  });
+
+  // Listen for a person leaving a queue.
+  socket.on('leave', function(queue) {
+    console.log("A user left " + queue);
+    for(var index in $scope.courses){
+      if($scope.courses[index].name === queue){
+        $scope.$apply($scope.courses[index].length--);
+        break;
+      }
+    }
+  });
+
   console.log('listing');
 
   // This function should direct the user to the wanted page

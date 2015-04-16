@@ -28,9 +28,6 @@
     $scope.locked = true;
     $scope.hibernating = true;
     $scope.motd = "";
-    if($scope.motd !== ""){
-      alert($scope.motd);
-    }
     $http.get('/API/queue/' + $routeParams.course)
     .success(function(response) {
       $scope.users = response.queue;
@@ -42,6 +39,9 @@
         if($scope.users[i].name === $scope.name){
           $scope.enqueued = true;
         }
+      }
+      if($scope.motd !== ""){
+        alert($scope.motd);
       }
     });
 
@@ -197,10 +197,11 @@
 
     // This function should lock the queue, preventing anyone from queueing
     $scope.lock = function(){
+      console.log("Called lock");
       socket.emit('lock', {
         queue:$routeParams.course
       });
-      console.log("Called lock");
+      console.log("Leaving lock");
     };
 
     // This function should unlock the queue, alowing people to join the queue
