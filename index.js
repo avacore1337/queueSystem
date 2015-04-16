@@ -132,6 +132,18 @@ courseSchema.methods.updateUser = function (name, user) {
   this.save();
 };
 
+
+courseSchema.methods.addAssistantComment = function (name, sender, queue, message) {
+  this.queue.forEach(function (usr, i, queue) {
+    if (usr.name === name) {
+      var user = usr;
+      user.messages.push(message);
+      _.extend(queue[i], user);
+    }
+  });
+  this.save();
+};
+
 /* => Is this code necessary?
 
 courseSchema.methods.helpUser = function (name, user) {
@@ -297,17 +309,25 @@ function setup(){
 
   var testAdmin = new Admin2({name: 'pernyb'});
   testAdmin.save();
+  testAdmin = new Admin2({name: 'antbac'});
+  testAdmin.save();
 }
 
 // => fungerar inte korrekt? <===
 function readIn(){
   Course2.find(function (err, courses) {
     courses.forEach(function (course) {
-      //cList[course.name] = course;
        courseList.push(course);
-      // console.log(courseList);
 
       console.log(course.name + ' loaded: ' + course);
+    });
+  });
+
+  Admin2.find(function (err, admins) {
+    admins.forEach(function (admin) {
+       adminList.push(admin);
+
+      console.log(admin.name + ' loaded');
     });
   });
 }
@@ -322,25 +342,22 @@ function findCourse(name) {
 
 // name in Admins
 function validate(name, type, course) {
-  Admin2.find(function (err, admins) {
-    admins.forEach(function (admin) {
-      if (admin.name === name) {
-        console.log(name + ' is a valid admin');
+  for (var i = 0; i < adminList.length; i++) {
+    if (adminList[i].name === name) {
+      console.log(name + ' is a valid admin');
+      return true;
+    }
+  };
 
-        return true;
-      }
-    });    
-  });
   console.log(name + ' is not a valid admin');
-
   return false;
 }
 
 /**
  THIS IS IMPORTANT STUFF!!!
 */
-setup();
-//readIn();
+//setup();
+readIn();
 
 app.io.on('connection', function(socket){
   console.log('a user connected');
@@ -582,6 +599,20 @@ app.io.route('addAssistant', function(req) {
 
 //  app.io.room(queue).broadcast('addTeacher');
   console.log(assistantName + ' is a new assistant!');
+})
+
+//
+app.io.route('flag', function(req) {
+  var queue = req.data.queue;
+  var sender = req.data.sender;
+  var name = req.data.name;
+  var message = req.data.message;
+ 
+  var course = findCourse(queue);
+  course.addAssistantComment(name, sender, queue, message);
+
+  console.log('flagged');
+  app.io.room(queue).broadcast('flag', name, message);
 })
 
 // /API/list
