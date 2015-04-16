@@ -361,7 +361,7 @@ app.io.route('join', function(req) {
 app.io.route('badLocation', function(req) {
   // assistant-validation
   if (!validate("pernyb", "type", "course")) {
-    console.log("validation for purge failed");
+    console.log("validation for badLocation failed");
     res.end();
     return;
   }
@@ -461,14 +461,14 @@ function doOnCourse(courseName, action){
   course[action]();
   console.log('trying to ' + action + ' ' + courseName);
   app.io.room(courseName).broadcast(action);
-  app.io.room("list").broadcast(action);
+  app.io.room("list").broadcast(action, courseName);
 }
 
 // admin locks a queue
 app.io.route('lock', function(req) {
  // teacher-validation
   if (!validate("pernyb", "type", "course")) {
-    console.log("validation for purge failed");
+    console.log("validation for lock failed");
     res.end();
     return;
   }
@@ -479,7 +479,7 @@ app.io.route('lock', function(req) {
 app.io.route('unlock', function(req) {
  // teacher-validation
   if (!validate("pernyb", "type", "course")) {
-    console.log("validation for purge failed");
+    console.log("validation for unlock failed");
     res.end();
     return;
   }
@@ -489,7 +489,7 @@ app.io.route('unlock', function(req) {
 app.io.route('hibernate', function(req) {
  // teacher-validation
   if (!validate("pernyb", "type", "course")) {
-    console.log("validation for purge failed");
+    console.log("validation for hibernate failed");
     res.end();
     return;
   }
@@ -499,7 +499,7 @@ app.io.route('hibernate', function(req) {
 app.io.route('unhibernate', function(req) {
  // teacher-validation
   if (!validate("pernyb", "type", "course")) {
-    console.log("validation for purge failed");
+    console.log("validation for unhibernate failed");
     res.end();
     return;
   }
@@ -539,7 +539,7 @@ app.io.route('queueing users', function(req) {
 app.io.route('createQueue', function(req) {
  // admin-validation
   if (!validate("pernyb", "type", "course")) {
-    console.log("validation for purge failed");
+    console.log("validation for createQueue failed");
     res.end();
     return;
   }
@@ -557,7 +557,7 @@ app.io.route('createQueue', function(req) {
 app.io.route('addAdmin', function(req) {
  // admin-validation
   if (!validate("pernyb", "type", "course")) {
-    console.log("validation for purge failed");
+    console.log("validation for addAdmin failed");
     res.end();
     return;
   }
@@ -575,7 +575,7 @@ app.io.route('addAdmin', function(req) {
 app.io.route('addTeacher', function(req) {
  // admin-validation
   if (!validate("pernyb", "type", "course")) {
-    console.log("validation for purge failed");
+    console.log("validation for addTeacher failed");
     res.end();
     return;
   }
@@ -594,7 +594,7 @@ app.io.route('addTeacher', function(req) {
 app.io.route('addAssistant', function(req) {
  // teacher-validation
   if (!validate("pernyb", "type", "course")) {
-    console.log("validation for purge failed");
+    console.log("validation for addAssistant failed");
     res.end();
     return;
   }
@@ -613,7 +613,7 @@ app.io.route('addAssistant', function(req) {
 app.io.route('flag', function(req) {
  // assistant-validation
   if (!validate("pernyb", "type", "course")) {
-    console.log("validation for purge failed");
+    console.log("validation for flag failed");
     res.end();
     return;
   }
