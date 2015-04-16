@@ -7,7 +7,7 @@
     "async": "^0.9.0",
     "express.io": "^1.1.13",
     "lodash": "^3.5.0",
-    "mongoose": "^3.8.25",
+    "mongoose": "^4.0.1",
     "util": "^0.10.3"
   },
   "devDependencies": {},
