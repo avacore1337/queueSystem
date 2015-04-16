@@ -30,23 +30,21 @@ var adminSchema = new Schema({
   name: String,
 });
 
+//-----
+
 var teacherSchema = new Schema({
   name: String,
   course: String,
 });
+
+//-----
 
 var assistantSchema = new Schema({
   name: String,
   course: String,
 });
 
-var Admin2 = mongoose.model("Admin", adminSchema);
-
-var Teacher2 = mongoose.model("Teacher", teacherSchema);
-
-var Assistant2 = mongoose.model("Assistant", assistantSchema);
-
-//===============================================================
+//-----
 
 var userSchema = new Schema({
   name: String,
@@ -66,6 +64,8 @@ userSchema.methods.toJSON = function () {
     comment: this.comment
   };
 };
+
+//-----
 
 var courseSchema = new Schema({
   name: String,
@@ -132,7 +132,6 @@ courseSchema.methods.updateUser = function (name, user) {
   this.save();
 };
 
-
 courseSchema.methods.addAssistantComment = function (name, sender, queue, message) {
   this.queue.forEach(function (usr, i, queue) {
     if (usr.name === name) {
@@ -144,23 +143,7 @@ courseSchema.methods.addAssistantComment = function (name, sender, queue, messag
   this.save();
 };
 
-/* => Is this code necessary?
-
-courseSchema.methods.helpUser = function (name, user) {
-  this.queue.forEach(function (usr, i, queue) {
-    if (usr.name === name) {
-      _.extend(queue[i], user);
-    }
-  });
-  this.save();
-};
-  for(var i = list[queue].length - 1; i >= 0; i--) {
-      if(list[queue][i].name === name) {
-        list[queue][i].gettingHelp = true;
-        console.log("helptrue!!");
-      }
-  }
-*/
+//-----
 
 var messageSchema = new Schema({
   course: String,
@@ -171,6 +154,8 @@ var messageSchema = new Schema({
   comment: { type: String, default: '' }
 });
 
+//-----
+
 var broadcastSchema = new Schema({
   course: String,
   from: String,
@@ -178,6 +163,8 @@ var broadcastSchema = new Schema({
   time: { type: Number, default: Date.now },
   comment: { type: String, default: '' }
 });
+
+//-----
 
 var helpSchema = new Schema({
   course: String,
@@ -187,6 +174,8 @@ var helpSchema = new Schema({
   comment: { type: String, default: '' }
 });
 
+//-----
+
 var badLocationSchema = new Schema({
   course: String,
   student: String,
@@ -194,6 +183,8 @@ var badLocationSchema = new Schema({
   time: { type: Number, default: Date.now },
   comment: { type: String, default: '' }
 });
+
+//-----
 
 var courseActionSchema = new Schema({
   course: String,
@@ -203,21 +194,7 @@ var courseActionSchema = new Schema({
   comment: { type: String, default: '' }
 });
 
-var User2 = mongoose.model("User", userSchema);
-
-var Course2 = mongoose.model("Course", courseSchema);
-
-var Msg2 = mongoose.model("Message", messageSchema);
-
-var Broadcast2 = mongoose.model("Broadcast", messageSchema);
-
-var Help2 = mongoose.model("Help", helpSchema);
-
-var BadLocation2 = mongoose.model("BadLocation", badLocationSchema);
-
-var CourseAction2 = mongoose.model("CourseAction", courseActionSchema);
-
-/* STATISTICS */
+//-----
 
 var userStatisticSchema = new Schema({
   student: String,
@@ -232,9 +209,53 @@ var userStatisticSchema = new Schema({
 
 userStatisticSchema.index({time: 1});
 
+//===============================================================
+
+var User2 = mongoose.model("User", userSchema);
+
+var Admin2 = mongoose.model("Admin", adminSchema);
+
+var Teacher2 = mongoose.model("Teacher", teacherSchema);
+
+var Assistant2 = mongoose.model("Assistant", assistantSchema);
+
+var Course2 = mongoose.model("Course", courseSchema);
+
+var Msg2 = mongoose.model("Message", messageSchema);
+
+var Broadcast2 = mongoose.model("Broadcast", messageSchema);
+
+var Help2 = mongoose.model("Help", helpSchema);
+
+var BadLocation2 = mongoose.model("BadLocation", badLocationSchema);
+
+var CourseAction2 = mongoose.model("CourseAction", courseActionSchema);
+
 var UserStatistic2 = mongoose.model("UserStatistic", userStatisticSchema);
 
+//===============================================================
 
+// HÅRDKODAD! => ska läsas ifrån databasen vid ett senare skede
+var tmpList = [
+  "dbas",
+  "inda",
+  "logik",
+  "numme",
+  "mvk",
+  "progp",
+  "mdi"
+];
+
+courseList = [];
+adminList = [];
+teacherList = [];
+assistantList = [];
+messageList = [];
+broadcastList = [];
+helpList = [];
+badLocationList = [];
+
+//===============================================================
 
 function User(name,place,comment){
   this.name = name;
@@ -251,29 +272,6 @@ function Course(name){
   this.length = 0;
 }
 
-// HÅRDKODAD! => ska läsas ifrån databasen vid ett senare skede
-var tmpList = [
-  "dbas",
-  "inda",
-  "logik",
-  "numme",
-  "mvk",
-  "progp",
-  "mdi"
-];
- courseList = []
- adminList = []
- teacherList = []
- assistantList = []
- messageList = []
- broadcastList = []
- helpList = []
- badLocationList = []
-
-// var cList = new Map();
-
-// Map för varje rum
-// innehåller alla users som står i resp kö
 // REFACTOR!
 function setup(){
   for (var i = 0 ; i < tmpList.length ; i++) {
@@ -313,7 +311,6 @@ function setup(){
   testAdmin.save();
 }
 
-// => fungerar inte korrekt? <===
 function readIn(){
   Course2.find(function (err, courses) {
     courses.forEach(function (course) {
@@ -353,11 +350,15 @@ function validate(name, type, course) {
   return false;
 }
 
+//===============================================================
+
 /**
  THIS IS IMPORTANT STUFF!!!
 */
 //setup();
 readIn();
+
+//===============================================================
 
 app.io.on('connection', function(socket){
   console.log('a user connected');
@@ -495,6 +496,8 @@ app.io.route('purge', function(req) {
   console.log(x + ' ' + req);
 });
 
+//===============================================================
+
 function doOnCourse(courseName, action){
   // console.log("doing " + action + " on course");
   var course = findCourse(courseName);
@@ -521,8 +524,9 @@ app.io.route('unhibernate', function(req) {
   doOnCourse(req.data.queue, 'unhibernate');
 });
 
-/* STATISTICS */
+//===============================================================
 
+// not done yet -> should be implemented in a different way
 app.io.route('numbers helped', function(req) {
   var queue = req.data.queue;
   var starttime = req.data.starttime;
@@ -545,8 +549,6 @@ app.io.route('queueing users', function(req) {
   app.io.room(queue).broadcast('queueing users', length);
 })
 
-// =================================================================================
-
 //
 app.io.route('createQueue', function(req) {
   var queueName = req.data.name;
@@ -556,7 +558,6 @@ app.io.route('createQueue', function(req) {
   courseList.push(newCourse);
   newCourse.save();
 
-//  app.io.room(queue).broadcast('createQueue');
   console.log(queueName + ' is getting created');
 })
 
@@ -569,7 +570,6 @@ app.io.route('addAdmin', function(req) {
   adminList.push(newAdmin);
   newAdmin.save();
 
-//  app.io.room(queue).broadcast('addAdmin');
   console.log(adminName + ' is a new admin!');
 })
 
@@ -583,7 +583,6 @@ app.io.route('addTeacher', function(req) {
   teacherList.push(newTeacher);
   newTeacher.save();
 
-//  app.io.room(queue).broadcast('addTeacher');
   console.log(teacherName + ' is a new teacher!');
 })
 
@@ -597,7 +596,6 @@ app.io.route('addAssistant', function(req) {
   assistantList.push(newAssistant);
   newAssistant.save();
 
-//  app.io.room(queue).broadcast('addTeacher');
   console.log(assistantName + ' is a new assistant!');
 })
 
@@ -615,8 +613,9 @@ app.io.route('flag', function(req) {
   app.io.room(queue).broadcast('flag', name, message);
 })
 
-// /API/list
-// => returnerar alla kurser som finns (lista av strängar)
+// =================================================================================
+
+// returnerar alla kurser som finns (lista av strängar)
 app.get('/API/courseList', function(req, res) {
   var retList = [];
 
@@ -630,10 +629,7 @@ app.get('/API/courseList', function(req, res) {
   console.log('list of courses requested');
 })
 
-// =================================================================================
-
 // returns the queue-list
-// => returnera rätt kö (inte samma kö)
 app.get('/API/queue/:queue', function(req, res) {
     res.setHeader('Content-Type', 'application/json');
     var course = findCourse(req.params.queue);
@@ -642,6 +638,7 @@ app.get('/API/queue/:queue', function(req, res) {
     res.end(JSON.stringify(course));
 })
 
+// TODO: add a list of admin
 app.get('/API/userData', function(req, res) {
     console.log("user data: ");
     console.log(req.session.user);
@@ -650,7 +647,6 @@ app.get('/API/userData', function(req, res) {
 })
 
 app.post('/API/setUser', function(req,res) {
-  // console.log(req.body);
   req.session.user = req.body;
   console.log("User settings set");
   res.writeHead(200);
