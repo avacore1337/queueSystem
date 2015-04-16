@@ -22,32 +22,24 @@
     $scope.users = [];
     $scope.bookedUsers = [];
     $scope.admin = user.isAdmin();
-    $scope.loggedIn = !(user.getName() === "");
+    $scope.loggedIn = user.getName() !== "";
     $scope.enqueued = false;
 
     $scope.locked = true;
     $scope.hibernate = true;
     $scope.motd = "";
-    $http.get('/API/courseList').success(function(response){
-      for(index in response){
-        if(response[index].name === $scope.course){
-          $scope.locked = response[index].locked;
-          $scope.hibernate = response[index].hibernate;
-          //$scope.motd = response[index].motd;
-          break;
-        }
-      }
-    });
-
     $http.get('/API/queue/' + $routeParams.course)
     .success(function(response) {
       $scope.users = response;
+      $scope.locked = response.locked;
+      $scope.hibernate = response.hibernate;
+      $scope.motd = response.motd;
       for (var i = 0; i < $scope.users.length; i++) {
         $scope.users[i].optionsActivated = false;
         if($scope.users[i].name === $scope.name){
           $scope.enqueued = true;
         }
-      };
+      }
     });
 
     $scope.bookedUsers = [
@@ -58,11 +50,11 @@
 
     $scope.newUser = true;
 
-    socket.emit('listen', $routeParams.course)
+    socket.emit('listen', $routeParams.course);
 
     console.log('testing');
 
-    if($scope.motd != ""){
+    if($scope.motd !== ""){
       alert($scope.motd);
     }
 
@@ -71,7 +63,7 @@
       console.log(data);
       $scope.$apply($scope.users.push({name:data.name, place:data.place, comment:data.comment, startTime:data.startTime}));
       console.log($scope.users);
-    })
+    });
 
     // Listen for the person leaving a queue event.
     socket.on('leave', function(data) {
@@ -81,7 +73,7 @@
           $scope.$apply($scope.users.splice(i, 1));
         }
       }
-    })
+    });
 
     // Listen for the person updateing a queue event.
     socket.on('update', function(data) {
@@ -94,18 +86,18 @@
         }
       }
       console.log($scope.users);
-    })
+    });
 
     // Listen for an admin purging the queue.
     socket.on('purge', function() {
       $scope.$apply($scope.users = []);
       $scope.$apply($scope.enqueued = false);
-    })
+    });
 
     // Listen for a message.
     socket.on('msg', function(data) {
       alert(data);
-    })
+    });
 
     // Listen for a user getting flagged
     socket.on('flag', function(data) {
@@ -115,7 +107,7 @@
           break;
         }
       }
-    })
+    });
 
     // Listen for a person getting help.
     socket.on('help', function(data) {
@@ -126,22 +118,22 @@
           break;
         }
       }
-    })
+    });
 
     // Listen for locking/unlocking the queue
     socket.on('toggleLock', function(state){
       $scope.locked = state;
-    })
+    });
 
     // Listen for hibernateing/waking the queue
     socket.on('toggleHibernate', function(state){
       $scope.hibernate = state;
-    })
+    });
 
     // Listen for a badLocation warning
     socket.on('badLocation', function() {
       alert("You have to enter a more descriptive location.");
-    })
+    });
 
     $scope.addUser = function(){
       if($scope.location === ""){
@@ -149,14 +141,14 @@
       }else{
         $scope.enqueued = true;
         console.log("Current time = " + Date.now());
-        socket.emit('join', 
+        socket.emit('join',
           {
             queue:$routeParams.course,
             user:{name:$scope.name, place:$scope.location, comment:$scope.comment, startTime:Math.round(Date.now()/1000)}
-          })
+          });
         console.log("Called addUser");
       }
-    }
+    };
 
     $scope.updateUser = function(){
       if($scope.location === ""){
@@ -165,15 +157,15 @@
         socket.emit('update', {
           queue:$routeParams.course,
           user:{name:$scope.name, place:$scope.location, comment:$scope.comment}
-        })
+        });
         console.log("Called updateUser");
       }
-    }
+    };
 
     $scope.removeUser = function(name){
       var tempPlace = '';
       var tempComment = '';
-      for(user in $scope.users){
+      for(var user in $scope.users){
         if(name == user.name){
           tempPlace = user.place;
           tempComment = user.comment;
@@ -187,7 +179,7 @@
       });
       $scope.comment = '';
       console.log("Called removeUser");
-    }
+    };
 
     // This function should remove every person in the queue
     $scope.purge = function(){
@@ -195,7 +187,7 @@
         queue:$routeParams.course
       });
       console.log("Called purge");
-    }
+    };
 
     // This function should lock the queue, preventing anyone from queueing
     $scope.lock = function(){
@@ -203,7 +195,7 @@
         queue:$routeParams.course
       });
       console.log("Called lock");
-    }
+    };
 
     // This function should unlock the queue, alowing people to join the queue
     $scope.unlock = function(){
@@ -211,7 +203,7 @@
         queue:$routeParams.course
       });
       console.log("Called unlock");
-    }
+    };
 
     // This function should hibernate the queue
     $scope.hibernate = function(){
@@ -219,15 +211,15 @@
         queue:$routeParams.course
       });
       console.log("Called hibernate");
-    }
+    };
 
     // This function should wakeup the queue
     $scope.wakeup = function(){
-      socket.emit('wakeup', {
+      socket.emit('unhibernate', {
         queue:$routeParams.course
       });
       console.log("Called wakeup");
-    }
+    };
 
     // Mark the user as being helped
     $scope.helpUser = function(name){
@@ -237,12 +229,12 @@
         helper:$scope.name
       });
       console.log("Called helpUser");
-    }
+    };
 
     // Function to send a message to a user
     $scope.messageUser = function(name){
       var message = prompt("Enter a message for the user.","");
-      if(message != null){
+      if(message !== null){
         socket.emit('messageUser', {
           queue:$routeParams.course,
           sender:$scope.name,
@@ -251,12 +243,12 @@
         });
       }
       console.log("Called messageUser");
-    }
+    };
 
     // Function to add a message about that user
     $scope.flag = function(name){
       var message = prompt("Enter a comment.","");
-      if(message != null){
+      if(message !== null){
         socket.emit('flag', {
           queue:$routeParams.course,
           sender:$scope.name,
@@ -265,14 +257,14 @@
         });
       }
       console.log("Called flag user");
-    }
+    };
 
     // Function to read comments about a user
     $scope.readMessages = function(name){
       var string = "";
-      for(user in $scope.users){
+      for(var user in $scope.users){
         if(user.name == name){
-          for(s in user.comments){
+          for(var s in user.comments){
             string = string + s + "\n";
           }
           break;
@@ -280,12 +272,12 @@
       }
       alert(string);
       console.log("Called readMessages");
-    }
+    };
 
     // Function to send a message to every user in the queue
     $scope.broadcast = function(){
       var message = prompt("Enter a message to broadcast.","");
-      if(message != null){
+      if(message !== null){
         socket.emit('broadcast', {
           queue:$routeParams.course,
           message:message,
@@ -294,12 +286,12 @@
         console.log("Sent message : " + message);
       }
       console.log("Called broadcast");
-    }
+    };
 
     // Function to send a message to every TA handeling the queue
     $scope.broadcastTA = function(){
       var message = prompt("Enter a message to broadcast.","");
-      if(message != null){
+      if(message !== null){
         socket.emit('broadcastTA', {
           queue:$routeParams.course,
           message:message,
@@ -308,7 +300,7 @@
         console.log("Sent message : " + message);
       }
       console.log("Called broadcast");
-    }
+    };
 
     // Function to send a message to a user
     $scope.badLocation = function(name){
@@ -317,7 +309,7 @@
         name:name
       });
       console.log("Called badLocation");
-    }
+    };
 
     // When an admin wants to see the admin options
      $scope.changeVisibility = function(name){
@@ -327,7 +319,7 @@
           break;
         }
       }
-    }
+    };
 
     // When aa teacher wants to remove the queue completely
      $scope.removeQueue = function(){
@@ -336,7 +328,7 @@
           queue:$routeParams.course,
         });
       }
-    }
+    };
 
   }]);
 })();
