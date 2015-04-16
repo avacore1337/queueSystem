@@ -104,7 +104,16 @@ it('TA is able to use the interaction ‘Lock’ or ‘Unlock’ with a queue', 
  browser.waitForAngular();
  userLogIn('TA', ta);
  $('body > div > div.ng-scope > div > div.row.col-md-12 > div.col-md-2.pin-center.black > div:nth-child(9)').click();
- expect($('body > div > div.ng-scope > div > div > section > div:nth-child(8)').not.isEnabled());
+ browser.get('http://localhost:8080/#/list');
+ browser.manage().window().maximize();
+ browser.waitForAngular();
+ userLogIn(name, student);
+ expect($('body > div > div.ng-scope > div > div > section > div:nth-child(8)').not.isEnabled()); // 8 = amount of queues+1 currently in the system if this fails due to this change 8 to amount of queues + 1
+ browser.get('http://localhost:8080/#/list');
+ browser.manage().window().maximize();
+ browser.waitForAngular();
+ userLogIn('TA', ta);
+ $('body > div > div.ng-scope > div > div.row.col-md-12 > div.col-md-2.pin-center.black > div:nth-child(9)').click();
 });
 
 });
