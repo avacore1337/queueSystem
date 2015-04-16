@@ -320,6 +320,22 @@ function findCourse(name) {
   };
 }
 
+// name in Admins
+function validate(name, type, course) {
+  Admin2.find(function (err, admins) {
+    admins.forEach(function (admin) {
+      if (admin.name === name) {
+        console.log(name + ' is a valid admin');
+
+        return true;
+      }
+    });    
+  });
+  console.log(name + ' is not a valid admin');
+
+  return false;
+}
+
 /**
  THIS IS IMPORTANT STUFF!!!
 */
@@ -457,6 +473,9 @@ app.io.route('purge', function(req) {
 
   app.io.room(queue).broadcast('purge');
   console.log(req.data.queue + ' -list purged');
+
+  var x = validate("pernyb", "type", "course");
+  console.log(x + ' ' + req);
 });
 
 function doOnCourse(courseName, action){
