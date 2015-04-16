@@ -178,11 +178,6 @@ adminList = [];
 teacherList = [];
 assistantList = [];
 
-messageList = [];
-broadcastList = [];
-helpList = [];
-badLocationList = [];
-
 //===============================================================
 
 function User(name,place,comment){
@@ -406,7 +401,6 @@ app.io.route('purge', function(req) {
 //===============================================================
 
 function doOnCourse(courseName, action){
-  // console.log("doing " + action + " on course");
   var course = findCourse(courseName);
   course[action]();
   console.log('trying to ' + action + ' ' + courseName);
@@ -456,6 +450,7 @@ app.io.route('unhibernate', function(req) {
 });
 
 //===============================================================
+// ### STATISTICS ###
 
 // not done yet -> should be implemented in a different way
 app.io.route('numbers helped', function(req) {
@@ -480,6 +475,8 @@ app.io.route('queueing users', function(req) {
   console.log('queueing users: ' + length);
   app.io.room(queue).broadcast('queueing users', length);
 })
+
+//===============================================================
 
 //
 app.io.route('createQueue', function(req) {
