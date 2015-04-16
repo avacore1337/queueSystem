@@ -1,13 +1,14 @@
 var queueControllers = angular.module('queueControllers', []);
 
-queueControllers.controller('listController', ['$scope', '$http', '$location', 'UserService',
-function ($scope, $http, $location, user) {
+queueControllers.controller('listController', ['$scope', '$http', '$location', 'WebSocketService', 'UserService',
+function ($scope, $http, $location, socket, user) {
   $scope.admin = false;
   $scope.courses = [];
   $http.get('/API/courseList').success(function(response){
     $scope.courses = response.sort(function(a, b) {return a.name.localeCompare(b.name);});
   });
 
+  console.log("API/userData");
   $http.get('/API/userData').success(function(response){
     console.log("user data requested");
     console.log(response);
@@ -16,6 +17,9 @@ function ($scope, $http, $location, user) {
     $scope.admin = user.isAdmin();
   });
 
+  socket.emit('listen', 'list');
+
+  console.log("join");
   // Listen for a person joining a queue.
   socket.on('join', function(queue) {
     console.log("A user joined " + queue);
@@ -27,6 +31,7 @@ function ($scope, $http, $location, user) {
     }
   });
 
+  console.log("leave");
   // Listen for a person leaving a queue.
   socket.on('leave', function(queue) {
     console.log("A user left " + queue);
