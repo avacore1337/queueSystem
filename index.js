@@ -44,13 +44,35 @@ userSchema.methods.toJSON = function () {
 
 var courseSchema = new Schema({
   name: String,
-  open: { type: Boolean, default: true },
+  locked: { type: Boolean, default: true },
+  motd: { type: String, default: "You can do it!" },
+  hibernating: { type: Boolean, default: true },
   active: { type: Boolean, default: true },
   queue: {type:[userSchema], default: []}
 });
 
 courseSchema.methods.addUser = function (user) {
   this.queue.push(user);
+  this.save();
+};
+
+courseSchema.methods.lock = function () {
+  this.locked = true;
+  this.save();
+};
+
+courseSchema.methods.unlock = function () {
+  this.locked = false;
+  this.save();
+};
+
+courseSchema.methods.hibernate = function (user) {
+  this.hibernating = true;
+  this.save();
+};
+
+courseSchema.methods.unhibernate = function (user) {
+  this.hibernating = false;
   this.save();
 };
 
@@ -402,17 +424,31 @@ app.io.route('purge', function(req) {
 
   app.io.room(queue).broadcast('purge');
   console.log(req.data.queue + ' -list purged');
-})
+});
 
 // admin locks a queue
 app.io.route('lock', function(req) {
   var queue = req.data.queue;
-
+  var course = findCourse(queue);
+  course.lock();
   console.log('trying to lock ' + queue);
+  app.io.room(queue).broadcast('lock');
 
-  var newCourseAction = new CourseAction2({course: queue, admin: '', action: 'lock'});
-  newCourseAction.save();
-})
+  // var newCourseAction = new CourseAction2({course: queue, admin: '', action: 'lock'});
+  // newCourseAction.save();
+});
+
+// admin unlocks a queue
+app.io.route('unlock', function(req) {
+  var queue = req.data.queue;
+  var course = findCourse(queue);
+  course.unlock();
+  console.log('trying to unlock ' + queue);
+  app.io.room(queue).broadcast('unlock');
+
+  // var newCourseAction = new CourseAction2({course: queue, admin: '', action: 'lock'});
+  // newCourseAction.save();
+});
 
 /* STATISTICS */
 
@@ -426,7 +462,7 @@ app.io.route('numbers helped', function(req) {
   // MAGIC WHERE WE GET ALL THE PEOPLE THAT LEFT THE QUEUE, BY AN ASSISTENT, BEFORE ENDTIME
 
   app.io.room(queue).broadcast('numbers helped', helpedList);
-})
+});
 
 app.io.route('queueing users', function(req) {
   var queue = req.data.queue;
