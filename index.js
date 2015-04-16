@@ -107,7 +107,6 @@ courseSchema.methods.removeUser = function (username) {
   this.save();
 };
 
-// => if we want to remove the queue from the database <=
 courseSchema.methods.purgeQueue = function (course) {
   this.queue.forEach(function (usr, i, queue) {
     var newUserStatistic = new UserStatistic2({student: usr.name, course: course, action: '?'});
@@ -235,17 +234,6 @@ var UserStatistic2 = mongoose.model("UserStatistic", userStatisticSchema);
 
 //===============================================================
 
-// HÅRDKODAD! => ska läsas ifrån databasen vid ett senare skede
-var tmpList = [
-  "dbas",
-  "inda",
-  "logik",
-  "numme",
-  "mvk",
-  "progp",
-  "mdi"
-];
-
 courseList = [];
 adminList = [];
 teacherList = [];
@@ -274,6 +262,16 @@ function Course(name){
 
 // REFACTOR!
 function setup(){
+  var tmpList = [
+    "dbas",
+    "inda",
+    "logik",
+    "numme",
+    "mvk",
+    "progp",
+    "mdi"
+  ];
+
   for (var i = 0 ; i < tmpList.length ; i++) {
     var course = tmpList[i];
     var newCourse = new Course2({name: course});
@@ -290,6 +288,9 @@ function setup(){
     console.log(course  + " " +  newCourse.queue.length);
   }
 
+  // -----
+
+  // Code to create collections in mongo
   var newAdmin = new Admin2({name: 'name'});
   newAdmin.save();
   var newMessage = new Msg2({course: 'course', from: 'from', to: 'to', msg: 'msg'});
@@ -311,20 +312,23 @@ function setup(){
   testAdmin.save();
 }
 
+// Read in courses and admins from the database
 function readIn(){
+  // All the courses
   Course2.find(function (err, courses) {
     courses.forEach(function (course) {
        courseList.push(course);
 
-      console.log(course.name + ' loaded: ' + course);
+      console.log('Course: ' + course.name + ' loaded!');
     });
   });
 
+  // All the admins
   Admin2.find(function (err, admins) {
     admins.forEach(function (admin) {
        adminList.push(admin);
 
-      console.log(admin.name + ' loaded');
+      console.log('Admin: ' + admin.name + ' loaded');
     });
   });
 }
@@ -360,6 +364,7 @@ readIn();
 
 //===============================================================
 
+// TODO: should a cookie be created/be received here?
 app.io.on('connection', function(socket){
   console.log('a user connected');
 });
