@@ -444,8 +444,9 @@ app.io.route('purge', function(req) {
   course.purgeQueue();
   course.queue = [];
 
-  app.io.room(queue).broadcast('purge');
   console.log(req.data.queue + ' -list purged');
+  app.io.room(queue).broadcast('purge');
+  app.io.room("list").broadcast('purge', queue);
 
   // ====== PrivList - testoutput =======
   var usr = "pernyb";
@@ -460,6 +461,7 @@ function doOnCourse(courseName, action){
   course[action]();
   console.log('trying to ' + action + ' ' + courseName);
   app.io.room(courseName).broadcast(action);
+  app.io.room("list").broadcast(action);
 }
 
 // admin locks a queue
