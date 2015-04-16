@@ -20,11 +20,11 @@ function ($scope, $http, $location, user) {
   $scope.redirect = function(course){
     $location.path('/course/' + course);
     //console.log("User wants to enter " + course);
-  }
+  };
 
   $scope.unauthorized = function(){
     alert("You do not have the rights to enter that page.");
-  }
+  };
 }]);
 
 queueControllers.controller('aboutController', ['$scope', '$http',
@@ -52,14 +52,14 @@ function ($scope, $location, $http) {
     });
   };
 
-}])
+}]);
 
 queueControllers.controller('navigationController', ['$scope', '$location', 'UserService',
 function ($scope, $location, user) {
   $scope.location = $location.path();
   
   // Robert look from here
-  $scope.loggedIn = !(user.getName() === "");
+  $scope.loggedIn = user.getName() !== "";
   $scope.name = user.getName();
   console.log("user = " + $scope.name);
   // Robert look to here
@@ -69,7 +69,7 @@ function ($scope, $location, user) {
     $location.path('/' + address);
     $scope.location = $location.path();
     console.log("location = " + $scope.location);
-  }
+  };
 }]);
 
 queueControllers.controller('adminController', ['$scope', '$location', '$http', 'UserService',
@@ -78,7 +78,7 @@ function ($scope, $location, $http, user) {
   $scope.admin = user.isAdmin();
   $scope.selectedQueue = undefined;
   $scope.dropdown = undefined;
-  $scope.newAdmin = ''; 
+  $scope.newAdmin = '';
   $scope.admins = [
     {name:'Anton',  id:'antbac'},
     {name:'Robert',  id:'robertwb'},
@@ -95,27 +95,27 @@ function ($scope, $location, $http, user) {
   //}
 
   $scope.createQueue = function(){
-    if($scope.courseName != ""){
+    if($scope.courseName !== ""){
       //socket.emit('createQueue', {
       //  name:queue
       //});
       console.log("Trying to create queue " + $scope.courseName);
       $scope.courseName = '';
     }
-  }
+  };
 
   $scope.addAdmin = function(){
-    if($scope.newAdmin != ""){
+    if($scope.newAdmin !== ""){
       //socket.emit('addAdmin', {
       //  name:$scope.newAdmin
       //});
       console.log("Adding admin " + $scope.newAdmin);
       $scope.newAdmin = '';
     }
-  }
+  };
 
   $scope.addTeacher = function(){
-    if($scope.newTeacher != "" && $scope.selectedQueue != undefined){
+    if($scope.newTeacher !== "" && $scope.selectedQueue !== undefined){
       //socket.emit('addTeacher', {
       //  name:$scope.newTeacher,
       //  course:$scope.selectedQueue
@@ -123,10 +123,10 @@ function ($scope, $location, $http, user) {
       console.log("Adding teacher " + $scope.newTeacher + " in the course " + $scope.selectedQueue);
       $scope.newTeacher = '';
     }
-  }
+  };
 
   $scope.addAssistant = function(){
-    if($scope.newAssistant != "" && $scope.selectedQueue != undefined){
+    if($scope.newAssistant !== "" && $scope.selectedQueue !== undefined){
       //socket.emit('addAssistant', {
       //  name:$scope.newAssistant,
       //  course:$scope.selectedQueue
@@ -134,13 +134,13 @@ function ($scope, $location, $http, user) {
       console.log("Adding assistant " + $scope.newAssistant  + " in the course " + $scope.selectedQueue);
       $scope.newAssistant = '';
     }
-  }
+  };
 
   $scope.selectQueue = function(queue){
     $scope.selectedQueue = queue;
     document.getElementById('dropdown').innerHTML = queue;
     console.log("selected queue = " + $scope.selectedQueue);
-  }
+  };
 
 }]);
 
