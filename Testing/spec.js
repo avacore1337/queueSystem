@@ -1,5 +1,4 @@
 describe('Basic Queue Functionality:', function() {
-  
 var name = 'Edvard';
 var location = 'Red';
 var student = 1;
@@ -22,9 +21,14 @@ var ta = 0;
 
 function userJoinQueue(joinCourse){
   $('body > div > div.ng-scope > div > div > section > div:nth-child('+ (joinCourse + 1) +')').click();
+  browser.switchTo().alert().then(
+    function (alert) { alert.dismiss(); },
+    function (err) { }
+);
   $('body > div > div.ng-scope > div > div.row.col-md-12 > div.col-md-2.pin-center.black > form > div:nth-child(1) > div > input').sendKeys(location);
   $('body > div > div.ng-scope > div > div.row.col-md-12 > div.col-md-2.pin-center.black > div:nth-child(2)').click();
 };
+
 
  afterEach(function(){
     userLogIn('delete', ta);
@@ -62,10 +66,7 @@ it('a User should be able to leave a joined queue.', function() {
     userJoinQueue(1);
     $('body > div > div.ng-scope > div > div.row.col-md-12 > div.col-md-2.pin-center.black > div:nth-child(3)').click();
     expect($('body > div > div.ng-scope > div > div.row.col-md-12 > div.col-md-9.pull-right > table > tbody').getText()).toEqual('');
-    
   });
-
-
 
 it('The Student class will have the possibility the change their own data in the form of location commment and personal comment.', function() {
     userLogIn(name, student);
@@ -108,7 +109,7 @@ it('TA is able to use the interaction ‘Lock’ or ‘Unlock’ with a queue', 
  browser.manage().window().maximize();
  browser.waitForAngular();
  userLogIn(name, student);
- expect($('body > div > div.ng-scope > div > div > section > div:nth-child(8)').not.isEnabled()); // 8 = amount of queues+1 currently in the system if this fails due to this change 8 to amount of queues + 1
+ expect($('body > div > div.ng-scope > div > div > section > div:nth-child(8)').isEnabled()); // 8 = amount of queues+1 currently in the system if this fails due to this change 8 to amount of queues + 1
  browser.get('http://localhost:8080/#/list');
  browser.manage().window().maximize();
  browser.waitForAngular();
