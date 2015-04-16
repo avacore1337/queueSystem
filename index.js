@@ -480,8 +480,6 @@ app.io.route('queueing users', function(req) {
   app.io.room(queue).broadcast('queueing users', length);
 })
 
-<<<<<<< HEAD
-
 // =================================================================================
 
 //
@@ -556,17 +554,6 @@ app.io.route('addAssistant', function(req) {
 
 //  app.io.room(queue).broadcast('addTeacher');
   console.log(assistantName + ' is a new assistant!');
-=======
-// returns the queue-list
-// => returnera rätt kö (inte samma kö)
-app.get('/API/queue/:queue', function(req, res) {
-    res.setHeader('Content-Type', 'application/json');
-    // console.log(list[req.params.queue] + " " + req.params.queue);
-    var course = findCourse(req.params.queue);
-    console.log('queue '+ req.params.queue +' requested');
-    console.log(course);
-    res.end(JSON.stringify(course));
->>>>>>> 6c839d078ef28f2c34e99682b41b35f782f88f54
 })
 
 // /API/list
@@ -590,10 +577,10 @@ app.get('/API/courseList', function(req, res) {
 // => returnera rätt kö (inte samma kö)
 app.get('/API/queue/:queue', function(req, res) {
     res.setHeader('Content-Type', 'application/json');
-    // console.log(list[req.params.queue] + " " + req.params.queue);
     var course = findCourse(req.params.queue);
-    res.end(JSON.stringify(course.queue));
-    console.log('queue requested');
+    console.log('queue '+ req.params.queue +' requested');
+    console.log(course);
+    res.end(JSON.stringify(course));
 })
 
 app.get('/API/userData', function(req, res) {
