@@ -140,17 +140,19 @@
     });
 
     $scope.addUser = function(){
-      if($scope.location === ""){
-        alert("You must enter a place.");
-      }else{
-        $scope.enqueued = true;
-        console.log("Current time = " + Date.now());
-        socket.emit('join',
+      if(!$scope.locked && !$scope.hibernating){
+        if($scope.location === ""){
+          alert("You must enter a place.");
+        }else{
+          $scope.enqueued = true;
+          console.log("Current time = " + Date.now());
+          socket.emit('join',
           {
             queue:$routeParams.course,
             user:{name:$scope.name, place:$scope.location, comment:$scope.comment, startTime:Math.round(Date.now()/1000)}
           });
-        console.log("Called addUser");
+          console.log("Called addUser");
+        }
       }
     };
 
