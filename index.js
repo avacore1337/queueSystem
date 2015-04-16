@@ -44,10 +44,9 @@ userSchema.methods.toJSON = function () {
 
 var courseSchema = new Schema({
   name: String,
-  locked: { type: Boolean, default: true },
+  locked: { type: Boolean, default: false },
   motd: { type: String, default: "You can do it!" },
-  hibernating: { type: Boolean, default: true },
-  active: { type: Boolean, default: true },
+  hibernating: { type: Boolean, default: false },
   queue: {type:[userSchema], default: []}
 });
 
