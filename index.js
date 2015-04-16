@@ -314,6 +314,12 @@ app.io.route('join', function(req) {
 // user tries to join a queue with a "bad location"
 //  - do nothing in backend?
 app.io.route('badLocation', function(req) {
+  // assistant-validation
+  if (!validate("pernyb", "type", "course")) {
+    console.log("validation for purge failed");
+    res.end();
+    return;
+  }
   var queue = req.data.queue;
   var name = req.data.name;
 
@@ -380,6 +386,12 @@ app.io.route('leave', function(req) {
 
 // admin purges a queue
 app.io.route('purge', function(req) {
+  // teacher-validation
+  if (!validate("pernyb", "type", "course")) {
+    console.log("validation for purge failed");
+    res.end();
+    return;
+  }
   var queue = req.data.queue;
 
   var course = findCourse(queue);
@@ -389,8 +401,6 @@ app.io.route('purge', function(req) {
   app.io.room(queue).broadcast('purge');
   console.log(req.data.queue + ' -list purged');
 
-  var x = validate("pernyb", "type", "course");
-  console.log(x + ' ' + req);
 });
 
 //===============================================================
@@ -405,19 +415,43 @@ function doOnCourse(courseName, action){
 
 // admin locks a queue
 app.io.route('lock', function(req) {
+ // teacher-validation
+  if (!validate("pernyb", "type", "course")) {
+    console.log("validation for purge failed");
+    res.end();
+    return;
+  }
   doOnCourse(req.data.queue, 'lock');
 });
 
 // admin unlocks a queue
 app.io.route('unlock', function(req) {
+ // teacher-validation
+  if (!validate("pernyb", "type", "course")) {
+    console.log("validation for purge failed");
+    res.end();
+    return;
+  }
   doOnCourse(req.data.queue, 'unlock');
 });
 
 app.io.route('hibernate', function(req) {
+ // teacher-validation
+  if (!validate("pernyb", "type", "course")) {
+    console.log("validation for purge failed");
+    res.end();
+    return;
+  }
   doOnCourse(req.data.queue, 'hibernate');
 });
 
 app.io.route('unhibernate', function(req) {
+ // teacher-validation
+  if (!validate("pernyb", "type", "course")) {
+    console.log("validation for purge failed");
+    res.end();
+    return;
+  }
   doOnCourse(req.data.queue, 'unhibernate');
 });
 
@@ -449,6 +483,12 @@ app.io.route('queueing users', function(req) {
 
 //
 app.io.route('createQueue', function(req) {
+ // admin-validation
+  if (!validate("pernyb", "type", "course")) {
+    console.log("validation for purge failed");
+    res.end();
+    return;
+  }
   var queueName = req.data.name;
   var queue = req.data.queue;
 
@@ -461,6 +501,12 @@ app.io.route('createQueue', function(req) {
 
 //
 app.io.route('addAdmin', function(req) {
+ // admin-validation
+  if (!validate("pernyb", "type", "course")) {
+    console.log("validation for purge failed");
+    res.end();
+    return;
+  }
   var adminName = req.data.name;
   var queue = req.data.queue;
 
@@ -473,6 +519,12 @@ app.io.route('addAdmin', function(req) {
 
 //
 app.io.route('addTeacher', function(req) {
+ // admin-validation
+  if (!validate("pernyb", "type", "course")) {
+    console.log("validation for purge failed");
+    res.end();
+    return;
+  }
   var teacherName = req.data.name;
   var queue = req.data.queue;
   var course = req.data.course;
@@ -486,6 +538,12 @@ app.io.route('addTeacher', function(req) {
 
 //
 app.io.route('addAssistant', function(req) {
+ // teacher-validation
+  if (!validate("pernyb", "type", "course")) {
+    console.log("validation for purge failed");
+    res.end();
+    return;
+  }
   var assistantName = req.data.name;
   var queue = req.data.queue;
   var course = req.data.course;
@@ -499,6 +557,12 @@ app.io.route('addAssistant', function(req) {
 
 //
 app.io.route('flag', function(req) {
+ // assistant-validation
+  if (!validate("pernyb", "type", "course")) {
+    console.log("validation for purge failed");
+    res.end();
+    return;
+  }
   var queue = req.data.queue;
   var sender = req.data.sender;
   var name = req.data.name;
