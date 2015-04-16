@@ -46,7 +46,7 @@ userSchema.methods.toJSON = function () {
 var courseSchema = new Schema({
   name: String,
   locked: { type: Boolean, default: false },
-  hibernated: { type: Boolean, default: false },
+  hibernating: { type: Boolean, default: false },
   motd: { type: String, default: "You can do it!" },
   queue: {type:[userSchema], default: []}
 });
@@ -67,12 +67,12 @@ courseSchema.methods.unlock = function () {
 };
 
 courseSchema.methods.hibernate = function (user) {
-  this.hibernated = true;
+  this.hibernating = true;
   this.save();
 };
 
 courseSchema.methods.unhibernate = function (user) {
-  this.hibernated = false;
+  this.hibernating = false;
   this.save();
 };
 
@@ -434,7 +434,7 @@ function doOnCourse(courseName, action){
   // console.log("doing " + action + " on course");
   var course = findCourse(courseName);
   course[action]();
-  console.log('trying to' + action + courseName);
+  console.log('trying to ' + action + ' ' + courseName);
   app.io.room(courseName).broadcast(action);
 }
 
@@ -563,7 +563,7 @@ app.get('/API/courseList', function(req, res) {
 
   for (i = 0 ; i < courseList.length ; i++) {
     console.log("trying to get length of " + courseList[i].name + ": " + courseList[i].queue.length);
-    retList.push({name: courseList[i].name, length: courseList[i].queue.length, locked: courseList[i].locked, hibernated: courseList[i].hibernated});
+    retList.push({name: courseList[i].name, length: courseList[i].queue.length, locked: courseList[i].locked, hibernating: courseList[i].hibernating});
   }
 
   res.setHeader('Content-Type', 'application/json');
