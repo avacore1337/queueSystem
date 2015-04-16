@@ -28,9 +28,6 @@
     $scope.locked = true;
     $scope.hibernating = true;
     $scope.motd = "";
-    if($scope.motd !== ""){
-      alert($scope.motd);
-    }
     $http.get('/API/queue/' + $routeParams.course)
     .success(function(response) {
       $scope.users = response.queue;
@@ -42,6 +39,9 @@
         if($scope.users[i].name === $scope.name){
           $scope.enqueued = true;
         }
+      }
+      if($scope.motd !== ""){
+        alert($scope.motd);
       }
     });
 
@@ -140,17 +140,19 @@
     });
 
     $scope.addUser = function(){
-      if($scope.location === ""){
-        alert("You must enter a place.");
-      }else{
-        $scope.enqueued = true;
-        console.log("Current time = " + Date.now());
-        socket.emit('join',
+      if(!$scope.locked && !$scope.hibernating){
+        if($scope.location === ""){
+          alert("You must enter a place.");
+        }else{
+          $scope.enqueued = true;
+          console.log("Current time = " + Date.now());
+          socket.emit('join',
           {
             queue:$routeParams.course,
             user:{name:$scope.name, place:$scope.location, comment:$scope.comment, startTime:Math.round(Date.now()/1000)}
           });
-        console.log("Called addUser");
+          console.log("Called addUser");
+        }
       }
     };
 
@@ -195,10 +197,11 @@
 
     // This function should lock the queue, preventing anyone from queueing
     $scope.lock = function(){
+      console.log("Called lock");
       socket.emit('lock', {
         queue:$routeParams.course
       });
-      console.log("Called lock");
+      console.log("Leaving lock");
     };
 
     // This function should unlock the queue, alowing people to join the queue

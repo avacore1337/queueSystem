@@ -2,9 +2,10 @@ var queueControllers = angular.module('queueControllers', []);
 
 queueControllers.controller('listController', ['$scope', '$http', '$location', 'UserService',
 function ($scope, $http, $location, user) {
+  $scope.admin = false;
   $scope.courses = [];
   $http.get('/API/courseList').success(function(response){
-    $scope.courses = response.sort(function(a, b) {return a.name.localeCompare(b.name)});
+    $scope.courses = response.sort(function(a, b) {return a.name.localeCompare(b.name);});
   });
 
   $http.get('/API/userData').success(function(response){
@@ -12,6 +13,29 @@ function ($scope, $http, $location, user) {
     console.log(response);
     user.setName(response.name);
     user.setAdmin(response.admin);
+    $scope.admin = user.isAdmin();
+  });
+
+  // Listen for a person joining a queue.
+  socket.on('join', function(queue) {
+    console.log("A user joined " + queue);
+    for(var index in $scope.courses){
+      if($scope.courses[index].name === queue){
+        $scope.$apply($scope.courses[index].length++);
+        break;
+      }
+    }
+  });
+
+  // Listen for a person leaving a queue.
+  socket.on('leave', function(queue) {
+    console.log("A user left " + queue);
+    for(var index in $scope.courses){
+      if($scope.courses[index].name === queue){
+        $scope.$apply($scope.courses[index].length--);
+        break;
+      }
+    }
   });
 
   console.log('listing');
@@ -19,19 +43,14 @@ function ($scope, $http, $location, user) {
   // This function should direct the user to the wanted page
   $scope.redirect = function(course){
     for(var index in $scope.courses){
-      console.log(course);
       if($scope.courses[index].name === course){
-        if(!$scope.courses[index].locked){
+        if(!$scope.courses[index].locked || $scope.admin){
           $location.path('/course/' + course);
         }
         break;
       }
     }
     //console.log("User wants to enter " + course);
-  };
-
-  $scope.unauthorized = function(){
-    alert("You do not have the rights to enter that page.");
   };
 }]);
 
