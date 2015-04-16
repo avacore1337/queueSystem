@@ -26,13 +26,13 @@
     $scope.enqueued = false;
 
     $scope.locked = true;
-    $scope.hibernate = true;
+    $scope.hibernating = true;
     $scope.motd = "";
     $http.get('/API/queue/' + $routeParams.course)
     .success(function(response) {
       $scope.users = response;
       $scope.locked = response.locked;
-      $scope.hibernate = response.hibernate;
+      $scope.hibernating = response.hibernating;
       $scope.motd = response.motd;
       for (var i = 0; i < $scope.users.length; i++) {
         $scope.users[i].optionsActivated = false;
@@ -47,6 +47,11 @@
       {name:'Joakim',  place:"Red 06" , comment:"Labb 3", time:"15:30"},
       {name:'Per',  place:"Red 07" , comment:"Labb 2", time:"16:00"}
     ];
+
+    //$http.get('/API/booked/' + $routeParams.course)
+    //  .success(function(response) {
+    //  $scope.bookedUsers = response;
+    //});
 
     $scope.newUser = true;
 
@@ -120,14 +125,14 @@
       }
     });
 
-    // Listen for locking/unlocking the queue
-    socket.on('toggleLock', function(state){
-      $scope.locked = state;
+    // Listen for locking the queue
+    socket.on('lock', function(){
+      $scope.locked = true;
     });
 
-    // Listen for hibernateing/waking the queue
-    socket.on('toggleHibernate', function(state){
-      $scope.hibernate = state;
+    // Listen for unlocking the queue
+    socket.on('unlock', function(){
+      $scope.locked = false;
     });
 
     // Listen for a badLocation warning

@@ -47,7 +47,7 @@
 }
 .dark-grey
 {
-  background-color: rgb(155,155,155);
+  background-color: rgb(155, 155, 155);
   border: .2em solid rgb(90, 90, 90);
 }
 .navbar-brand
@@ -60,15 +60,15 @@
 }
 .navbar.navbar-default
 {
-	-moz-border-radius: 0px;
-	-webkit-border-radius: 0px;
-	border-radius: 0px;
+	-moz-border-radius: 0;
+	-webkit-border-radius: 0;
+	border-radius: 0;
 }
 .table-striped.booked > tbody > tr:nth-child(odd) > td{
-   background-color: rgba(48,240,94,0.65);
+   background-color: rgba(48, 240, 94, 0.65);
 }
 .table-striped.booked > tbody > tr:nth-child(even) > td{
-   background-color: rgba(48,255,94,0.6);
+   background-color: rgba(48, 255, 94, 0.6);
 }
 .text-white
 {
@@ -77,6 +77,10 @@
 .text-black
 {
   color: black;
+}
+.text-red
+{
+  color: red;
 }
 .text-easteregg
 {
@@ -98,10 +102,10 @@
 }
 .zero-padding
 {
-  padding-top: 0px;
-  padding-bottom: 0px;
-  padding-right: 0px;
-  padding-left: 0px;
+  padding-top: 0;
+  padding-bottom: 0;
+  padding-right: 0;
+  padding-left: 0;
 }
 .main-body
 {
@@ -113,8 +117,8 @@
 {
   margin-top: 0.5em;
   margin-bottom: 0.5em;
-  margin-right: 0px;
-  margin-left: 0px;
+  margin-right: 0;
+  margin-left: 0;
 }
 .frame
 {
