@@ -27,7 +27,8 @@ db.once('open', function callback () {
 var userSchema = new Schema({
   name: String,
   place: String,
-  time: { type: Number, default: Date.now },
+  startTime: { type: Number, default: Date.now },
+  messages: [String],
   action: { type: String, default: '' },
   comment: { type: String, default: '' }
 });
@@ -36,7 +37,7 @@ userSchema.methods.toJSON = function () {
   return {
     name: this.name,
     place: this.place,
-    time: this.time,
+    time: this.startTime,
     action: this.action,
     comment: this.comment
   };
@@ -44,8 +45,8 @@ userSchema.methods.toJSON = function () {
 
 var courseSchema = new Schema({
   name: String,
-  open: { type: Boolean, default: true },
-  active: { type: Boolean, default: true },
+  locked: { type: Boolean, default: false },
+  hibernated: { type: Boolean, default: false },
   queue: {type:[userSchema], default: []}
 });
 
@@ -204,6 +205,7 @@ var tmpList = [
   "mdi"
 ];
  courseList = []
+ adminList = []
  messageList = []
  broadcastList = []
  helpList = []
@@ -430,21 +432,89 @@ app.io.route('numbers helped', function(req) {
 
 app.io.route('queueing users', function(req) {
   var queue = req.data.queue;
-  var time = req.data.time;
+  var time = req.data.startTime;
   var course = findCourse(queue);
   var length = course.queue.length;
 
+  console.log('queueing users: ' + length);
   app.io.room(queue).broadcast('queueing users', length);
 })
 
-// returns the queue-list
-// => returnera rätt kö (inte samma kö)
-app.get('/API/queue/:queue', function(req, res) {
-    res.setHeader('Content-Type', 'application/json');
-    // console.log(list[req.params.queue] + " " + req.params.queue);
-    var course = findCourse(req.params.queue);
-    res.end(JSON.stringify(course.queue));
-    console.log('queue requested');
+
+// =================================================================================
+
+//
+app.io.route('createQueue', function(req) {
+  var queueName = req.data.name;
+  var queue = req.data.queue;
+
+  var newCourse = new Course2({name: queueName});
+  courseList.push(newCourse);
+  newCourse.save();
+
+//  app.io.room(queue).broadcast('createQueue');
+  console.log(queueName + ' is getting created');
+})
+
+var adminSchema = new Schema({
+  name: String,
+});
+
+var Admin2 = mongoose.model("Admin", adminSchema);
+
+//
+app.io.route('addAdmin', function(req) {
+  var adminName = req.data.name;
+  var queue = req.data.queue;
+
+  var newAdmin = new Admin2({name: adminName});
+  adminList.push(newAdmin);
+  newAdmin.save();
+
+//  app.io.room(queue).broadcast('addAdmin');
+  console.log(adminName + ' is a new admin!');
+})
+
+var teacherSchema = new Schema({
+  name: String,
+  course: String,
+});
+
+var Teacher2 = mongoose.model("Teacher", teacherSchema);
+
+//
+app.io.route('addTeacher', function(req) {
+  var teacherName = req.data.name;
+  var queue = req.data.queue;
+  var course = req.data.course;
+
+  var newTeacher = new Teacher2({name: teacherName, course: course});
+  teacherList.push(newTeacher);
+  newTeacher.save();
+
+//  app.io.room(queue).broadcast('addTeacher');
+  console.log(teacherName + ' is a new teacher!');
+})
+
+var assistantSchema = new Schema({
+  name: String,
+  course: String,
+});
+
+var Assistant2 = mongoose.model("Assistant", assistantSchema);
+
+//
+app.io.route('addAssistant', function(req) {
+  var assistantName = req.data.name;
+  var queue = req.data.queue;
+  var course = req.data.course;
+
+  var newAssistant = new Assistant2({name: assistantName, course: course});
+  assistantList.push(newAssistant);
+  newAssistant.save();
+
+//  app.io.room(queue).broadcast('addTeacher');
+  console.log(assistantName + ' is a new assistant!');
 })
 
 // /API/list
@@ -454,12 +524,24 @@ app.get('/API/courseList', function(req, res) {
 
   for (i = 0 ; i < courseList.length ; i++) {
     console.log("trying to get length of " + courseList[i].name + ": " + courseList[i].queue.length);
-    retList.push({name: courseList[i].name, length:courseList[i].queue.length});
+    retList.push({name: courseList[i].name, length: courseList[i].queue.length, locked: courseList[i].locked, hibernated: courseList[i].hibernated});
   }
 
   res.setHeader('Content-Type', 'application/json');
   res.end(JSON.stringify(retList));
   console.log('list of courses requested');
+})
+
+// =================================================================================
+
+// returns the queue-list
+// => returnera rätt kö (inte samma kö)
+app.get('/API/queue/:queue', function(req, res) {
+    res.setHeader('Content-Type', 'application/json');
+    // console.log(list[req.params.queue] + " " + req.params.queue);
+    var course = findCourse(req.params.queue);
+    res.end(JSON.stringify(course.queue));
+    console.log('queue requested');
 })
 
 app.get('/API/userData', function(req, res) {
