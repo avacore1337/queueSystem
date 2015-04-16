@@ -24,6 +24,30 @@ db.once('open', function callback () {
 });
 
 
+//===============================================================
+
+var adminSchema = new Schema({
+  name: String,
+});
+
+var teacherSchema = new Schema({
+  name: String,
+  course: String,
+});
+
+var assistantSchema = new Schema({
+  name: String,
+  course: String,
+});
+
+var Admin2 = mongoose.model("Admin", adminSchema);
+
+var Teacher2 = mongoose.model("Teacher", teacherSchema);
+
+var Assistant2 = mongoose.model("Assistant", assistantSchema);
+
+//===============================================================
+
 var userSchema = new Schema({
   name: String,
   place: String,
@@ -256,6 +280,8 @@ function setup(){
     console.log(course  + " " +  newCourse.queue.length);
   }
 
+  var newAdmin = new Admin2({name: 'name'});
+  newAdmin.save();
   var newMessage = new Msg2({course: 'course', from: 'from', to: 'to', msg: 'msg'});
   newMessage.save();
   var newBroadcast = new Broadcast2({course: 'course', from: 'from', msg: 'msg'});
@@ -268,6 +294,9 @@ function setup(){
   newCourseAction.save();
   var newUserStatistic = new UserStatistic2({student: 'student', course: 'course', action: 'action'});
   newUserStatistic.save();
+
+  var testAdmin = new Admin2({name: 'pernyb'});
+  testAdmin.save();
 }
 
 // => fungerar inte korrekt? <===
@@ -495,12 +524,6 @@ app.io.route('createQueue', function(req) {
   console.log(queueName + ' is getting created');
 })
 
-var adminSchema = new Schema({
-  name: String,
-});
-
-var Admin2 = mongoose.model("Admin", adminSchema);
-
 //
 app.io.route('addAdmin', function(req) {
   var adminName = req.data.name;
@@ -513,13 +536,6 @@ app.io.route('addAdmin', function(req) {
 //  app.io.room(queue).broadcast('addAdmin');
   console.log(adminName + ' is a new admin!');
 })
-
-var teacherSchema = new Schema({
-  name: String,
-  course: String,
-});
-
-var Teacher2 = mongoose.model("Teacher", teacherSchema);
 
 //
 app.io.route('addTeacher', function(req) {
@@ -534,13 +550,6 @@ app.io.route('addTeacher', function(req) {
 //  app.io.room(queue).broadcast('addTeacher');
   console.log(teacherName + ' is a new teacher!');
 })
-
-var assistantSchema = new Schema({
-  name: String,
-  course: String,
-});
-
-var Assistant2 = mongoose.model("Assistant", assistantSchema);
 
 //
 app.io.route('addAssistant', function(req) {
