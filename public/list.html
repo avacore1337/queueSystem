@@ -5,8 +5,8 @@
     <h1>Courses</h1>
     <div class="well white clickable row" ng-repeat="course in courses" ng-click="redirect(course.name)" clear:both>
       <div class="col-md-6">
-        <h4 ng-show="course.locked">
-          <i class="glyphicon glyphicon-lock"></i>
+        <h4 ng-show="course.locked" class="text-red">
+          <span class="glyphicon glyphicon-lock"></span>
           <a href="">{{course.name}}</a> <!-- course.name -->
         </h4>
         <h4 ng-show="!course.locked">

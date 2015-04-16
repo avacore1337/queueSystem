@@ -47,11 +47,32 @@ var courseSchema = new Schema({
   name: String,
   locked: { type: Boolean, default: false },
   hibernated: { type: Boolean, default: false },
+  motd: { type: String, default: "You can do it!" },
   queue: {type:[userSchema], default: []}
 });
 
 courseSchema.methods.addUser = function (user) {
   this.queue.push(user);
+  this.save();
+};
+
+courseSchema.methods.lock = function () {
+  this.locked = true;
+  this.save();
+};
+
+courseSchema.methods.unlock = function () {
+  this.locked = false;
+  this.save();
+};
+
+courseSchema.methods.hibernate = function (user) {
+  this.hibernated = true;
+  this.save();
+};
+
+courseSchema.methods.unhibernate = function (user) {
+  this.hibernated = false;
   this.save();
 };
 
@@ -196,20 +217,23 @@ function Course(name){
 
 // HÅRDKODAD! => ska läsas ifrån databasen vid ett senare skede
 var tmpList = [
-  "dbas", 
-  "inda", 
-  "logik", 
-  "numme", 
+  "dbas",
+  "inda",
+  "logik",
+  "numme",
   "mvk",
   "progp",
   "mdi"
 ];
  courseList = []
  adminList = []
+ teacherList = []
+ assistantList = []
  messageList = []
  broadcastList = []
  helpList = []
  badLocationList = []
+
 // var cList = new Map();
 
 // Map för varje rum
@@ -223,14 +247,14 @@ function setup(){
     newCourse.save();
 
     var queues = Math.floor((Math.random() * 50) + 1);
-    for (var j = 0; j < queues; j++) {  
+    for (var j = 0; j < queues; j++) {
       var newUser = new User2({name: Math.random().toString(36).substring(7), place: 'Green', comment: 'lab1'});
       newCourse.addUser(newUser);
       newCourse.save();
-    };
+    }
 
     console.log(course  + " " +  newCourse.queue.length);
-  }  
+  }
 
   var newMessage = new Msg2({course: 'course', from: 'from', to: 'to', msg: 'msg'});
   newMessage.save();
@@ -404,17 +428,25 @@ app.io.route('purge', function(req) {
 
   app.io.room(queue).broadcast('purge');
   console.log(req.data.queue + ' -list purged');
-})
+});
 
 // admin locks a queue
 app.io.route('lock', function(req) {
   var queue = req.data.queue;
-
+  var course = findCourse(queue);
+  course["lock"]();
   console.log('trying to lock ' + queue);
+  app.io.room(queue).broadcast('lock');
+});
 
-  var newCourseAction = new CourseAction2({course: queue, admin: '', action: 'lock'});
-  newCourseAction.save();
-})
+// admin unlocks a queue
+app.io.route('unlock', function(req) {
+  var queue = req.data.queue;
+  var course = findCourse(queue);
+  course.unlock();
+  console.log('trying to unlock ' + queue);
+  app.io.room(queue).broadcast('unlock');
+});
 
 /* STATISTICS */
 
@@ -428,7 +460,7 @@ app.io.route('numbers helped', function(req) {
   // MAGIC WHERE WE GET ALL THE PEOPLE THAT LEFT THE QUEUE, BY AN ASSISTENT, BEFORE ENDTIME
 
   app.io.room(queue).broadcast('numbers helped', helpedList);
-})
+});
 
 app.io.route('queueing users', function(req) {
   var queue = req.data.queue;
@@ -440,6 +472,7 @@ app.io.route('queueing users', function(req) {
   app.io.room(queue).broadcast('queueing users', length);
 })
 
+<<<<<<< HEAD
 
 // =================================================================================
 
@@ -515,6 +548,17 @@ app.io.route('addAssistant', function(req) {
 
 //  app.io.room(queue).broadcast('addTeacher');
   console.log(assistantName + ' is a new assistant!');
+=======
+// returns the queue-list
+// => returnera rätt kö (inte samma kö)
+app.get('/API/queue/:queue', function(req, res) {
+    res.setHeader('Content-Type', 'application/json');
+    // console.log(list[req.params.queue] + " " + req.params.queue);
+    var course = findCourse(req.params.queue);
+    console.log('queue '+ req.params.queue +' requested');
+    console.log(course);
+    res.end(JSON.stringify(course));
+>>>>>>> 6c839d078ef28f2c34e99682b41b35f782f88f54
 })
 
 // /API/list

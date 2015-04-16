@@ -1,7 +1,8 @@
 (function(){
   var app = angular.module("queue", [
   'ngRoute',
-  'queueControllers'
+  'queueControllers',
+  'queue.course'
   ]);
   
   app.config(['$routeProvider',
@@ -10,10 +11,6 @@
       when('/list', {
         templateUrl: 'list.html',
         controller: 'listController'
-      }).
-      when('/course/:course', {
-        templateUrl: 'course.html',
-        controller: 'courseController'
       }).
       when('/about', {
         templateUrl: 'about.html',
