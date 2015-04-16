@@ -144,57 +144,6 @@ courseSchema.methods.addAssistantComment = function (name, sender, queue, messag
 
 //-----
 
-var messageSchema = new Schema({
-  course: String,
-  from: String,
-  to: String,
-  msg: String,
-  time: { type: Date, default: Date.now },
-  comment: { type: String, default: '' }
-});
-
-//-----
-
-var broadcastSchema = new Schema({
-  course: String,
-  from: String,
-  msg: String,
-  time: { type: Number, default: Date.now },
-  comment: { type: String, default: '' }
-});
-
-//-----
-
-var helpSchema = new Schema({
-  course: String,
-  student: String,
-  assistant: String,
-  time: { type: Number, default: Date.now },
-  comment: { type: String, default: '' }
-});
-
-//-----
-
-var badLocationSchema = new Schema({
-  course: String,
-  student: String,
-  assistant: String,
-  time: { type: Number, default: Date.now },
-  comment: { type: String, default: '' }
-});
-
-//-----
-
-var courseActionSchema = new Schema({
-  course: String,
-  admin: String,
-  action: String,
-  time: { type: Number, default: Date.now },
-  comment: { type: String, default: '' }
-});
-
-//-----
-
 var userStatisticSchema = new Schema({
   student: String,
   course: String,
@@ -220,16 +169,6 @@ var Assistant2 = mongoose.model("Assistant", assistantSchema);
 
 var Course2 = mongoose.model("Course", courseSchema);
 
-var Msg2 = mongoose.model("Message", messageSchema);
-
-var Broadcast2 = mongoose.model("Broadcast", messageSchema);
-
-var Help2 = mongoose.model("Help", helpSchema);
-
-var BadLocation2 = mongoose.model("BadLocation", badLocationSchema);
-
-var CourseAction2 = mongoose.model("CourseAction", courseActionSchema);
-
 var UserStatistic2 = mongoose.model("UserStatistic", userStatisticSchema);
 
 //===============================================================
@@ -238,6 +177,7 @@ courseList = [];
 adminList = [];
 teacherList = [];
 assistantList = [];
+
 messageList = [];
 broadcastList = [];
 helpList = [];
@@ -293,16 +233,6 @@ function setup(){
   // Code to create collections in mongo
   var newAdmin = new Admin2({name: 'name'});
   newAdmin.save();
-  var newMessage = new Msg2({course: 'course', from: 'from', to: 'to', msg: 'msg'});
-  newMessage.save();
-  var newBroadcast = new Broadcast2({course: 'course', from: 'from', msg: 'msg'});
-  newBroadcast.save();
-  var newHelp = new Help2({course: 'course', student: 'student', assistant: 'assistant'});
-  newHelp.save();
-  var newBadLocation = new BadLocation2({course: 'course', student: 'student', assistant: 'assistant'});
-  newBadLocation.save();
-  var newCourseAction = new CourseAction2({course: 'course', admin: 'admin', action: 'action'});
-  newCourseAction.save();
   var newUserStatistic = new UserStatistic2({student: 'student', course: 'course', action: 'action'});
   newUserStatistic.save();
 
@@ -318,8 +248,7 @@ function readIn(){
   Course2.find(function (err, courses) {
     courses.forEach(function (course) {
        courseList.push(course);
-
-      console.log('Course: ' + course.name + ' loaded!');
+       console.log('Course: ' + course.name + ' loaded!');
     });
   });
 
@@ -327,8 +256,7 @@ function readIn(){
   Admin2.find(function (err, admins) {
     admins.forEach(function (admin) {
        adminList.push(admin);
-
-      console.log('Admin: ' + admin.name + ' loaded');
+       console.log('Admin: ' + admin.name + ' loaded');
     });
   });
 }
@@ -356,9 +284,6 @@ function validate(name, type, course) {
 
 //===============================================================
 
-/**
- THIS IS IMPORTANT STUFF!!!
-*/
 //setup();
 readIn();
 
@@ -392,11 +317,6 @@ app.io.route('badLocation', function(req) {
   var queue = req.data.queue;
   var name = req.data.name;
 
-  var newBadLocation = new BadLocation2({course: queue, student: name, assistant: ''});
-  badLocationList.push(newBadLocation);
-  newBadLocation.save();
-  console.log(newBadLocation);
-
   app.io.room(queue).broadcast('badLocation'); 
   console.log("Bad location at " + queue + " for " + name);
 })
@@ -419,14 +339,6 @@ app.io.route('help', function(req) {
   var name = req.data.name;
   var helper = req.data.helper;
 
-  var newHelp = new Help2({course: queue, student: name, assistant: ''});
-  helpList.push(newHelp);
-  newHelp.save();
-
-// => is this part necessary or does the database handle this? <=
-//  var course = findCourse(queue);
-//  course.helpUser(user.name, user);
-
   app.io.room(queue).broadcast('help', helper);
   console.log(name + ' is getting help in ' + queue);
 })
@@ -437,41 +349,24 @@ app.io.route('messageUser', function(req) {
   var name = req.data.name;
   var message = req.data.message;
   var sender = req.data.sender;
-  var time = new Date(new Date().getTime());
 
   app.io.room(queue).broadcast('msg', message); // Not having user as an identifier?
   console.log('user ' + name + ' was messaged from ' + sender + ' at ' + queue + ' with: ' + message);
-
-  var d = new Date(1382086394000);
-  console.log(time);
-
-  var newMessage = new Msg2({course: queue, from: sender, to: name, msg: message, time: time});
-  messageList.push(newMessage);
-  newMessage.save();
 })
 
 // admin broadcasts to all users
 app.io.route('broadcast', function(req) {
   var queue = req.data.queue;
   var message = req.data.message;
-//  var sender = req.data.sender;
 
   app.io.room(queue).broadcast('msg', message);
   console.log('broadcast in ' + queue + ', msg: ' + message);
-// console.log('broadcast in ' + queue + ' by ' + sender + ', msg: ' + message);
-
-  var newBroadcast = new Broadcast2({course: queue, from: '', msg: message});
-//  var newBroadcast = new Broadcast2({course: queue, from: sender, msg: message});
-  broadcastList.push(newBroadcast);
-  newBroadcast.save();
 })
 
 // user leaves queue
 app.io.route('leave', function(req) {
   var queue = req.data.queue;
   var user = req.data.user;
-  console.log('a user left ' + queue);
-  app.io.room(queue).broadcast('leave', user);
 
   var course = findCourse(queue);
   course.removeUser(user.name);
@@ -479,8 +374,8 @@ app.io.route('leave', function(req) {
   var newUserStatistic = new UserStatistic2({student: user.name, course: queue, action: '?'});
   newUserStatistic.save();
 
-  var newCourseAction = new CourseAction2({course: queue, admin: '', action: 'removed user: ' + user.name});
-  newCourseAction.save();
+  console.log('a user left ' + queue);
+  app.io.room(queue).broadcast('leave', user);
 });
 
 // admin purges a queue
@@ -490,9 +385,6 @@ app.io.route('purge', function(req) {
   var course = findCourse(queue);
   course.purgeQueue();
   course.queue = [];
-
-  var newCourseAction = new CourseAction2({course: queue, admin: '', action: 'purge'});
-  newCourseAction.save();
 
   app.io.room(queue).broadcast('purge');
   console.log(req.data.queue + ' -list purged');
@@ -547,6 +439,7 @@ app.io.route('numbers helped', function(req) {
 app.io.route('queueing users', function(req) {
   var queue = req.data.queue;
   var time = req.data.startTime;
+
   var course = findCourse(queue);
   var length = course.queue.length;
 
