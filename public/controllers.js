@@ -86,6 +86,7 @@ function ($scope, $http, $routeParams, socket, user) {
   // Listen for an admin purging the queue.
   socket.on('purge', function() {
     $scope.$apply($scope.users = []);
+    $scope.$apply($scope.enqueued = false);
   })
 
   // Listen for a message.
@@ -323,10 +324,6 @@ function ($scope, $http, $routeParams, socket, user) {
       });
     }
   }
-  // Returns the time it has been since the user entered the queue
-  //$scope.timeDiff = function (time) {
-  //  return moment(time).from(Date.now(), true);
-  //};
 
 }]);
 

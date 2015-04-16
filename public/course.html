@@ -46,7 +46,7 @@ ska man kunna lämna in kommentarer som asse?
       <span class="glyphicon glyphicon-plus"></span>&nbsp;
       Join queue
     </div>
-    <div class="red clickable center-content frame" ng-click="removeUser(name)" ng-show="enqueued">
+    <div class="red clickable center-content frame" ng-show="enqueued" ng-click="removeUser(name)">
       <span class="glyphicon glyphicon-remove"></span>&nbsp;
       Leave queue
     </div>
@@ -63,7 +63,7 @@ ska man kunna lämna in kommentarer som asse?
       <span class="glyphicon glyphicon-bullhorn"></span>&nbsp;
       Broadcast to TAs
     </div>
-    <div class="red clickable center-content frame text-black" ng-show="admin" ng-click="purge()">
+    <div class="red clickable center-content frame" ng-show="admin" ng-click="purge()">
       <span class="glyphicon glyphicon-remove"></span>&nbsp;
       Purge queue
     </div>
