@@ -413,14 +413,14 @@ app.io.route('leave', function(req) {
 
   var newCourseAction = new CourseAction2({course: queue, admin: '', action: 'removed user: ' + user.name});
   newCourseAction.save();
-})
+});
 
 // admin purges a queue
 app.io.route('purge', function(req) {
   var queue = req.data.queue;
 
   var course = findCourse(queue);
-  course.purgeQueue(); 
+  course.purgeQueue();
   course.queue = [];
 
   var newCourseAction = new CourseAction2({course: queue, admin: '', action: 'purge'});
@@ -430,22 +430,30 @@ app.io.route('purge', function(req) {
   console.log(req.data.queue + ' -list purged');
 });
 
+function doOnCourse(courseName, action){
+  // console.log("doing " + action + " on course");
+  var course = findCourse(courseName);
+  course[action]();
+  console.log('trying to' + action + courseName);
+  app.io.room(courseName).broadcast(action);
+}
+
 // admin locks a queue
 app.io.route('lock', function(req) {
-  var queue = req.data.queue;
-  var course = findCourse(queue);
-  course["lock"]();
-  console.log('trying to lock ' + queue);
-  app.io.room(queue).broadcast('lock');
+  doOnCourse(req.data.queue, 'lock');
 });
 
 // admin unlocks a queue
 app.io.route('unlock', function(req) {
-  var queue = req.data.queue;
-  var course = findCourse(queue);
-  course.unlock();
-  console.log('trying to unlock ' + queue);
-  app.io.room(queue).broadcast('unlock');
+  doOnCourse(req.data.queue, 'unlock');
+});
+
+app.io.route('hibernate', function(req) {
+  doOnCourse(req.data.queue, 'hibernate');
+});
+
+app.io.route('unhibernate', function(req) {
+  doOnCourse(req.data.queue, 'unhibernate');
 });
 
 /* STATISTICS */
