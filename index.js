@@ -350,6 +350,7 @@ app.io.route('join', function(req) {
   var user = req.data.user;
   console.log('a user joined to ' + queue);
   app.io.room(queue).broadcast('join', user);
+  app.io.room("list").broadcast('join', queue);
 
   var course = findCourse(queue);
   course.addUser(new User2({name: user.name, place: user.place, comment: user.comment}));
@@ -426,6 +427,7 @@ app.io.route('leave', function(req) {
 
   console.log('a user left ' + queue);
   app.io.room(queue).broadcast('leave', user);
+  app.io.room("list").broadcast('leave', queue);
 });
 
 // admin purges a queue
