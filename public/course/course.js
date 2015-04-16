@@ -28,6 +28,9 @@
     $scope.locked = true;
     $scope.hibernating = true;
     $scope.motd = "";
+    if($scope.motd !== ""){
+      alert($scope.motd);
+    }
     $http.get('/API/queue/' + $routeParams.course)
     .success(function(response) {
       $scope.users = response.queue;
@@ -58,10 +61,6 @@
     socket.emit('listen', $routeParams.course);
 
     console.log('testing');
-
-    if($scope.motd !== ""){
-      alert($scope.motd);
-    }
 
     // Listen for the person joining a queue event.
     socket.on('join', function(data) {
@@ -127,12 +126,12 @@
 
     // Listen for locking the queue
     socket.on('lock', function(){
-      $scope.locked = true;
+      $scope.$apply($scope.locked = true);
     });
 
     // Listen for unlocking the queue
     socket.on('unlock', function(){
-      $scope.locked = false;
+      $scope.$apply($scope.locked = false);
     });
 
     // Listen for a badLocation warning
