@@ -4,6 +4,13 @@ var location = 'Red';
 var student = 1;
 var ta = 0;
 
+ //beforeAll(function() {
+  //userLogIn('TA', ta);
+  //$('body > div > div.ng-scope > div > div > section > div:nth-child(2)').click();
+  //closeMOTD();
+  //$('body > div > div.ng-scope > div > div.row.col-md-12 > div.col-md-2.pin-center.black > div:nth-child(8)').click();
+ //});
+
  beforeEach(function() {
     browser.get('http://localhost:8080/#/list');
     browser.manage().window().maximize();
@@ -19,12 +26,17 @@ var ta = 0;
   element(by.css('input.btn.btn-default')).click();
  };
 
+function closeMOTD(){
+  browser.sleep(250);
+  browser.switchTo().alert().then(
+      function(alert) {  return alert.dismiss(); },
+      function(err) { }
+      );
+};
+
 function userJoinQueue(joinCourse){
   $('body > div > div.ng-scope > div > div > section > div:nth-child('+ (joinCourse + 1) +')').click();
-  browser.switchTo().alert().then(
-    function (alert) { alert.dismiss(); },
-    function (err) { }
-);
+  closeMOTD();
   $('body > div > div.ng-scope > div > div.row.col-md-12 > div.col-md-2.pin-center.black > form > div:nth-child(1) > div > input').sendKeys(location);
   $('body > div > div.ng-scope > div > div.row.col-md-12 > div.col-md-2.pin-center.black > div:nth-child(2)').click();
 };
@@ -33,6 +45,7 @@ function userJoinQueue(joinCourse){
  afterEach(function(){
     userLogIn('delete', ta);
     $('body > div > div.ng-scope > div > div > section > div:nth-child(2)').click();
+    closeMOTD();
     $('body > div > div.ng-scope > div > div.row.col-md-12 > div.col-md-2.pin-center.black > div:nth-child(8)').click();
 
  });
@@ -45,13 +58,20 @@ it('he TA class is able to, by interaction, Purge the queue of all Users', funct
   browser.waitForAngular();
   userLogIn('TA', ta);
   $('body > div > div.ng-scope > div > div > section > div:nth-child(2)').click();
+  closeMOTD();
   $('body > div > div.ng-scope > div > div.row.col-md-12 > div.col-md-2.pin-center.black > div:nth-child(8)').click();
-  //expect($('body > div > div.ng-scope > div > div.row.col-md-12 > div.col-md-9.pull-right > table > tbody').isDisplayed().toBeTruthy());
+  browser.get('http://localhost:8080/#/list');
+  browser.manage().window().maximize();
+  browser.waitForAngular();
+  userLogIn(name, student);
+  userJoinQueue(1);
+  expect(element.all(by.css('body > div > div.ng-scope > div > div.row.col-md-12 > div.col-md-9.pull-right > table > tbody')).getText()).toMatch('^1 Edvard Red.*');
 });
 
 it('a User should be able to log on', function() {
     userLogIn(name, student);
     $('body > div > div.ng-scope > div > div > section > div:nth-child(2)').click();
+    closeMOTD();
    // expect(element(by.model('name').getText()).toEqual('Edvard Mickos'));
   });
 
@@ -71,6 +91,7 @@ it('a User should be able to leave a joined queue.', function() {
 it('The Student class will have the possibility the change their own data in the form of location commment and personal comment.', function() {
     userLogIn(name, student);
     $('body > div > div.ng-scope > div > div > section > div:nth-child(2)').click();
+    closeMOTD();
     $('body > div > div.ng-scope > div > div.row.col-md-12 > div.col-md-2.pin-center.black > form > div:nth-child(1) > div > input').sendKeys(location);
     $('body > div > div.ng-scope > div > div.row.col-md-12 > div.col-md-2.pin-center.black > form > div:nth-child(2) > div > input').sendKeys('comment1');
     $('body > div > div.ng-scope > div > div.row.col-md-12 > div.col-md-2.pin-center.black > div:nth-child(2)').click();
@@ -85,6 +106,7 @@ it('The Student class will have the possibility the change their own data in the
 it('The TA class is able to, by interaction, ‘Kick’ a User from the Queue', function(){
   userLogIn(name, student);
   $('body > div > div.ng-scope > div > div > section > div:nth-child(2)').click();
+  closeMOTD();
   $('body > div > div.ng-scope > div > div.row.col-md-12 > div.col-md-2.pin-center.black > form > div:nth-child(1) > div > input').sendKeys(location);
   $('body > div > div.ng-scope > div > div.row.col-md-12 > div.col-md-2.pin-center.black > div:nth-child(2)').click();
   browser.get('http://localhost:8080/#/list');
@@ -92,29 +114,26 @@ it('The TA class is able to, by interaction, ‘Kick’ a User from the Queue', 
   browser.waitForAngular();
   userLogIn('TA', ta);
   $('body > div > div.ng-scope > div > div > section > div:nth-child(2)').click();
+  closeMOTD();
   browser.actions().doubleClick($('body > div > div.ng-scope > div > div.row.col-md-12 > div.col-md-9.pull-right > table > tbody')).perform();
   $('body > div > div.ng-scope > div > div.row.col-md-12 > div.col-md-9.pull-right > table > tbody > tr > td:nth-child(6) > div > span:nth-child(1) > button').click();
   expect($('body > div > div.ng-scope > div > div.row.col-md-12 > div.col-md-9.pull-right > table > tbody').getText()).toEqual('');
   });
 
 it('TA is able to use the interaction ‘Lock’ or ‘Unlock’ with a queue', function(){  
- userLogIn(name, student);
- userJoinQueue(1);
- browser.get('http://localhost:8080/#/list');
- browser.manage().window().maximize();
- browser.waitForAngular();
  userLogIn('TA', ta);
  $('body > div > div.ng-scope > div > div.row.col-md-12 > div.col-md-2.pin-center.black > div:nth-child(9)').click();
  browser.get('http://localhost:8080/#/list');
  browser.manage().window().maximize();
  browser.waitForAngular();
  userLogIn(name, student);
- expect($('body > div > div.ng-scope > div > div > section > div:nth-child(8)').isEnabled()); // 8 = amount of queues+1 currently in the system if this fails due to this change 8 to amount of queues + 1
+ expect($('body > div > div.ng-scope > div > div > section > div:nth-child(8)').isEnabled().toBe(false)); // 8 = amount of queues+1 currently in the system if this fails due to this change 8 to amount of queues + 1
  browser.get('http://localhost:8080/#/list');
  browser.manage().window().maximize();
  browser.waitForAngular();
  userLogIn('TA', ta);
- $('body > div > div.ng-scope > div > div.row.col-md-12 > div.col-md-2.pin-center.black > div:nth-child(9)').click();
-});
+ userJoinQueue(7);
+ $('body > div > div.ng-scope > div > div.row.col-md-12 > div.col-md-2.pin-center.black > div:nth-child(10)').isEnabled();
+  });
 
 });
