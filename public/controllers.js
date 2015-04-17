@@ -58,12 +58,7 @@ function ($scope, $http, $location, socket, user) {
   // Listen for a queue waking up.
   socket.on('lobbyunhibernate', function(queue) {
     console.log(queue + " was awoken (lobby)");
-    for(var index in $scope.courses){
-      if($scope.courses[index].name === queue){
-        $scope.$apply($scope.courses[index].hibernating = false);
-        break;
-      }
-    }
+    $scope.$apply(getCourse(queue).hibernating = false);
   });
 
   function getCourse (queue) {
