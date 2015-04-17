@@ -1,42 +1,44 @@
 angular.module('queue')
 
 .factory('UserService', function () {
-	var username = "";
-	var admin = false;
 
 	return {
+		admin: false,
+
+		username: "",
+
 		setName: function (name) {
-			username = name;
+			this.username = name;
 		},
 
 		getName: function () {
-			return username;
+			return this.username;
 		},
 
 		isAdmin: function () {
-			return admin;
+			return this.admin;
 		},
 
 		setAdmin: function (bool) {
-			admin = bool;
+			this.admin = bool;
 		},
 
 		/**
 		 * Function decorator.
 		 * Requires the user to be admin to run the functions.
 		 */
-		admin: function (func) {
-			return function () {
-				if (admin) {
-					return func.apply(this, arguments);
-				}
-			};
-		},
+		//admin: function (func) {
+		//	return function () {
+		//		if (admin) {
+		//			return func.apply(this, arguments);
+		//		}
+		//	};
+		//},
 
 		clearName: function () {
-			username = void 0;
+			this.username = void 0;
 		}
-	}
+	};
 })
 
 .factory('WebSocketService', function () {

@@ -114,8 +114,8 @@ function ($scope, $location, user) {
   $scope.location = $location.path();
   
   // Robert look from here
-  $scope.loggedIn = user.getName() !== "";
-  $scope.name = user.getName();
+  $scope.loggedIn = user.username !== "";
+  $scope.name = user.username;
   console.log("user = " + $scope.name);
   // Robert look to here
 
@@ -127,8 +127,8 @@ function ($scope, $location, user) {
   };
 }]);
 
-queueControllers.controller('adminController', ['$scope', '$location', '$http', 'UserService',
-function ($scope, $location, $http, user) {
+queueControllers.controller('adminController', ['$scope', '$location', '$http', 'WebSocketService', 'UserService',
+function ($scope, $location, $http, socket, user) {
   console.log("Entered admin.html");
   $scope.admin = user.isAdmin();
   $scope.selectedQueue = undefined;
@@ -144,49 +144,109 @@ function ($scope, $location, $http, user) {
     $scope.courses = response;
   });
 
-  //if(!$scope.admin){
-  //  $location.path('/list');
-    //Call unauthorized in listController
-  //}
+  socket.emit('stopListening', 'lobby');
+  socket.emit('listen', 'admin');
 
   $scope.createQueue = function(){
     if($scope.courseName !== ""){
-      //socket.emit('createQueue', {
-      //  name:queue
-      //});
+      socket.emit('createQueue', {
+        queue:queue
+      });
       console.log("Trying to create queue " + $scope.courseName);
+      $scope.courseName = '';
+    }
+  };
+
+  $scope.deleteQueue = function(){
+    if($scope.courseName !== ""){
+      socket.emit('deleteQueue', {
+        queue:queue
+      });
+      console.log("Trying to delete queue " + $scope.courseName);
+      $scope.courseName = '';
+    }
+  };
+
+  $scope.hibernateQueue = function(){
+    if($scope.courseName !== ""){
+      socket.emit('hibernate', {
+        queue:queue
+      });
+      console.log("Trying to hibernate queue " + $scope.courseName);
+      $scope.courseName = '';
+    }
+  };
+
+  $scope.unhibernateQueue = function(){
+    if($scope.courseName !== ""){
+      socket.emit('unhibernate', {
+        queue:queue
+      });
+      console.log("Trying to unhibernate queue " + $scope.courseName);
       $scope.courseName = '';
     }
   };
 
   $scope.addAdmin = function(){
     if($scope.newAdmin !== ""){
-      //socket.emit('addAdmin', {
-      //  name:$scope.newAdmin
-      //});
+      socket.emit('addAdmin', {
+        name:$scope.newAdmin
+      });
       console.log("Adding admin " + $scope.newAdmin);
+      $scope.newAdmin = '';
+    }
+  };
+
+  $scope.removeAdmin = function(){
+    if($scope.newAdmin !== ""){
+      socket.emit('removeAdmin', {
+        name:$scope.newAdmin
+      });
+      console.log("Removing admin " + $scope.newAdmin);
       $scope.newAdmin = '';
     }
   };
 
   $scope.addTeacher = function(){
     if($scope.newTeacher !== "" && $scope.selectedQueue !== undefined){
-      //socket.emit('addTeacher', {
-      //  name:$scope.newTeacher,
-      //  course:$scope.selectedQueue
-      //});
+      socket.emit('addTeacher', {
+        name:$scope.newTeacher,
+        course:$scope.selectedQueue
+      });
       console.log("Adding teacher " + $scope.newTeacher + " in the course " + $scope.selectedQueue);
+      $scope.newTeacher = '';
+    }
+  };
+
+  $scope.removeTeacher = function(){
+    if($scope.newTeacher !== "" && $scope.selectedQueue !== undefined){
+      socket.emit('removeTeacher', {
+        name:$scope.newTeacher,
+        course:$scope.selectedQueue
+      });
+      console.log("Removing teacher " + $scope.newTeacher + " in the course " + $scope.selectedQueue);
       $scope.newTeacher = '';
     }
   };
 
   $scope.addAssistant = function(){
     if($scope.newAssistant !== "" && $scope.selectedQueue !== undefined){
-      //socket.emit('addAssistant', {
-      //  name:$scope.newAssistant,
-      //  course:$scope.selectedQueue
-      //});
+      socket.emit('addAssistant', {
+        name:$scope.newAssistant,
+        course:$scope.selectedQueue
+      });
       console.log("Adding assistant " + $scope.newAssistant  + " in the course " + $scope.selectedQueue);
+      $scope.newAssistant = '';
+    }
+  };
+
+    $scope.removeAssistant = function(){
+    if($scope.newAssistant !== "" && $scope.selectedQueue !== undefined){
+      socket.emit('removeAssistant', {
+        name:$scope.newAssistant,
+        course:$scope.selectedQueue
+      });
+      console.log("Removing assistant " + $scope.newAssistant  + " in the course " + $scope.selectedQueue);
       $scope.newAssistant = '';
     }
   };
