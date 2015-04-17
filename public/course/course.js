@@ -40,9 +40,9 @@
           $scope.enqueued = true;
         }
       }
-      if($scope.motd !== ""){
-        alert($scope.motd);
-      }
+      //if($scope.motd !== ""){
+      //  alert($scope.motd);
+      //}
     });
 
     $scope.bookedUsers = [
@@ -58,14 +58,15 @@
 
     $scope.newUser = true;
 
+    socket.emit('stopListening', 'lobby');
     socket.emit('listen', $routeParams.course);
 
     console.log('testing');
 
     // Listen for the person joining a queue event.
     socket.on('join', function(data) {
-      console.log(data);
       $scope.$apply($scope.users.push({name:data.name, place:data.place, comment:data.comment, startTime:data.startTime}));
+      console.log("data in course join = " + data);
       console.log($scope.users);
     });
 

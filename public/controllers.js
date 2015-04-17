@@ -17,84 +17,47 @@ function ($scope, $http, $location, socket, user) {
     $scope.admin = user.isAdmin();
   });
 
-  socket.emit('listen', 'list');
+  socket.emit('listen', 'lobby');
 
-  console.log("join");
   // Listen for a person joining a queue.
-  socket.on('join', function(queue) {
-    console.log("A user joined " + queue);
-    for(var index in $scope.courses){
-      if($scope.courses[index].name === queue){
-        $scope.$apply($scope.courses[index].length++);
-        break;
-      }
-    }
+  socket.on('lobbyjoin', function(queue) {
+    console.log("A user joined (lobby) " + queue);
+    $scope.$apply(getCourse(queue).length++);
   });
 
-  console.log("leave");
   // Listen for a person leaving a queue.
-  socket.on('leave', function(queue) {
-    console.log("A user left " + queue);
-    for(var index in $scope.courses){
-      if($scope.courses[index].name === queue){
-        $scope.$apply($scope.courses[index].length--);
-        break;
-      }
-    }
+  socket.on('lobbyleave', function(queue) {
+    console.log("A user left (lobby) " + queue);
+    $scope.$apply(getCourse(queue).length--);
   });
 
-  console.log("purge");
   // Listen for queue geting purged.
-  socket.on('purge', function(queue) {
-    console.log(queue + " was purged");
-    for(var index in $scope.courses){
-      if($scope.courses[index].name === queue){
-        $scope.$apply($scope.courses[index].length = 0);
-        break;
-      }
-    }
+  socket.on('lobbypurge', function(queue) {
+    console.log(queue + " was purged (lobby)");
+    $scope.$apply(getCourse(queue).length = 0);
   });
 
-  console.log("lock");
   // Listen for a queue being locked.
-  socket.on('lock', function(queue) {
-    console.log(queue + " was locked");
-    for(var index in $scope.courses){
-      if($scope.courses[index].name === queue){
-        $scope.$apply($scope.courses[index].locked = true);
-        break;
-      }
-    }
+  socket.on('lobbylock', function(queue) {
+    console.log(queue + " was locked (lobby)");
+    $scope.$apply(getCourse(queue).locked = true);
   });
 
-  console.log("unlock");
   // Listen for a queue being unlocked.
-  socket.on('unlock', function(queue) {
-    console.log(queue + " was unlocked");
-    for(var index in $scope.courses){
-      if($scope.courses[index].name === queue){
-        $scope.$apply($scope.courses[index].locked = false);
-        break;
-      }
-    }
+  socket.on('lobbyunlock', function(queue) {
+    console.log(queue + " was unlocked (lobby)");
+    $scope.$apply(getCourse(queue).locked = false);
   });
 
-  console.log("hibernate");
   // Listen for a queue going to sleep.
-  socket.on('hibernate', function(queue) {
-    console.log(queue + " was sent to sleep");
-    for(var index in $scope.courses){
-      if($scope.courses[index].name === queue){
-        $scope.$apply($scope.courses[index].hibernating = true);
-        break;
-      }
-    }
+  socket.on('lobbyhibernate', function(queue) {
+    console.log(queue + " was sent to sleep (lobby)");
+    $scope.$apply(getCourse(queue).hibernating = true);
   });
 
-  console.log("unhibernate");
   // Listen for a queue waking up.
-  socket.on('unhibernate', function(queue) {
-    console.log(queue + " was awoken");
+  socket.on('lobbyunhibernate', function(queue) {
+    console.log(queue + " was awoken (lobby)");
     for(var index in $scope.courses){
       if($scope.courses[index].name === queue){
         $scope.$apply($scope.courses[index].hibernating = false);
@@ -103,8 +66,13 @@ function ($scope, $http, $location, socket, user) {
     }
   });
 
-  console.log('listing');
-
+  function getCourse (queue) {
+    for(var index in $scope.courses){
+      if($scope.courses[index].name === queue){
+        return $scope.courses[index];
+      }
+    }
+  }
   // This function should direct the user to the wanted page
   $scope.redirect = function(course){
     for(var index in $scope.courses){

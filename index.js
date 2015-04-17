@@ -344,13 +344,18 @@ app.io.route('listen', function(req) {
   req.io.join(req.data);
 })
 
+app.io.route('stopListening', function(req) {
+  console.log('a user left ' + req.data);
+  req.io.leave(req.data);
+})
+
 // user joins queue
 app.io.route('join', function(req) {
   var queue = req.data.queue;
   var user = req.data.user;
   console.log('a user joined to ' + queue);
   app.io.room(queue).broadcast('join', user);
-  app.io.room("list").broadcast('join', queue);
+  app.io.room("lobby").broadcast('lobbyjoin', queue);
 
   var course = findCourse(queue);
   course.addUser(new User2({name: user.name, place: user.place, comment: user.comment}));
@@ -427,7 +432,7 @@ app.io.route('leave', function(req) {
 
   console.log('a user left ' + queue);
   app.io.room(queue).broadcast('leave', user);
-  app.io.room("list").broadcast('leave', queue);
+  app.io.room("lobby").broadcast('lobbyleave', queue);
 });
 
 // admin purges a queue
@@ -446,7 +451,7 @@ app.io.route('purge', function(req) {
 
   console.log(req.data.queue + ' -list purged');
   app.io.room(queue).broadcast('purge');
-  app.io.room("list").broadcast('purge', queue);
+  app.io.room("lobby").broadcast('lobbypurge', queue);
 
   // ====== PrivList - testoutput =======
   var usr = "pernyb";
@@ -461,7 +466,7 @@ function doOnCourse(courseName, action){
   course[action]();
   console.log('trying to ' + action + ' ' + courseName);
   app.io.room(courseName).broadcast(action);
-  app.io.room("list").broadcast(action, courseName);
+  app.io.room("lobby").broadcast("lobby" + action, courseName);
 }
 
 // admin locks a queue
