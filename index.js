@@ -187,6 +187,17 @@ function privilegeList(name) {
   return list;
 }
 
+// the average time in 'queue' of students who joined the queue 
+//  from 'start' and left before/was still in queue at 'end'
+function getAverageQueueTime(queue, start, end) {
+  return 0;
+}
+
+// number of people who joined the queue from 'start' and left before 'end'
+function numbersOfPeopleLeftQueue(queue, start, end) {
+  return 0;
+}
+
 //===============================================================
 
 //setup();
