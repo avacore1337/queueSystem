@@ -16,26 +16,133 @@ var Schema = mongoose.Schema;
 var _ = require('lodash');
 var async = require('async');
 
+//===============================================================
+// Setting up the database-connection
+
 mongoose.connect('mongodb://localhost/queueBase');
 
 var db = mongoose.connection;
+
 db.on('error', console.error.bind(console, 'connection error:'));
 db.once('open', function callback () {
   console.log("db open!");
 });
 
 //===============================================================
+// Setting up schemas and lists for the program
 
 var User2 = database.user;
 var Admin2 = database.admin;
 var Course2 = database.course;
 
+//---
+
 courseList = [];
 adminList = [];
 
 //===============================================================
+// Methods for setting up or reading in the database (in production, only readIn should be used)
 
-function User(name,place,comment){
+//setup(); // temporary method
+readIn();
+
+function setup(){
+  // list of courses to be used
+  var tmpList = [
+    "dbas",
+    "inda",
+    "logik",
+    "numme",
+    "mvk",
+    "progp",
+    "mdi",
+  ];
+
+  // creates database-objects from the list (of courses)
+  for (var i = 0 ; i < tmpList.length ; i++) {
+    var course = tmpList[i];
+    var newCourse = new Course2({name: course});
+    courseList.push(newCourse);
+    newCourse.save();
+
+    // for every course, create users
+    var queues = Math.floor((Math.random() * 50) + 1);
+    for (var j = 0; j < queues; j++) {
+      var newUser = new User2({name: Math.random().toString(36).substring(7), place: 'Green', comment: 'lab1'});
+      newCourse.addUser(newUser);
+      newCourse.save();
+    }
+
+    console.log(course  + " " +  newCourse.queue.length); // temporary for error-solving
+  }
+
+  // -----
+
+  // Code to create collections in mongo    <--   temporary for error-solving
+  var newAdmin = new Admin2({name: 'name'});
+  newAdmin.save();
+
+  var testAdmin = new Admin2({name: 'pernyb', admin: true});
+  testAdmin.save();
+  adminList.push(testAdmin);
+  testAdmin = new Admin2({name: 'antbac', admin: true});
+  testAdmin.save();
+  adminList.push(testAdmin);
+
+  var testTeacher = new Admin2({name : 'pernyb', teacher : true});
+  testTeacher.save();
+  teacherList.push(testTeacher);
+}
+
+// Read in courses and admins from the database
+function readIn(){
+  // All the courses
+  Course2.find(function (err, courses) {
+    courses.forEach(function (course) {
+       courseList.push(course);
+
+       console.log('Course: ' + course.name + ' loaded!'); // temporary for error-solving
+    });
+  });
+
+  // All the admins
+  Admin2.find(function (err, admins) {
+    admins.forEach(function (admin) {
+      if (admin.admin) {
+        adminList.push(admin);
+
+        console.log('Admin: ' + admin.name + ' loaded'); // temporary for error-solving
+      }
+    });
+  });
+
+  // All the admins
+  Admin2.find(function (err, teachers) {
+    teachers.forEach(function (teacher) {
+      if (teacher.teacher) {
+        teacherList.push(teacher);
+
+        console.log('Teacher: ' + teacher.name + ' loaded'); // temporary for error-solving
+      }
+    });
+  });
+
+  // All the admins
+  Admin2.find(function (err, assistants) {
+    assistants.forEach(function (assistant) {
+      if (assistant.assistant) {
+        assistantList.push(assistant);
+
+        console.log('Assistant: ' + assistant.name + ' loaded'); // temporary for error-solving
+      }
+    });
+  });
+}
+
+//===============================================================
+// Functions
+
+function User(name, place, comment){
   this.name = name;
   this.place = place;
   this.comment = comment;
@@ -50,95 +157,7 @@ function Course(name){
   this.length = 0;
 }
 
-// REFACTOR!
-function setup(){
-  var tmpList = [
-    "dbas",
-    "inda",
-    "logik",
-    "numme",
-    "mvk",
-    "progp",
-    "mdi"
-  ];
-
-  for (var i = 0 ; i < tmpList.length ; i++) {
-    var course = tmpList[i];
-    var newCourse = new Course2({name: course});
-    courseList.push(newCourse);
-    newCourse.save();
-
-    var queues = Math.floor((Math.random() * 50) + 1);
-    for (var j = 0; j < queues; j++) {
-      var newUser = new User2({name: Math.random().toString(36).substring(7), place: 'Green', comment: 'lab1'});
-      newCourse.addUser(newUser);
-      newCourse.save();
-    }
-
-    console.log(course  + " " +  newCourse.queue.length);
-  }
-
-  // -----
-
-  // Code to create collections in mongo
-  var newAdmin = new Admin2({name: 'name'});
-  newAdmin.save();
-//  var newUserStatistic = new UserStatistic2({student: 'student', course: 'course', action: 'action'});
-  //newUserStatistic.save();
-
-  var testAdmin = new Admin2({name: 'pernyb'});
-  testAdmin.save();
-  adminList.push(testAdmin);
-  testAdmin = new Admin2({name: 'antbac'});
-  testAdmin.save();
-  adminList.push(testAdmin);
-
-//  var testTeacher = new Teacher2({name : 'pernyb', course : 'dbas'});
-// testTeacher.save();
-//  teacherList.push(testTeacher);
-}
-
-// Read in courses and admins from the database
-function readIn(){
-  // All the courses
-  Course2.find(function (err, courses) {
-    courses.forEach(function (course) {
-       courseList.push(course);
-       console.log('Course: ' + course.name + ' loaded!');
-    });
-  });
-
-  // All the admins
-  Admin2.find(function (err, admins) {
-    admins.forEach(function (admin) {
-      if (admin.admin) {
-        adminList.push(admin);
-        console.log('Admin: ' + admin.name + ' loaded');
-      }
-    });
-  });
-
-  // All the admins
-  Admin2.find(function (err, teachers) {
-    teachers.forEach(function (teacher) {
-      if (teacher.teacher) {
-        teacherList.push(teacher);
-        console.log('Teacher: ' + teacher.name + ' loaded');
-      }
-    });
-  });
-
-  // All the admins
-  Admin2.find(function (err, assistants) {
-    assistants.forEach(function (assistant) {
-      if (assistant.assistant) {
-        assistantList.push(assistant);
-        console.log('Assistant: ' + assistant.name + ' loaded');
-      }
-    });
-  });
-}
-
+// return the course with the name "name"
 function findCourse(name) {
   for (var i = 0; i < courseList.length; i++) {
     if (courseList[i].name === name) {
@@ -147,20 +166,22 @@ function findCourse(name) {
   };
 }
 
-// name in Admins
+// validates if a person is the privilege-type given for given course
+// TODO: make the validation more secure
 function validate(name, type, course) {
   for (var i = 0; i < adminList.length; i++) {
     if (adminList[i].name === name) {
-      console.log(name + ' is a valid admin');
+      console.log(name + ' is a valid admin'); // temporary for error-solving
       return true;
     }
   };
 
-  console.log(name + ' is not a valid admin');
+  console.log(name + ' is not a valid admin'); // temporary for error-solving
   return false;
 }
 
 // list of courses that a user is admin, teacher or TA for
+// TODO: make the list containing a field which says which kind of privilege-type the person has
 function privilegeList(name) {
   list = [];
   for (var i = 0; i < adminList.length; i++) {
@@ -169,20 +190,6 @@ function privilegeList(name) {
       list.push(obj);
     }
   }
-  
-/*  for (var i = 0; i < teacherList.length; i++) {
-    if (teacherList[i].name === name) {
-      var obj = { "name" : teacherList[i].name, "course" : teacherList[i].course, "type" : "teacher" };
-      list.push(obj);
-    }
-  }*/
-
-/*  for (var i = 0; i < assistantList.length; i++) {
-    if (assistantList[i].name === name) {
-      var obj = { "name" : assistantList[i].name, "course" : assistantList[i].course, "type" : "assistant" };
-      list.push(obj);
-    }
-  }*/
   
   return list;
 }
@@ -197,11 +204,6 @@ function getAverageQueueTime(queue, start, end) {
 function numbersOfPeopleLeftQueue(queue, start, end) {
   return 0;
 }
-
-//===============================================================
-
-//setup();
-readIn();
 
 //===============================================================
 

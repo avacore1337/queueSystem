@@ -54,6 +54,14 @@ courseSchema.methods.addUser = function (user) {
   this.save();
 };
 
+// takes a username as a parameter and removes the user form the queue
+courseSchema.methods.removeUser = function (username) {
+  this.queue = this.queue.filter(function (user) {
+    return user.name !== username;
+  });
+  this.save();
+};
+
 // locks the queue
 courseSchema.methods.lock = function () {
   this.locked = true;
@@ -75,14 +83,6 @@ courseSchema.methods.hibernate = function (user) {
 // unhide the schema
 courseSchema.methods.unhibernate = function (user) {
   this.hibernating = false;
-  this.save();
-};
-
-// takes a username as a parameter and removes the user form the queue
-courseSchema.methods.removeUser = function (username) {
-  this.queue = this.queue.filter(function (user) {
-    return user.name !== username;
-  });
   this.save();
 };
 
@@ -122,6 +122,12 @@ courseSchema.methods.addAssistantComment = function (name, sender, queue, messag
     }
   });
   this.save();
+};
+
+// NOT IMPLEMENTED YET
+// set the "message of the day" for the course
+courseSchema.methods.setMOTD = function () {
+  // TODO
 };
 
 //-----
