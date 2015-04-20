@@ -11,6 +11,7 @@ app.use(expressio.session({secret: 'express.io is the best framework ever!'}));
 app.use(expressio.bodyParser());
 
 var mongoose = require('mongoose');
+var database = require("./queueSchemas.js"); // databas stuff
 var Schema = mongoose.Schema;
 var _ = require('lodash');
 var async = require('async');
@@ -23,160 +24,14 @@ db.once('open', function callback () {
   console.log("db open!");
 });
 
-
 //===============================================================
 
-var adminSchema = new Schema({
-  name: String,
-});
-
-//-----
-
-var teacherSchema = new Schema({
-  name: String,
-  course: String,
-});
-
-//-----
-
-var assistantSchema = new Schema({
-  name: String,
-  course: String,
-});
-
-//-----
-
-var userSchema = new Schema({
-  name: String,
-  place: String,
-  startTime: { type: Number, default: Date.now },
-  messages: [String],
-  action: { type: String, default: '' },
-  comment: { type: String, default: '' }
-});
-
-userSchema.methods.toJSON = function () {
-  return {
-    name: this.name,
-    place: this.place,
-    time: this.startTime,
-    action: this.action,
-    comment: this.comment
-  };
-};
-
-//-----
-
-var courseSchema = new Schema({
-  name: String,
-  locked: { type: Boolean, default: false },
-  hibernating: { type: Boolean, default: false },
-  motd: { type: String, default: "You can do it!" },
-  queue: {type:[userSchema], default: []}
-});
-
-courseSchema.methods.addUser = function (user) {
-  this.queue.push(user);
-  this.save();
-};
-
-courseSchema.methods.lock = function () {
-  this.locked = true;
-  this.save();
-};
-
-courseSchema.methods.unlock = function () {
-  this.locked = false;
-  this.save();
-};
-
-courseSchema.methods.hibernate = function (user) {
-  this.hibernating = true;
-  this.save();
-};
-
-courseSchema.methods.unhibernate = function (user) {
-  this.hibernating = false;
-  this.save();
-};
-
-courseSchema.methods.removeUser = function (username) {
-  this.queue = this.queue.filter(function (user) {
-    return user.name !== username;
-  });
-  this.save();
-};
-
-courseSchema.methods.purgeQueue = function (course) {
-  this.queue.forEach(function (usr, i, queue) {
-    var newUserStatistic = new UserStatistic2({student: usr.name, course: course, action: '?'});
-    newUserStatistic.save();
-  });
-
-  this.queue = [];
-  this.save();
-};
-
-courseSchema.methods.forUser = function (fn) {
-  this.queue.forEach(fn);
-  this.save();
-};
-
-courseSchema.methods.updateUser = function (name, user) {
-  this.queue.forEach(function (usr, i, queue) {
-    if (usr.name === name) {
-      _.extend(queue[i], user);
-    }
-  });
-  this.save();
-};
-
-courseSchema.methods.addAssistantComment = function (name, sender, queue, message) {
-  this.queue.forEach(function (usr, i, queue) {
-    if (usr.name === name) {
-      var user = usr;
-      user.messages.push(message);
-      _.extend(queue[i], user);
-    }
-  });
-  this.save();
-};
-
-//-----
-
-var userStatisticSchema = new Schema({
-  student: String,
-  course: String,
-  time: { type: Number, default: Date.now },
-  action: String,
-  leftQueue: { type: Boolean, default: false },
-  queueLength: { type: Number, default: 0},
-  timesHelped: { type: Number, default: 0},
-  timeAmountHelped: { type: Number, default: 0}
-});
-
-userStatisticSchema.index({time: 1});
-
-//===============================================================
-
-var User2 = mongoose.model("User", userSchema);
-
-var Admin2 = mongoose.model("Admin", adminSchema);
-
-var Teacher2 = mongoose.model("Teacher", teacherSchema);
-
-var Assistant2 = mongoose.model("Assistant", assistantSchema);
-
-var Course2 = mongoose.model("Course", courseSchema);
-
-var UserStatistic2 = mongoose.model("UserStatistic", userStatisticSchema);
-
-//===============================================================
+var User2 = database.user;
+var Admin2 = database.admin;
+var Course2 = database.course;
 
 courseList = [];
 adminList = [];
-teacherList = [];
-assistantList = [];
 
 //===============================================================
 
@@ -228,8 +83,8 @@ function setup(){
   // Code to create collections in mongo
   var newAdmin = new Admin2({name: 'name'});
   newAdmin.save();
-  var newUserStatistic = new UserStatistic2({student: 'student', course: 'course', action: 'action'});
-  newUserStatistic.save();
+//  var newUserStatistic = new UserStatistic2({student: 'student', course: 'course', action: 'action'});
+  //newUserStatistic.save();
 
   var testAdmin = new Admin2({name: 'pernyb'});
   testAdmin.save();
@@ -238,9 +93,9 @@ function setup(){
   testAdmin.save();
   adminList.push(testAdmin);
 
-  var testTeacher = new Teacher2({name : 'pernyb', course : 'dbas'});
-  testTeacher.save();
-  teacherList.push(testTeacher);
+//  var testTeacher = new Teacher2({name : 'pernyb', course : 'dbas'});
+// testTeacher.save();
+//  teacherList.push(testTeacher);
 }
 
 // Read in courses and admins from the database
@@ -261,21 +116,21 @@ function readIn(){
     });
   });
 
-  // All the admins
+/*  // All the admins
   Teacher2.find(function (err, teachers) {
     teachers.forEach(function (teacher) {
        teacherList.push(teacher);
        console.log('Teacher: ' + teacher.name + ' loaded');
     });
-  });
+  });*/
 
   // All the admins
-  Assistant2.find(function (err, assistants) {
+/*  Assistant2.find(function (err, assistants) {
     assistants.forEach(function (assistant) {
        assistantList.push(assistant);
        console.log('Assistant: ' + assistant.name + ' loaded');
     });
-  });
+  });*/
 }
 
 function findCourse(name) {
@@ -309,19 +164,19 @@ function privilegeList(name) {
     }
   }
   
-  for (var i = 0; i < teacherList.length; i++) {
+/*  for (var i = 0; i < teacherList.length; i++) {
     if (teacherList[i].name === name) {
       var obj = { "name" : teacherList[i].name, "course" : teacherList[i].course, "type" : "teacher" };
       list.push(obj);
     }
-  }
+  }*/
 
-  for (var i = 0; i < assistantList.length; i++) {
+/*  for (var i = 0; i < assistantList.length; i++) {
     if (assistantList[i].name === name) {
       var obj = { "name" : assistantList[i].name, "course" : assistantList[i].course, "type" : "assistant" };
       list.push(obj);
     }
-  }
+  }*/
   
   return list;
 }
@@ -427,8 +282,8 @@ app.io.route('leave', function(req) {
   var course = findCourse(queue);
   course.removeUser(user.name);
 
-  var newUserStatistic = new UserStatistic2({student: user.name, course: queue, action: '?'});
-  newUserStatistic.save();
+//  var newUserStatistic = new UserStatistic2({student: user.name, course: queue, action: '?'});
+//  newUserStatistic.save();
 
   console.log('a user left ' + queue);
   app.io.room(queue).broadcast('leave', user);
@@ -588,11 +443,11 @@ app.io.route('addTeacher', function(req) {
   var queue = req.data.queue;
   var course = req.data.course;
 
-  var newTeacher = new Teacher2({name: teacherName, course: course});
+/*  var newTeacher = new Teacher2({name: teacherName, course: course});
   teacherList.push(newTeacher);
-  newTeacher.save();
+  newTeacher.save();*/
 
-  console.log(teacherName + ' is a new teacher!');
+  console.log(teacherName + ' is a new teacher (but not really)!');
 })
 
 //
@@ -607,11 +462,11 @@ app.io.route('addAssistant', function(req) {
   var queue = req.data.queue;
   var course = req.data.course;
 
-  var newAssistant = new Assistant2({name: assistantName, course: course});
+/*  var newAssistant = new Assistant2({name: assistantName, course: course});
   assistantList.push(newAssistant);
-  newAssistant.save();
+  newAssistant.save();*/
 
-  console.log(assistantName + ' is a new assistant!');
+  console.log(assistantName + ' is a new assistant (but not really)!');
 })
 
 //
