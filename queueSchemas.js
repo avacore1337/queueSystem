@@ -4,6 +4,7 @@
 //===============================================================
 
 var async = require('async');
+var lodash = require('lodash');
 var mongoose = require('mongoose');
 var Schema = mongoose.Schema;
 
@@ -110,7 +111,7 @@ courseSchema.methods.forUser = function (fn) {
 courseSchema.methods.updateUser = function (name, user) {
   this.queue.forEach(function (usr, i, queue) {
     if (usr.name === name) {
-      _.extend(queue[i], user);
+      lodash.extend(queue[i], user);
     }
   });
   this.save();
@@ -122,7 +123,7 @@ courseSchema.methods.addAssistantComment = function (name, sender, queue, messag
     if (usr.name === name) {
       var user = usr;
       user.messages.push(message);
-      _.extend(queue[i], user);
+      lodash.extend(queue[i], user);
     }
   });
   this.save();

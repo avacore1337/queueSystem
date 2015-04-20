@@ -125,7 +125,7 @@ function readIn(){
   Admin2.find(function (err, teachers) {
     teachers.forEach(function (teacher) {
       if (teacher.teacher) {
-        teacherList.push(teacher);
+//        teacherList.push(teacher);
 
         console.log('Teacher: ' + teacher.name + ' loaded'); // temporary for error-solving
       }
@@ -136,7 +136,7 @@ function readIn(){
   Admin2.find(function (err, assistants) {
     assistants.forEach(function (assistant) {
       if (assistant.assistant) {
-        assistantList.push(assistant);
+//        assistantList.push(assistant);
 
         console.log('Assistant: ' + assistant.name + ' loaded'); // temporary for error-solving
       }
@@ -168,7 +168,7 @@ function findCourse(name) {
     if (courseList[i].name === name) {
       return courseList[i];
     }
-  };
+  }
 }
 
 // validates if a person is the privilege-type given for given course
@@ -179,7 +179,7 @@ function validate(name, type, course) {
       console.log(name + ' is a valid admin'); // temporary for error-solving
       return true;
     }
-  };
+  }
 
   console.log(name + ' is not a valid admin'); // temporary for error-solving
   return false;
@@ -188,7 +188,7 @@ function validate(name, type, course) {
 // list of courses that a user is admin, teacher or TA for
 // TODO: make the list containing a field which says which kind of privilege-type the person has
 function privilegeList(name) {
-  list = [];
+  var list = [];
   for (var i = 0; i < adminList.length; i++) {
     if (adminList[i].name === name) {
       var obj = { "name" : adminList[i].name, "course" : "", "type" : "admin" };
@@ -221,12 +221,12 @@ app.io.on('connection', function(socket){
 app.io.route('listen', function(req) {
   console.log('a user added to ' + req.data);
   req.io.join(req.data);
-})
+});
 
 app.io.route('stopListening', function(req) {
   console.log('a user left ' + req.data);
   req.io.leave(req.data);
-})
+});
 
 // user joins queue
 app.io.route('join', function(req) {
@@ -238,7 +238,7 @@ app.io.route('join', function(req) {
 
   var course = findCourse(queue);
   course.addUser(new User2({name: user.name, place: user.place, comment: user.comment}));
-})
+});
 
 // user tries to join a queue with a "bad location"
 //  - do nothing in backend?
@@ -254,7 +254,7 @@ app.io.route('badLocation', function(req) {
 
   app.io.room(queue).broadcast('badLocation'); 
   console.log("Bad location at " + queue + " for " + name);
-})
+});
 
 // user gets updated
 app.io.route('update', function(req) {
@@ -266,7 +266,7 @@ app.io.route('update', function(req) {
 
   var course = findCourse(queue);
   course.updateUser(user.name, user);
-})
+});
 
 // admin helps a user (marked in the queue)
 app.io.route('help', function(req) {
@@ -276,7 +276,7 @@ app.io.route('help', function(req) {
 
   app.io.room(queue).broadcast('help', helper);
   console.log(name + ' is getting help in ' + queue);
-})
+});
 
 // admin messages a user
 app.io.route('messageUser', function(req) {
@@ -287,7 +287,7 @@ app.io.route('messageUser', function(req) {
 
   app.io.room(queue).broadcast('msg', message); // Not having user as an identifier?
   console.log('user ' + name + ' was messaged from ' + sender + ' at ' + queue + ' with: ' + message);
-})
+});
 
 // admin broadcasts to all users
 app.io.route('broadcast', function(req) {
@@ -296,7 +296,7 @@ app.io.route('broadcast', function(req) {
 
   app.io.room(queue).broadcast('msg', message);
   console.log('broadcast in ' + queue + ', msg: ' + message);
-})
+});
 
 // user leaves queue
 app.io.route('leave', function(req) {
@@ -415,7 +415,7 @@ app.io.route('queueing users', function(req) {
 
   console.log('queueing users: ' + length);
   app.io.room(queue).broadcast('queueing users', length);
-})
+});
 
 //===============================================================
 
@@ -435,7 +435,7 @@ app.io.route('createQueue', function(req) {
   newCourse.save();
 
   console.log(queueName + ' is getting created');
-})
+});
 
 //
 app.io.route('addAdmin', function(req) {
@@ -453,7 +453,7 @@ app.io.route('addAdmin', function(req) {
   newAdmin.save();
 
   console.log(adminName + ' is a new admin!');
-})
+});
 
 //
 app.io.route('addTeacher', function(req) {
@@ -472,7 +472,7 @@ app.io.route('addTeacher', function(req) {
   newTeacher.save();*/
 
   console.log(teacherName + ' is a new teacher (but not really)!');
-})
+});
 
 //
 app.io.route('addAssistant', function(req) {
@@ -491,7 +491,7 @@ app.io.route('addAssistant', function(req) {
   newAssistant.save();*/
 
   console.log(assistantName + ' is a new assistant (but not really)!');
-})
+});
 
 //
 app.io.route('flag', function(req) {
@@ -511,7 +511,7 @@ app.io.route('flag', function(req) {
 
   console.log('flagged');
   app.io.room(queue).broadcast('flag', name, message);
-})
+});
 
 // =================================================================================
 
@@ -519,7 +519,7 @@ app.io.route('flag', function(req) {
 app.get('/API/courseList', function(req, res) {
   var retList = [];
 
-  for (i = 0 ; i < courseList.length ; i++) {
+  for (var i = 0 ; i < courseList.length ; i++) {
     console.log("trying to get length of " + courseList[i].name + ": " + courseList[i].queue.length);
     retList.push({name: courseList[i].name, length: courseList[i].queue.length, locked: courseList[i].locked, hibernating: courseList[i].hibernating});
   }
@@ -527,7 +527,7 @@ app.get('/API/courseList', function(req, res) {
   res.setHeader('Content-Type', 'application/json');
   res.end(JSON.stringify(retList));
   console.log('list of courses requested');
-})
+});
 
 // returns the queue-list
 app.get('/API/queue/:queue', function(req, res) {
@@ -536,7 +536,7 @@ app.get('/API/queue/:queue', function(req, res) {
     console.log('queue '+ req.params.queue +' requested');
     console.log(course);
     res.end(JSON.stringify(course));
-})
+});
 
 // TODO: add a list of admin
 app.get('/API/userData', function(req, res) {
@@ -544,13 +544,13 @@ app.get('/API/userData', function(req, res) {
     console.log(req.session.user);
     res.setHeader('Content-Type', 'application/json');
     res.end(JSON.stringify(req.session.user));
-})
+});
 
 app.post('/API/setUser', function(req,res) {
   req.session.user = req.body;
   console.log("User settings set");
   res.writeHead(200);
   res.end();
-})
+});
 
 app.listen(8080);
