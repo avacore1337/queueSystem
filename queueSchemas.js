@@ -1,3 +1,8 @@
+/* jslint node: true */
+"use strict";
+
+//===============================================================
+
 var async = require('async');
 var mongoose = require('mongoose');
 var Schema = mongoose.Schema;
@@ -45,7 +50,6 @@ var courseSchema = new Schema({
   motd: { type: String, default: "You can do it!" },
   queue: {type:[userSchema], default: []},
   bookings: [String],
-  assistant
 });
 
 // takes a user as a parameter and adds to the queue
@@ -152,12 +156,12 @@ var statisticSchema = new Schema({
   queueLength: { type: Number, default: 0},
 });
 
-userStatisticSchema.index({time: 1});
+statisticSchema.index({time: 1});
 
 //===============================================================
 // Schemas that will be used, but are not correctly formated as of this commit
 
-var UserStatistic2 = mongoose.model("UserStatistic", userStatisticSchema);
+var UserStatistic2 = mongoose.model("UserStatistic", statisticSchema);
 
 //=========================================
 // The schemas that will be used in "index.js"

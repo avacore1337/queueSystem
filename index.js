@@ -1,3 +1,8 @@
+/* jslint node: true */
+"use strict";
+
+//===============================================================
+
 var expressio = require('express.io');
 
 var app = expressio();
@@ -37,14 +42,14 @@ var Course2 = database.course;
 
 //---
 
-courseList = [];
-adminList = [];
+var courseList = [];
+var adminList = [];
 
 //===============================================================
 // Methods for setting up or reading in the database (in production, only readIn should be used)
 
-//setup(); // temporary method
-readIn();
+setup(); // temporary method
+//readIn();
 
 function setup(){
   // list of courses to be used
@@ -91,7 +96,7 @@ function setup(){
 
   var testTeacher = new Admin2({name : 'pernyb', teacher : true});
   testTeacher.save();
-  teacherList.push(testTeacher);
+//  teacherList.push(testTeacher);
 }
 
 // Read in courses and admins from the database
