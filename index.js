@@ -111,26 +111,32 @@ function readIn(){
   // All the admins
   Admin2.find(function (err, admins) {
     admins.forEach(function (admin) {
-       adminList.push(admin);
-       console.log('Admin: ' + admin.name + ' loaded');
+      if (admin.admin) {
+        adminList.push(admin);
+        console.log('Admin: ' + admin.name + ' loaded');
+      }
     });
   });
 
-/*  // All the admins
-  Teacher2.find(function (err, teachers) {
+  // All the admins
+  Admin2.find(function (err, teachers) {
     teachers.forEach(function (teacher) {
-       teacherList.push(teacher);
-       console.log('Teacher: ' + teacher.name + ' loaded');
+      if (teacher.teacher) {
+        teacherList.push(teacher);
+        console.log('Teacher: ' + teacher.name + ' loaded');
+      }
     });
-  });*/
+  });
 
   // All the admins
-/*  Assistant2.find(function (err, assistants) {
+  Admin2.find(function (err, assistants) {
     assistants.forEach(function (assistant) {
-       assistantList.push(assistant);
-       console.log('Assistant: ' + assistant.name + ' loaded');
+      if (assistant.assistant) {
+        assistantList.push(assistant);
+        console.log('Assistant: ' + assistant.name + ' loaded');
+      }
     });
-  });*/
+  });
 }
 
 function findCourse(name) {
@@ -222,7 +228,7 @@ app.io.route('badLocation', function(req) {
   // assistant-validation
   if (!validate("pernyb", "type", "course")) {
     console.log("validation for badLocation failed");
-    res.end();
+    //res.end();
     return;
   }
   var queue = req.data.queue;
@@ -295,7 +301,7 @@ app.io.route('purge', function(req) {
   // teacher-validation
   if (!validate("pernyb", "type", "course")) {
     console.log("validation for purge failed");
-    res.end();
+    //res.end();
     return;
   }
   var queue = req.data.queue;
@@ -329,7 +335,7 @@ app.io.route('lock', function(req) {
  // teacher-validation
   if (!validate("pernyb", "type", "course")) {
     console.log("validation for lock failed");
-    res.end();
+    //res.end();
     return;
   }
   doOnCourse(req.data.queue, 'lock');
@@ -340,7 +346,7 @@ app.io.route('unlock', function(req) {
  // teacher-validation
   if (!validate("pernyb", "type", "course")) {
     console.log("validation for unlock failed");
-    res.end();
+    //res.end();
     return;
   }
   doOnCourse(req.data.queue, 'unlock');
@@ -350,7 +356,7 @@ app.io.route('hibernate', function(req) {
  // teacher-validation
   if (!validate("pernyb", "type", "course")) {
     console.log("validation for hibernate failed");
-    res.end();
+    //res.end();
     return;
   }
   doOnCourse(req.data.queue, 'hibernate');
@@ -360,7 +366,7 @@ app.io.route('unhibernate', function(req) {
  // teacher-validation
   if (!validate("pernyb", "type", "course")) {
     console.log("validation for unhibernate failed");
-    res.end();
+    //res.end();
     return;
   }
   doOnCourse(req.data.queue, 'unhibernate');
@@ -400,7 +406,7 @@ app.io.route('createQueue', function(req) {
  // admin-validation
   if (!validate("pernyb", "type", "course")) {
     console.log("validation for createQueue failed");
-    res.end();
+    //res.end();
     return;
   }
   var queueName = req.data.name;
@@ -418,7 +424,7 @@ app.io.route('addAdmin', function(req) {
  // admin-validation
   if (!validate("pernyb", "type", "course")) {
     console.log("validation for addAdmin failed");
-    res.end();
+    //res.end();
     return;
   }
   var adminName = req.data.name;
@@ -436,7 +442,7 @@ app.io.route('addTeacher', function(req) {
  // admin-validation
   if (!validate("pernyb", "type", "course")) {
     console.log("validation for addTeacher failed");
-    res.end();
+    //res.end();
     return;
   }
   var teacherName = req.data.name;
@@ -455,7 +461,7 @@ app.io.route('addAssistant', function(req) {
  // teacher-validation
   if (!validate("pernyb", "type", "course")) {
     console.log("validation for addAssistant failed");
-    res.end();
+    //res.end();
     return;
   }
   var assistantName = req.data.name;
@@ -474,7 +480,7 @@ app.io.route('flag', function(req) {
  // assistant-validation
   if (!validate("pernyb", "type", "course")) {
     console.log("validation for flag failed");
-    res.end();
+    //res.end();
     return;
   }
   var queue = req.data.queue;
