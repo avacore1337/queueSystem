@@ -14,19 +14,20 @@
 	<body>
 	<nav ng-controller="navigationController">
 		<div class="col-md-12 black zero-padding text-center">
-			<div class="col-md-3 zero-padding">
-				<div ng-class="location == '/list' || location.match('/course/.*') ? 'blue' : 'black'" class="col-md-4 clickable zero-padding" ng-click="redirect('list')">
-					<h3 class="text-white equal-margin">Queues</h3>
-				</div>
-				<div ng-class="location == '/about' ? 'blue' : 'black'" class="col-md-4 clickable zero-padding" ng-click="redirect('about')">
-					<h3 class="text-white equal-margin">About</h3>
-				</div>
-				<div ng-class="location == '/help' ? 'blue' : 'black'" class="col-md-4 clickable zero-padding" ng-click="redirect('help')">
-					<h3 class="text-white equal-margin">Help</h3>
-				</div>
+			<div ng-class="location == '/list' || location.match('/course/.*') ? 'blue' : 'black'" class="col-md-1 clickable zero-padding" ng-click="redirect('list')">
+				<h3 class="text-white equal-margin">Queues</h3>
+			</div>
+			<div ng-class="location == '/about' ? 'blue' : 'black'" class="col-md-1 clickable zero-padding" ng-click="redirect('about')">
+				<h3 class="text-white equal-margin">About</h3>
+			</div>
+			<div ng-class="location == '/help' ? 'blue' : 'black'" class="col-md-1 clickable zero-padding" ng-click="redirect('help')">
+				<h3 class="text-white equal-margin">Help</h3>
+			</div>
+			<div ng-class="location == '/admin' ? 'blue' : 'black'" class="col-md-1 clickable zero-padding" ng-show="admin" ng-click="redirect('admin')">
+				<h3 class="text-white equal-margin">Admin</h3>
 			</div>
 			<a href="">
-				<div class="col-md-2 col-md-offset-2 zero-padding" ng-click="redirect('list')">
+				<div class="col-md-2 col-md-offset-2 zero-padding" ng-class="admin ? 'col-md-offset-1' : 'col-md-offset-2'" ng-click="redirect('list')">
 					<h3 class="text-white equal-margin">Stay A While</h3>
 				</div>
 			</a>
@@ -36,8 +37,11 @@
 			<div class="col-md-1 col-md-offset-2 text-right black clickable zero-padding" ng-show="!loggedIn" ng-click="redirect('login')">
 				<h3 class="text-white equal-margin">Log in&nbsp;&nbsp;</h3>
 			</div>
-			<div class="col-md-3 text-right black zero-padding" style="cursor: default;" ng-show="loggedIn">
+			<div class="col-md-2 text-right black zero-padding" style="cursor: default;" ng-show="loggedIn">
 				<h3 class="text-white equal-margin">{{ name }}&nbsp;&nbsp;</h3>
+			</div>
+			<div class="col-md-1 text-right black clickable zero-padding" ng-show="loggedIn" ng-click="redirect('login')">
+				<h3 class="text-white equal-margin">Log out&nbsp;&nbsp;</h3>
 			</div>
 		</div>
 	</nav>

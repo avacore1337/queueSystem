@@ -113,11 +113,21 @@ queueControllers.controller('navigationController', ['$scope', '$location', 'Use
 function ($scope, $location, user) {
   $scope.location = $location.path();
   
-  // Robert look from here
   $scope.loggedIn = user.username !== "";
   $scope.name = user.username;
-  console.log("user = " + $scope.name);
-  // Robert look to here
+  $scope.admin = user.admin;
+  
+  $scope.$watch(function () { return user.username; }, function(newValue, oldValue) {
+    $scope.name = newValue;
+    $scope.loggedIn = $scope.name !== "";
+    console.log("Detected update to user.username (oldValue = " + oldValue + ", newValue = " + newValue + ")");
+  });
+
+  $scope.$watch(function () { return user.admin; }, function(newValue, oldValue) {
+    $scope.admin = newValue;
+    console.log("Detected update to user.admin (oldValue = " + oldValue + ", newValue = " + newValue + ")");
+  });
+  
 
   // This function should direct the user to the wanted page
   $scope.redirect = function(address){
