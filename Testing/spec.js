@@ -58,6 +58,12 @@ function userJoinQueue(joinCourse){
   element(by.id('courseJoinQueueBtn')).click();
 };
 
+function newBrowser(){
+  browser.get('http://localhost:8080/#/list');
+  browser.manage().window().maximize();
+  browser.waitForAngular();
+};
+
 
  afterEach(function(){
  });
@@ -65,17 +71,13 @@ function userJoinQueue(joinCourse){
 it('he TA class is able to, by interaction, Purge the queue of all Users', function(){
   userLogIn(name);
   userJoinQueue('dbas');
-  browser.get('http://localhost:8080/#/list');
-  browser.manage().window().maximize();
-  browser.waitForAngular();
+  newBrowser();
   adminLogIn('TA');
   element(by.id('listdbasBtn')).click();
   closeMOTD();
   element(by.id('coursePurgeQueueBtn')).click();
   expect(element(by.id('courseEdvardBtn')).isPresent()).toBeFalsy();
-  browser.get('http://localhost:8080/#/list');
-  browser.manage().window().maximize();
-  browser.waitForAngular();
+  newBrowser();
   userLogIn(name);
   userJoinQueue('dbas');
   expect(element(by.id('courseEdvardBtn')).isPresent()).toBeTruthy();
@@ -119,9 +121,7 @@ it('The Student class will have the possibility the change their own data in the
 it('The TA class is able to, by interaction, ‘Kick’ a User from the Queue', function(){
   userLogIn(name);
   userJoinQueue('dbas');
-  browser.get('http://localhost:8080/#/list');
-  browser.manage().window().maximize();
-  browser.waitForAngular();
+  newBrowser();
   adminLogIn('TA');
   $('#listdbasBtn').click();
   closeMOTD();
@@ -134,21 +134,15 @@ it('TA is able to use the interaction ‘Lock’ or ‘Unlock’ with a queue', 
  adminLogIn('TA');
  $('#listdbasBtn').click();
  $('#courseLockQueueBtn').click();
- browser.get('http://localhost:8080/#/list');
- browser.manage().window().maximize();
- browser.waitForAngular();
+ newBrowser();
  userLogIn(name);
  $('#listdbasBtn').click();
  expect(browser.getCurrentUrl()).toMatch('http://localhost:8080/#/list');
- browser.get('http://localhost:8080/#/list');
- browser.manage().window().maximize();
- browser.waitForAngular();
+ newBrowser();
  adminLogIn('TA');
  $('#listdbasBtn').click();
  $('#courseUnlockQueueBtn').click();
- browser.get('http://localhost:8080/#/list');
- browser.manage().window().maximize();
- browser.waitForAngular();
+ newBrowser();
  userLogIn(name);
  $('#listdbasBtn').click();
  expect(browser.getCurrentUrl()).toMatch('http://localhost:8080/#/course/dbas');
