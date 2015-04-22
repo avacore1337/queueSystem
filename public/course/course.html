@@ -138,32 +138,32 @@ ska man kunna lämna in kommentarer som asse?
           <td ng-show="admin">
             <div ng-show="user.optionsActivated">
               <span title="remove user">
-                <button class="btn red clickable" ng-click="removeUser(user.name)" id="courseRemoveUserBtn">
+                <button class="btn red clickable" ng-click="removeUser(user.name)" id="courseRemoveUser{{user.name}}Btn">
                   <span class="glyphicon glyphicon-trash"></span>
                 </button>
               </span>
               <span title="send message">
-                <button class="btn btn-success" ng-click="messageUser(user.name)" id="courseSendMessageBtn">
+                <button class="btn btn-success" ng-click="messageUser(user.name)" id="courseSendMessage{{user.name}}Btn">
                   <span class="glyphicon glyphicon-envelope"></span>
                 </button>
               </span>
               <span title="help">
-                <button class="btn btn-success" ng-click="helpUser(user.name)" id="courseHelpBtn">
+                <button class="btn btn-success" ng-click="helpUser(user.name)" id="courseHelp{{user.name}}Btn">
                   <span class="glyphicon glyphicon-check"></span>
                 </button>
               </span>
               <span title="bad location">
-                <button class="btn btn-success" ng-click="badLocation(user.name)" id="courseBadLocationBtn">
+                <button class="btn btn-success" ng-click="badLocation(user.name)" id="courseBadLocation{{user.name}}Btn">
                   <span class="glyphicon glyphicon-question-sign"></span>
                 </button>
               </span>
               <span title="add comment">
-                <button class="btn btn-success" ng-click="flag(user.name)" id="courseAddCommentBtn">
+                <button class="btn btn-success" ng-click="flag(user.name)" id="courseAddComment{{user.name}}Btn">
                   <span class="glyphicon glyphicon-tag"></span>
                 </button>
               </span>
               <span ng-show="user.comments.length > 0" title="read comment">
-                <button class="btn btn-success" ng-click="readMessages(user.name)" id="courseReadCommentBtn">
+                <button class="btn btn-success" ng-click="readMessages(user.name)" id="courseReadComment{{user.name}}Btn">
                   <span class="glyphicon glyphicon-search"></span>
                 </button>
               </span>

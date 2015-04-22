@@ -1,33 +1,50 @@
 describe('Basic Queue Functionality:', function() {
 var name = 'Edvard';
 var location = 'Red';
-var student = 1;
-var ta = 0;
-
- //beforeAll(function() {
-  //userLogIn('TA', ta);
-  //$('body > div > div.ng-scope > div > div > section > div:nth-child(2)').click();
-  //closeMOTD();
-  //$('body > div > div.ng-scope > div > div.row.col-md-12 > div.col-md-2.pin-center.black > div:nth-child(8)').click();
- //});
+var student = 'student';
+var ta = 'Admin';
 
  beforeEach(function() {
     browser.get('http://localhost:8080/#/list');
     browser.manage().window().maximize();
     browser.waitForAngular();
+    adminLogIn('delete');
+    element(by.id('listdbasBtn')).click();
+    closeMOTD();
+    element(by.id('coursePurgeQueueBtn')).click();
   });
 
 
 
- function userLogIn(userName, userType){
-  element(by.css('div.col-md-1.text-right.black.clickable.zero-padding')).click();
-  element(by.model('name')).sendKeys(userName);
-  element.all(by.model('type')).get(userType).click();
-  element(by.css('input.btn.btn-default')).click();
+ function userLogIn(userName){
+  element(by.id('indexLogInBtn')).isDisplayed().then(function(isVisible) {
+      if (isVisible){  
+        element(by.id('indexLogInBtn')).click(); 
+      } else {  
+        element(by.id('indexLogOutBtn')).click();  
+      }
+    });
+  element(by.id('loginInputField')).sendKeys(userName);
+  element(by.id('loginRadioUser')).click();
+  element(by.id('loginSubmit')).click();
  };
 
+function adminLogIn(userName){
+  element(by.id('indexLogInBtn')).isDisplayed().then(function(isVisible) {
+      if (isVisible){  
+        element(by.id('indexLogInBtn')).click(); 
+      } else {  
+        element(by.id('indexLogOutBtn')).click();  
+      }
+    });
+  element(by.id('loginInputField')).sendKeys(userName);
+  element(by.id('loginRadioAdmin')).click();
+  element(by.id('loginSubmit')).click();
+ };
+
+
 function closeMOTD(){
-  browser.sleep(250);
+  // browser.sleep(250);
   browser.switchTo().alert().then(
       function(alert) {  return alert.dismiss(); },
       function(err) { }
@@ -35,105 +52,106 @@ function closeMOTD(){
 };
 
 function userJoinQueue(joinCourse){
-  $('body > div > div.ng-scope > div > div > section > div:nth-child('+ (joinCourse + 1) +')').click();
+  element(by.id('list'+joinCourse+'Btn')).click();
   closeMOTD();
-  $('body > div > div.ng-scope > div > div.row.col-md-12 > div.col-md-2.pin-center.black > form > div:nth-child(1) > div > input').sendKeys(location);
-  $('body > div > div.ng-scope > div > div.row.col-md-12 > div.col-md-2.pin-center.black > div:nth-child(2)').click();
+  element(by.id('courseLocationInputField')).sendKeys(location);
+  element(by.id('courseJoinQueueBtn')).click();
 };
 
 
  afterEach(function(){
-    userLogIn('delete', ta);
-    $('body > div > div.ng-scope > div > div > section > div:nth-child(2)').click();
-    closeMOTD();
-    $('body > div > div.ng-scope > div > div.row.col-md-12 > div.col-md-2.pin-center.black > div:nth-child(8)').click();
-
  });
 
 it('he TA class is able to, by interaction, Purge the queue of all Users', function(){
-  userLogIn(name, student);
-  userJoinQueue(1);
+  userLogIn(name);
+  userJoinQueue('dbas');
   browser.get('http://localhost:8080/#/list');
   browser.manage().window().maximize();
   browser.waitForAngular();
-  userLogIn('TA', ta);
-  $('body > div > div.ng-scope > div > div > section > div:nth-child(2)').click();
+  adminLogIn('TA');
+  element(by.id('listdbasBtn')).click();
   closeMOTD();
-  $('body > div > div.ng-scope > div > div.row.col-md-12 > div.col-md-2.pin-center.black > div:nth-child(8)').click();
+  element(by.id('coursePurgeQueueBtn')).click();
+  expect(element(by.id('courseEdvardBtn')).isPresent()).toBeFalsy();
   browser.get('http://localhost:8080/#/list');
   browser.manage().window().maximize();
   browser.waitForAngular();
-  userLogIn(name, student);
-  userJoinQueue(1);
-  expect(element.all(by.css('body > div > div.ng-scope > div > div.row.col-md-12 > div.col-md-9.pull-right > table > tbody')).getText()).toMatch('^1 Edvard Red.*');
+  userLogIn(name);
+  userJoinQueue('dbas');
+  expect(element(by.id('courseEdvardBtn')).isPresent()).toBeTruthy();
 });
 
 it('a User should be able to log on', function() {
-    userLogIn(name, student);
-    $('body > div > div.ng-scope > div > div > section > div:nth-child(2)').click();
+    userLogIn(name);
     closeMOTD();
-   // expect(element(by.model('name').getText()).toEqual('Edvard Mickos'));
+    expect(element(by.id('indexNameTextField')).getText()).toEqual('Edvard  ');
   });
 
 it('a User should be able to choose a course and join a queue.', function() {
-    userLogIn(name, student);
-    userJoinQueue(1);
-    expect($('body > div > div.ng-scope > div > div.row.col-md-12 > div.col-md-9.pull-right > table > tbody').getText()).toMatch('^1 Edvard Red.*');
+    userLogIn(name);
+    userJoinQueue('dbas');
+    expect(element(by.id('courseEdvardBtn')).isPresent()).toBeTruthy();
   });
 
 it('a User should be able to leave a joined queue.', function() {
-    userLogIn(name, student);
-    userJoinQueue(1);
-    $('body > div > div.ng-scope > div > div.row.col-md-12 > div.col-md-2.pin-center.black > div:nth-child(3)').click();
-    expect($('body > div > div.ng-scope > div > div.row.col-md-12 > div.col-md-9.pull-right > table > tbody').getText()).toEqual('');
+    userLogIn(name);
+    userJoinQueue('dbas');
+    element(by.id('courseLeaveQueueBtn')).click();
+    expect(element(by.id('courseEdvardBtn')).isPresent()).toBeFalsy();
   });
 
 it('The Student class will have the possibility the change their own data in the form of location commment and personal comment.', function() {
     userLogIn(name, student);
-    $('body > div > div.ng-scope > div > div > section > div:nth-child(2)').click();
+    $('#listdbasBtn').click();
     closeMOTD();
-    $('body > div > div.ng-scope > div > div.row.col-md-12 > div.col-md-2.pin-center.black > form > div:nth-child(1) > div > input').sendKeys(location);
-    $('body > div > div.ng-scope > div > div.row.col-md-12 > div.col-md-2.pin-center.black > form > div:nth-child(2) > div > input').sendKeys('comment1');
-    $('body > div > div.ng-scope > div > div.row.col-md-12 > div.col-md-2.pin-center.black > div:nth-child(2)').click();
-    $('body > div > div.ng-scope > div > div.row.col-md-12 > div.col-md-2.pin-center.black > form > div:nth-child(1) > div > input').clear();
-    $('body > div > div.ng-scope > div > div.row.col-md-12 > div.col-md-2.pin-center.black > form > div:nth-child(2) > div > input').clear();
-    $('body > div > div.ng-scope > div > div.row.col-md-12 > div.col-md-2.pin-center.black > form > div:nth-child(1) > div > input').sendKeys('yellow');
-    $('body > div > div.ng-scope > div > div.row.col-md-12 > div.col-md-2.pin-center.black > form > div:nth-child(2) > div > input').sendKeys('comment2');
-    $('body > div > div.ng-scope > div > div.row.col-md-12 > div.col-md-2.pin-center.black > div:nth-child(4)').click();
-    expect($('body > div > div.ng-scope > div > div.row.col-md-12 > div.col-md-9.pull-right > table > tbody').getText()).toMatch('^1 Edvard yellow comment2.*');
+    $('#courseLocationInputField').sendKeys(location);
+    $('#courseCommentInputField').sendKeys('comment1');
+    $('#courseJoinQueueBtn').click();
+    expect(element(by.id('courseEdvardBtn')).getText()).toMatch('1 Edvard Red comment1');
+    $('#courseCommentInputField').clear();
+    $('#courseLocationInputField').clear();
+    $('#courseLocationInputField').sendKeys('Yellow');
+    $('#courseCommentInputField').sendKeys('comment2');
+    $('#courseUpdateInformationBtn').click()
+    expect(element(by.id('courseEdvardBtn')).getText()).toMatch('1 Edvard Yellow comment2');
   });
 
 it('The TA class is able to, by interaction, ‘Kick’ a User from the Queue', function(){
-  userLogIn(name, student);
-  $('body > div > div.ng-scope > div > div > section > div:nth-child(2)').click();
-  closeMOTD();
-  $('body > div > div.ng-scope > div > div.row.col-md-12 > div.col-md-2.pin-center.black > form > div:nth-child(1) > div > input').sendKeys(location);
-  $('body > div > div.ng-scope > div > div.row.col-md-12 > div.col-md-2.pin-center.black > div:nth-child(2)').click();
+  userLogIn(name);
+  userJoinQueue('dbas');
   browser.get('http://localhost:8080/#/list');
   browser.manage().window().maximize();
   browser.waitForAngular();
-  userLogIn('TA', ta);
-  $('body > div > div.ng-scope > div > div > section > div:nth-child(2)').click();
+  adminLogIn('TA');
+  $('#listdbasBtn').click();
   closeMOTD();
-  browser.actions().doubleClick($('body > div > div.ng-scope > div > div.row.col-md-12 > div.col-md-9.pull-right > table > tbody')).perform();
-  $('body > div > div.ng-scope > div > div.row.col-md-12 > div.col-md-9.pull-right > table > tbody > tr > td:nth-child(6) > div > span:nth-child(1) > button').click();
-  expect($('body > div > div.ng-scope > div > div.row.col-md-12 > div.col-md-9.pull-right > table > tbody').getText()).toEqual('');
+  browser.actions().doubleClick($('#course'+name+'Btn')).perform();
+  $('#courseRemoveUser'+name+'Btn').click();
+  expect(element(by.id('course'+name+'Btn')).isPresent()).toBeFalsy();
   });
 
 it('TA is able to use the interaction ‘Lock’ or ‘Unlock’ with a queue', function(){  
- userLogIn('TA', ta);
- $('body > div > div.ng-scope > div > div.row.col-md-12 > div.col-md-2.pin-center.black > div:nth-child(9)').click();
+ adminLogIn('TA');
+ $('#listdbasBtn').click();
+ $('#courseLockQueueBtn').click();
  browser.get('http://localhost:8080/#/list');
  browser.manage().window().maximize();
  browser.waitForAngular();
- userLogIn(name, student);
- expect($('body > div > div.ng-scope > div > div > section > div:nth-child(8)').isEnabled().toBe(false)); // 8 = amount of queues+1 currently in the system if this fails due to this change 8 to amount of queues + 1
+ userLogIn(name);
+ $('#listdbasBtn').click();
+ expect(browser.getCurrentUrl()).toMatch('http://localhost:8080/#/list');
  browser.get('http://localhost:8080/#/list');
  browser.manage().window().maximize();
  browser.waitForAngular();
- userLogIn('TA', ta);
- userJoinQueue(7);
- $('body > div > div.ng-scope > div > div.row.col-md-12 > div.col-md-2.pin-center.black > div:nth-child(10)').isEnabled();
+ adminLogIn('TA');
+ $('#listdbasBtn').click();
+ $('#courseUnlockQueueBtn').click();
+ browser.get('http://localhost:8080/#/list');
+ browser.manage().window().maximize();
+ browser.waitForAngular();
+ userLogIn(name);
+ $('#listdbasBtn').click();
+ expect(browser.getCurrentUrl()).toMatch('http://localhost:8080/#/course/dbas');
   });
 
 });
