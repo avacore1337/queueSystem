@@ -50,6 +50,10 @@
   background-color: rgb(155, 155, 155);
   border: .2em solid rgb(90, 90, 90);
 }
+.text-light-gray
+{
+  color: rgb(190, 190, 190);
+}
 .navbar-brand
 {
   position: absolute;

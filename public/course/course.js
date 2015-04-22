@@ -190,9 +190,11 @@
 
     // This function should remove every person in the queue
     $scope.purge = function(){
-      socket.emit('purge', {
-        queue:$routeParams.course
-      });
+      if (confirm('Are you sure you want to remove this queue permanently?')) {
+        socket.emit('purge', {
+          queue:$routeParams.course
+        });
+      }
       console.log("Called purge");
     };
 

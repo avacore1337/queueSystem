@@ -10,7 +10,8 @@ ska man kunna lämna in kommentarer som asse?
 <div class="container">
 
 <div class="row col-md-2">
-  <h2 class="col-md-offset-5">{{course}}</h2>
+  <h2 class="col-md-offset-5 text-red" ng-show="locked"><span class="glyphicon glyphicon-lock"></span>{{course}}</h2>
+  <h2 class="col-md-offset-5" ng-show="!locked">{{course}}</h2>
 </div>
 
 <div class="row col-md-12">
