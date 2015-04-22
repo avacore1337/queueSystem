@@ -84,7 +84,7 @@ it('he TA class is able to, by interaction, Purge the queue of all Users', funct
 it('a User should be able to log on', function() {
     userLogIn(name);
     closeMOTD();
-    expect(element(by.id('indexNameTextField')).getText()).toEqual('Edvard  ');
+    expect(element(by.id('indexNameTextField')).getText()).toEqual('Edvard');
   });
 
 it('a User should be able to choose a course and join a queue.', function() {
