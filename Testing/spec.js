@@ -102,6 +102,10 @@ it('a User should be able to leave a joined queue.', function() {
     expect(element(by.id('courseEdvardBtn')).isPresent()).toBeFalsy();
   });
 
+it('Joining a queue with a booked time slot', function(){
+ //TODO
+});
+
 it('The Student class will have the possibility the change their own data in the form of location commment and personal comment.', function() {
     userLogIn(name, student);
     $('#listdbasBtn').click();
@@ -117,6 +121,10 @@ it('The Student class will have the possibility the change their own data in the
     $('#courseUpdateInformationBtn').click()
     expect(element(by.id('courseEdvardBtn')).getText()).toMatch('1 Edvard Yellow comment2');
   });
+
+it('Broadcasting in a Queue', function(){
+ //TODO
+});
 
 it('The TA class is able to, by interaction, ‘Kick’ a User from the Queue', function(){
   userLogIn(name);
@@ -147,5 +155,34 @@ it('TA is able to use the interaction ‘Lock’ or ‘Unlock’ with a queue', 
  $('#listdbasBtn').click();
  expect(browser.getCurrentUrl()).toMatch('http://localhost:8080/#/course/dbas');
   });
+
+it('TA is able to use the interaction ‘new MOTD’ (Message of the Day) with a queue for a session which he is given privileges.', function(){
+//TODO
+});
+
+it('The users of class Teacher have the system rights to change other users user class within the group:', function(){
+//TODO
+});
+
+it('The Teacher class is able to Hide or Reveal the Queue. Hiding the Queue will remove the Queue from the list of Queues for Users of the Student class', function(){
+dminLogIn('TA');
+ $('#listdbasBtn').click();
+ $('#courseHibernateQueueBtn').click();
+ newBrowser();
+ userLogIn(name);
+ $('#listdbasBtn').click();
+ expect($('#listdbasBtn').isEnabled()).toBeFalsy();
+ newBrowser();
+ adminLogIn('TA');
+ $('#listdbasBtn').click();
+ $('#courseWakeupQueueBtn').click();
+ newBrowser();
+ userLogIn(name);
+ $('#listdbasBtn').click();
+ expect($('#listdbasBtn').isEnabled()).toBeTruthy();
+
+});
+
+
 
 });
