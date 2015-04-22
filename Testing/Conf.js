@@ -3,8 +3,8 @@ exports.config = {
   specs: ['spec.js'],
 
   multiCapabilities: [ 
-  {browserName: 'chrome'},
-  {browserName: 'firefox'}
+ //{browserName: 'firefox'},
+  {browserName: 'chrome'}
   ],
 
   maxSessions: 1,
