@@ -2,6 +2,8 @@
 <html ng-app="queue">
 	<head>
 		<link rel="stylesheet" href="http://maxcdn.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap.min.css">
+		<!--<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.4.0/css/bootstrap-datepicker.css">-->
+		<!--<link rel="stylesheet" href="http://bsdp-assets.blackcherry.us/1.3.0/datepicker3.min.css">-->
 		<link rel="stylesheet" type="text/css" href="main.css">
 		<script src="http://ajax.googleapis.com/ajax/libs/angularjs/1.2.26/angular.min.js"></script>
 		<script src="http://ajax.googleapis.com/ajax/libs/angularjs/1.2.26/angular-route.min.js"></script>
@@ -9,39 +11,41 @@
 		<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.4/js/bootstrap.min.js"></script>
 		<script src="http://momentjs.com/downloads/moment.js"></script>
 		<script src="https://cdnjs.cloudflare.com/ajax/libs/livestamp/1.1.2/livestamp.min.js"></script>
+		<!--<script src="http://eternicode.github.io/bootstrap-datepicker/bootstrap-datepicker/js/bootstrap-datepicker.js"></script>-->
+		<!--<script src="//cdnjs.cloudflare.com/ajax/libs/angular-ui-bootstrap/0.12.0/ui-bootstrap-tpls.min.js"></script>-->
 	</head>
 
 	<body>
 	<nav ng-controller="navigationController">
 		<div class="col-md-12 black zero-padding text-center">
-			<div ng-class="location == '/list' || location.match('/course/.*') ? 'blue' : 'black'" class="col-md-1 clickable zero-padding" ng-click="redirect('list')">
-				<h3 class="text-white equal-margin">Queues</h3>
+			<div ng-class="location == '/list' || location.match('/course/.*') ? 'blue' : 'black'" class="col-md-1 clickable zero-padding" ng-click="redirect('list')" id="navQueuesBtn">
+				<h4 class="text-white equal-margin">Queues</h4>
 			</div>
-			<div ng-class="location == '/about' ? 'blue' : 'black'" class="col-md-1 clickable zero-padding" ng-click="redirect('about')">
-				<h3 class="text-white equal-margin">About</h3>
+			<div ng-class="location == '/about' ? 'blue' : 'black'" class="col-md-1 clickable zero-padding" ng-click="redirect('about')"id="indexAboutBtn">
+				<h4 class="text-white equal-margin">About</h4>
 			</div>
-			<div ng-class="location == '/help' ? 'blue' : 'black'" class="col-md-1 clickable zero-padding" ng-click="redirect('help')">
-				<h3 class="text-white equal-margin">Help</h3>
+			<div ng-class="location == '/help' ? 'blue' : 'black'" class="col-md-1 clickable zero-padding" ng-click="redirect('help')" id="indexHelpBtn">
+				<h4 class="text-white equal-margin">Help</h4>
 			</div>
-			<div ng-class="location == '/admin' ? 'blue' : 'black'" class="col-md-1 clickable zero-padding" ng-show="admin" ng-click="redirect('admin')">
-				<h3 class="text-white equal-margin">Admin</h3>
+			<div ng-class="location == '/admin' ? 'blue' : 'black'" class="col-md-1 clickable zero-padding" ng-show="admin" ng-click="redirect('admin')" id="indexAdminBtn">
+				<h4 class="text-white equal-margin">Admin</h4>
 			</div>
 			<a href="">
-				<div class="col-md-2 col-md-offset-2 zero-padding" ng-class="admin ? 'col-md-offset-1' : 'col-md-offset-2'" ng-click="redirect('list')">
+				<div class="col-md-2 col-md-offset-2 zero-padding" ng-class="admin ? 'col-md-offset-1' : 'col-md-offset-2'" ng-click="redirect('list')" id="indexStayAWhileBtn">
 					<h3 class="text-white equal-margin">Stay A While</h3>
 				</div>
 			</a>
 			<div class="col-md-2 zero-padding">
 				<h3 class="text-easteregg text-left equal-margin" style="cursor: default;">And Listen</h3>
 			</div>
-			<div class="col-md-1 col-md-offset-2 text-right black clickable zero-padding" ng-show="!loggedIn" ng-click="redirect('login')">
-				<h3 class="text-white equal-margin">Log in&nbsp;&nbsp;</h3>
+			<div class="col-md-1 col-md-offset-2 text-right black clickable zero-padding" ng-show="!loggedIn" ng-click="redirect('login')" id="indexLogInBtn">
+				<h4 class="text-white equal-margin">Log in&nbsp;&nbsp;</h4>
 			</div>
-			<div class="col-md-2 text-right black zero-padding" style="cursor: default;" ng-show="loggedIn">
-				<h3 class="text-white equal-margin">{{ name }}&nbsp;&nbsp;</h3>
+			<div class="col-md-2 text-right black zero-padding" style="cursor: default;" ng-show="loggedIn" id="indexNameTextField">
+				<h4 class="text-white equal-margin">{{ name }}&nbsp;&nbsp;</h4>
 			</div>
-			<div class="col-md-1 text-right black clickable zero-padding" ng-show="loggedIn" ng-click="redirect('login')">
-				<h3 class="text-white equal-margin">Log out&nbsp;&nbsp;</h3>
+			<div class="col-md-1 text-right black clickable zero-padding" ng-show="loggedIn" ng-click="redirect('login')" id="indexLogOut">
+				<h4 class="text-white equal-margin">Log out&nbsp;&nbsp;</h4>
 			</div>
 		</div>
 	</nav>

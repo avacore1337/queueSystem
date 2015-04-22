@@ -30,60 +30,60 @@ ska man kunna lämna in kommentarer som asse?
       <div class="form-group">
         <label class="control-label col-md-offset-1">Location:</label>
         <div class="text-black">
-          <input class="col-md-10 col-md-offset-1" type="text" ng-model="location" placeholder="Red 01" onfocus="this.placeholder = ''" onblur="this.placeholder = 'Red 01'">
+          <input class="col-md-10 col-md-offset-1" type="text" ng-model="location" placeholder="Red 01" onfocus="this.placeholder = ''" onblur="this.placeholder = 'Red 01'" id="courseLocationInputField">
         </div>
       </div>
       <div class="form-group">
         <label class="control-label col-md-offset-1">Comment:</label>
         <div class="text-black">
-          <input class="col-md-10 col-md-offset-1" type="text" ng-model="comment" placeholder="Laboration 1" onfocus="this.placeholder = ''" onblur="this.placeholder = 'Laboration 1'">
+          <input class="col-md-10 col-md-offset-1" type="text" ng-model="comment" placeholder="Laboration 1" onfocus="this.placeholder = ''" onblur="this.placeholder = 'Laboration 1'" id="courseCommentInputField">
         </div>
       </div>
     </form>
 
     <!-- The buttons -->
-    <div class="green clickable center-content frame" ng-show="!enqueued" ng-click="addUser()">
+    <div class="green clickable center-content frame" ng-show="!enqueued" ng-click="addUser()" id="courseJoinQueueBtn">
       <span class="glyphicon glyphicon-plus"></span>&nbsp;
       Join queue
     </div>
-    <div class="red clickable center-content frame" ng-show="enqueued" ng-click="removeUser(name)">
+    <div class="red clickable center-content frame" ng-show="enqueued" ng-click="removeUser(name)" id="courseLeaveQueueBtn">
       <span class="glyphicon glyphicon-remove"></span>&nbsp;
       Leave queue
     </div>
-    <div class="green clickable center-content frame" ng-show="enqueued" ng-click="updateUser()">
+    <div class="green clickable center-content frame" ng-show="enqueued" ng-click="updateUser()" id="courseUpdateInformationBtn">
       <span class="glyphicon glyphicon-pencil"></span>&nbsp;
       Update information
     </div>
     <div class="buffer" ng-show="admin"></div>
-    <div class="blue clickable center-content frame" ng-show="admin" ng-click="broadcast()">
+    <div class="blue clickable center-content frame" ng-show="admin" ng-click="broadcast()" id="courseBroadcastBtn">
       <span class="glyphicon glyphicon-bullhorn"></span>&nbsp;
       Broadcast
     </div>
-    <div class="blue clickable center-content frame" ng-show="admin" ng-click="broadcastTA()">
+    <div class="blue clickable center-content frame" ng-show="admin" ng-click="broadcastTA()" id="courseBroadcastToTasBtn">
       <span class="glyphicon glyphicon-bullhorn"></span>&nbsp;
       Broadcast to TAs
     </div>
-    <div class="red clickable center-content frame" ng-show="admin" ng-click="purge()">
+    <div class="red clickable center-content frame" ng-show="admin" ng-click="purge()" id="coursePurgeQueueBtn">
       <span class="glyphicon glyphicon-remove"></span>&nbsp;
       Purge queue
     </div>
-    <div class="red clickable center-content frame" ng-show="admin && !locked" ng-click="lock()">
+    <div class="red clickable center-content frame" ng-show="admin && !locked" ng-click="lock()" id="courseLockQueueBtn">
       <span class="glyphicon glyphicon-lock"></span>&nbsp;
       Lock queue
     </div>
-    <div class="green clickable center-content frame" ng-show="admin && locked" ng-click="unlock()">
+    <div class="green clickable center-content frame" ng-show="admin && locked" ng-click="unlock()" id="courseUnlockQueueBtn">
       <span class="glyphicon glyphicon-lock"></span>&nbsp;
       Unlock queue
     </div>
-    <div class="red clickable center-content frame" ng-show="admin && !hibernating" ng-click="hibernate()">
+    <div class="red clickable center-content frame" ng-show="admin && !hibernating" ng-click="hibernate()" id="courseHibernateQueueBtn">
       <span class="glyphicon glyphicon-off"></span>&nbsp;
       Hibernate queue
     </div>
-    <div class="green clickable center-content frame" ng-show="admin && hibernating" ng-click="wakeup()">
+    <div class="green clickable center-content frame" ng-show="admin && hibernating" ng-click="wakeup()" id="courseWakeupQueueBtn">
       <span class="glyphicon glyphicon-off"></span>&nbsp;
       Wakeup queue
     </div>
-    <div class="red clickable center-content frame" ng-show="admin" ng-click="removeQueue()">
+    <div class="red clickable center-content frame" ng-show="admin" ng-click="removeQueue()" id="courseRemoveQueueBtn">
       <span class="glyphicon glyphicon-trash"></span>&nbsp;
       Remove queue
     </div>
@@ -96,7 +96,7 @@ ska man kunna lämna in kommentarer som asse?
 
   <div class="col-md-9 pull-right">
     <!-- Users with bookings -->
-    <input class="spoilerbutton" type="button" value="Show booked users" onclick="this.value=this.value=='Show booked users' ? 'Hide booked users' : 'Show booked users';" class="spoilerbutton" ng-hide="bookedUsers.length == 0">
+    <input class="spoilerbutton" type="button" value="Show booked users" onclick="this.value=this.value=='Show booked users' ? 'Hide booked users' : 'Show booked users';" class="spoilerbutton" ng-hide="bookedUsers.length == 0"  id="courseShowBookedUsersBtn">
     <div class="spoiler" ng-hide="bookedUsers.length == 0">
       <table class="table table-striped booked">
         <thead>
@@ -129,7 +129,7 @@ ska man kunna lämna in kommentarer som asse?
         </tr>
       </thead>
       <tbody>
-        <tr ng-repeat="user in users track by $index" ng-class="user.gettingHelp ? 'pulse' : ''" ng-dblclick="changeVisibility(user.name)">
+        <tr ng-repeat="user in users track by $index" ng-class="user.gettingHelp ? 'pulse' : ''" ng-dblclick="changeVisibility(user.name)"  id="course{{user.name}}Btn">
           <td>{{ $index + 1 }}</td>
           <td>{{ user.name }}</td>
           <td>{{ user.place }}</td>
@@ -138,32 +138,32 @@ ska man kunna lämna in kommentarer som asse?
           <td ng-show="admin">
             <div ng-show="user.optionsActivated">
               <span title="remove user">
-                <button class="btn red clickable" ng-click="removeUser(user.name)">
+                <button class="btn red clickable" ng-click="removeUser(user.name)" id="courseRemoveUserBtn">
                   <span class="glyphicon glyphicon-trash"></span>
                 </button>
               </span>
               <span title="send message">
-                <button class="btn btn-success" ng-click="messageUser(user.name)">
+                <button class="btn btn-success" ng-click="messageUser(user.name)" id="courseSendMessageBtn">
                   <span class="glyphicon glyphicon-envelope"></span>
                 </button>
               </span>
               <span title="help">
-                <button class="btn btn-success" ng-click="helpUser(user.name)">
+                <button class="btn btn-success" ng-click="helpUser(user.name)" id="courseHelpBtn">
                   <span class="glyphicon glyphicon-check"></span>
                 </button>
               </span>
               <span title="bad location">
-                <button class="btn btn-success" ng-click="badLocation(user.name)">
+                <button class="btn btn-success" ng-click="badLocation(user.name)" id="courseBadLocationBtn">
                   <span class="glyphicon glyphicon-question-sign"></span>
                 </button>
               </span>
               <span title="add comment">
-                <button class="btn btn-success" ng-click="flag(user.name)">
+                <button class="btn btn-success" ng-click="flag(user.name)" id="courseAddCommentBtn">
                   <span class="glyphicon glyphicon-tag"></span>
                 </button>
               </span>
               <span ng-show="user.comments.length > 0" title="read comment">
-                <button class="btn btn-success" ng-click="readMessages(user.name)">
+                <button class="btn btn-success" ng-click="readMessages(user.name)" id="courseReadCommentBtn">
                   <span class="glyphicon glyphicon-search"></span>
                 </button>
               </span>

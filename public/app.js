@@ -28,6 +28,10 @@
         templateUrl: 'admin.html',
         controller: 'adminController'
       }).
+      when('/statistics', {
+        templateUrl: 'statistics.html',
+        controller: 'statisticsController'
+      }).
       otherwise({
         redirectTo: '/list'
       });

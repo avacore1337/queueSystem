@@ -92,6 +92,16 @@ function ($scope, $http) {
   console.log('entered help.html');
 }]);
 
+queueControllers.controller('statisticsController', ['$scope', '$http',
+function ($scope, $http) {
+  console.log('entered statistics.html');
+
+  $scope.open = function (id) {
+    $(id).datetimepicker({format: 'LLL'});
+  };
+
+}]);
+
 queueControllers.controller('loginController', ['$scope', '$location', '$http',
 function ($scope, $location, $http) {
 
@@ -113,13 +123,13 @@ queueControllers.controller('navigationController', ['$scope', '$location', 'Use
 function ($scope, $location, user) {
   $scope.location = $location.path();
   
-  $scope.loggedIn = user.username !== "";
+  $scope.loggedIn = user.username !== undefined && user.username !== "";
   $scope.name = user.username;
   $scope.admin = user.admin;
   
   $scope.$watch(function () { return user.username; }, function(newValue, oldValue) {
     $scope.name = newValue;
-    $scope.loggedIn = $scope.name !== "";
+    $scope.loggedIn = user.username !== undefined && user.username !== "";
     console.log("Detected update to user.username (oldValue = " + oldValue + ", newValue = " + newValue + ")");
   });
 

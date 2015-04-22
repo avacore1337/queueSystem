@@ -1,9 +1,9 @@
 <div class="text-box">
 	<h1>What is your name?</h1>
 	<form ng-submit="done()">
-		<input class="form-control" type="text" ng-model="name" required autofocus>
-		<input type="radio" ng-model="type" value="admin">Administrator
-		<input type="radio" ng-model="type" value="user">User
-		<input class="btn btn-default" type="submit" value="Ok">
+		<input class="form-control" type="text" ng-model="name" id="loginInputField" required autofocus>
+		<input type="radio" ng-model="type" id="loginRadioAdmin" value="admin">Administrator
+		<input type="radio" ng-model="type" id="loginRadioUser" value="user">User
+		<input class="btn btn-default" type="submit" id="loginSubmit" value="Ok">
 	</form>
 </div>

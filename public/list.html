@@ -3,7 +3,7 @@
 <div class="row">
   <section class="col-md-10 col-md-offset-1">
     <h1>Courses</h1>
-    <div class="well white row" ng-repeat="course in courses | orderBy:'locked':false" ng-class="admin || !course.locked ? 'clickable' : ''" ng-click="redirect(course.name)" ng-if="!course.hibernating" clear:both>
+    <div class="well white row" ng-repeat="course in courses | orderBy:'locked':false" ng-class="admin || !course.locked ? 'clickable' : ''" ng-click="redirect(course.name)" ng-if="!course.hibernating" id="list{{course.name}}Btn" clear:both>
       <div class="col-md-6">
         <h4 ng-show="course.locked" class="text-red">
           <span class="glyphicon glyphicon-lock"></span>
