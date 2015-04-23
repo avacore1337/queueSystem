@@ -545,6 +545,8 @@ app.get('/API/userData', function(req, res) {
 app.post('/API/setUser', function(req,res) {
   req.session.user = req.body;
   console.log("User settings set");
+  res.writeHead(200);
+  res.end();
 });
 
 app.listen(8080);
