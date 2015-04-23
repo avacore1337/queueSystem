@@ -207,8 +207,14 @@
 {
   border-left: 1px solid rgb(180, 180, 180);
 }
-.fifth-width
+.nav-block
+{
+  height: 4em;
+  line-height: 4em;
+  text-align: center;
+  float: left;
+}
+.nav-block.fifth
 {
   width: 20%;
-  height: 100%;
 }

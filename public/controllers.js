@@ -106,13 +106,14 @@ queueControllers.controller('loginController', ['$scope', '$location', '$http',
 function ($scope, $location, $http) {
 
   $scope.done = function () {
+    console.log("Reached done()");
     $http.post('/API/setUser', {
       name: $scope.name,
       admin: $scope.type === 'admin'
     },
     {withCredentials: true}).success(function(response){
       console.log("with credentials success");
-      $location.path('search');
+      $location.path('list');
       console.log("logged in");
     });
   };
@@ -126,6 +127,11 @@ function ($scope, $location, user) {
   $scope.loggedIn = user.username !== undefined && user.username !== "";
   $scope.name = user.username;
   $scope.admin = user.admin;
+
+  $scope.$watch(function () { return $location.path(); }, function(newValue, oldValue) {
+    $scope.location = newValue;
+    console.log("Detected update to $location.path() (oldValue = " + oldValue + ", newValue = " + newValue + ")");
+  });
   
   $scope.$watch(function () { return user.username; }, function(newValue, oldValue) {
     $scope.name = newValue;

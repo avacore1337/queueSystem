@@ -17,18 +17,21 @@
 
 	<body>
 	<nav ng-controller="navigationController">
+<!--		
 		<div class="col-md-12 black zero-padding text-center">
-			<div ng-class="location == '/list' || location.match('/course/.*') ? 'blue' : 'black'" class="col-md-1 clickable zero-padding" ng-click="redirect('list')" id="navQueuesBtn">
-				<h4 class="text-white equal-margin">Queues</h4>
-			</div>
-			<div ng-class="location == '/about' ? 'blue' : 'black'" class="col-md-1 clickable zero-padding" ng-click="redirect('about')"id="indexAboutBtn">
-				<h4 class="text-white equal-margin">About</h4>
-			</div>
-			<div ng-class="location == '/help' ? 'blue' : 'black'" class="col-md-1 clickable zero-padding" ng-click="redirect('help')" id="indexHelpBtn">
-				<h4 class="text-white equal-margin">Help</h4>
-			</div>
-			<div ng-class="location == '/admin' ? 'blue' : 'black'" class="col-md-1 clickable zero-padding" ng-show="admin" ng-click="redirect('admin')" id="indexAdminBtn">
-				<h4 class="text-white equal-margin">Admin</h4>
+			<div>
+				<div ng-class="location == '/list' || location.match('/course/.*') ? 'blue' : 'black'" class="col-md-1 clickable zero-padding" ng-click="redirect('list')" id="navQueuesBtn">
+					<h4 class="text-white equal-margin">Queues</h4>
+				</div>
+				<div ng-class="location == '/about' ? 'blue' : 'black'" class="col-md-1 clickable zero-padding" ng-click="redirect('about')"id="indexAboutBtn">
+					<h4 class="text-white equal-margin">About</h4>
+				</div>
+				<div ng-class="location == '/help' ? 'blue' : 'black'" class="col-md-1 clickable zero-padding" ng-click="redirect('help')" id="indexHelpBtn">
+					<h4 class="text-white equal-margin">Help</h4>
+				</div>
+				<div ng-class="location == '/admin' ? 'blue' : 'black'" class="col-md-1 clickable zero-padding" ng-show="admin" ng-click="redirect('admin')" id="indexAdminBtn">
+					<h4 class="text-white equal-margin">Admin</h4>
+				</div>
 			</div>
 			<a href="">
 				<div class="col-md-2 col-md-offset-2 zero-padding" ng-class="admin ? 'col-md-offset-1' : 'col-md-offset-2'" ng-click="redirect('list')" id="indexStayAWhileBtn">
@@ -48,17 +51,63 @@
 				<h4 class="text-white equal-margin">Log out&nbsp;&nbsp;</h4>
 			</div>
 		</div>
+-->
+		<!-- Navigation body -->
+		<div class="black text-white" style="width: 100%; height: 4em;">
+			<!-- Left block -->
+			<div class="nav-block" style="width: 30%;">
+				<!-- Queues block -->
+				<div class="nav-block fifth clickable" ng-class="location == '/list' || location.match('/course/.*') ? 'blue' : 'black'" ng-click="redirect('list')">
+					Queues
+				</div>
+				<!-- About block -->
+				<div class="nav-block fifth clickable" ng-class="location == '/about' ? 'blue' : 'black'" ng-click="redirect('about')">
+					About
+				</div>
+				<!-- Help block -->
+				<div class="nav-block fifth clickable" ng-class="location == '/help' ? 'blue' : 'black'" ng-click="redirect('help')">
+					Help
+				</div>
+				<!-- Admin block -->
+				<div class="nav-block fifth clickable" ng-class="location == '/admin' ? 'blue' : 'black'" ng-click="redirect('admin')">
+					Admin
+				</div>
+				<!-- Statistics block -->
+				<div class="nav-block fifth clickable" ng-class="location == '/statistics' ? 'blue' : 'black'" ng-click="redirect('statistics')">
+					Statistics
+				</div>
+			</div>
+			<!-- Center block -->
+			<div class="nav-block black" style="width: 20%; margin-left: 10%; cursor: pointer;" ng-click="redirect('list')">
+				<h2 style="line-height: .5em;">Stay A While</h2>
+			</div>
+			<!-- Right block -->
+			<div class="nav-block" style="width: 30%; margin-left: 10%;">
+				<!-- Name block -->
+				<div class="nav-block" style="width: 70%;">
+					{{name}}
+				</div>
+				<!-- Log in block -->
+				<div class="nav-block black clickable" style="width: 30%;" ng-show="!loggedIn"  ng-click="redirect('login')">
+					Log in&nbsp;&nbsp;
+				</div>
+				<!-- Log out block -->
+				<div class="nav-block black clickable" style="width: 30%;" ng-show="loggedIn" ng-click="redirect('login')">
+					Log out&nbsp;&nbsp;
+				</div>
+			</div>
+		</div>
 	</nav>
 
 	<div class="main-body">
 		<div ng-view></div>
-		<div class="row buffer"></div>
+		<div class="row col-md-12 buffer"></div>
 	</div>
 
-		<script src="/socket.io/socket.io.js"></script>
+		<script src = "/socket.io/socket.io.js"></script>
 		<script src = "app.js"></script>
 		<script src = "controllers.js"></script>
 		<script src = "services.js"></script>
-		<script src="course/course.js"></script>
+		<script src = "course/course.js"></script>
 	</body>
 </html>
