@@ -6,12 +6,14 @@ var ta = 'Admin';
 
  beforeEach(function() {
     browser.get('http://localhost:8080/#/list');
+    browser.manage().deleteAllCookies();
     browser.manage().window().maximize();
     browser.waitForAngular();
     adminLogIn('delete');
     element(by.id('listdbasBtn')).click();
     closeMOTD();
     element(by.id('coursePurgeQueueBtn')).click();
+    acceptDialogue();
   });
 
 
@@ -51,6 +53,14 @@ function closeMOTD(){
       );
 };
 
+function acceptDialogue(){
+  browser.sleep(100);
+  browser.switchTo().alert().then(
+      function(alert) {  return alert.accept(); },
+      function(err) { }
+      );
+};
+
 function userJoinQueue(joinCourse){
   element(by.id('list'+joinCourse+'Btn')).click();
   closeMOTD();
@@ -60,6 +70,7 @@ function userJoinQueue(joinCourse){
 
 function newBrowser(){
   browser.get('http://localhost:8080/#/list');
+  browser.manage().deleteAllCookies();
   browser.manage().window().maximize();
   browser.waitForAngular();
 };
@@ -76,6 +87,7 @@ it('he TA class is able to, by interaction, Purge the queue of all Users', funct
   element(by.id('listdbasBtn')).click();
   closeMOTD();
   element(by.id('coursePurgeQueueBtn')).click();
+  acceptDialogue();
   expect(element(by.id('courseEdvardBtn')).isPresent()).toBeFalsy();
   newBrowser();
   userLogIn(name);
@@ -165,22 +177,20 @@ it('The users of class Teacher have the system rights to change other users user
 });
 
 it('The Teacher class is able to Hide or Reveal the Queue. Hiding the Queue will remove the Queue from the list of Queues for Users of the Student class', function(){
-dminLogIn('TA');
+ adminLogIn('TA');
  $('#listdbasBtn').click();
  $('#courseHibernateQueueBtn').click();
  newBrowser();
  userLogIn(name);
- $('#listdbasBtn').click();
- expect($('#listdbasBtn').isEnabled()).toBeFalsy();
+ expect($('#listdbasBtn').isDisplayed()).toBeFalsy();
  newBrowser();
  adminLogIn('TA');
  $('#listdbasBtn').click();
  $('#courseWakeupQueueBtn').click();
  newBrowser();
  userLogIn(name);
- $('#listdbasBtn').click();
- expect($('#listdbasBtn').isEnabled()).toBeTruthy();
-
+ expect($('#listdbasBtn').isDisplayed()).toBeTruthy();
+ userJoinQueue('dbas');
 });
 
 
