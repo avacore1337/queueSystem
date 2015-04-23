@@ -69,11 +69,11 @@
 					Help
 				</div>
 				<!-- Admin block -->
-				<div class="nav-block fifth clickable" ng-class="location == '/admin' ? 'blue' : 'black'" ng-click="redirect('admin')" id="indexAdminBtn">
+				<div class="nav-block fifth clickable" ng-class="location == '/admin' ? 'blue' : 'black'" ng-click="redirect('admin')" id="indexAdminBtn" ng-show="admin">
 					Admin
 				</div>
 				<!-- Statistics block -->
-				<div class="nav-block fifth clickable" ng-class="location == '/statistics' ? 'blue' : 'black'" ng-click="redirect('statistics')" id="indexStatisticsBtn">
+				<div class="nav-block fifth clickable" ng-class="location == '/statistics' ? 'blue' : 'black'" ng-click="redirect('statistics')" id="indexStatisticsBtn" ng-show="admin">
 					Statistics
 				</div>
 			</div>

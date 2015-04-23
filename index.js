@@ -48,8 +48,8 @@ var adminList = [];
 //===============================================================
 // Methods for setting up or reading in the database (in production, only readIn should be used)
 
-setup(); // temporary method
-// readIn();
+//setup(); // temporary method
+readIn();
 
 function setup(){
   // list of courses to be used
