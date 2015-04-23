@@ -12,11 +12,11 @@ app.http().io();
 app.use(expressio.cookieParser());
 app.use(expressio.static(__dirname + '/public'));
 
-app.use(expressio.session({secret: 'express.io is the best framework ever!'}));
+app.use(expressio.session({secret: 'express.io is the best framework ever!!'}));
 app.use(expressio.bodyParser());
 
 var mongoose = require('mongoose');
-var database = require("./queueSchemas.js"); // databas stuff
+var database = require("./model.js"); // databas stuff
 var Schema = mongoose.Schema;
 var _ = require('lodash');
 var async = require('async');
@@ -48,8 +48,8 @@ var adminList = [];
 //===============================================================
 // Methods for setting up or reading in the database (in production, only readIn should be used)
 
-//setup(); // temporary method
-readIn();
+setup(); // temporary method
+// readIn();
 
 function setup(){
   // list of courses to be used
@@ -84,18 +84,18 @@ function setup(){
   // -----
 
   // Code to create collections in mongo    <--   temporary for error-solving
-  var newAdmin = new Admin2({name: 'name'});
-  newAdmin.save();
+  // var newAdmin = new Admin2({name: 'name'});
+  // newAdmin.save();
 
-  var testAdmin = new Admin2({name: 'pernyb', admin: true});
-  testAdmin.save();
-  adminList.push(testAdmin);
-  testAdmin = new Admin2({name: 'antbac', admin: true});
-  testAdmin.save();
-  adminList.push(testAdmin);
+  // var testAdmin = new Admin2({name: 'pernyb', admin: true});
+  // testAdmin.save();
+  // adminList.push(testAdmin);
+  // testAdmin = new Admin2({name: 'antbac', admin: true});
+  // testAdmin.save();
+  // adminList.push(testAdmin);
 
-  var testTeacher = new Admin2({name : 'pernyb', teacher : true});
-  testTeacher.save();
+  // var testTeacher = new Admin2({name : 'pernyb', teacher : true});
+  // testTeacher.save();
 //  teacherList.push(testTeacher);
 }
 
@@ -111,56 +111,41 @@ function readIn(){
   });
 
   // All the admins
-  Admin2.find(function (err, admins) {
-    admins.forEach(function (admin) {
-      if (admin.admin) {
-        adminList.push(admin);
+  // Admin2.find(function (err, admins) {
+  //   admins.forEach(function (admin) {
+  //     if (admin.admin) {
+  //       adminList.push(admin);
 
-        console.log('Admin: ' + admin.name + ' loaded'); // temporary for error-solving
-      }
-    });
-  });
-
-  // All the admins
-  Admin2.find(function (err, teachers) {
-    teachers.forEach(function (teacher) {
-      if (teacher.teacher) {
-//        teacherList.push(teacher);
-
-        console.log('Teacher: ' + teacher.name + ' loaded'); // temporary for error-solving
-      }
-    });
-  });
+  //       console.log('Admin: ' + admin.name + ' loaded'); // temporary for error-solving
+  //     }
+  //   });
+  // });
 
   // All the admins
-  Admin2.find(function (err, assistants) {
-    assistants.forEach(function (assistant) {
-      if (assistant.assistant) {
-//        assistantList.push(assistant);
+//   Admin2.find(function (err, teachers) {
+//     teachers.forEach(function (teacher) {
+//       if (teacher.teacher) {
+// //        teacherList.push(teacher);
 
-        console.log('Assistant: ' + assistant.name + ' loaded'); // temporary for error-solving
-      }
-    });
-  });
+//         console.log('Teacher: ' + teacher.name + ' loaded'); // temporary for error-solving
+//       }
+//     });
+//   });
+
+//   // All the admins
+//   Admin2.find(function (err, assistants) {
+//     assistants.forEach(function (assistant) {
+//       if (assistant.assistant) {
+// //        assistantList.push(assistant);
+
+//         console.log('Assistant: ' + assistant.name + ' loaded'); // temporary for error-solving
+//       }
+//     });
+//   });
 }
 
 //===============================================================
-// Functions
-
-function User(name, place, comment){
-  this.name = name;
-  this.place = place;
-  this.comment = comment;
-  this.gettingHelp = false;
-}
-
-function Course(name){
-  this.name = name;
-  this.locked = false;
-  this.hidden = false;
-  this.admins = [];
-  this.length = 0;
-}
+// 
 
 // return the course with the name "name"
 function findCourse(name) {
@@ -174,6 +159,13 @@ function findCourse(name) {
 // validates if a person is the privilege-type given for given course
 // TODO: make the validation more secure
 function validate(name, type, course) {
+  return true;
+  var course = findCourse(course);
+
+  if (type === 'super') {
+    return validateSuper(name);
+  };
+
   for (var i = 0; i < adminList.length; i++) {
     if (adminList[i].name === name) {
       console.log(name + ' is a valid admin'); // temporary for error-solving
@@ -316,6 +308,10 @@ app.io.route('leave', function(req) {
 
 // admin purges a queue
 app.io.route('purge', function(req) {
+
+  console.log("called purge:");
+  console.log(req.session.user);
+  req.session.user = "troll";
   // teacher-validation
   if (!validate("pernyb", "type", "course")) {
     console.log("validation for purge failed");
@@ -477,7 +473,7 @@ app.io.route('addTeacher', function(req) {
 //
 app.io.route('addAssistant', function(req) {
  // teacher-validation
-  if (!validate("pernyb", "type", "course")) {
+  if (!validate("pernyb", "super", "course")) {
     console.log("validation for addAssistant failed");
     //res.end();
     return;
@@ -549,8 +545,6 @@ app.get('/API/userData', function(req, res) {
 app.post('/API/setUser', function(req,res) {
   req.session.user = req.body;
   console.log("User settings set");
-  res.writeHead(200);
-  res.end();
 });
 
 app.listen(8080);
