@@ -27,8 +27,8 @@ var ta = 'Admin';
       }
     });
   element(by.id('loginInputField')).sendKeys(userName);
-  element(by.id('loginRadioUser')).click();
-  element(by.id('loginSubmit')).click();
+  element(by.id('loginUserRadio')).click();
+  element(by.id('loginOKBtn')).click();
  };
 
 function adminLogIn(userName){
@@ -40,8 +40,10 @@ function adminLogIn(userName){
       }
     });
   element(by.id('loginInputField')).sendKeys(userName);
-  element(by.id('loginRadioAdmin')).click();
-  element(by.id('loginSubmit')).click();
+  browser.sleep(250);
+  element(by.id('loginAdminRadio')).click();
+  browser.sleep(250);
+  element(by.id('loginOKBtn')).click();
  };
 
 
