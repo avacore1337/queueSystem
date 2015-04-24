@@ -72,7 +72,9 @@
 
     // Listen for the person leaving a queue event.
     socket.on('leave', function(data) {
-      $scope.enqueued = false;
+      if(data.name === $scope.name){
+        $scope.enqueued = false;
+      }
       for(var i = $scope.users.length - 1; i >= 0; i--) {
         if($scope.users[i].name === data.name) {
           $scope.$apply($scope.users.splice(i, 1));
