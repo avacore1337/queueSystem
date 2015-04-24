@@ -6,4 +6,4 @@ Pre-req. Queuesystem running.
 2. node_modules/protractor/bin/webdriver-manager update         
 3. node_modules/protractor/bin/webdriver-manager start
 4. open a new terminal and go to queueSystem folder.             
-5. node_modules/protractor/bin/protractor Testing/Conf.js
+5. node_modules/protractor/bin/protractor testing/conf.js
