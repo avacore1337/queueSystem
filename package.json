@@ -10,7 +10,9 @@
     "mongoose": "^4.0.1",
     "util": "^0.10.3"
   },
-  "devDependencies": {},
+  "devDependencies": {
+    "protractor": "^2.0.0"
+  },
   "scripts": {
     "test": "runtest",
     "start": "node --harmony index.js"
