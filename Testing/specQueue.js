@@ -40,15 +40,13 @@ function adminLogIn(userName){
       }
     });
   element(by.id('loginInputField')).sendKeys(userName);
-  browser.sleep(250);
   element(by.id('loginAdminRadio')).click();
-  browser.sleep(250);
   element(by.id('loginOKBtn')).click();
  };
 
 
 function closeMOTD(){
-  // browser.sleep(250);
+  browser.sleep(100);
   browser.switchTo().alert().then(
       function(alert) {  return alert.dismiss(); },
       function(err) { }
@@ -171,7 +169,7 @@ it('TA is able to use the interaction ‘Lock’ or ‘Unlock’ with a queue', 
   });
 
 it('TA is able to use the interaction ‘new MOTD’ (Message of the Day) with a queue for a session which he is given privileges.', function(){
-//TODO
+  //TODO
 });
 
 it('The users of class Teacher have the system rights to change other users user class within the group:', function(){
