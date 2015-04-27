@@ -14,92 +14,40 @@
 	</head>
 
 	<body>
-	<nav ng-controller="navigationController">
-<!--		
-		<div class="col-md-12 black zero-padding text-center">
-			<div>
-				<div ng-class="location == '/list' || location.match('/course/.*') ? 'blue' : 'black'" class="col-md-1 clickable zero-padding" ng-click="redirect('list')" id="navQueuesBtn">
-					<h4 class="text-white equal-margin">Queues</h4>
+		<nav class="navbar navbar-default navbar-inverse navbar-static-top" role="navigation" ng-controller="navigationController">
+			<div class="container">
+			<!-- Brand and toggle get grouped for better mobile display -->
+				<div class="navbar-header">
+					<button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#navbar-brand-centered" id="indexCollapseBtn">
+						<span class="sr-only">Toggle navigation</span>
+						<span class="icon-bar"></span>
+						<span class="icon-bar"></span>
+						<span class="icon-bar"></span>
+					</button>
+					<div ng-click="redirect('list')" class="navbar-brand navbar-brand-centered" style="cursor: pointer;" id="indexStayAWhileBtn">Stay A While</div>
 				</div>
-				<div ng-class="location == '/about' ? 'blue' : 'black'" class="col-md-1 clickable zero-padding" ng-click="redirect('about')"id="indexAboutBtn">
-					<h4 class="text-white equal-margin">About</h4>
-				</div>
-				<div ng-class="location == '/help' ? 'blue' : 'black'" class="col-md-1 clickable zero-padding" ng-click="redirect('help')" id="indexHelpBtn">
-					<h4 class="text-white equal-margin">Help</h4>
-				</div>
-				<div ng-class="location == '/admin' ? 'blue' : 'black'" class="col-md-1 clickable zero-padding" ng-show="admin" ng-click="redirect('admin')" id="indexAdminBtn">
-					<h4 class="text-white equal-margin">Admin</h4>
-				</div>
-			</div>
-			<a href="">
-				<div class="col-md-2 col-md-offset-2 zero-padding" ng-class="admin ? 'col-md-offset-1' : 'col-md-offset-2'" ng-click="redirect('list')" id="indexStayAWhileBtn">
-					<h3 class="text-white equal-margin">Stay A While</h3>
-				</div>
-			</a>
-			<div class="col-md-2 zero-padding">
-				<h3 class="text-easteregg text-left equal-margin" style="cursor: default;">And Listen</h3>
-			</div>
-			<div class="col-md-1 col-md-offset-2 text-right black clickable zero-padding" ng-show="!loggedIn" ng-click="redirect('login')" id="indexLogInBtn">
-				<h4 class="text-white equal-margin">Log in&nbsp;&nbsp;</h4>
-			</div>
-			<div class="col-md-2 text-right black zero-padding" style="cursor: default;" ng-show="loggedIn" id="indexNameTextField">
-				<h4 class="text-white equal-margin">{{ name }}</h4>
-			</div>
-			<div class="col-md-1 text-right black clickable zero-padding" ng-show="loggedIn" ng-click="redirect('login')" id="indexLogOutBtn">
-				<h4 class="text-white equal-margin">Log out&nbsp;&nbsp;</h4>
-			</div>
-		</div>
--->
-		<!-- Navigation body -->
-		<div class="black text-white" style="width: 100%; height: 4em;">
-			<!-- Left block -->
-			<div class="nav-block" style="width: 30%;">
-				<!-- Queues block -->
-				<div class="nav-block fifth clickable" ng-class="location == '/list' || location.match('/course/.*') ? 'blue' : 'black'" ng-click="redirect('list')" id="indexQueuesBtn">
-					Queues
-				</div>
-				<!-- About block -->
-				<div class="nav-block fifth clickable" ng-class="location == '/about' ? 'blue' : 'black'" ng-click="redirect('about')" id="indexAboutBtn">
-					About
-				</div>
-				<!-- Help block -->
-				<div class="nav-block fifth clickable" ng-class="location == '/help' ? 'blue' : 'black'" ng-click="redirect('help')" id="indexHelpBtn">
-					Help
-				</div>
-				<!-- Admin block -->
-				<div class="nav-block fifth clickable" ng-class="location == '/admin' ? 'blue' : 'black'" ng-click="redirect('admin')" id="indexAdminBtn" ng-show="admin">
-					Admin
-				</div>
-				<!-- Statistics block -->
-				<div class="nav-block fifth clickable" ng-class="location == '/statistics' ? 'blue' : 'black'" ng-click="redirect('statistics')" id="indexStatisticsBtn" ng-show="admin">
-					Statistics
-				</div>
-			</div>
-			<!-- Center block -->
-			<div class="nav-block black" style="width: 20%; margin-left: 10%; cursor: pointer;" ng-click="redirect('list')" id="indexStayAWhileBtn">
-				<h2 style="line-height: .5em;">Stay A While</h2>
-			</div>
-			<!-- Right block -->
-			<div class="nav-block" style="width: 30%; margin-left: 10%;">
-				<!-- Name block -->
-				<div class="nav-block black" style="width: 70%;" id="indexNameTextField">
-					{{name}}
-				</div>
-				<!-- Log in block -->
-				<div class="nav-block black clickable" style="width: 30%;" ng-show="!loggedIn"  ng-click="redirect('login')" id="indexLogInBtn">
-					Log in&nbsp;&nbsp;
-				</div>
-				<!-- Log out block -->
-				<div class="nav-block black clickable" style="width: 30%;" ng-show="loggedIn" ng-click="redirect('login')" id="indexLogOutBtn">
-					Log out&nbsp;&nbsp;
-				</div>
-			</div>
-		</div>
-	</nav>
+
+				<!-- Collect the nav links, forms, and other content for toggling -->
+				<div class="collapse navbar-collapse" id="navbar-brand-centered">
+					<ul class="nav navbar-nav">
+						<li ng-click="redirect('list')" ng-class="location == '/list' || location.match('/course/.*') ? 'active' : ''" id="indexQueuesBtn"><a style="cursor: pointer;">Queues</a></li>
+						<li ng-click="redirect('about')" ng-class="location == '/about' ? 'active' : ''" id="indexAboutBtn"><a style="cursor: pointer;">About</a></li>
+						<li ng-click="redirect('help')" ng-class="location == '/help' ? 'active' : ''" id="indexHelpBtn"><a style="cursor: pointer;">Help</a></li>
+						<li ng-show="admin" ng-click="redirect('admin')" ng-class="location == '/admin' ? 'active' : ''" id="indexAdminBtn"><a style="cursor: pointer;">Admin</a></li>
+						<li ng-show="admin" ng-click="redirect('statistics')" ng-class="location == '/statistics' ? 'active' : ''" id="indexStatisticsBtn"><a style="cursor: pointer;">Statistics</a></li>
+					</ul>
+					<ul class="nav navbar-nav navbar-right">
+						<li class="unresponsive hidden-xs"><a style="cursor: pointer;" class="unresponsive">{{name}}</a></li>
+						<li ng-show="!loggedIn" ng-click="redirect('login')" id="indexLogInBtn"><a style="cursor: pointer;">Log in</a></li>
+						<li ng-show="loggedIn" ng-click="redirect('login')" id="indexLogOutBtn"><a style="cursor: pointer;">Log out</a></li>
+					</ul>
+				</div><!-- /.navbar-collapse -->
+			</div><!-- /.container-fluid -->
+		</nav>
 
 	<div class="main-body">
 		<div ng-view></div>
-		<div class="row col-md-12 buffer"></div>
+		<div class="row col-xs-12 buffer"></div>
 	</div>
 
 		<script src = "/socket.io/socket.io.js"></script>
