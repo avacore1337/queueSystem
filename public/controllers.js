@@ -96,6 +96,19 @@ queueControllers.controller('statisticsController', ['$scope', '$http',
 function ($scope, $http) {
   console.log('entered statistics.html');
 
+// Queue selection
+  $scope.courses = [];
+  $http.get('/API/courseList').success(function(response){
+    $scope.courses = response;
+  });
+
+  $scope.selectedQueue = undefined;
+  $scope.selectQueue = function(queue){
+    $scope.selectedQueue = queue;
+    document.getElementById('dropdown').innerHTML = queue;
+    console.log("selected queue = " + $scope.selectedQueue);
+  };
+
 // Date
   $scope.today = function() {
     $scope.dtFrom = new Date();
@@ -119,19 +132,6 @@ function ($scope, $http) {
 
   $scope.hstep = 1;
   $scope.mstep = 5;
-
-// Queue selection
-  $scope.courses = [];
-  $http.get('/API/courseList').success(function(response){
-    $scope.courses = response;
-  });
-
-  $scope.selectedQueue = undefined;
-  $scope.selectQueue = function(queue){
-    $scope.selectedQueue = queue;
-    document.getElementById('dropdown').innerHTML = queue;
-    console.log("selected queue = " + $scope.selectedQueue);
-  };
 
 // Statistics
   $scope.getStatistics = function() {

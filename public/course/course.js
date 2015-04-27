@@ -14,8 +14,8 @@
   }])
 
 
-  .controller('courseController', ['$scope', '$http', '$routeParams', 'WebSocketService', 'UserService',
-  function ($scope, $http, $routeParams, socket, user) {
+  .controller('courseController', ['$scope', '$http', '$routeParams', '$modal', 'WebSocketService', 'UserService',
+  function ($scope, $http, $routeParams, $modal, socket, user) {
     $scope.course = $routeParams.course;
     $scope.name = user.getName();
     $scope.location = '';
@@ -103,8 +103,22 @@
     });
 
     // Listen for a message.
-    socket.on('msg', function(data) {
-      alert(data);
+    socket.on('msg', function(message) {
+      console.log("Received message : " + message);
+      var modalInstance = $modal.open({
+        templateUrl: 'receiveMessage.html',
+        controller: function ($scope, $modalInstance, message) {
+          $scope.message = message;
+        },
+        resolve: {
+          message: function () {
+            return message;
+          }//,
+          //sender: function () {
+          //  return data.sender;
+          //},
+        }
+      });
     });
 
     // Listen for a user getting flagged
@@ -140,7 +154,20 @@
 
     // Listen for a badLocation warning
     socket.on('badLocation', function() {
-      alert("You have to enter a more descriptive location.");
+      var modalInstance = $modal.open({
+        templateUrl: 'receiveMessage.html',
+        controller: function ($scope, $modalInstance, message) {
+          $scope.message = "You have to enter a more descriptive location.";
+        },
+        resolve: {
+          message: function () {
+            return message;
+          }//,
+          //sender: function () {
+          //  return data.sender;
+          //},
+        }
+      });
     });
 
     $scope.addUser = function(){
@@ -193,12 +220,27 @@
 
     // This function should remove every person in the queue
     $scope.purge = function(){
-      if (confirm('Are you sure you want to remove this queue permanently?')) {
-        socket.emit('purge', {
-          queue:$routeParams.course
-        });
-      }
       console.log("Called purge");
+      var modalInstance = $modal.open({
+        templateUrl: 'purgeQueue.html',
+        controller: function ($scope, $modalInstance) {
+          $scope.purge = function () {
+            $modalInstance.close("purge");
+          };
+          $scope.doNotPurge = function () {
+            $modalInstance.close("");
+          };
+        },
+        resolve: {}
+      });
+
+      modalInstance.result.then(function (message) {
+        if(message === "purge"){
+          socket.emit('purge', {
+            queue:$routeParams.course
+          });
+        }
+      }, function () {});
     };
 
     // This function should lock the queue, preventing anyone from queueing
@@ -244,18 +286,29 @@
       console.log("Called helpUser");
     };
 
-    // Function to send a message to a user
-    $scope.messageUser = function(name){
-      var message = prompt("Enter a message for the user.","");
-      if(message !== null){
-        socket.emit('messageUser', {
-          queue:$routeParams.course,
-          sender:$scope.name,
-          name:name,
-          message:message
-        });
-      }
-      console.log("Called messageUser");
+    $scope.messageUser = function () {
+      console.log("Entered messageUser");
+      var modalInstance = $modal.open({
+        templateUrl: 'messageUser.html',
+        controller: function ($scope, $modalInstance) {
+          $scope.ok = function () {
+            $modalInstance.close($scope.message);
+          };
+        },
+        resolve: {}
+      });
+
+      modalInstance.result.then(function (message) {
+        console.log("Message = " + message);
+        if(message !== null && message !== undefined){
+          socket.emit('messageUser', {
+            queue:$routeParams.course,
+            sender:$scope.name,
+            name:name,
+            message:message
+          });
+        }
+      }, function () {});
     };
 
     // Function to add a message about that user

@@ -9,6 +9,49 @@ ska man kunna lämna in kommentarer som asse?
 
 <div class="container">
 
+<script type="text/ng-template" id="messageUser.html">
+  <div class="modal-header">
+    <h4>Enter message</h4>
+  </div>
+  <div class="modal-body">
+    <div class="form-group">
+      <textarea class="form-control" rows="3" ng-model="message"></textarea>
+    </div>
+  </div>
+  <div class="modal-footer">
+    <button class="btn btn-primary" ng-click="ok()">Send</button>
+  </div>
+</script>
+
+<script type="text/ng-template" id="receiveMessage.html">
+  <div class="modal-header">
+    <h4>Message</h4>
+  </div>
+  <div class="modal-body">
+    <div class="form-group">
+      <p>{{message}}</p>
+    </div>
+  </div>
+  <div class="modal-footer">
+    <i class="text-light-gray">- Anton Bäckström</>
+  </div>
+</script>
+
+<script type="text/ng-template" id="purgeQueue.html">
+  <div class="modal-header">
+    <h4>Purge queue</h4>
+  </div>
+  <div class="modal-body">
+    <div class="form-group">
+      <p>Are you sure you want to remove everyone in the queue?</p>
+    </div>
+  </div>
+  <div class="modal-footer">
+    <button class="btn btn-success" ng-click="doNotPurge()">No, leave them alone.</button>
+    <button class="btn btn-danger" ng-click="purge()">Yes, kick them all out.</button>
+  </div>
+</script>
+
 <div class="row col-md-2">
   <h2 class="col-md-offset-5 text-red" ng-show="locked"><span class="glyphicon glyphicon-lock"></span>{{course}}</h2>
   <h2 class="col-md-offset-5" ng-show="!locked">{{course}}</h2>
