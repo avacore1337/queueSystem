@@ -67,7 +67,7 @@
 
   <div class="row">
     <!-- Buttons (not logged in) -->
-    <div class="col-md-2 black" ng-show="!loggedIn">
+    <div class="col-md-2" ng-show="!loggedIn">
       <h3>You are currently not logged in</h3>
     </div>
     <!-- Buttons (logged in) -->
@@ -91,7 +91,7 @@
         <span class="glyphicon glyphicon-plus"></span>
         Join queue
       </button>
-      <button class="green clickable frame center-content expand" ng-show="!enqueued && !location" popover="In order to queue, you must enter your location"  popover-trigger="focus" popover-placement="bottom" id="coursePromptLocationBtn">
+      <button class="green clickable frame center-content expand" ng-show="!enqueued && !location" popover="In order to queue, you must enter your location"  popover-trigger="focus" popover-placement="bottom" id="coursePromptLocationJoinBtn">
         <span class="glyphicon glyphicon-plus"></span>
         Join queue
       </button>
@@ -99,7 +99,11 @@
         <span class="glyphicon glyphicon-remove"></span>&nbsp;
         Leave queue
       </button>
-      <button class="green clickable center-content frame expand" ng-show="enqueued" ng-click="updateUser()" id="courseUpdateInformationBtn">
+      <button class="green clickable center-content frame expand" ng-show="enqueued && location" ng-click="updateUser()" id="courseUpdateInformationBtn">
+        <span class="glyphicon glyphicon-pencil"></span>&nbsp;
+        Update information
+      </button>
+      <button class="green clickable frame center-content expand" ng-show="enqueued && !location" popover="You must enter your location again"  popover-trigger="focus" popover-placement="bottom" id="coursePromptLocationUpdateBtn">
         <span class="glyphicon glyphicon-pencil"></span>&nbsp;
         Update information
       </button>
