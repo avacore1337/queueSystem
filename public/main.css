@@ -126,7 +126,7 @@
 }
 .frame
 {
-  border: 1px solid rgb(50,50,50);
+  border: solid rgb(50,50,50) 1px;
 }
 .pulse {
   -webkit-animation: pulse 3.8s linear infinite;
@@ -217,4 +217,12 @@
 .nav-block.fifth
 {
   width: 20%;
+}
+button.expand
+{
+  width:100%;
+}
+button:focus
+{
+  outline: 0;
 }
