@@ -120,9 +120,28 @@ function ($scope, $http) {
   $scope.hstep = 1;
   $scope.mstep = 5;
 
+// Queue selection
+  $scope.courses = [];
+  $http.get('/API/courseList').success(function(response){
+    $scope.courses = response;
+  });
+
+  $scope.selectedQueue = undefined;
+  $scope.selectQueue = function(queue){
+    $scope.selectedQueue = queue;
+    document.getElementById('dropdown').innerHTML = queue;
+    console.log("selected queue = " + $scope.selectedQueue);
+  };
+
 // Statistics
   $scope.getStatistics = function() {
-    if($scope.dtFrom !== null && $scope.dtFrom !== undefined && $scope.dtTo !== null && $scope.dtTo !== undefined){
+    if($scope.dtFrom !== null && $scope.dtFrom !== undefined && $scope.dtTo !== null && $scope.dtTo !== undefined && $scope.selectedQueue !== undefined){
+      $scope.statistics = [{description: "Unique students queueing", data: "50"},
+      {description: "Students getting helped", data: "45"},
+      {description: "Students left in queue when lab session ended", data: "5"},
+      {description: "Number of TAs attending", data: "11"},
+      {description: "Average time spent helping students", data: "5m 34s"},
+      {description: "Number of students who left before receiving help", data: "7"}];
       console.log("Getting data from " + $scope.dtFrom + " " + $scope.fromTime);
       console.log("Getting data to " + $scope.dtTo + " " + $scope.toTime);
     }
