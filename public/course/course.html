@@ -9,23 +9,23 @@ ska man kunna lämna in kommentarer som asse?
 
 <div class="container">
 
-<script type="text/ng-template" id="messageUser.html">
+<script type="text/ng-template" id="enterMessage.html">
   <div class="modal-header">
-    <h4>Enter message</h4>
+    <h4>{{title}}</h4>
   </div>
   <div class="modal-body">
     <div class="form-group">
-      <textarea class="form-control" rows="3" ng-model="message"></textarea>
+      <textarea class="form-control" rows="3" ng-model="message" id="courseEnterMessageTextArea"></textarea>
     </div>
   </div>
   <div class="modal-footer">
-    <button class="btn btn-primary" ng-click="ok()">Send</button>
+    <button class="btn btn-primary" ng-click="ok()" id="course{{buttonText}}Btn">{{buttonText}}</button>
   </div>
 </script>
 
 <script type="text/ng-template" id="receiveMessage.html">
   <div class="modal-header">
-    <h4>Message</h4>
+    <h4>{{title}}</h4>
   </div>
   <div class="modal-body">
     <div class="form-group">
@@ -33,7 +33,7 @@ ska man kunna lämna in kommentarer som asse?
     </div>
   </div>
   <div class="modal-footer">
-    <i class="text-light-gray">- Anton Bäckström</>
+    <i class="text-light-gray">- {{sender}}</>
   </div>
 </script>
 
@@ -47,8 +47,23 @@ ska man kunna lämna in kommentarer som asse?
     </div>
   </div>
   <div class="modal-footer">
-    <button class="btn btn-success" ng-click="doNotPurge()">No, leave them alone.</button>
-    <button class="btn btn-danger" ng-click="purge()">Yes, kick them all out.</button>
+    <button class="btn btn-success" ng-click="doNotPurge()" id="courseDoNotPurgeBtn">No, leave them alone.</button>
+    <button class="btn btn-danger" ng-click="purge()" id="courseDoPurgeBtn">Yes, kick them all out.</button>
+  </div>
+</script>
+
+<script type="text/ng-template" id="readMessages.html">
+  <div class="modal-header">
+    <h4>Messages</h4>
+  </div>
+  <div class="modal-body">
+    <div class="form-group">
+      <ul>
+        <li ng-repeat="message in messages">
+          {{message}}
+        </li>
+      </ul>
+    </div>
   </div>
 </script>
 
@@ -197,7 +212,7 @@ ska man kunna lämna in kommentarer som asse?
                   <span class="glyphicon glyphicon-tag"></span>
                 </button>
               </span>
-              <span ng-show="user.comments.length > 0" title="read comment">
+              <span ng-show="user.messages.length > 0" title="read comment">
                 <button class="btn btn-success" ng-click="readMessages(user.name)" id="courseReadComment{{user.name}}Btn">
                   <span class="glyphicon glyphicon-search"></span>
                 </button>

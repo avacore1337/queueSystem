@@ -107,16 +107,21 @@
       console.log("Received message : " + message);
       var modalInstance = $modal.open({
         templateUrl: 'receiveMessage.html',
-        controller: function ($scope, $modalInstance, message) {
+        controller: function ($scope, $modalInstance, title, message, sender) {
+          $scope.title = title;
           $scope.message = message;
+          $scope.sender = sender;
         },
         resolve: {
+          title: function () {
+            return "Message";
+          },
           message: function () {
             return message;
-          }//,
-          //sender: function () {
-          //  return data.sender;
-          //},
+          },
+          sender: function () {
+            return "Anton Bäckström";
+          }
         }
       });
     });
@@ -156,16 +161,21 @@
     socket.on('badLocation', function() {
       var modalInstance = $modal.open({
         templateUrl: 'receiveMessage.html',
-        controller: function ($scope, $modalInstance, message) {
-          $scope.message = "You have to enter a more descriptive location.";
+        controller: function ($scope, $modalInstance, title, message, sender) {
+          $scope.title = title;
+          $scope.message = message;
+          $scope.sender = sender;
         },
         resolve: {
+          title: function () {
+            return "Unclear location";
+          },
           message: function () {
-            return message;
-          }//,
-          //sender: function () {
-          //  return data.sender;
-          //},
+            return "You have to enter a more descriptive location.";
+          },
+          sender: function () {
+            return "Anton Bäckström";
+          }
         }
       });
     });
@@ -286,16 +296,25 @@
       console.log("Called helpUser");
     };
 
-    $scope.messageUser = function () {
+    $scope.messageUser = function (name) {
       console.log("Entered messageUser");
       var modalInstance = $modal.open({
-        templateUrl: 'messageUser.html',
-        controller: function ($scope, $modalInstance) {
+        templateUrl: 'enterMessage.html',
+        controller: function ($scope, $modalInstance, title, buttonText) {
+          $scope.title = title;
+          $scope.buttonText = buttonText;
           $scope.ok = function () {
             $modalInstance.close($scope.message);
           };
         },
-        resolve: {}
+        resolve: {
+          title: function () {
+            return "Enter a message to " + name;
+          },
+          buttonText: function () {
+            return "Send";
+          }
+        }
       });
 
       modalInstance.result.then(function (message) {
@@ -313,59 +332,127 @@
 
     // Function to add a message about that user
     $scope.flag = function(name){
-      var message = prompt("Enter a comment.","");
-      if(message !== null){
-        socket.emit('flag', {
-          queue:$routeParams.course,
-          sender:$scope.name,
-          name:name,
-          message:message
-        });
-      }
-      console.log("Called flag user");
+      console.log("Entered flag");
+      var modalInstance = $modal.open({
+        templateUrl: 'enterMessage.html',
+        controller: function ($scope, $modalInstance, title, buttonText) {
+          $scope.title = title;
+          $scope.buttonText = buttonText;
+          $scope.ok = function () {
+            $modalInstance.close($scope.message);
+          };
+        },
+        resolve: {
+          title: function () {
+            return "Enter a comment about " + name;
+          },
+          buttonText: function () {
+            return "Add comment";
+          }
+        }
+      });
+
+      modalInstance.result.then(function (message) {
+        console.log("Message = " + message);
+        if(message !== null && message !== undefined){
+          socket.emit('flag', {
+            queue:$routeParams.course,
+            sender:$scope.name,
+            name:name,
+            message:message
+          });
+        }
+      }, function () {});
     };
 
     // Function to read comments about a user
     $scope.readMessages = function(name){
-      var string = "";
-      for(var user in $scope.users){
-        if(user.name == name){
-          for(var s in user.comments){
-            string = string + s + "\n";
-          }
+      console.log("Called readMessages");
+      for(var index in $scope.users){
+        if($scope.users[index].name == name){
+          var modalInstance = $modal.open({
+            templateUrl: 'readMessages.html',
+            controller: function ($scope, $modalInstance, messages) {
+              $scope.messages = messages;
+            },
+            resolve: {
+              messages: function () {
+                //return $scope.users[index].messages;
+                return ["He is the greatest.","I have never met anyone more stupid.","Wow, what a genious.","F***ing moron ...","Hello, World!"];
+              }
+            }
+          });
           break;
         }
       }
-      alert(string);
-      console.log("Called readMessages");
     };
 
     // Function to send a message to every user in the queue
     $scope.broadcast = function(){
-      var message = prompt("Enter a message to broadcast.","");
-      if(message !== null){
-        socket.emit('broadcast', {
-          queue:$routeParams.course,
-          message:message,
-          sender: $scope.name
-        });
-        console.log("Sent message : " + message);
-      }
       console.log("Called broadcast");
+      var modalInstance = $modal.open({
+        templateUrl: 'enterMessage.html',
+        controller: function ($scope, $modalInstance, title, buttonText) {
+          $scope.title = title;
+          $scope.buttonText = buttonText;
+          $scope.ok = function () {
+            $modalInstance.close($scope.message);
+          };
+        },
+        resolve: {
+          title: function () {
+            return "Enter a message to broadcast";
+          },
+          buttonText: function () {
+            return "Broadcast";
+          }
+        }
+      });
+
+      modalInstance.result.then(function (message) {
+        console.log("Message = " + message);
+        if(message !== null && message !== undefined){
+          socket.emit('broadcast', {
+            queue:$routeParams.course,
+            message:message,
+            sender: $scope.name
+          });
+        }
+      }, function () {});
     };
 
     // Function to send a message to every TA handeling the queue
     $scope.broadcastTA = function(){
-      var message = prompt("Enter a message to broadcast.","");
-      if(message !== null){
-        socket.emit('broadcastTA', {
-          queue:$routeParams.course,
-          message:message,
-          sender: $scope.name
-        });
-        console.log("Sent message : " + message);
-      }
       console.log("Called broadcast");
+      var modalInstance = $modal.open({
+        templateUrl: 'enterMessage.html',
+        controller: function ($scope, $modalInstance, title, buttonText) {
+          $scope.title = title;
+          $scope.buttonText = buttonText;
+          $scope.ok = function () {
+            $modalInstance.close($scope.message);
+          };
+        },
+        resolve: {
+          title: function () {
+            return "Enter a message to broadcast to TAs";
+          },
+          buttonText: function () {
+            return "Broadcast";
+          }
+        }
+      });
+
+      modalInstance.result.then(function (message) {
+        console.log("Message = " + message);
+        if(message !== null && message !== undefined){
+          socket.emit('broadcastTA', {
+            queue:$routeParams.course,
+            message:message,
+            sender: $scope.name
+          });
+        }
+      }, function () {});
     };
 
     // Function to send a message to a user
@@ -388,7 +475,7 @@
     };
 
     // When aa teacher wants to remove the queue completely
-     $scope.removeQueue = function(){
+    $scope.removeQueue = function(){
       if (confirm('Are you sure you want to remove this queue permanently?')) {
         socket.emit('removeQueue', {
           queue:$routeParams.course,
