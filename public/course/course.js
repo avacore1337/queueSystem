@@ -1,5 +1,6 @@
 (function(){
   var app = angular.module("queue.course", [
+  'ui.bootstrap',
   'ngRoute'
   ]);
   

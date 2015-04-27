@@ -1,22 +1,33 @@
 <div class="container">
+
     <div class="row">
-        <div class='col-sm-6'>
-            <div class="form-group">
-                <div class='input-group date' id='datetimepicker1'>
-                    <input type='text' class="form-control" />
-                    <span class="input-group-addon">
-                        <span class="glyphicon glyphicon-calendar"></span>
-                    </span>
-                </div>
-            </div>
+<!-- Datepicker (from) -->
+        <div class="col-md-6">
+            <h4>From</h4>
+            <p class="input-group">
+              <input type="text" class="form-control" datepicker-popup="yyyy-MM-dd" ng-model="dtFrom" is-open="openedFrom" max-date="today" close-text="Close" id="statisticsFromDateInputField"/>
+              <span class="input-group-btn">
+                <button type="button" class="btn btn-default" ng-click="open($event, 'openedFrom')" id="statisticsFromDateCalendarBtn"><i class="glyphicon glyphicon-calendar"></i></button>
+              </span>
+            </p>
+<!-- Timepicker (from) -->
+            <timepicker ng-model="fromTime" minute-step="mstep" show-meridian="false" id="statisticsFromTimeTimepicker"></timepicker>
+        </div>
+<!-- Datepicker (from) -->
+        <div class="col-md-6">
+            <h4>To</h4>
+            <p class="input-group">
+              <input type="text" class="form-control" datepicker-popup="yyyy-MM-dd" ng-model="dtTo" is-open="openedTo" max-date="dt" close-text="Close" id="statisticsToDateInputField"/>
+              <span class="input-group-btn">
+                <button type="button" class="btn btn-default" ng-click="open($event, 'openedTo')" id="statisticsToDateCalendarBtn"><i class="glyphicon glyphicon-calendar"></i></button>
+              </span>
+            </p>
+<!-- Timepicker (to) -->
+            <timepicker ng-model="toTime" minute-step="mstep" show-meridian="false" id="statisticsToTimeTimepicker"></timepicker>
         </div>
     </div>
-    <script type="text/javascript" src="http://code.jquery.com/ui/1.10.3/jquery-ui.js"></script>
-    <script type="text/javascript" src="http://eonasdan.github.io/bootstrap-datetimepicker/scripts/bootstrap.min.js"></script>
-    <script type="text/javascript" src="http://eonasdan.github.io/bootstrap-datetimepicker/scripts/bootstrap-datetimepicker.js"></script>
-    <script type="text/javascript">
-        $(function () {
-            $('#datetimepicker1').datetimepicker();
-        });
-    </script>
+    <hr>
+<!-- Statistics goes here -->
+
+    <button class="btn btn-primary" ng-click="getStatistics()">Get statistics</button>
 </div>

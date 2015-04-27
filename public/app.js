@@ -2,6 +2,7 @@
   var app = angular.module("queue", [
   'ngRoute',
   'queueControllers',
+  'ui.bootstrap',
   'queue.course'
   ]);
   

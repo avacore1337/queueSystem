@@ -96,8 +96,36 @@ queueControllers.controller('statisticsController', ['$scope', '$http',
 function ($scope, $http) {
   console.log('entered statistics.html');
 
-  $scope.open = function (id) {
-    $(id).datetimepicker({format: 'LLL'});
+// Date
+  $scope.today = function() {
+    $scope.dtFrom = new Date();
+    $scope.dtTo = new Date();
+    $scope.today = new Date();
+  };
+  $scope.today();
+
+  $scope.open = function($event, opened) {
+    $event.preventDefault();
+    $event.stopPropagation();
+
+    $scope[opened] = true;
+  };
+
+// Time
+  $scope.fromTime = new Date();
+  $scope.fromTime.setHours(0);
+  $scope.fromTime.setMinutes(0);
+  $scope.toTime = new Date();
+
+  $scope.hstep = 1;
+  $scope.mstep = 5;
+
+// Statistics
+  $scope.getStatistics = function() {
+    if($scope.dtFrom !== null && $scope.dtFrom !== undefined && $scope.dtTo !== null && $scope.dtTo !== undefined){
+      console.log("Getting data from " + $scope.dtFrom + " " + $scope.fromTime);
+      console.log("Getting data to " + $scope.dtTo + " " + $scope.toTime);
+    }
   };
 
 }]);
