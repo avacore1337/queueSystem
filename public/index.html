@@ -37,7 +37,7 @@
 						<li ng-show="admin" ng-click="redirect('statistics')" ng-class="location == '/statistics' ? 'active' : ''" id="indexStatisticsBtn"><a style="cursor: pointer;">Statistics</a></li>
 					</ul>
 					<ul class="nav navbar-nav navbar-right">
-						<li class="unresponsive hidden-xs"><a style="cursor: pointer;" class="unresponsive">{{name}}</a></li>
+						<li class="unresponsive hidden-xs"><a class="unresponsive">{{name}}</a></li>
 						<li ng-show="!loggedIn" ng-click="redirect('login')" id="indexLogInBtn"><a style="cursor: pointer;">Log in</a></li>
 						<li ng-show="loggedIn" ng-click="redirect('login')" id="indexLogOutBtn"><a style="cursor: pointer;">Log out</a></li>
 					</ul>

@@ -69,6 +69,9 @@
     <!-- Buttons (not logged in) -->
     <div class="col-md-2" ng-show="!loggedIn">
       <h3>You are currently not logged in</h3>
+      <button class="blue clickable center-content expand" style="border: 0; color: #FFFFFF;" ng-click="redirect('/login')" id="courseNotLoggedInLogInBtn">
+        Log in
+      </button>
     </div>
     <!-- Buttons (logged in) -->
     <div class="col-md-2 black" ng-show="loggedIn">

@@ -1,73 +1,117 @@
 <!--<div ng-show="admin">-->
 <div class="container">
+
+  <script type="text/ng-template" id="delete.html">
+    <div class="modal-header">
+      <h4>{{title}}</h4>
+    </div>
+    <div class="modal-body">
+      <div class="form-group">
+        <p>{{message}}</p>
+      </div>
+    </div>
+    <div class="modal-footer">
+		<button class="btn btn-success" ng-click="doNotDelete()" id="adminDoNotDeleteBtn">No, I made a mistake.</button>
+		<button class="btn btn-danger" ng-click="delete()" id="adminDoDeleteBtn">Yes, I never want to see it again.</button>
+    </div>
+  </script>
+
 	<h1>Administration</h1>
 	<p>Please be careful on this page. Here, you have the power to change everything.</p>
-	<h1>Admins of UWait&nbsp;<a href="/help">?</a></h1>
+	<h1>Admins of Stay A While&nbsp;<a href="/help">?</a></h1>
+	<h5>New admins might have to log out and in again in order to get all of their new privileges.</h5>
+	<br>
 
-	<div class="row col-md-12">
-		<div class="row col-md-offset-2">
-			<!-- Adding new admins -->
-			<div class="col-md-12">
-				<h5>New admins will have to log out and in again in order to get all of their new privileges.</h5>
-				<div class="input-group col-md-5">
-					<input type="text" class="form-control" ng-model="newAdmin" placeholder="Add admin" onfocus="this.placeholder = ''" onblur="this.placeholder = 'Add admin'" id="adminAdminInputField">
-					<span class="input-group-addon blue clickable text-white" style="border: 0px;" id="adminAddAdminBtn" ng-click="addAdmin()"><span class="glyphicon glyphicon-plus"></span>Add</span>
-				</div>
+	<div class="row">
+		<div class="col-md-6">
+			<!-- Add admins -->
+			<div class="input-group col-md-8">
+				<input type="text" class="form-control" ng-model="newAdmin" placeholder="Add admin" onfocus="this.placeholder = ''" onblur="this.placeholder = 'Add admin'" id="adminAdminInputField">
+				<span class="input-group-addon blue clickable text-white" style="border: 0px;" id="adminAddAdminBtn" ng-click="addAdmin()"><span class="glyphicon glyphicon-plus"></span>Add</span>
 			</div>
-
-			<!-- Removing admins -->
-			<div class="col-md-6">
-				<br>
-				Admins
-				<br>
-				<div ng-show="admins.length > 0">
-					<table class="table table-striped">
-		      			<thead class="dark-grey">
-		        			<tr>
-		          				<th>Name</th>
-		          				<th>KTH-id</th>
-	          					<th>Remove</th>
-		        			</tr>
-		      			</thead>
-		      			<tbody>
-		        			<tr id="admin.name" ng-repeat="admin in admins">
-		          				<td>{{ admin.name }}</td>
-		          				<td>{{ admin.id }}</td>
-		          				<td>
-		          					<button class="btn red clickable" ng-click="removeAdmin(user.name)" id="adminRemoveAdminBtn">
-            							<span class="glyphicon glyphicon-trash"></span>
-          							</button>
-          						</td>
-			          		</tr>
-			          	</tbody>
-					</table>
-				</div>
-				<div ng-show="admins.length == 0">
-					(No admins)
-				</div>
+			<!-- Remove admins -->
+			<br>
+			Admins
+			<br>
+			<div ng-show="admins.length > 0">
+				<table class="table table-striped">
+	      			<thead class="dark-grey">
+	        			<tr>
+	          				<th>Name</th>
+	          				<th>KTH-id</th>
+          					<th>Remove</th>
+	        			</tr>
+	      			</thead>
+	      			<tbody>
+	        			<tr id="admin.name" ng-repeat="admin in admins">
+	          				<td>{{ admin.name }}</td>
+	          				<td>{{ admin.id }}</td>
+	          				<td>
+	          					<button class="btn red clickable" ng-click="removeAdmin(user.name)" id="adminRemoveAdminBtn">
+        							<span class="glyphicon glyphicon-trash"></span>
+      							</button>
+      						</td>
+		          		</tr>
+		          	</tbody>
+				</table>
+			</div>
+			<div ng-show="admins.length == 0">
+				(No admins)
 			</div>
 		</div>
+		<!-- Adding queues -->
+		<div class="col-md-6">
+			<div class="input-group col-md-8">
+				<input type="text" class="form-control" ng-model="newQueue" placeholder="Add queue" onfocus="this.placeholder = ''" onblur="this.placeholder = 'Add queue'" id="adminQueueInputField">
+				<span class="input-group-addon blue clickable text-white" style="border: 0px;" id="adminAddQueueBtn" ng-click="addQueue()"><span class="glyphicon glyphicon-plus"></span>Add</span>
+			</div>
+			<table class="table table-striped">
+				<thead>
+					<tr>
+      					<th>Queues</th>
+        			</tr>
+				</thead>
+				<tbody>
+					<tr ng-repeat="queue in queues">
+      					<th>{{queue.name}}</th>
+        			</tr>
+				</tbody>
+			</table>
+		</div>
+		<!-- Adding and removing admins -->
 	</div>
 
+	<br>
 	<h1>Edit queue roles</h1>
 	<h5>Choose queue to administrate</h5>
 
 	<!-- Dropdown of courses -->
-	<div class="dropdown">
-        <button class="btn btn-default dropdown-toggle col-md-5" type="button" data-toggle="dropdown" id="adminSelectQueueDropDown">
-        	<div class="col-md-11 text-left" id="dropdown">Select Queue</div> <span class="caret"></span>
-        </button>
-        <ul class="dropdown-menu">
-			<li ng-repeat="course in courses"><a href="" ng-click="selectQueue(course.name)" id="admin{{course.name}}DropDownBtn">{{course.name}}</a></li>
-        </ul>
+	<div class="row">
+		<div class="col-md-12">
+			<div class="dropdown">
+		        <button class="btn btn-default dropdown-toggle col-md-5" type="button" data-toggle="dropdown" id="adminSelectQueueDropDown">
+		        	<div class="col-md-11 text-left" id="dropdown">Select Queue</div> <span class="caret"></span>
+		        </button>
+		        <ul class="dropdown-menu">
+					<li ng-repeat="course in courses"><a href="" ng-click="selectQueue(course.name)" id="admin{{course.name}}DropDownBtn">{{course.name}}</a></li>
+		        </ul>
+			</div>
+		</div>
 	</div>
+	<br>
 	<!-- Dropdown ends here -->
+
+	<div class="row" ng-show="selectedQueue">
+		<div class="col-md-12">
+			<button class="btn btn-danger" ng-click="deleteQueue()">Remove queue</button>
+		</div>
+	</div>
 
 	<div class="row col-md-12">
 		<!-- Adding teachers -->
 		<div class="row col-md-6">
-			<h3>Teachers at UWait&nbsp;<a href="/help">?</a></h3>
-			<h5>New teachers will have to log out and in again in order to get all of their new privileges.</h5>
+			<h3>Teachers at Stay A While&nbsp;<a href="/help">?</a></h3>
+			<h5>New teachers might have to log out and in again in order to get all of their new privileges.</h5>
 			<div class="input-group col-md-9">
 				<input type="text" class="form-control" ng-model="newTeacher" placeholder="Add teacher" onfocus="this.placeholder = ''" onblur="this.placeholder = 'Add teacher'" id="adminAddTeacherInputField">
 				<span class="input-group-addon blue clickable text-white" style="border: 0px;" ng-click="addTeacher()" id="adminAddTeacherBtn"><span class="glyphicon glyphicon-plus"></span>Add</span>
@@ -103,8 +147,8 @@
 		</div>
 		<!-- Adding teaching assistants -->
 		<div class="row col-md-6 left-divider">
-			<h3>Assistants at UWait&nbsp;<a href="/help">?</a></h3>
-			<h5>New assistants will have to log out and in again in order to get all of their new privileges.</h5>
+			<h3>Assistants at Stay A While&nbsp;<a href="/help">?</a></h3>
+			<h5>New assistants might have to log out and in again in order to get all of their new privileges.</h5>
 			<div class="input-group col-md-9">
 				<input type="text" class="form-control" ng-model="newAssistant" placeholder="Add assistant" onfocus="this.placeholder = ''" onblur="this.placeholder = 'Add assistant'" id="adminAddAssistantInputField">
 				<span class="input-group-addon blue clickable text-white" style="border: 0px;" ng-click="addAssistant()" id="adminAddAssistantBtn"><span class="glyphicon glyphicon-plus"></span>Add</span>

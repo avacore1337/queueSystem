@@ -206,8 +206,8 @@ function ($scope, $location, user) {
   });
 }]);
 
-queueControllers.controller('adminController', ['$scope', '$location', '$http', 'WebSocketService', 'UserService',
-function ($scope, $location, $http, socket, user) {
+queueControllers.controller('adminController', ['$scope', '$location', '$http', '$modal', 'WebSocketService', 'UserService',
+function ($scope, $location, $http, $modal, socket, user) {
   console.log("Entered admin.html");
   $scope.admin = user.isAdmin();
   $scope.selectedQueue = undefined;
@@ -226,43 +226,128 @@ function ($scope, $location, $http, socket, user) {
   socket.emit('stopListening', 'lobby');
   socket.emit('listen', 'admin');
 
+  // Listen for an assistant being added to a queue.
+  socket.on('addAssistant', function(data) {
+    $scope.$apply(getCourse(data.course).assistants.push(data.user));
+  });
+
+  // Listen for an teacher being added to a queue.
+  socket.on('deleteAssistant', function(data) {
+    for (var i = $scope.courses.length - 1; i >= 0; i--) {
+      if($scope.courses[i].name == data.queue){
+        for (var j = $scope.courses.assistants.length - 1; j >= 0; j--) {
+          if($scope.courses.assistants[j] == data.user){
+            $scope.$apply($scope.courses.splice(i, 1));
+            break;
+          }
+        };
+        break;
+      }
+    }
+  });
+
+  // Listen for an teacher being added to a queue.
+  socket.on('addTeacher', function(data) {
+    $scope.$apply(getCourse(data.course).teachers.push(data.user));
+  });
+
+  // Listen for an teacher being added to a queue.
+  socket.on('deleteTeacher', function(data) {
+    for (var i = $scope.courses.length - 1; i >= 0; i--) {
+      if($scope.courses[i].name == data.queue){
+        for (var j = $scope.courses.teachers.length - 1; j >= 0; j--) {
+          if($scope.courses.teachers[j] == data.user){
+            $scope.$apply($scope.courses.splice(i, 1));
+            break;
+          }
+        };
+        break;
+      }
+    }
+  });
+
+  // Listen for a queue being added.
+  socket.on('addQueue', function(queue) {
+    $scope.$apply($scope.courses.push(queue));
+  });
+
+  // Listen for the person leaving a queue event.
+  socket.on('deleteQueue', function(queue) {
+    for (var i = $scope.courses.length - 1; i >= 0; i--) {
+      if(queue === $scope.courses[i].name){
+        $scope.$apply($scope.courses.splice(i, 1));
+      }
+    }
+  });
+
+  function getCourse (queue) {
+    for(var index in $scope.courses){
+      if($scope.courses[index].name === queue){
+        return $scope.courses[index];
+      }
+    }
+  }
+
   $scope.createQueue = function(){
-    if($scope.courseName !== ""){
+    if($scope.selectedQueue !== ""){
       socket.emit('createQueue', {
         queue:queue
       });
-      console.log("Trying to create queue " + $scope.courseName);
-      $scope.courseName = '';
+      console.log("Trying to create queue " + $scope.selectedQueue);
+      $scope.selectedQueue = '';
     }
   };
 
   $scope.deleteQueue = function(){
-    if($scope.courseName !== ""){
-      socket.emit('deleteQueue', {
-        queue:queue
+    console.log("Called deleteQueue");
+      var modalInstance = $modal.open({
+        templateUrl: 'delete.html',
+        controller: function ($scope, $modalInstance, title, message) {
+          $scope.title = title;
+          $scope.message = message;
+          $scope.delete = function () {
+            $modalInstance.close("delete");
+          };
+          $scope.doNotDelete = function () {
+            $modalInstance.close("");
+          };
+        },
+        resolve: {
+          title: function () {
+            return "Delete queue";
+          },
+          message: function () {
+            return "Are you sure that you wish to remove " + $scope.selectedQueue + " permanently?";
+          }
+        }
       });
-      console.log("Trying to delete queue " + $scope.courseName);
-      $scope.courseName = '';
-    }
-  };
+
+      modalInstance.result.then(function (message) {
+        socket.emit('deleteQueue', {
+          queue:queue
+        });
+        console.log("Trying to delete queue " + $scope.selectedQueue);
+        $scope.selectedQueue = '';
+      }, function () {});
+    };
 
   $scope.hibernateQueue = function(){
-    if($scope.courseName !== ""){
+    if($scope.selectedQueue !== ""){
       socket.emit('hibernate', {
         queue:queue
       });
-      console.log("Trying to hibernate queue " + $scope.courseName);
-      $scope.courseName = '';
+      console.log("Trying to hibernate queue " + $scope.selectedQueue);
+      $scope.selectedQueue = '';
     }
   };
 
   $scope.unhibernateQueue = function(){
-    if($scope.courseName !== ""){
+    if($scope.selectedQueue !== ""){
       socket.emit('unhibernate', {
         queue:queue
       });
-      console.log("Trying to unhibernate queue " + $scope.courseName);
-      $scope.courseName = '';
+      console.log("Trying to unhibernate queue " + $scope.selectedQueue);
+      $scope.selectedQueue = '';
     }
   };
 
