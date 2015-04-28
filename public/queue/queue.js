@@ -23,7 +23,7 @@
     $scope.users = [];
     $scope.bookedUsers = [];
     $scope.admin = user.isAdmin();
-    $scope.loggedIn = user.getName() !== "";
+    $scope.loggedIn = user.getName() !== null && user.getName() !== "" && user.getName() !== undefined;
     $scope.enqueued = false;
 
     $scope.locked = true;
@@ -268,22 +268,6 @@
         queue:$routeParams.queue
       });
       console.log("Called unlock");
-    };
-
-    // This function should hibernate the queue
-    $scope.hibernate = function(){
-      socket.emit('hibernate', {
-        queue:$routeParams.queue
-      });
-      console.log("Called hibernate");
-    };
-
-    // This function should wakeup the queue
-    $scope.wakeup = function(){
-      socket.emit('unhibernate', {
-        queue:$routeParams.queue
-      });
-      console.log("Called wakeup");
     };
 
     // Mark the user as being helped

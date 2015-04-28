@@ -11,8 +11,8 @@
       </div>
     </div>
     <div class="modal-footer">
-		<button class="btn btn-success" ng-click="doNotDelete()" id="adminDoNotDeleteBtn">No, I made a mistake.</button>
-		<button class="btn btn-danger" ng-click="delete()" id="adminDoDeleteBtn">Yes, I never want to see it again.</button>
+		<button class="btn btn-success" ng-click="doNotDelete()" id="adminDoNotDeleteBtn">{{safeButtonText}}</button>
+		<button class="btn btn-danger" ng-click="delete()" id="adminDoDeleteBtn">{{dangerButtonText}}</button>
     </div>
   </script>
 
@@ -68,7 +68,7 @@
 			<table class="table table-striped">
 				<thead>
 					<tr>
-      					<th>Queues</th>
+      					<th><h3>Queues</h3></th>
         			</tr>
 				</thead>
 				<tbody>
@@ -78,7 +78,6 @@
 				</tbody>
 			</table>
 		</div>
-		<!-- Adding and removing admins -->
 	</div>
 
 	<br>
@@ -89,7 +88,7 @@
 	<div class="row">
 		<div class="col-md-12">
 			<div class="dropdown">
-		        <button class="btn btn-default dropdown-toggle col-md-5" type="button" data-toggle="dropdown" id="adminSelectQueueDropDown">
+		        <button class="btn btn-default dropdown-toggle col-xs-3" type="button" data-toggle="dropdown" id="adminSelectQueueDropDown">
 		        	<div class="col-md-11 text-left" id="dropdown">Select Queue</div> <span class="caret"></span>
 		        </button>
 		        <ul class="dropdown-menu">
@@ -101,9 +100,11 @@
 	<br>
 	<!-- Dropdown ends here -->
 
-	<div class="row" ng-show="selectedQueue">
+	<div class="row" ng-show="selectedQueue !== undefined">
 		<div class="col-md-12">
 			<button class="btn btn-danger" ng-click="deleteQueue()">Remove queue</button>
+			<button class="btn btn-warning" ng-click="hibernateQueue()" ng-show="!selectedQueue.hibernating">Hibernate queue</button>
+			<button class="btn btn-success" ng-click="unhibernateQueue()" ng-show="selectedQueue.hibernating">Wake up queue</button>
 		</div>
 	</div>
 
