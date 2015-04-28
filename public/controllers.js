@@ -198,6 +198,12 @@ function ($scope, $location, user) {
     $scope.location = $location.path();
     console.log("location = " + $scope.location);
   };
+
+  $(document).ready(function () {
+    $(".navbar-nav li a").click(function(event) {
+      $(".navbar-collapse").collapse('hide');
+    });
+  });
 }]);
 
 queueControllers.controller('adminController', ['$scope', '$location', '$http', 'WebSocketService', 'UserService',
