@@ -3,9 +3,9 @@ var queueControllers = angular.module('queueControllers', []);
 queueControllers.controller('listController', ['$scope', '$http', '$location', 'WebSocketService', 'UserService',
 function ($scope, $http, $location, socket, user) {
   $scope.admin = false;
-  $scope.courses = [];
-  $http.get('/API/courseList').success(function(response){
-    $scope.courses = response.sort(function(a, b) {return a.name.localeCompare(b.name);});
+  $scope.queues = [];
+  $http.get('/API/queueList').success(function(response){
+    $scope.queues = response.sort(function(a, b) {return a.name.localeCompare(b.name);});
   });
 
   console.log("API/userData");
@@ -22,63 +22,63 @@ function ($scope, $http, $location, socket, user) {
   // Listen for a person joining a queue.
   socket.on('lobbyjoin', function(queue) {
     console.log("A user joined (lobby) " + queue);
-    $scope.$apply(getCourse(queue).length++);
+    $scope.$apply(getQueue(queue).length++);
   });
 
   // Listen for a person leaving a queue.
   socket.on('lobbyleave', function(queue) {
     console.log("A user left (lobby) " + queue);
-    $scope.$apply(getCourse(queue).length--);
+    $scope.$apply(getQueue(queue).length--);
   });
 
   // Listen for queue geting purged.
   socket.on('lobbypurge', function(queue) {
     console.log(queue + " was purged (lobby)");
-    $scope.$apply(getCourse(queue).length = 0);
+    $scope.$apply(getQueue(queue).length = 0);
   });
 
   // Listen for a queue being locked.
   socket.on('lobbylock', function(queue) {
     console.log(queue + " was locked (lobby)");
-    $scope.$apply(getCourse(queue).locked = true);
+    $scope.$apply(getQueue(queue).locked = true);
   });
 
   // Listen for a queue being unlocked.
   socket.on('lobbyunlock', function(queue) {
     console.log(queue + " was unlocked (lobby)");
-    $scope.$apply(getCourse(queue).locked = false);
+    $scope.$apply(getQueue(queue).locked = false);
   });
 
   // Listen for a queue going to sleep.
   socket.on('lobbyhibernate', function(queue) {
     console.log(queue + " was sent to sleep (lobby)");
-    $scope.$apply(getCourse(queue).hibernating = true);
+    $scope.$apply(getQueue(queue).hibernating = true);
   });
 
   // Listen for a queue waking up.
   socket.on('lobbyunhibernate', function(queue) {
     console.log(queue + " was awoken (lobby)");
-    $scope.$apply(getCourse(queue).hibernating = false);
+    $scope.$apply(getQueue(queue).hibernating = false);
   });
 
-  function getCourse (queue) {
-    for(var index in $scope.courses){
-      if($scope.courses[index].name === queue){
-        return $scope.courses[index];
+  function getQueue (queue) {
+    for(var index in $scope.queues){
+      if($scope.queues[index].name === queue){
+        return $scope.queues[index];
       }
     }
   }
   // This function should direct the user to the wanted page
-  $scope.redirect = function(course){
-    for(var index in $scope.courses){
-      if($scope.courses[index].name === course){
-        if(!$scope.courses[index].locked || $scope.admin){
-          $location.path('/course/' + course);
+  $scope.redirect = function(queue){
+    for(var index in $scope.queues){
+      if($scope.queues[index].name === queue){
+        if(!$scope.queues[index].locked || $scope.admin){
+          $location.path('/queue/' + queue);
         }
         break;
       }
     }
-    //console.log("User wants to enter " + course);
+    //console.log("User wants to enter " + queue);
   };
 }]);
 
@@ -97,9 +97,9 @@ function ($scope, $http) {
   console.log('entered statistics.html');
 
 // Queue selection
-  $scope.courses = [];
-  $http.get('/API/courseList').success(function(response){
-    $scope.courses = response;
+  $scope.queues = [];
+  $http.get('/API/queueList').success(function(response){
+    $scope.queues = response;
   });
 
   $scope.selectedQueue = undefined;
@@ -218,9 +218,9 @@ function ($scope, $location, $http, $modal, socket, user) {
     {name:'Robert',  id:'robertwb'},
     {name:'Per',  id:'pernyb'}
   ];
-  $scope.courses = [];
-  $http.get('/API/courseList').success(function(response){
-    $scope.courses = response;
+  $scope.queues = [];
+  $http.get('/API/queueList').success(function(response){
+    $scope.queues = response;
   });
 
   socket.emit('stopListening', 'lobby');
@@ -228,16 +228,16 @@ function ($scope, $location, $http, $modal, socket, user) {
 
   // Listen for an assistant being added to a queue.
   socket.on('addAssistant', function(data) {
-    $scope.$apply(getCourse(data.course).assistants.push(data.user));
+    $scope.$apply(getQueue(data.queue).assistants.push(data.user));
   });
 
   // Listen for an teacher being added to a queue.
   socket.on('deleteAssistant', function(data) {
-    for (var i = $scope.courses.length - 1; i >= 0; i--) {
-      if($scope.courses[i].name == data.queue){
-        for (var j = $scope.courses.assistants.length - 1; j >= 0; j--) {
-          if($scope.courses.assistants[j] == data.user){
-            $scope.$apply($scope.courses.splice(i, 1));
+    for (var i = $scope.queues.length - 1; i >= 0; i--) {
+      if($scope.queues[i].name == data.queue){
+        for (var j = $scope.queues.assistants.length - 1; j >= 0; j--) {
+          if($scope.queues.assistants[j] == data.user){
+            $scope.$apply($scope.queues.splice(i, 1));
             break;
           }
         };
@@ -248,16 +248,16 @@ function ($scope, $location, $http, $modal, socket, user) {
 
   // Listen for an teacher being added to a queue.
   socket.on('addTeacher', function(data) {
-    $scope.$apply(getCourse(data.course).teachers.push(data.user));
+    $scope.$apply(getQueue(data.queue).teachers.push(data.user));
   });
 
   // Listen for an teacher being added to a queue.
   socket.on('deleteTeacher', function(data) {
-    for (var i = $scope.courses.length - 1; i >= 0; i--) {
-      if($scope.courses[i].name == data.queue){
-        for (var j = $scope.courses.teachers.length - 1; j >= 0; j--) {
-          if($scope.courses.teachers[j] == data.user){
-            $scope.$apply($scope.courses.splice(i, 1));
+    for (var i = $scope.queues.length - 1; i >= 0; i--) {
+      if($scope.queues[i].name == data.queue){
+        for (var j = $scope.queues.teachers.length - 1; j >= 0; j--) {
+          if($scope.queues.teachers[j] == data.user){
+            $scope.$apply($scope.queues.splice(i, 1));
             break;
           }
         };
@@ -268,22 +268,22 @@ function ($scope, $location, $http, $modal, socket, user) {
 
   // Listen for a queue being added.
   socket.on('addQueue', function(queue) {
-    $scope.$apply($scope.courses.push(queue));
+    $scope.$apply($scope.queues.push(queue));
   });
 
   // Listen for the person leaving a queue event.
   socket.on('deleteQueue', function(queue) {
-    for (var i = $scope.courses.length - 1; i >= 0; i--) {
-      if(queue === $scope.courses[i].name){
-        $scope.$apply($scope.courses.splice(i, 1));
+    for (var i = $scope.queues.length - 1; i >= 0; i--) {
+      if(queue === $scope.queues[i].name){
+        $scope.$apply($scope.queues.splice(i, 1));
       }
     }
   });
 
-  function getCourse (queue) {
-    for(var index in $scope.courses){
-      if($scope.courses[index].name === queue){
-        return $scope.courses[index];
+  function getQueue (queue) {
+    for(var index in $scope.queues){
+      if($scope.queues[index].name === queue){
+        return $scope.queues[index];
       }
     }
   }
@@ -375,9 +375,9 @@ function ($scope, $location, $http, $modal, socket, user) {
     if($scope.newTeacher !== "" && $scope.selectedQueue !== undefined){
       socket.emit('addTeacher', {
         name:$scope.newTeacher,
-        course:$scope.selectedQueue
+        queue:$scope.selectedQueue
       });
-      console.log("Adding teacher " + $scope.newTeacher + " in the course " + $scope.selectedQueue);
+      console.log("Adding teacher " + $scope.newTeacher + " in the queue " + $scope.selectedQueue);
       $scope.newTeacher = '';
     }
   };
@@ -386,9 +386,9 @@ function ($scope, $location, $http, $modal, socket, user) {
     if($scope.newTeacher !== "" && $scope.selectedQueue !== undefined){
       socket.emit('removeTeacher', {
         name:$scope.newTeacher,
-        course:$scope.selectedQueue
+        queue:$scope.selectedQueue
       });
-      console.log("Removing teacher " + $scope.newTeacher + " in the course " + $scope.selectedQueue);
+      console.log("Removing teacher " + $scope.newTeacher + " in the queue " + $scope.selectedQueue);
       $scope.newTeacher = '';
     }
   };
@@ -397,9 +397,9 @@ function ($scope, $location, $http, $modal, socket, user) {
     if($scope.newAssistant !== "" && $scope.selectedQueue !== undefined){
       socket.emit('addAssistant', {
         name:$scope.newAssistant,
-        course:$scope.selectedQueue
+        queue:$scope.selectedQueue
       });
-      console.log("Adding assistant " + $scope.newAssistant  + " in the course " + $scope.selectedQueue);
+      console.log("Adding assistant " + $scope.newAssistant  + " in the queue " + $scope.selectedQueue);
       $scope.newAssistant = '';
     }
   };
@@ -408,9 +408,9 @@ function ($scope, $location, $http, $modal, socket, user) {
     if($scope.newAssistant !== "" && $scope.selectedQueue !== undefined){
       socket.emit('removeAssistant', {
         name:$scope.newAssistant,
-        course:$scope.selectedQueue
+        queue:$scope.selectedQueue
       });
-      console.log("Removing assistant " + $scope.newAssistant  + " in the course " + $scope.selectedQueue);
+      console.log("Removing assistant " + $scope.newAssistant  + " in the queue " + $scope.selectedQueue);
       $scope.newAssistant = '';
     }
   };

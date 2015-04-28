@@ -3,7 +3,7 @@
   'ngRoute',
   'queueControllers',
   'ui.bootstrap',
-  'queue.course'
+  'queue.queue'
   ]);
   
   app.config(['$routeProvider',

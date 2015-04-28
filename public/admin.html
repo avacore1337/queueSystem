@@ -85,7 +85,7 @@
 	<h1>Edit queue roles</h1>
 	<h5>Choose queue to administrate</h5>
 
-	<!-- Dropdown of courses -->
+	<!-- Dropdown of queues -->
 	<div class="row">
 		<div class="col-md-12">
 			<div class="dropdown">
@@ -93,7 +93,7 @@
 		        	<div class="col-md-11 text-left" id="dropdown">Select Queue</div> <span class="caret"></span>
 		        </button>
 		        <ul class="dropdown-menu">
-					<li ng-repeat="course in courses"><a href="" ng-click="selectQueue(course.name)" id="admin{{course.name}}DropDownBtn">{{course.name}}</a></li>
+					<li ng-repeat="queue in queues"><a href="" ng-click="selectQueue(queue.name)" id="admin{{queue.name}}DropDownBtn">{{queue.name}}</a></li>
 		        </ul>
 			</div>
 		</div>

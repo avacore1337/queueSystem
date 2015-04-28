@@ -6,11 +6,11 @@
     </div>
     <div class="modal-body">
       <div class="form-group">
-        <textarea class="form-control" rows="3" ng-model="message" id="courseEnterMessageTextArea"></textarea>
+        <textarea class="form-control" rows="3" ng-model="message" id="queueEnterMessageTextArea"></textarea>
       </div>
     </div>
     <div class="modal-footer">
-      <button class="btn btn-primary" ng-click="ok()" id="course{{buttonText}}Btn">{{buttonText}}</button>
+      <button class="btn btn-primary" ng-click="ok()" id="queue{{buttonText}}Btn">{{buttonText}}</button>
     </div>
   </script>
 
@@ -38,8 +38,8 @@
       </div>
     </div>
     <div class="modal-footer">
-      <button class="btn btn-success" ng-click="doNotPurge()" id="courseDoNotPurgeBtn">No, leave them alone.</button>
-      <button class="btn btn-danger" ng-click="purge()" id="courseDoPurgeBtn">Yes, kick them all out.</button>
+      <button class="btn btn-success" ng-click="doNotPurge()" id="queueDoNotPurgeBtn">No, leave them alone.</button>
+      <button class="btn btn-danger" ng-click="purge()" id="queueDoPurgeBtn">Yes, kick them all out.</button>
     </div>
   </script>
 
@@ -60,8 +60,8 @@
 
   <div class="row">
     <div class="col-md-offset-1 col-md-3">
-      <h2 class="text-red" ng-show="locked"><span class="glyphicon glyphicon-lock"></span>{{course}}</h2>
-      <h2 ng-show="!locked">{{course}}</h2>
+      <h2 class="text-red" ng-show="locked"><span class="glyphicon glyphicon-lock"></span>{{queue}}</h2>
+      <h2 ng-show="!locked">{{queue}}</h2>
     </div>
   </div>
 
@@ -72,7 +72,7 @@
     <!-- Queues -->
     <div class="col-md-9 col-md-push-3">
       <!-- Users with bookings -->
-      <input class="spoilerbutton" type="button" value="Show booked users" onclick="this.value=this.value=='Show booked users' ? 'Hide booked users' : 'Show booked users';" class="spoilerbutton" ng-hide="bookedUsers.length == 0"  id="courseShowBookedUsersBtn">
+      <input class="spoilerbutton" type="button" value="Show booked users" onclick="this.value=this.value=='Show booked users' ? 'Hide booked users' : 'Show booked users';" class="spoilerbutton" ng-hide="bookedUsers.length == 0"  id="queueShowBookedUsersBtn">
       <div class="col-md-12 spoiler" ng-hide="bookedUsers.length == 0">
         <table class="table table-striped booked">
           <thead>
@@ -104,7 +104,7 @@
           </tr>
         </thead>
         <tbody>
-          <tr ng-repeat="user in users track by $index" ng-class="user.gettingHelp ? 'pulse' : ''" ng-dblclick="changeVisibility(user.name)"  id="course{{user.name}}Btn">
+          <tr ng-repeat="user in users track by $index" ng-class="user.gettingHelp ? 'pulse' : ''" ng-dblclick="changeVisibility(user.name)"  id="queue{{user.name}}Btn">
             <td class="hidden-xs">{{ $index + 1 }}</td>
             <td>{{ user.name }}</td>
             <td>{{ user.place }}</td>
@@ -113,32 +113,32 @@
             <td ng-show="admin">
               <div ng-show="user.optionsActivated">
                 <span title="remove user">
-                  <button class="btn red clickable" ng-click="removeUser(user.name)" id="courseRemoveUser{{user.name}}Btn">
+                  <button class="btn red clickable" ng-click="removeUser(user.name)" id="queueRemoveUser{{user.name}}Btn">
                     <span class="glyphicon glyphicon-trash"></span>
                   </button>
                 </span>
                 <span title="send message">
-                  <button class="btn btn-success" ng-click="messageUser(user.name)" id="courseSendMessage{{user.name}}Btn">
+                  <button class="btn btn-success" ng-click="messageUser(user.name)" id="queueSendMessage{{user.name}}Btn">
                     <span class="glyphicon glyphicon-envelope"></span>
                   </button>
                 </span>
                 <span title="help">
-                  <button class="btn btn-success" ng-click="helpUser(user.name)" id="courseHelp{{user.name}}Btn">
+                  <button class="btn btn-success" ng-click="helpUser(user.name)" id="queueHelp{{user.name}}Btn">
                     <span class="glyphicon glyphicon-check"></span>
                   </button>
                 </span>
                 <span title="bad location">
-                  <button class="btn btn-success" ng-click="badLocation(user.name)" id="courseBadLocation{{user.name}}Btn">
+                  <button class="btn btn-success" ng-click="badLocation(user.name)" id="queueBadLocation{{user.name}}Btn">
                     <span class="glyphicon glyphicon-question-sign"></span>
                   </button>
                 </span>
                 <span title="add comment">
-                  <button class="btn btn-success" ng-click="flag(user.name)" id="courseAddComment{{user.name}}Btn">
+                  <button class="btn btn-success" ng-click="flag(user.name)" id="queueAddComment{{user.name}}Btn">
                     <span class="glyphicon glyphicon-tag"></span>
                   </button>
                 </span>
                 <span ng-show="user.messages.length > 0" title="read comment">
-                  <button class="btn btn-success" ng-click="readMessages(user.name)" id="courseReadComment{{user.name}}Btn">
+                  <button class="btn btn-success" ng-click="readMessages(user.name)" id="queueReadComment{{user.name}}Btn">
                     <span class="glyphicon glyphicon-search"></span>
                   </button>
                 </span>
@@ -156,35 +156,35 @@
       <div ng-show="loggedIn">
         <h5>Location</h5>
         <div style="background-color: #F04124; padding-bottom: 2%; margin-bottom: 7%;">
-          <input type="text" ng-model="location" placeholder="Red 01" onfocus="this.placeholder = ''" onblur="this.placeholder = 'Red 01'" class="col-xs-12" style="height: 3em; margin-bottom: 2%;" id="courseLocationInputField">
+          <input type="text" ng-model="location" placeholder="Red 01" onfocus="this.placeholder = ''" onblur="this.placeholder = 'Red 01'" class="col-xs-12" style="height: 3em; margin-bottom: 2%;" id="queueLocationInputField">
           <i class="text-white">&nbsp;&nbsp;Required</i>
         </div>
         <h5>Comment</h5>
-        <input type="text" ng-model="comment" placeholder="Laboration 1" onfocus="this.placeholder = ''" onblur="this.placeholder = 'Laboration 1'" class="col-xs-12" style="height: 3em; margin-bottom: 7%;" id="courseCommentInputField">
-        <button class="green clickable frame center-content expand" ng-show="!enqueued && location" ng-click="addUser()" id="courseJoinQueueBtn">
+        <input type="text" ng-model="comment" placeholder="Laboration 1" onfocus="this.placeholder = ''" onblur="this.placeholder = 'Laboration 1'" class="col-xs-12" style="height: 3em; margin-bottom: 7%;" id="queueCommentInputField">
+        <button class="green clickable frame center-content expand" ng-show="!enqueued && location" ng-click="addUser()" id="queueJoinQueueBtn">
           <span class="glyphicon glyphicon-plus"></span>
           Join queue
         </button>
-        <button class="green clickable frame center-content expand" ng-show="!enqueued && !location" popover="In order to queue, you must enter your location"  popover-trigger="focus" popover-placement="bottom" id="coursePromptLocationJoinBtn">
+        <button class="green clickable frame center-content expand" ng-show="!enqueued && !location" popover="In order to queue, you must enter your location"  popover-trigger="focus" popover-placement="bottom" id="queuePromptLocationJoinBtn">
           <span class="glyphicon glyphicon-plus"></span>
           Join queue
         </button>
-        <button class="red clickable center-content frame expand" ng-show="enqueued" ng-click="removeUser(name)" id="courseUpdateInformationBtn">
+        <button class="red clickable center-content frame expand" ng-show="enqueued" ng-click="removeUser(name)" id="queueUpdateInformationBtn">
           <span class="glyphicon glyphicon-remove"></span>&nbsp;
           Leave queue
         </button>
-        <button class="green clickable center-content frame expand" ng-show="enqueued && location" ng-click="updateUser()" id="courseUpdateInformationBtn">
+        <button class="green clickable center-content frame expand" ng-show="enqueued && location" ng-click="updateUser()" id="queueUpdateInformationBtn">
           <span class="glyphicon glyphicon-pencil"></span>&nbsp;
           Update information
         </button>
-        <button class="green clickable frame center-content expand" ng-show="enqueued && !location" popover="You must enter your location again"  popover-trigger="focus" popover-placement="bottom" id="coursePromptLocationUpdateBtn">
+        <button class="green clickable frame center-content expand" ng-show="enqueued && !location" popover="You must enter your location again"  popover-trigger="focus" popover-placement="bottom" id="queuePromptLocationUpdateBtn">
           <span class="glyphicon glyphicon-pencil"></span>&nbsp;
           Update information
         </button>
         <div class="buffer" ng-show="admin"></div>
         <!-- Admin-options -->
         <div class="btn-group col-xs-12" dropdown is-open="status.isopen" ng-show="admin" style="padding-left: 0; padding-right: 0;">
-          <button type="button" class="btn btn-default dropdown-toggle col-xs-12" id="courseOptionsBtn" dropdown-toggle>
+          <button type="button" class="btn btn-default dropdown-toggle col-xs-12" id="queueOptionsBtn" dropdown-toggle>
             <div class="col-xs-6 text-left">
               Options
             </div>
@@ -194,43 +194,43 @@
           </button>
           <ul class="dropdown-menu col-xs-12" role="menu" style="padding: 5%;">
             <li>
-              <button class="blue clickable center-content frame expand" ng-show="admin" ng-click="broadcast()" id="courseBroadcastBtn">
+              <button class="blue clickable center-content frame expand" ng-show="admin" ng-click="broadcast()" id="queueBroadcastBtn">
                 <span class="glyphicon glyphicon-bullhorn"></span>&nbsp;
                 Broadcast
               </button>
             </li>
             <li>
-              <button class="blue clickable center-content frame expand" ng-show="admin" ng-click="broadcastTA()" id="courseBroadcastToTasBtn">
+              <button class="blue clickable center-content frame expand" ng-show="admin" ng-click="broadcastTA()" id="queueBroadcastToTasBtn">
                 <span class="glyphicon glyphicon-bullhorn"></span>&nbsp;
                 Broadcast to TAs
               </button>
             </li>
             <li>
-              <button class="red clickable center-content frame expand" ng-show="admin" ng-click="purge()" id="coursePurgeQueueBtn">
+              <button class="red clickable center-content frame expand" ng-show="admin" ng-click="purge()" id="queuePurgeQueueBtn">
                 <span class="glyphicon glyphicon-remove"></span>&nbsp;
                 Purge queue
               </button>
             </li>
             <li>
-              <button class="red clickable center-content frame expand" ng-show="admin && !locked" ng-click="lock()" id="courseLockQueueBtn">
+              <button class="red clickable center-content frame expand" ng-show="admin && !locked" ng-click="lock()" id="queueLockQueueBtn">
                 <span class="glyphicon glyphicon-lock"></span>&nbsp;
                 Lock queue
               </button>
             </li>
             <li>
-              <button class="green clickable center-content frame expand" ng-show="admin && locked" ng-click="unlock()" id="courseUnlockQueueBtn">
+              <button class="green clickable center-content frame expand" ng-show="admin && locked" ng-click="unlock()" id="queueUnlockQueueBtn">
                 <span class="glyphicon glyphicon-lock"></span>&nbsp;
                 Unlock queue
               </button>
             </li>
             <li>
-              <button class="red clickable center-content frame expand" ng-show="admin && !hibernating" ng-click="hibernate()" id="courseHibernateQueueBtn">
+              <button class="red clickable center-content frame expand" ng-show="admin && !hibernating" ng-click="hibernate()" id="queueHibernateQueueBtn">
                 <span class="glyphicon glyphicon-off"></span>&nbsp;
                 Hibernate queue
               </button>
             </li>
             <li>
-              <button class="green clickable center-content frame expand" ng-show="admin && hibernating" ng-click="wakeup()" id="courseWakeupQueueBtn">
+              <button class="green clickable center-content frame expand" ng-show="admin && hibernating" ng-click="wakeup()" id="queueWakeupQueueBtn">
                 <span class="glyphicon glyphicon-off"></span>&nbsp;
                 Wakeup queue
               </button>
@@ -241,7 +241,7 @@
       <!-- Not logged in -->
       <div ng-show="!loggedIn">
         <h3>You are currently not logged in</h3>
-        <button class="blue clickable center-content expand text-white" style="border: 0;" ng-click="redirect('login')" id="courseNotLoggedInLogInBtn">
+        <button class="blue clickable center-content expand text-white" style="border: 0;" ng-click="redirect('login')" id="queueNotLoggedInLogInBtn">
           Log in
         </button>
       </div>

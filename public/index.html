@@ -30,7 +30,7 @@
 				<!-- Collect the nav links, forms, and other content for toggling -->
 				<div class="collapse navbar-collapse" id="navbar-brand-centered">
 					<ul class="nav navbar-nav">
-						<li ng-click="redirect('list')" ng-class="location == '/list' || location.match('/course/.*') ? 'active' : ''" id="indexQueuesBtn"><a style="cursor: pointer;">Queues</a></li>
+						<li ng-click="redirect('list')" ng-class="location == '/list' || location.match('/queue/.*') ? 'active' : ''" id="indexQueuesBtn"><a style="cursor: pointer;">Queues</a></li>
 						<li ng-click="redirect('about')" ng-class="location == '/about' ? 'active' : ''" id="indexAboutBtn"><a style="cursor: pointer;">About</a></li>
 						<li ng-click="redirect('help')" ng-class="location == '/help' ? 'active' : ''" id="indexHelpBtn"><a style="cursor: pointer;">Help</a></li>
 						<li ng-show="admin" ng-click="redirect('admin')" ng-class="location == '/admin' ? 'active' : ''" id="indexAdminBtn"><a style="cursor: pointer;">Admin</a></li>
@@ -54,6 +54,6 @@
 		<script src = "app.js"></script>
 		<script src = "controllers.js"></script>
 		<script src = "services.js"></script>
-		<script src = "course/course.js"></script>
+		<script src = "queue/queue.js"></script>
 	</body>
 </html>

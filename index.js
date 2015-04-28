@@ -512,7 +512,7 @@ app.io.route('flag', function(req) {
 // =================================================================================
 
 // returnerar alla kurser som finns (lista av strängar)
-app.get('/API/courseList', function(req, res) {
+app.get('/API/queueList', function(req, res) {
   var retList = [];
 
   for (var i = 0 ; i < courseList.length ; i++) {

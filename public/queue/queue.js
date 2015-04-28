@@ -1,5 +1,5 @@
 (function(){
-  var app = angular.module("queue.course", [
+  var app = angular.module("queue.queue", [
   'ui.bootstrap',
   'ngRoute'
   ]);
@@ -7,16 +7,16 @@
   app.config(['$routeProvider',
   function($routeProvider) {
     $routeProvider.
-      when('/course/:course', {
-        templateUrl: 'course/course.html',
-        controller: 'courseController'
+      when('/queue/:queue', {
+        templateUrl: 'queue/queue.html',
+        controller: 'queueController'
       });
   }])
 
 
-  .controller('courseController', ['$scope', '$http', '$routeParams', '$location', '$modal', 'WebSocketService', 'UserService',
+  .controller('queueController', ['$scope', '$http', '$routeParams', '$location', '$modal', 'WebSocketService', 'UserService',
   function ($scope, $http, $routeParams, $location, $modal, socket, user) {
-    $scope.course = $routeParams.course;
+    $scope.queue = $routeParams.queue;
     $scope.name = user.getName();
     $scope.location = '';
     $scope.comment = '';
@@ -29,7 +29,7 @@
     $scope.locked = true;
     $scope.hibernating = true;
     $scope.motd = "";
-    $http.get('/API/queue/' + $routeParams.course)
+    $http.get('/API/queue/' + $routeParams.queue)
     .success(function(response) {
       $scope.users = response.queue;
       $scope.locked = response.locked;
@@ -52,7 +52,7 @@
       {name:'Per',  place:"Red 07" , comment:"Labb 2", time:"16:00"}
     ];
 
-    //$http.get('/API/booked/' + $routeParams.course)
+    //$http.get('/API/booked/' + $routeParams.queue)
     //  .success(function(response) {
     //  $scope.bookedUsers = response;
     //});
@@ -60,14 +60,14 @@
     $scope.newUser = true;
 
     socket.emit('stopListening', 'lobby');
-    socket.emit('listen', $routeParams.course);
+    socket.emit('listen', $routeParams.queue);
 
     console.log('testing');
 
     // Listen for the person joining a queue event.
     socket.on('join', function(data) {
       $scope.$apply($scope.users.push({name:data.name, place:data.place, comment:data.comment, startTime:data.startTime}));
-      console.log("data in course join = " + data);
+      console.log("data in queue join = " + data);
       console.log($scope.users);
     });
 
@@ -189,7 +189,7 @@
           console.log("Current time = " + Date.now());
           socket.emit('join',
           {
-            queue:$routeParams.course,
+            queue:$routeParams.queue,
             user:{name:$scope.name, place:$scope.location, comment:$scope.comment, startTime:Math.round(Date.now()/1000)}
           });
           console.log("Called addUser");
@@ -202,7 +202,7 @@
         alert("You must enter a place.");
       }else{
         socket.emit('update', {
-          queue:$routeParams.course,
+          queue:$routeParams.queue,
           user:{name:$scope.name, place:$scope.location, comment:$scope.comment}
         });
         console.log("Called updateUser");
@@ -221,7 +221,7 @@
       }
       console.log("tempPlace = " + tempPlace + " :  tempPlace = " + tempComment);
       socket.emit('leave', {
-        queue:$routeParams.course,
+        queue:$routeParams.queue,
         user:{name:name, place:tempPlace, comment:tempComment}
       });
       $scope.comment = '';
@@ -247,7 +247,7 @@
       modalInstance.result.then(function (message) {
         if(message === "purge"){
           socket.emit('purge', {
-            queue:$routeParams.course
+            queue:$routeParams.queue
           });
         }
       }, function () {});
@@ -257,7 +257,7 @@
     $scope.lock = function(){
       console.log("Called lock");
       socket.emit('lock', {
-        queue:$routeParams.course
+        queue:$routeParams.queue
       });
       console.log("Leaving lock");
     };
@@ -265,7 +265,7 @@
     // This function should unlock the queue, alowing people to join the queue
     $scope.unlock = function(){
       socket.emit('unlock', {
-        queue:$routeParams.course
+        queue:$routeParams.queue
       });
       console.log("Called unlock");
     };
@@ -273,7 +273,7 @@
     // This function should hibernate the queue
     $scope.hibernate = function(){
       socket.emit('hibernate', {
-        queue:$routeParams.course
+        queue:$routeParams.queue
       });
       console.log("Called hibernate");
     };
@@ -281,7 +281,7 @@
     // This function should wakeup the queue
     $scope.wakeup = function(){
       socket.emit('unhibernate', {
-        queue:$routeParams.course
+        queue:$routeParams.queue
       });
       console.log("Called wakeup");
     };
@@ -289,7 +289,7 @@
     // Mark the user as being helped
     $scope.helpUser = function(name){
       socket.emit('help', {
-        queue:$routeParams.course,
+        queue:$routeParams.queue,
         name:name,
         helper:$scope.name
       });
@@ -321,7 +321,7 @@
         console.log("Message = " + message);
         if(message !== null && message !== undefined){
           socket.emit('messageUser', {
-            queue:$routeParams.course,
+            queue:$routeParams.queue,
             sender:$scope.name,
             name:name,
             message:message
@@ -356,7 +356,7 @@
         console.log("Message = " + message);
         if(message !== null && message !== undefined){
           socket.emit('flag', {
-            queue:$routeParams.course,
+            queue:$routeParams.queue,
             sender:$scope.name,
             name:name,
             message:message
@@ -413,7 +413,7 @@
         console.log("Message = " + message);
         if(message !== null && message !== undefined){
           socket.emit('broadcast', {
-            queue:$routeParams.course,
+            queue:$routeParams.queue,
             message:message,
             sender: $scope.name
           });
@@ -447,7 +447,7 @@
         console.log("Message = " + message);
         if(message !== null && message !== undefined){
           socket.emit('broadcastTA', {
-            queue:$routeParams.course,
+            queue:$routeParams.queue,
             message:message,
             sender: $scope.name
           });
@@ -458,7 +458,7 @@
     // Function to send a message to a user
     $scope.badLocation = function(name){
       socket.emit('badLocation', {
-        queue:$routeParams.course,
+        queue:$routeParams.queue,
         name:name
       });
       console.log("Called badLocation");
