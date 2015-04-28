@@ -11,8 +11,8 @@
       </div>
     </div>
     <div class="modal-footer">
-		<button class="btn btn-success" ng-click="doNotDelete()" id="adminDoNotDeleteBtn">{{safeButtonText}}</button>
-		<button class="btn btn-danger" ng-click="delete()" id="adminDoDeleteBtn">{{dangerButtonText}}</button>
+		<button class="btn btn-success" ng-click="doNotDelete()" id="adminNoChangeBtn">{{safeButtonText}}</button>
+		<button class="btn btn-danger" ng-click="delete()" id="adminChangeBtn">{{dangerButtonText}}</button>
     </div>
   </script>
 
@@ -102,9 +102,9 @@
 
 	<div class="row" ng-show="selectedQueue !== undefined">
 		<div class="col-md-12">
-			<button class="btn btn-danger" ng-click="deleteQueue()">Remove queue</button>
-			<button class="btn btn-warning" ng-click="hibernateQueue()" ng-show="!selectedQueue.hibernating">Hibernate queue</button>
-			<button class="btn btn-success" ng-click="unhibernateQueue()" ng-show="selectedQueue.hibernating">Wake up queue</button>
+			<button class="btn btn-danger" ng-click="deleteQueue()" id="adminRemoveQueueBtn">Remove queue</button>
+			<button class="btn btn-warning" ng-click="hibernateQueue()" ng-show="!selectedQueue.hibernating" id="adminHibernateQueueBtn">Hibernate queue</button>
+			<button class="btn btn-success" ng-click="unhibernateQueue()" ng-show="selectedQueue.hibernating" id="adminUnHibernateQueueBtn">Wake up queue</button>
 		</div>
 	</div>
 
