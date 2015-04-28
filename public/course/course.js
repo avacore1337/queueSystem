@@ -14,8 +14,8 @@
   }])
 
 
-  .controller('courseController', ['$scope', '$http', '$routeParams', '$modal', 'WebSocketService', 'UserService',
-  function ($scope, $http, $routeParams, $modal, socket, user) {
+  .controller('courseController', ['$scope', '$http', '$routeParams', '$location', '$modal', 'WebSocketService', 'UserService',
+  function ($scope, $http, $routeParams, $location, $modal, socket, user) {
     $scope.course = $routeParams.course;
     $scope.name = user.getName();
     $scope.location = '';
@@ -474,14 +474,12 @@
       }
     };
 
-    // When aa teacher wants to remove the queue completely
-    $scope.removeQueue = function(){
-      if (confirm('Are you sure you want to remove this queue permanently?')) {
-        socket.emit('removeQueue', {
-          queue:$routeParams.course,
-        });
-      }
-    };
+  // This function should direct the user to the wanted page
+  $scope.redirect = function(address){
+    $location.path('/' + address);
+    $scope.location = $location.path();
+    console.log("location = " + $scope.location);
+  };
 
   }]);
 })();

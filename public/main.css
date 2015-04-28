@@ -112,7 +112,7 @@
 }
 .frame
 {
-  border: solid rgb(50,50,50) 1px;
+  border: solid #FFFFFF 1px;
 }
 .pulse {
   -webkit-animation: pulse 3.8s linear infinite;
