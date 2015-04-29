@@ -465,14 +465,11 @@ $scope.addAdmin = function(){
   }
 };
 
-$scope.removeAdmin = function(){
-  if($scope.newAdmin !== ""){
-    socket.emit('removeAdmin', {
-      name:$scope.newAdmin
-    });
-    console.log("Removing admin " + $scope.newAdmin);
-    $scope.newAdmin = '';
-  }
+$scope.removeAdmin = function(name){
+  socket.emit('removeAdmin', {
+    name:name
+  });
+  console.log("Removing admin " + admin);
 };
 
 $scope.addTeacher = function(){
@@ -486,7 +483,7 @@ $scope.addTeacher = function(){
   }
 };
 
-$scope.removeTeacher = function(){
+$scope.removeTeacher = function(name){
   if($scope.newTeacher !== "" && $scope.selectedQueue !== undefined){
     socket.emit('removeTeacher', {
       name:$scope.newTeacher,

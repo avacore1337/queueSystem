@@ -72,6 +72,11 @@
 {
   color: red;
 }
+.text-red.clickable:hover
+{
+  color: #BF0000;
+  cursor: pointer;
+}
 .text-easteregg
 {
   color: rgb(50, 50, 50);

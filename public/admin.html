@@ -33,29 +33,23 @@
 			<br>
 			Admins
 			<br>
-			<div ng-show="admins.length > 0">
+			<div ng-show="admins.length">
 				<table class="table table-striped">
-	      			<thead class="dark-grey">
+	      			<thead>
 	        			<tr>
 	          				<th>Name</th>
 	          				<th>KTH-id</th>
-          					<th>Remove</th>
 	        			</tr>
 	      			</thead>
 	      			<tbody>
 	        			<tr id="admin.name" ng-repeat="admin in admins">
 	          				<td>{{ admin.name }}</td>
-	          				<td>{{ admin.id }}</td>
-	          				<td>
-	          					<button class="btn red clickable" ng-click="removeAdmin(user.name)" id="adminRemoveAdminBtn">
-        							<span class="glyphicon glyphicon-trash"></span>
-      							</button>
-      						</td>
+	          				<td>{{ admin.id }} <span class="glyphicon glyphicon-remove text-red clickable" ng-click="removeAdmin(admin.name)" id="adminRemoveAdminBtn"></span></td>
 		          		</tr>
 		          	</tbody>
 				</table>
 			</div>
-			<div ng-show="admins.length == 0">
+			<div ng-hide="admins.length">
 				(No admins)
 			</div>
 		</div>
@@ -119,30 +113,24 @@
 			</div>
 			<div class="buffer"></div>
 			<!-- TODO : Table of current teachers goes here -->
-			<div class="col-md-10" ng-show="admins.length > 0" style="padding-left: 0px;">
+			<div class="col-md-10" ng-show="admins.length" style="padding-left: 0px;">
 				<table class="table table-striped">
 	      			<thead class="dark-grey">
 	        			<tr>
 	          				<th>Name</th>
 	          				<th>KTH-id</th>
-	          				<th>Remove</th>
 		        		</tr>
 		      		</thead>
 		      		<tbody>
 		        		<tr id="admin.name" ng-repeat="admin in admins">
 		          			<td>{{ admin.name }}</td>
-		          			<td>{{ admin.id }}</td>
-		          			<td>
-		          				<button class="btn red clickable" ng-click="removeAdmin(user.name)" id="adminRemoveTeacherBtn">
-            						<span class="glyphicon glyphicon-trash"></span>
-          						</button>
-          					</td>
+		          			<td>{{ admin.id }} <span class="glyphicon glyphicon-remove text-red clickable" ng-click="removeTeacher(admin.name)" id="adminRemoveTeacherBtn"></span></td>
 		          		</tr>
 		          	</tbody>
 				</table>
 			</div>
-			<div ng-show="admins.length == 0">
-				(No admins)
+			<div ng-hide="admins.length">
+				(No teachers)
 			</div>
 			<!-- End of TODO (Table of current teachers goes here) -->
 		</div>
@@ -156,29 +144,23 @@
 			</div>
 			<div class="buffer"></div>
 			<!-- TODO : Table of current assistants goes here -->
-			<div class="col-md-10" ng-show="admins.length > 0" style="padding-left: 0px;">
+			<div class="col-md-10" ng-show="admins.length" style="padding-left: 0px;">
 				<table class="table table-striped">
 	      			<thead class="dark-grey">
 	        			<tr>
 	          				<th>Name</th>
 	          				<th>KTH-id</th>
-	          				<th>Remove</th>
 		        		</tr>
 		      		</thead>
 		      		<tbody>
 		        		<tr id="admin.name" ng-repeat="admin in admins">
 		          			<td>{{ admin.name }}</td>
-		          			<td>{{ admin.id }}</td>
-		          			<td>
-		          				<button class="btn red clickable" ng-click="removeAdmin(user.name)" id="adminRemoveAssistantBtn">
-            						<span class="glyphicon glyphicon-trash"></span>
-          						</button>
-		          			</td>
+		          			<td>{{ admin.id }} <span class="glyphicon glyphicon-remove text-red clickable" ng-click="removeAssistant(admin.name)" id="adminRemoveAssistantBtn"></span></td>
 		          		</tr>
 		          	</tbody>
 				</table>
 			</div>
-			<div ng-show="admins.length == 0">
+			<div ng-hide="admins.length">
 				(No admins)
 			</div>
 			<!-- End of TODO (Table of current assistants goes here) -->
