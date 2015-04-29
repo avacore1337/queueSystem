@@ -330,7 +330,7 @@ queueControllers.controller('adminController', ['$scope', '$location', '$http', 
   $scope.deleteQueue = function(){
     console.log("Called deleteQueue");
     var modalInstance = $modal.open({
-      templateUrl: 'delete.html',
+      templateUrl: 'warning.html',
       controller: function ($scope, $modalInstance, title, message, safeButtonText, dangerButtonText) {
         $scope.title = title;
         $scope.message = message;
@@ -374,7 +374,7 @@ queueControllers.controller('adminController', ['$scope', '$location', '$http', 
   $scope.hibernateQueue = function(){
     console.log("Called hibernateQueue");
     var modalInstance = $modal.open({
-      templateUrl: 'delete.html',
+      templateUrl: 'warning.html',
       controller: function ($scope, $modalInstance, title, message, safeButtonText, dangerButtonText) {
         $scope.title = title;
         $scope.message = message;
@@ -416,7 +416,7 @@ modalInstance.result.then(function (message) {
 $scope.unhibernateQueue = function(){
   console.log("Called unhibernateQueue");
   var modalInstance = $modal.open({
-    templateUrl: 'delete.html',
+    templateUrl: 'warning.html',
     controller: function ($scope, $modalInstance, title, message, safeButtonText, dangerButtonText) {
       $scope.title = title;
       $scope.message = message;

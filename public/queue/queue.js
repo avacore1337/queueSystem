@@ -103,8 +103,8 @@
     });
 
     // Listen for a message.
-    socket.on('msg', function(message) {
-      console.log("Received message : " + message);
+    socket.on('msg', function(data) {
+      console.log("Received message : " + data);
       var modalInstance = $modal.open({
         templateUrl: 'receiveMessage.html',
         controller: function ($scope, $modalInstance, title, message, sender) {
@@ -117,10 +117,10 @@
             return "Message";
           },
           message: function () {
-            return message;
+            return data.message;
           },
           sender: function () {
-            return "Anton Bäckström";
+            return data.sender;
           }
         }
       });
