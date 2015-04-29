@@ -484,14 +484,11 @@ $scope.addTeacher = function(){
 };
 
 $scope.removeTeacher = function(name){
-  if($scope.newTeacher !== "" && $scope.selectedQueue !== undefined){
-    socket.emit('removeTeacher', {
-      name:$scope.newTeacher,
-      queue:$scope.selectedQueue.name
-    });
-    console.log("Removing teacher " + $scope.newTeacher + " in the queue " + $scope.selectedQueue.name);
-    $scope.newTeacher = '';
-  }
+  socket.emit('removeTeacher', {
+    name:$scope.newTeacher,
+    queue:$scope.selectedQueue.name
+  });
+  console.log("Removing teacher " + name + " in the queue " + $scope.selectedQueue.name);
 };
 
 $scope.addAssistant = function(){
@@ -505,15 +502,12 @@ $scope.addAssistant = function(){
   }
 };
 
-$scope.removeAssistant = function(){
-  if($scope.newAssistant !== "" && $scope.selectedQueue !== undefined){
-    socket.emit('removeAssistant', {
-      name:$scope.newAssistant,
-      queue:$scope.selectedQueue.name
-    });
-    console.log("Removing assistant " + $scope.newAssistant  + " in the queue " + $scope.selectedQueue.name);
-    $scope.newAssistant = '';
-  }
+$scope.removeAssistant = function(name){
+  socket.emit('removeAssistant', {
+    name:$scope.newAssistant,
+    queue:$scope.selectedQueue.name
+  });
+  console.log("Removing assistant " + name  + " in the queue " + $scope.selectedQueue.name);
 };
 
 $scope.selectQueue = function(queue){
