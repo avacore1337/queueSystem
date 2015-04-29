@@ -228,19 +228,34 @@ queueControllers.controller('adminController', ['$scope', '$location', '$http', 
 
   // Listen for an assistant being added to a queue.
   socket.on('addAssistant', function(data) {
-    $scope.$apply(getQueue(data.queue).assistants.push(data.user));
+    $scope.$apply(getQueue(data.queue).assistants.push(data.name));
   });
 
   // Listen for an teacher being added to a queue.
-  socket.on('deleteAssistant', function(data) {
+  socket.on('removeAssistant', function(data) {
     for (var i = $scope.queues.length - 1; i >= 0; i--) {
-      if($scope.queues[i].name == data.queue){
+      if($scope.queues[i].name === data.queue){
         for (var j = $scope.queues.assistants.length - 1; j >= 0; j--) {
-          if($scope.queues.assistants[j] == data.user){
+          if($scope.queues.assistants[j] === data.name){
             $scope.$apply($scope.queues.splice(i, 1));
             break;
           }
         }
+        break;
+      }
+    }
+  });
+
+  // Listen for an teacher being added to a queue.
+  socket.on('addAdmin', function(user) {
+    $scope.$apply($scope.admins.push(user));
+  });
+
+    // Listen for an teacher being added to a queue.
+  socket.on('removeAdmin', function(user) {
+    for (var i = $scope.admins.length - 1; i >= 0; i--) {
+      if($scope.admins[i] === user){
+        $scope.$apply($scope.admins.splice(i, 1));
         break;
       }
     }
@@ -248,15 +263,15 @@ queueControllers.controller('adminController', ['$scope', '$location', '$http', 
 
   // Listen for an teacher being added to a queue.
   socket.on('addTeacher', function(data) {
-    $scope.$apply(getQueue(data.queue).teachers.push(data.user));
+    $scope.$apply(getQueue(data.queue).teachers.push(data.name));
   });
 
   // Listen for an teacher being added to a queue.
-  socket.on('deleteTeacher', function(data) {
+  socket.on('removeTeacher', function(data) {
     for (var i = $scope.queues.length - 1; i >= 0; i--) {
-      if($scope.queues[i].name == data.queue){
+      if($scope.queues[i].name === data.queue){
         for (var j = $scope.queues.teachers.length - 1; j >= 0; j--) {
-          if($scope.queues.teachers[j] == data.user){
+          if($scope.queues.teachers[j] === data.name){
             $scope.$apply($scope.queues.splice(i, 1));
             break;
           }
@@ -266,8 +281,26 @@ queueControllers.controller('adminController', ['$scope', '$location', '$http', 
     }
   });
 
+  // Listen for a queue being hibernated.
+  socket.on('hibernate', function(queue) {
+    for (var i = $scope.queues.length - 1; i >= 0; i--) {
+      if(queue === $scope.queues[i].name){
+        $scope.$apply($scope.queues[i].hibernating = false);
+      }
+    }
+  });
+
+  // Listen for a queue being unhibernated.
+  socket.on('unhibernate', function(queue) {
+    for (var i = $scope.queues.length - 1; i >= 0; i--) {
+      if(queue === $scope.queues[i].name){
+        $scope.$apply($scope.queues[i].hibernating = true);
+      }
+    }
+  });
+
   // Listen for a queue being added.
-  socket.on('addQueue', function(queue) {
+  socket.on('createQueue', function(queue) {
     $scope.$apply($scope.queues.push(queue));
   });
 
@@ -338,7 +371,7 @@ queueControllers.controller('adminController', ['$scope', '$location', '$http', 
     }, function () {});
   };
 
-    $scope.hibernateQueue = function(){
+  $scope.hibernateQueue = function(){
     console.log("Called hibernateQueue");
     var modalInstance = $modal.open({
       templateUrl: 'delete.html',
@@ -370,130 +403,130 @@ queueControllers.controller('adminController', ['$scope', '$location', '$http', 
       }
     });
 
-    modalInstance.result.then(function (message) {
-      if(message === "hibernate"){
-        socket.emit('hibernate', {
-          queue:$scope.selectedQueue.name
-        });
-        console.log("Trying to hibernate queue " + $scope.selectedQueue.name);
-      }
-    }, function () {});
-  };
-
-  $scope.unhibernateQueue = function(){
-    console.log("Called unhibernateQueue");
-    var modalInstance = $modal.open({
-      templateUrl: 'delete.html',
-      controller: function ($scope, $modalInstance, title, message, safeButtonText, dangerButtonText) {
-        $scope.title = title;
-        $scope.message = message;
-        $scope.safeButtonText = safeButtonText;
-        $scope.dangerButtonText = dangerButtonText;
-        $scope.delete = function () {
-          $modalInstance.close("unhibernate");
-        };
-        $scope.doNotDelete = function () {
-          $modalInstance.close("");
-        };
-      },
-      resolve: {
-        title: function () {
-          return "Wake up queue";
-        },
-        message: function () {
-          return "Are you sure that you wish to unhibernate " + $scope.selectedQueue.name + "? This means that anyone can see and enter the queue.";
-        },
-        safeButtonText: function () {
-          return "No, let it sleep.";
-        },
-        dangerButtonText: function () {
-          return "Yes, rise and shine.";
-        }
-      }
+modalInstance.result.then(function (message) {
+  if(message === "hibernate"){
+    socket.emit('hibernate', {
+      queue:$scope.selectedQueue.name
     });
+    console.log("Trying to hibernate queue " + $scope.selectedQueue.name);
+  }
+}, function () {});
+};
 
-    modalInstance.result.then(function (message) {
-      if(message === "unhibernate"){
-        socket.emit('unhibernate', {
-          queue:$scope.selectedQueue.name
-        });
-        console.log("Trying to unhibernate queue " + $scope.selectedQueue.name);
+$scope.unhibernateQueue = function(){
+  console.log("Called unhibernateQueue");
+  var modalInstance = $modal.open({
+    templateUrl: 'delete.html',
+    controller: function ($scope, $modalInstance, title, message, safeButtonText, dangerButtonText) {
+      $scope.title = title;
+      $scope.message = message;
+      $scope.safeButtonText = safeButtonText;
+      $scope.dangerButtonText = dangerButtonText;
+      $scope.delete = function () {
+        $modalInstance.close("unhibernate");
+      };
+      $scope.doNotDelete = function () {
+        $modalInstance.close("");
+      };
+    },
+    resolve: {
+      title: function () {
+        return "Wake up queue";
+      },
+      message: function () {
+        return "Are you sure that you wish to unhibernate " + $scope.selectedQueue.name + "? This means that anyone can see and enter the queue.";
+      },
+      safeButtonText: function () {
+        return "No, let it sleep.";
+      },
+      dangerButtonText: function () {
+        return "Yes, rise and shine.";
       }
-    }, function () {});
-  };
-
-  $scope.addAdmin = function(){
-    if($scope.newAdmin !== ""){
-      socket.emit('addAdmin', {
-        name:$scope.newAdmin
-      });
-      console.log("Adding admin " + $scope.newAdmin);
-      $scope.newAdmin = '';
     }
-  };
+  });
 
-  $scope.removeAdmin = function(){
-    if($scope.newAdmin !== ""){
-      socket.emit('removeAdmin', {
-        name:$scope.newAdmin
-      });
-      console.log("Removing admin " + $scope.newAdmin);
-      $scope.newAdmin = '';
-    }
-  };
-
-  $scope.addTeacher = function(){
-    if($scope.newTeacher !== "" && $scope.selectedQueue !== undefined){
-      socket.emit('addTeacher', {
-        name:$scope.newTeacher,
+  modalInstance.result.then(function (message) {
+    if(message === "unhibernate"){
+      socket.emit('unhibernate', {
         queue:$scope.selectedQueue.name
       });
-      console.log("Adding teacher " + $scope.newTeacher + " in the queue " + $scope.selectedQueue.name);
-      $scope.newTeacher = '';
+      console.log("Trying to unhibernate queue " + $scope.selectedQueue.name);
     }
-  };
+  }, function () {});
+};
 
-  $scope.removeTeacher = function(){
-    if($scope.newTeacher !== "" && $scope.selectedQueue !== undefined){
-      socket.emit('removeTeacher', {
-        name:$scope.newTeacher,
-        queue:$scope.selectedQueue.name
-      });
-      console.log("Removing teacher " + $scope.newTeacher + " in the queue " + $scope.selectedQueue.name);
-      $scope.newTeacher = '';
+$scope.addAdmin = function(){
+  if($scope.newAdmin !== ""){
+    socket.emit('addAdmin', {
+      name:$scope.newAdmin
+    });
+    console.log("Adding admin " + $scope.newAdmin);
+    $scope.newAdmin = '';
+  }
+};
+
+$scope.removeAdmin = function(){
+  if($scope.newAdmin !== ""){
+    socket.emit('removeAdmin', {
+      name:$scope.newAdmin
+    });
+    console.log("Removing admin " + $scope.newAdmin);
+    $scope.newAdmin = '';
+  }
+};
+
+$scope.addTeacher = function(){
+  if($scope.newTeacher !== "" && $scope.selectedQueue !== undefined){
+    socket.emit('addTeacher', {
+      name:$scope.newTeacher,
+      queue:$scope.selectedQueue.name
+    });
+    console.log("Adding teacher " + $scope.newTeacher + " in the queue " + $scope.selectedQueue.name);
+    $scope.newTeacher = '';
+  }
+};
+
+$scope.removeTeacher = function(){
+  if($scope.newTeacher !== "" && $scope.selectedQueue !== undefined){
+    socket.emit('removeTeacher', {
+      name:$scope.newTeacher,
+      queue:$scope.selectedQueue.name
+    });
+    console.log("Removing teacher " + $scope.newTeacher + " in the queue " + $scope.selectedQueue.name);
+    $scope.newTeacher = '';
+  }
+};
+
+$scope.addAssistant = function(){
+  if($scope.newAssistant !== "" && $scope.selectedQueue !== undefined){
+    socket.emit('addAssistant', {
+      name:$scope.newAssistant,
+      queue:$scope.selectedQueue.name
+    });
+    console.log("Adding assistant " + $scope.newAssistant  + " in the queue " + $scope.selectedQueue.name);
+    $scope.newAssistant = '';
+  }
+};
+
+$scope.removeAssistant = function(){
+  if($scope.newAssistant !== "" && $scope.selectedQueue !== undefined){
+    socket.emit('removeAssistant', {
+      name:$scope.newAssistant,
+      queue:$scope.selectedQueue.name
+    });
+    console.log("Removing assistant " + $scope.newAssistant  + " in the queue " + $scope.selectedQueue.name);
+    $scope.newAssistant = '';
+  }
+};
+
+$scope.selectQueue = function(queue){
+  for (var i = $scope.queues.length - 1; i >= 0; i--) {
+    if($scope.queues[i].name === queue){
+      $scope.selectedQueue = $scope.queues[i];
+      document.getElementById('dropdown').innerHTML = queue;
+      console.log("selected queue = " + $scope.selectedQueue.name);
     }
-  };
-
-  $scope.addAssistant = function(){
-    if($scope.newAssistant !== "" && $scope.selectedQueue !== undefined){
-      socket.emit('addAssistant', {
-        name:$scope.newAssistant,
-        queue:$scope.selectedQueue.name
-      });
-      console.log("Adding assistant " + $scope.newAssistant  + " in the queue " + $scope.selectedQueue.name);
-      $scope.newAssistant = '';
-    }
-  };
-
-  $scope.removeAssistant = function(){
-    if($scope.newAssistant !== "" && $scope.selectedQueue !== undefined){
-      socket.emit('removeAssistant', {
-        name:$scope.newAssistant,
-        queue:$scope.selectedQueue.name
-      });
-      console.log("Removing assistant " + $scope.newAssistant  + " in the queue " + $scope.selectedQueue.name);
-      $scope.newAssistant = '';
-    }
-  };
-
-  $scope.selectQueue = function(queue){
-    for (var i = $scope.queues.length - 1; i >= 0; i--) {
-      if($scope.queues[i].name === queue){
-        $scope.selectedQueue = $scope.queues[i];
-        document.getElementById('dropdown').innerHTML = queue;
-        console.log("selected queue = " + $scope.selectedQueue.name);
-      }
-    };
-  };
+  }
+};
 
 }]);
