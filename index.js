@@ -243,8 +243,10 @@ app.io.route('badLocation', function(req) {
   }
   var queue = req.data.queue;
   var name = req.data.name;
+  var message = "Bad location given";
+  var sender = req.data.sender;
 
-  app.io.room(queue).broadcast('badLocation'); 
+  app.io.room(queue).broadcast('badLocation', {message: message, sender: sender}); 
   console.log("Bad location at " + queue + " for " + name);
 });
 
@@ -277,7 +279,7 @@ app.io.route('messageUser', function(req) {
   var message = req.data.message;
   var sender = req.data.sender;
 
-  app.io.room(queue).broadcast('msg', message); // Not having user as an identifier?
+  app.io.room(queue).broadcast('msg', {message: message, sender: sender}); // Not having user as an identifier?
   console.log('user ' + name + ' was messaged from ' + sender + ' at ' + queue + ' with: ' + message);
 });
 
@@ -285,8 +287,9 @@ app.io.route('messageUser', function(req) {
 app.io.route('broadcast', function(req) {
   var queue = req.data.queue;
   var message = req.data.message;
+  var sender = req.data.sender;
 
-  app.io.room(queue).broadcast('msg', message);
+  app.io.room(queue).broadcast('msg', {message: message, sender: sender});
   console.log('broadcast in ' + queue + ', msg: ' + message);
 });
 
