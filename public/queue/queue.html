@@ -92,8 +92,8 @@
         </table>
       </div>
       <!-- Users without bookings -->
-      <div ng-hide="users"><h4>This queue is empty</h4></div>
-      <table class="col-md-12 table table-striped" ng-show="users">
+      <div ng-hide="users.length"><h4>This queue is empty</h4></div>
+      <table class="col-md-12 table table-striped" ng-show="users.length">
         <thead>
           <tr>
             <th class="hidden-xs">#</th>

@@ -66,6 +66,9 @@
 
     // Listen for the person joining a queue event.
     socket.on('join', function(data) {
+      if(data.name === $scope.name){
+        $scope.enqueued = true;
+      }
       $scope.$apply($scope.users.push({name:data.name, place:data.place, comment:data.comment, startTime:data.startTime}));
       console.log("data in queue join = " + data);
       console.log($scope.users);
@@ -185,7 +188,6 @@
         if($scope.location === ""){
           alert("You must enter a place.");
         }else{
-          $scope.enqueued = true;
           console.log("Current time = " + Date.now());
           socket.emit('join',
           {
