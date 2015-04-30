@@ -44,7 +44,7 @@
 	      			<tbody>
 	        			<tr id="admin.name" ng-repeat="admin in admins">
 	          				<td>{{ admin.name }}</td>
-	          				<td>{{ admin.id }} <span class="glyphicon glyphicon-remove text-red clickable" ng-click="removeAdmin(admin.name)" id="adminRemoveAdminBtn"></span></td>
+	          				<td>{{ admin.id }} <span class="glyphicon glyphicon-remove text-red clickable" title="Remove admin" ng-click="removeAdmin(admin.name)" id="adminRemoveAdminBtn"></span></td>
 		          		</tr>
 		          	</tbody>
 				</table>
@@ -124,7 +124,7 @@
 		      		<tbody>
 		        		<tr id="admin.name" ng-repeat="admin in admins">
 		          			<td>{{ admin.name }}</td>
-		          			<td>{{ admin.id }} <span class="glyphicon glyphicon-remove text-red clickable" ng-click="removeTeacher(admin.name)" id="adminRemoveTeacherBtn"></span></td>
+		          			<td>{{ admin.id }} <span class="glyphicon glyphicon-remove text-red clickable" title="Remove teacher" ng-click="removeTeacher(admin.name)" id="adminRemoveTeacherBtn"></span></td>
 		          		</tr>
 		          	</tbody>
 				</table>
@@ -155,7 +155,7 @@
 		      		<tbody>
 		        		<tr id="admin.name" ng-repeat="admin in admins">
 		          			<td>{{ admin.name }}</td>
-		          			<td>{{ admin.id }} <span class="glyphicon glyphicon-remove text-red clickable" ng-click="removeAssistant(admin.name)" id="adminRemoveAssistantBtn"></span></td>
+		          			<td>{{ admin.id }} <span class="glyphicon glyphicon-remove text-red clickable" title="Remove assistant" ng-click="removeAssistant(admin.name)" id="adminRemoveAssistantBtn"></span></td>
 		          		</tr>
 		          	</tbody>
 				</table>

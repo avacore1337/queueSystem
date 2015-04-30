@@ -38,7 +38,8 @@
 <!-- Timepicker (to) -->
           <timepicker ng-model="toTime" minute-step="mstep" show-meridian="false" id="statisticsToTimeTimepicker"></timepicker>
       </div>
-      <button class="btn btn-primary pull-right" ng-click="getStatistics()" id="statisticsGetStatisticsBtn">Get statistics</button>
+      <button class="btn btn-primary pull-right" ng-show="selectedQueue" ng-click="getStatistics()" id="statisticsGetStatisticsBtn">Get statistics</button>
+      <button class="btn btn-primary pull-right" ng-hide="selectedQueue" popover="You must choose a queue first."  popover-trigger="focus" popover-placement="top" id="statisticsPromptQueueBtn">Get statistics</button>
   </div>
   <hr>
 <!-- Statistics goes here -->
