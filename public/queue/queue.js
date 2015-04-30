@@ -14,9 +14,10 @@
   }])
 
 
-  .controller('queueController', ['$scope', '$http', '$routeParams', '$location', '$modal', 'WebSocketService', 'UserService',
-  function ($scope, $http, $routeParams, $location, $modal, socket, user) {
+  .controller('queueController', ['$scope', '$http', '$routeParams', '$location', '$modal', 'WebSocketService', 'UserService', 'TitleService',
+  function ($scope, $http, $routeParams, $location, $modal, socket, user, title) {
     $scope.queue = $routeParams.queue;
+    title.title = $scope.queue + " | Stay A While";
     $scope.name = user.getName();
     $scope.location = '';
     $scope.comment = '';
@@ -40,6 +41,7 @@
         $scope.users[i].time = $scope.users[i].time/1000;
         if($scope.users[i].name === $scope.name){
           $scope.enqueued = true;
+          title.title = "["  + (i+1) + "] " + $scope.queue + " | Stay A while";
           $scope.location = $scope.users[i].place;
           $scope.comment = $scope.users[i].comment;
         }
@@ -72,6 +74,7 @@
       console.log("I get this time to 'join' : " + data.time);
       if(data.name === $scope.name){
         $scope.enqueued = true;
+        title.title = "["  + ($scope.users.length+1) + "] " + $scope.queue + " | Stay A while";
       }
       $scope.$apply($scope.users.push({name:data.name, place:data.place, comment:data.comment, time:data.time/1000}));
     });
@@ -80,10 +83,20 @@
     socket.on('leave', function(data) {
       if(data.name === $scope.name){
         $scope.enqueued = false;
+        title.title = $scope.queue + " | Stay A while";
       }
       for(var i = $scope.users.length - 1; i >= 0; i--) {
         if($scope.users[i].name === data.name) {
           $scope.$apply($scope.users.splice(i, 1));
+          break;
+        }
+      }
+      if($scope.enqueued){
+        for(var j = $scope.users.length - 1; j >= 0; j--) {
+          if($scope.users[j].name === $scope.name) {
+            title.title = "["  + (j+1) + "] " + $scope.queue + " | Stay A while";
+            break;
+          }
         }
       }
     });

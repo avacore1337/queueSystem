@@ -1,7 +1,8 @@
 var queueControllers = angular.module('queueControllers', []);
 
-queueControllers.controller('listController', ['$scope', '$http', '$location', 'WebSocketService', 'UserService',
-  function ($scope, $http, $location, socket, user) {
+queueControllers.controller('listController', ['$scope', '$http', '$location', 'WebSocketService', 'UserService', 'TitleService',
+  function ($scope, $http, $location, socket, user, title) {
+    title.title = "Stay A While";
     $scope.admin = false;
     $scope.queues = [];
     $http.get('/API/queueList').success(function(response){
@@ -82,18 +83,21 @@ queueControllers.controller('listController', ['$scope', '$http', '$location', '
   };
 }]);
 
-queueControllers.controller('aboutController', ['$scope', '$http',
-  function ($scope, $http) {
+queueControllers.controller('aboutController', ['$scope', '$http', 'TitleService',
+  function ($scope, $http, title) {
+    title.title = "About | Stay A While";
     console.log('entered about.html');
   }]);
 
-queueControllers.controller('helpController', ['$scope', '$http',
-  function ($scope, $http) {
+queueControllers.controller('helpController', ['$scope', '$http', 'TitleService',
+  function ($scope, $http, title) {
+    title.title = "Help | Stay A While";
     console.log('entered help.html');
   }]);
 
-queueControllers.controller('statisticsController', ['$scope', '$http',
-  function ($scope, $http) {
+queueControllers.controller('statisticsController', ['$scope', '$http', 'TitleService',
+  function ($scope, $http, title) {
+    title.title = "Statistics | Stay A While";
     console.log('entered statistics.html');
 
 // Queue selection
@@ -149,9 +153,9 @@ $scope.getStatistics = function() {
 
 }]);
 
-queueControllers.controller('loginController', ['$scope', '$location', '$http',
-  function ($scope, $location, $http) {
-
+queueControllers.controller('loginController', ['$scope', '$location', '$http', 'TitleService',
+  function ($scope, $location, $http, title) {
+    title.title = "Log in | Stay A While";
     $scope.done = function () {
       console.log("Reached done()");
       $http.post('/API/setUser', {
@@ -206,8 +210,9 @@ queueControllers.controller('navigationController', ['$scope', '$location', 'Use
   });
 }]);
 
-queueControllers.controller('adminController', ['$scope', '$location', '$http', '$modal', 'WebSocketService', 'UserService',
-  function ($scope, $location, $http, $modal, socket, user) {
+queueControllers.controller('adminController', ['$scope', '$location', '$http', '$modal', 'WebSocketService', 'UserService', 'TitleService',
+  function ($scope, $location, $http, $modal, socket, user, title) {
+    title.title = "Admin | Stay A While";
     console.log("Entered admin.html");
     $scope.admin = user.isAdmin();
     $scope.selectedQueue = undefined;
@@ -521,3 +526,13 @@ $scope.selectQueue = function(queue){
 };
 
 }]);
+
+queueControllers.controller('TitleController', ['$scope', 'TitleService',
+  function ($scope, title) {
+    console.log(title);
+    $scope.title = title.title;
+
+    $scope.$watch(function () { return title.title }, function(newValue, oldValue) {
+      $scope.title = newValue;
+    });
+  }]);

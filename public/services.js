@@ -46,5 +46,12 @@ angular.module('queue')
 	var ws = io.connect();
 
 	return ws;
+})
+
+.factory('TitleService', function () {
+
+	return {
+		title: "Stay A While"
+	};
 });
 
