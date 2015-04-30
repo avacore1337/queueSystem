@@ -37,8 +37,11 @@
       $scope.motd = response.motd;
       for (var i = 0; i < $scope.users.length; i++) {
         $scope.users[i].optionsActivated = false;
+        $scope.users[i].time = $scope.users[i].time/1000;
         if($scope.users[i].name === $scope.name){
           $scope.enqueued = true;
+          $scope.location = $scope.users[i].place;
+          $scope.comment = $scope.users[i].comment;
         }
       }
       //if($scope.motd !== ""){
@@ -66,12 +69,11 @@
 
     // Listen for the person joining a queue event.
     socket.on('join', function(data) {
+      console.log("I get this time to 'join' : " + data.time);
       if(data.name === $scope.name){
         $scope.enqueued = true;
       }
-      $scope.$apply($scope.users.push({name:data.name, place:data.place, comment:data.comment, startTime:data.startTime}));
-      console.log("data in queue join = " + data);
-      console.log($scope.users);
+      $scope.$apply($scope.users.push({name:data.name, place:data.place, comment:data.comment, time:data.time/1000}));
     });
 
     // Listen for the person leaving a queue event.
@@ -192,7 +194,7 @@
           socket.emit('join',
           {
             queue:$routeParams.queue,
-            user:{name:$scope.name, place:$scope.location, comment:$scope.comment, startTime:Math.round(Date.now()/1000)}
+            user:{name:$scope.name, place:$scope.location, comment:$scope.comment, time:Date.now()}
           });
           console.log("Called addUser");
         }
