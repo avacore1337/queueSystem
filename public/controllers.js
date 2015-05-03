@@ -202,6 +202,7 @@ queueControllers.controller('loginController', ['$scope', '$location', '$http', 
         console.log("logged in");
       });
       console.log("I set the user with http");
+      // TODO : This should be removed later on
       socket.emit('setUser', {
         name: $scope.name,
         admin: $scope.type === 'admin'
@@ -314,7 +315,7 @@ queueControllers.controller('adminController', ['$scope', '$location', '$http', 
   // Listen for an teacher being added to a queue.
   socket.on('addAdmin', function(user) {
     $scope.$apply($scope.admins.push(user));
-    console.log("Recevived a nde admin : " + user);
+    console.log("adding admin (from backend) name = " + user.name + ", username = " + user.username + ", addedBy = " + user.addedBy);
   });
 
     // Listen for an teacher being added to a queue.
@@ -376,6 +377,7 @@ queueControllers.controller('adminController', ['$scope', '$location', '$http', 
 
   // Listen for the person leaving a queue event.
   socket.on('removeQueue', function(queue) {
+    console.log("Backend wants to remove queue " + queue);
     for (var i = $scope.queues.length - 1; i >= 0; i--) {
       if(queue === $scope.queues[i].name){
         $scope.$apply($scope.queues.splice(i, 1));
@@ -535,11 +537,11 @@ $scope.addAdmin = function(){
   }
 };
 
-$scope.removeAdmin = function(user){
+$scope.removeAdmin = function(username){
   socket.emit('removeAdmin', {
-    username:user.name
+    username:username
   });
-  console.log("Removing admin " + user.name);
+  console.log("Removing admin " + username);
 };
 
 $scope.addTeacher = function(){
