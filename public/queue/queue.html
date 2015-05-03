@@ -72,8 +72,8 @@
     <!-- Queues -->
     <div class="col-md-9 col-md-push-3">
       <!-- Users with bookings -->
-      <input class="spoilerbutton" type="button" value="Show booked users" onclick="this.value=this.value=='Show booked users' ? 'Hide booked users' : 'Show booked users';" class="spoilerbutton" ng-hide="bookedUsers.length == 0"  id="queueShowBookedUsersBtn">
-      <div class="col-md-12 spoiler" ng-hide="bookedUsers.length == 0">
+      <input class="spoilerbutton" type="button" value="Show booked users" onclick="this.value=this.value=='Show booked users' ? 'Hide booked users' : 'Show booked users';" class="spoilerbutton" ng-show="bookedUsers.length"  id="queueShowBookedUsersBtn">
+      <div class="col-md-12 spoiler" ng-sow="bookedUsers.length">
         <table class="table table-striped booked">
           <thead>
             <th>User</th>

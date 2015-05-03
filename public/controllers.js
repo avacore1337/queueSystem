@@ -95,61 +95,64 @@ queueControllers.controller('helpController', ['$scope', '$http', 'TitleService'
     console.log('entered help.html');
   }]);
 
-queueControllers.controller('statisticsController', ['$scope', '$http', 'TitleService',
-  function ($scope, $http, title) {
+queueControllers.controller('statisticsController', ['$scope', '$http', 'WebSocketService', 'TitleService',
+  function ($scope, $http, socket, title) {
     title.title = "Statistics | Stay A While";
     console.log('entered statistics.html');
 
-// Queue selection
-$scope.queues = [];
-$http.get('/API/queueList').success(function(response){
-  $scope.queues = response.sort(function(a, b) {return a.name.localeCompare(b.name);});
-});
+    socket.emit('stopListening', 'lobby');
+    socket.emit('listen', 'statistics');
 
-$scope.selectedQueue = undefined;
-$scope.selectQueue = function(queue){
-  $scope.selectedQueue = queue;
-  document.getElementById('dropdown').innerHTML = queue;
-  console.log("selected queue = " + $scope.selectedQueue);
-};
+    // Listen for new statistics.
+    socket.on('getAverageQueueTime', function(time) {
+      $scope.averageQueueTime = time;
+    });
 
-// Date
-$scope.today = function() {
-  $scope.dtFrom = new Date();
-  $scope.dtTo = new Date();
-  $scope.today = new Date();
-};
-$scope.today();
+    // Queue selection
+    $scope.queues = [];
+    $http.get('/API/queueList').success(function(response){
+      $scope.queues = response.sort(function(a, b) {return a.name.localeCompare(b.name);});
+    });
 
-$scope.open = function($event, opened) {
-  $event.preventDefault();
-  $event.stopPropagation();
+    $scope.selectedQueue = undefined;
+    $scope.selectQueue = function(queue){
+      $scope.selectedQueue = queue;
+      document.getElementById('dropdown').innerHTML = queue;
+      console.log("selected queue = " + $scope.selectedQueue);
+    };
 
-  $scope[opened] = true;
-};
+    // Date
+    $scope.today = function() {
+      $scope.dtFrom = new Date();
+      $scope.dtTo = new Date();
+      $scope.today = new Date();
+    };
+    $scope.today();
 
-// Time
-$scope.fromTime = new Date();
-$scope.fromTime.setHours(0);
-$scope.fromTime.setMinutes(0);
-$scope.toTime = new Date();
+    $scope.open = function($event, opened) {
+      $event.preventDefault();
+      $event.stopPropagation();
 
-$scope.hstep = 1;
-$scope.mstep = 5;
+      $scope[opened] = true;
+    };
 
-// Statistics
-$scope.getStatistics = function() {
-  if($scope.dtFrom !== null && $scope.dtFrom !== undefined && $scope.dtTo !== null && $scope.dtTo !== undefined && $scope.selectedQueue !== undefined){
-    $scope.statistics = [{description: "Unique students queueing", data: "50"},
-    {description: "Students getting helped", data: "45"},
-    {description: "Students left in queue when lab session ended", data: "5"},
-    {description: "Number of TAs attending", data: "11"},
-    {description: "Average time spent helping students", data: "5m 34s"},
-    {description: "Number of students who left before receiving help", data: "7"}];
-    console.log("Getting data from " + $scope.dtFrom + " " + $scope.fromTime);
-    console.log("Getting data to " + $scope.dtTo + " " + $scope.toTime);
-  }
-};
+    // Time
+    $scope.fromTime = new Date();
+    $scope.fromTime.setHours(0);
+    $scope.fromTime.setMinutes(0);
+    $scope.toTime = new Date();
+
+    $scope.hstep = 1;
+    $scope.mstep = 5;
+
+    // Statistics
+    $scope.getStatistics = function() {
+      socket.emit('getAverageQueueTime', {
+          queueName:$scope.selectedQueue.name,
+          start:$scope.fromTime.getTime(),
+          end:$scope.toTime.getTime()
+      });
+    };
 
 }]);
 
@@ -257,14 +260,14 @@ queueControllers.controller('adminController', ['$scope', '$location', '$http', 
   });
 
     // Listen for an teacher being added to a queue.
-  socket.on('removeAdmin', function(user) {
-    for (var i = $scope.admins.length - 1; i >= 0; i--) {
-      if($scope.admins[i] === user){
-        $scope.$apply($scope.admins.splice(i, 1));
-        break;
+    socket.on('removeAdmin', function(user) {
+      for (var i = $scope.admins.length - 1; i >= 0; i--) {
+        if($scope.admins[i] === user){
+          $scope.$apply($scope.admins.splice(i, 1));
+          break;
+        }
       }
-    }
-  });
+    });
 
   // Listen for an teacher being added to a queue.
   socket.on('addTeacher', function(data) {

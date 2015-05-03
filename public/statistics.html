@@ -43,16 +43,16 @@
   </div>
   <hr>
 <!-- Statistics goes here -->
-  <div class="row" ng-show="statistics">
+  <div class="row" ng-show="averageQueueTime">
     <table class="table table-striped">
       <thead>
         <th>Description</th>
         <th>Statistics</th>
       </thead>
       <tbody>
-        <tr ng-repeat="stat in statistics">
-          <td>{{stat.description}}</td>
-          <td>{{stat.data}}</td>
+        <tr>
+          <td>Average queueing time</td>
+          <td>{{averageQueueTime}}</td>
         </tr>
       </tbody>
     </table>
