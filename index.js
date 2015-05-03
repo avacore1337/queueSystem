@@ -419,7 +419,17 @@ app.io.route('queueing users', function(req) {
 app.io.route('getAverageQueueTime', function(req) {
   var queue = req.data.queue;
 
+  var averageQueueTime = 0;
   app.io.room('statistics').broadcast('getAverageQueueTime', averageQueueTime);
+});
+
+app.io.route('numbersOfPeopleLeftQueue', function(req) {
+  var queueName = req.data.queueName;
+  var start = req.data.start;
+  var end = req.data.end;
+
+  var numbersOfPeopleLeft = getAverageQueueTime(queueName, start, end);
+  app.io.room('statistics').broadcast('numbersOfPeopleLeftQueue', numbersOfPeopleLeft);
 });
 
 // the average time in 'queue' of students who joined the queue 
