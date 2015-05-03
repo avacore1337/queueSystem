@@ -101,18 +101,18 @@
             <th>Location</th>
             <th>Comment</th>
             <th class="hidden-xs">Time</th>
-            <th ng-show="admin">Admin options</th>
           </tr>
         </thead>
         <tbody>
-          <tr ng-repeat="user in users track by $index" ng-class="user.gettingHelp ? 'pulse' : ''" ng-dblclick="changeVisibility(user.name)"  id="queue{{user.name}}Btn">
+          <tr ng-repeat-start="user in users track by $index" ng-class="user.gettingHelp ? 'pulse' : ''" ng-dblclick="changeVisibility(user.name)"  id="queue{{user.name}}Btn">
             <td class="hidden-xs">{{ $index + 1 }}</td>
             <td>{{ user.name }}</td>
             <td>{{ user.place }}</td>
             <td>{{ user.comment }}</td>
             <td class="hidden-xs"><span data-livestamp="{{user.time}}"></span></td>
-            <td ng-show="admin">
-              <div ng-show="user.optionsActivated">
+          </tr>
+          <tr ng-repeat-end ng-show="admin && user.optionsActivated" ng-dblclick="changeVisibility(user.name)">
+            <td colspan="100%" class="text-right">
                 <span title="remove user">
                   <button class="btn red clickable" ng-click="removeUser(user.name)" id="queueRemoveUser{{user.name}}Btn">
                     <span class="glyphicon glyphicon-trash"></span>
@@ -143,9 +143,6 @@
                     <span class="glyphicon glyphicon-search"></span>
                   </button>
                 </span>
-              </div>
-              <p ng-hide="user.optionsActivated">(Double-click for options)</p>
-              <p ng-show="user.gettingHelp && admin">&nbsp;Currently helped by + {{user.helper}}</p>
             </td>
           </tr>
         </tbody>
