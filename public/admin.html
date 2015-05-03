@@ -86,7 +86,7 @@
 		        	<div class="col-md-11 text-left" id="dropdown">Select Queue</div> <span class="caret"></span>
 		        </button>
 		        <ul class="dropdown-menu">
-					<li ng-repeat="queue in queues"><a href="" ng-click="selectQueue(queue.name)" id="admin{{queue.name}}DropDownBtn">{{queue.name}}</a></li>
+					<li ng-repeat="queue in queues"><a href="" ng-click="selectQueue(queue)" id="admin{{queue.name}}DropDownBtn">{{queue.name}}</a></li>
 		        </ul>
 			</div>
 		</div>
@@ -113,7 +113,7 @@
 			</div>
 			<div class="buffer"></div>
 			<!-- TODO : Table of current teachers goes here -->
-			<div class="col-md-10" ng-show="admins.length" style="padding-left: 0px;">
+			<div class="col-md-10" ng-show="selectedQueue.teacher.length" style="padding-left: 0px;">
 				<table class="table table-striped">
 	      			<thead class="dark-grey">
 	        			<tr>
@@ -122,14 +122,14 @@
 		        		</tr>
 		      		</thead>
 		      		<tbody>
-		        		<tr id="admin.name" ng-repeat="admin in admins">
-		          			<td>{{ admin.name }}</td>
-		          			<td>{{ admin.username }} <span class="glyphicon glyphicon-remove text-red clickable" title="Remove teacher" ng-click="removeTeacher(admin.name)" id="adminRemoveTeacherBtn"></span></td>
+		        		<tr id="teacher.username" ng-repeat="teacher in selectedQueue.teacher">
+		          			<td>{{ teacher.name }}</td>
+		          			<td>{{ teacher.username }} <span class="glyphicon glyphicon-remove text-red clickable" title="Remove teacher" ng-click="removeTeacher(teacher.name)" id="adminRemoveTeacherBtn"></span></td>
 		          		</tr>
 		          	</tbody>
 				</table>
 			</div>
-			<div ng-hide="admins.length">
+			<div ng-hide="selectedQueue.teacher.length">
 				(No teachers)
 			</div>
 			<!-- End of TODO (Table of current teachers goes here) -->
@@ -144,7 +144,7 @@
 			</div>
 			<div class="buffer"></div>
 			<!-- TODO : Table of current assistants goes here -->
-			<div class="col-md-10" ng-show="admins.length" style="padding-left: 0px;">
+			<div class="col-md-10" ng-show="selectedQueue.assistant.length" style="padding-left: 0px;">
 				<table class="table table-striped">
 	      			<thead class="dark-grey">
 	        			<tr>
@@ -153,14 +153,14 @@
 		        		</tr>
 		      		</thead>
 		      		<tbody>
-		        		<tr id="admin.name" ng-repeat="admin in admins">
-		          			<td>{{ admin.name }}</td>
-		          			<td>{{ admin.username }} <span class="glyphicon glyphicon-remove text-red clickable" title="Remove assistant" ng-click="removeAssistant(admin.name)" id="adminRemoveAssistantBtn"></span></td>
+		        		<tr id="assistant.name" ng-repeat="assistant in selectedQueue.assistant">
+		          			<td>{{ assistant.name }}</td>
+		          			<td>{{ assistant.username }} <span class="glyphicon glyphicon-remove text-red clickable" title="Remove assistant" ng-click="removeAssistant(assistant.name)" id="adminRemoveAssistantBtn"></span></td>
 		          		</tr>
 		          	</tbody>
 				</table>
 			</div>
-			<div ng-hide="admins.length">
+			<div ng-hide="selectedQueue.assistant.length">
 				(No admins)
 			</div>
 			<!-- End of TODO (Table of current assistants goes here) -->

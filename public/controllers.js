@@ -270,7 +270,12 @@ queueControllers.controller('adminController', ['$scope', '$location', '$http', 
     ];
     $scope.queues = [];
     $http.get('/API/queueList').success(function(response){
-      $scope.queues = response.sort(function(a, b) {return a.name.localeCompare(b.name);});
+      var temp = response.sort(function(a, b) {return a.name.localeCompare(b.name);});
+      for (var i = temp.length - 1; i >= 0; i--) {
+        $http.get('/API/queue/' + temp[i].name).success(function(response){
+          $scope.queues.push(response);
+        });
+      }
     });
 
     socket.emit('stopListening', 'lobby');
@@ -278,15 +283,16 @@ queueControllers.controller('adminController', ['$scope', '$location', '$http', 
 
   // Listen for an assistant being added to a queue.
   socket.on('addAssistant', function(data) {
-    $scope.$apply(getQueue(data.queue).assistants.push(data.name));
+    console.log("adding assistant (from backend) queueName = " + data.queueName + ", name = " + data.name + ", username = " + data.username);
+    $scope.$apply(getQueue(data.queueName).assistant.push({name:data.name, username:data.username}));
   });
 
   // Listen for an teacher being added to a queue.
   socket.on('removeAssistant', function(data) {
     for (var i = $scope.queues.length - 1; i >= 0; i--) {
       if($scope.queues[i].name === data.queue){
-        for (var j = $scope.queues.assistants.length - 1; j >= 0; j--) {
-          if($scope.queues.assistants[j] === data.name){
+        for (var j = $scope.queues.assistant.length - 1; j >= 0; j--) {
+          if($scope.queues.assistant[j] === data.name){
             $scope.$apply($scope.queues.splice(i, 1));
             break;
           }
@@ -314,15 +320,16 @@ queueControllers.controller('adminController', ['$scope', '$location', '$http', 
 
   // Listen for an teacher being added to a queue.
   socket.on('addTeacher', function(data) {
-    $scope.$apply(getQueue(data.queue).teachers.push(data.name));
+    console.log("adding teacher (from backend) queueName = " + data.queueName + ", name = " + data.name + ", username = " + data.username);
+    $scope.$apply(getQueue(data.queueName).teacher.push({name:data.name, username:data.username}));
   });
 
   // Listen for an teacher being added to a queue.
   socket.on('removeTeacher', function(data) {
     for (var i = $scope.queues.length - 1; i >= 0; i--) {
       if($scope.queues[i].name === data.queue){
-        for (var j = $scope.queues.teachers.length - 1; j >= 0; j--) {
-          if($scope.queues.teachers[j] === data.name){
+        for (var j = $scope.queues.teacher.length - 1; j >= 0; j--) {
+          if($scope.queues.teacher[j] === data.name){
             $scope.$apply($scope.queues.splice(i, 1));
             break;
           }
@@ -334,18 +341,20 @@ queueControllers.controller('adminController', ['$scope', '$location', '$http', 
 
   // Listen for a queue being hibernated.
   socket.on('hibernate', function(queue) {
+    console.log("I will go to sleep (because backend)");
     for (var i = $scope.queues.length - 1; i >= 0; i--) {
       if(queue === $scope.queues[i].name){
-        $scope.$apply($scope.queues[i].hibernating = false);
+        $scope.$apply($scope.queues[i].hibernating = true);
       }
     }
   });
 
   // Listen for a queue being unhibernated.
   socket.on('unhibernate', function(queue) {
+    console.log("I will wake up (because backend)");
     for (var i = $scope.queues.length - 1; i >= 0; i--) {
       if(queue === $scope.queues[i].name){
-        $scope.$apply($scope.queues[i].hibernating = true);
+        $scope.$apply($scope.queues[i].hibernating = false);
       }
     }
   });
@@ -562,13 +571,9 @@ $scope.removeAssistant = function(name){
 };
 
 $scope.selectQueue = function(queue){
-  for (var i = $scope.queues.length - 1; i >= 0; i--) {
-    if($scope.queues[i].name === queue){
-      $scope.selectedQueue = $scope.queues[i];
-      document.getElementById('dropdown').innerHTML = queue;
-      console.log("selected queue = " + $scope.selectedQueue.name);
-    }
-  }
+  $scope.selectedQueue = queue;
+  document.getElementById('dropdown').innerHTML = queue.name;
+  console.log("selected queue = " + $scope.selectedQueue.name);
 };
 
 }]);
