@@ -264,9 +264,9 @@ queueControllers.controller('adminController', ['$scope', '$location', '$http', 
     $scope.dropdown = undefined;
     $scope.newAdmin = '';
     $scope.admins = [
-    {name:'Anton',  id:'antbac'},
-    {name:'Robert',  id:'robertwb'},
-    {name:'Per',  id:'pernyb'}
+    {name:'Anton',  username:'antbac'},
+    {name:'Robert',  username:'robertwb'},
+    {name:'Per',  username:'pernyb'}
     ];
     $scope.queues = [];
     $http.get('/API/queueList').success(function(response){
@@ -299,6 +299,7 @@ queueControllers.controller('adminController', ['$scope', '$location', '$http', 
   // Listen for an teacher being added to a queue.
   socket.on('addAdmin', function(user) {
     $scope.$apply($scope.admins.push(user));
+    console.log("Recevived a nde admin : " + user);
   });
 
     // Listen for an teacher being added to a queue.
