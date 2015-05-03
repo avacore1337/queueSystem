@@ -95,10 +95,15 @@ function setup(){
 
   var newAdmin = new Admin2({name: "pernyb", username: "pernyb"});
   adminList.push(newAdmin);
+  newAdmin.save();
+
   newAdmin = new Admin2({name: "antbac", username: "antbac"});
   adminList.push(newAdmin);
+  newAdmin.save();
+
   newAdmin = new Admin2({name: "rwb", username: "rwb"});
   adminList.push(newAdmin);
+  newAdmin.save();
 }
 
 // Read in courses and admins from the database
@@ -496,9 +501,8 @@ app.io.route('addAdmin', function(req) {
     //res.end();
     return;
   }*/
-  var adminName = req.data.name;
-//  var username = req.data.username;
-/*TEST*/  var username = adminName;
+  var username = req.data.username;
+  var adminName = username;
   var queue = req.data.queue;
 
   var newAdmin = new Admin2({name: adminName, username: username});
@@ -571,12 +575,12 @@ app.io.route('removeAdmin', function(req) {
     var admin = adminList[i];
     if (admin.username === username) {
       adminList.splice(i, 1);
+      admin.remove();
       break;
     }
   };
-  adminList.save();
 
-  console.log(adminName + ' is a removed from admin!');
+  console.log(username + ' is a removed from admin!');
   app.io.room('admin').broadcast('removeAdmin', username);
 });
 
