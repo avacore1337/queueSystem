@@ -399,6 +399,7 @@ queueControllers.controller('adminController', ['$scope', '$location', '$http', 
     socket.emit('addQueue', {
       queue:$scope.newQueue
     });
+    $scope.newQueue = "";
   };
 
   $scope.removeQueue = function(){
@@ -436,7 +437,7 @@ queueControllers.controller('adminController', ['$scope', '$location', '$http', 
     modalInstance.result.then(function (message) {
       if(message === "delete"){
         socket.emit('removeQueue', {
-          queue:$scope.selectedQueue.name
+          queueName:$scope.selectedQueue.name
         });
         console.log("Trying to delete queue " + $scope.selectedQueue.name);
         document.getElementById('dropdown').innerHTML = "Select Queue";
@@ -597,7 +598,7 @@ queueControllers.controller('TitleController', ['$scope', 'TitleService',
     console.log(title);
     $scope.title = title.title;
 
-    $scope.$watch(function () { return title.title }, function(newValue, oldValue) {
+    $scope.$watch(function () { return title.title; }, function(newValue, oldValue) {
       $scope.title = newValue;
     });
   }]);
