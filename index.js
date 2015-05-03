@@ -489,9 +489,9 @@ app.io.route('addQueue', function(req) {
   courseList.push(newCourse);
   newCourse.save();
 
-  console.log(queueName + ' is getting created');
+  console.log(queueName + ' is getting created as ' + JSON.stringify(newCourse));
 
-  app.io.room('admin').broadcast('addQueue', {course: newCourse});
+  app.io.room('admin').broadcast('addQueue', newCourse);
 });
 
 //
