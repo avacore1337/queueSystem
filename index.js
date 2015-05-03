@@ -93,11 +93,11 @@ function setup(){
     console.log(course  + " " +  newCourse.queue.length); // temporary for error-solving
   }
 
-  var newAdmin = new Admin2(name: pernyb, username: pernyb);
+  var newAdmin = new Admin2({name: "pernyb", username: "pernyb"});
   adminList.push(newAdmin);
-  newAdmin = new Admin2(name: antbac, username: antbac);
+  newAdmin = new Admin2({name: "antbac", username: "antbac"});
   adminList.push(newAdmin);
-  newAdmin = new Admin2(name: rwb, username: rwb);
+  newAdmin = new Admin2({name: "rwb", username: "rwb"});
   adminList.push(newAdmin);
 }
 
@@ -600,6 +600,11 @@ app.io.route('flag', function(req) {
   app.io.room(queue).broadcast('flag', name, message);
 });
 
+//
+app.io.route('setUser', function(req) {
+  req.session.user = req.data;
+});
+
 // =================================================================================
 
 // returnerar alla kurser som finns (lista av strängar)
@@ -642,6 +647,7 @@ app.get('/API/userData', function(req, res) {
 
 app.post('/API/setUser', function(req,res) {
   req.session.user = req.body;
+// Robert-TODO: set socket
   console.log("User settings set");
   res.writeHead(200);
   res.end();
