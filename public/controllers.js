@@ -290,9 +290,9 @@ queueControllers.controller('adminController', ['$scope', '$location', '$http', 
   // Listen for an teacher being added to a queue.
   socket.on('removeAssistant', function(data) {
     for (var i = $scope.queues.length - 1; i >= 0; i--) {
-      if($scope.queues[i].name === data.queue){
+      if($scope.queues[i].name === data.queueName){
         for (var j = $scope.queues.assistant.length - 1; j >= 0; j--) {
-          if($scope.queues.assistant[j] === data.name){
+          if($scope.queues.assistant[j].username === data.username){
             $scope.$apply($scope.queues.splice(i, 1));
             break;
           }
@@ -309,9 +309,10 @@ queueControllers.controller('adminController', ['$scope', '$location', '$http', 
   });
 
     // Listen for an teacher being added to a queue.
-    socket.on('removeAdmin', function(user) {
+    socket.on('removeAdmin', function(username) {
+      console.log("Backend wants to remove the admin " + username);
       for (var i = $scope.admins.length - 1; i >= 0; i--) {
-        if($scope.admins[i] === user){
+        if($scope.admins[i].username === username){
           $scope.$apply($scope.admins.splice(i, 1));
           break;
         }
@@ -327,9 +328,9 @@ queueControllers.controller('adminController', ['$scope', '$location', '$http', 
   // Listen for an teacher being added to a queue.
   socket.on('removeTeacher', function(data) {
     for (var i = $scope.queues.length - 1; i >= 0; i--) {
-      if($scope.queues[i].name === data.queue){
+      if($scope.queues[i].name === data.queueName){
         for (var j = $scope.queues.teacher.length - 1; j >= 0; j--) {
-          if($scope.queues.teacher[j] === data.name){
+          if($scope.queues.teacher[j].username === data.username){
             $scope.$apply($scope.queues.splice(i, 1));
             break;
           }
@@ -518,25 +519,25 @@ $scope.unhibernateQueue = function(){
 $scope.addAdmin = function(){
   if($scope.newAdmin !== ""){
     socket.emit('addAdmin', {
-      name:$scope.newAdmin
+      username:$scope.newAdmin
     });
     console.log("Adding admin " + $scope.newAdmin);
     $scope.newAdmin = '';
   }
 };
 
-$scope.removeAdmin = function(name){
+$scope.removeAdmin = function(user){
   socket.emit('removeAdmin', {
-    name:name
+    username:user.name
   });
-  console.log("Removing admin " + admin);
+  console.log("Removing admin " + user.name);
 };
 
 $scope.addTeacher = function(){
   if($scope.newTeacher !== "" && $scope.selectedQueue !== undefined){
     socket.emit('addTeacher', {
-      name:$scope.newTeacher,
-      queue:$scope.selectedQueue.name
+      username:$scope.newTeacher,
+      queueName:$scope.selectedQueue.name
     });
     console.log("Adding teacher " + $scope.newTeacher + " in the queue " + $scope.selectedQueue.name);
     $scope.newTeacher = '';
@@ -545,8 +546,8 @@ $scope.addTeacher = function(){
 
 $scope.removeTeacher = function(name){
   socket.emit('removeTeacher', {
-    name:$scope.newTeacher,
-    queue:$scope.selectedQueue.name
+    username:$scope.newTeacher,
+    queueName:$scope.selectedQueue.name
   });
   console.log("Removing teacher " + name + " in the queue " + $scope.selectedQueue.name);
 };
@@ -554,8 +555,8 @@ $scope.removeTeacher = function(name){
 $scope.addAssistant = function(){
   if($scope.newAssistant !== "" && $scope.selectedQueue !== undefined){
     socket.emit('addAssistant', {
-      name:$scope.newAssistant,
-      queue:$scope.selectedQueue.name
+      username:$scope.newAssistant,
+      queueName:$scope.selectedQueue.name
     });
     console.log("Adding assistant " + $scope.newAssistant  + " in the queue " + $scope.selectedQueue.name);
     $scope.newAssistant = '';
@@ -564,8 +565,8 @@ $scope.addAssistant = function(){
 
 $scope.removeAssistant = function(name){
   socket.emit('removeAssistant', {
-    name:$scope.newAssistant,
-    queue:$scope.selectedQueue.name
+    username:$scope.newAssistant,
+    queueName:$scope.selectedQueue.name
   });
   console.log("Removing assistant " + name  + " in the queue " + $scope.selectedQueue.name);
 };
