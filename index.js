@@ -581,6 +581,42 @@ app.io.route('removeAdmin', function(req) {
 });
 
 //
+app.io.route('removeTeacher', function(req) {
+ // teacher-validation
+/*  if (!validate("pernyb", "super", "course")) {
+    console.log("validation for addAssistant failed");
+    //res.end();
+    return;
+  }*/
+  var username = req.data.username;
+  var queueName = req.data.queueName;
+  var course = findCourse(queueName);
+
+  course.removeTeacher(username);
+
+  console.log(username + ' is a removed as a teacher in ' + queueName + '!');
+  app.io.room('admin').broadcast('removeTeacher',  {username: username, queueName: queueName});
+});
+
+//
+app.io.route('removeAssistant', function(req) {
+ // teacher-validation
+/*  if (!validate("pernyb", "super", "course")) {
+    console.log("validation for addAssistant failed");
+    //res.end();
+    return;
+  }*/
+  var username = req.data.username;
+  var queueName = req.data.queueName;
+  var course = findCourse(queueName);
+
+  course.removeAssistant(username);
+
+  console.log(username + ' is a removed as a assistant in ' + queueName + '!');
+  app.io.room('admin').broadcast('removeAssistant',  {username: username, queueName: queueName});
+});
+
+//
 app.io.route('flag', function(req) {
  // assistant-validation
   if (!validate("pernyb", "type", "course")) {
