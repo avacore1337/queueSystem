@@ -112,11 +112,13 @@ queueControllers.controller('statisticsController', ['$scope', '$http', 'WebSock
       x /= 60;
       var hours = x % 24;
       if(hours !== 0){
-        $scope.averageQueueTime = hours + "h " + minutes + "m " + seconds + "s";  
+        $scope.averageQueueTime = hours + "h " + minutes + "m " + seconds + "s";
       }else if(minutes !== 0){
-        $scope.averageQueueTime = minutes + "m " + seconds + "s";  
+        $scope.averageQueueTime = minutes + "m " + seconds + "s";
+      }else if(seconds !== 0){
+        $scope.averageQueueTime = seconds + "s"; 
       }else{
-        $scope.averageQueueTime = seconds + "s";  
+        $scope.averageQueueTime = "0s"; 
       }
       console.log("Received data : " + time);
       console.log("Average time = : " + $scope.averageQueueTime);
@@ -130,7 +132,7 @@ queueControllers.controller('statisticsController', ['$scope', '$http', 'WebSock
 
     $scope.selectedQueue = undefined;
     $scope.selectQueue = function(queue){
-      $scope.selectedQueue = queue;
+      $scope.selectedQueue = getQueue(queue);
       document.getElementById('dropdown').innerHTML = queue;
       console.log("selected queue = " + $scope.selectedQueue);
     };
@@ -161,6 +163,7 @@ queueControllers.controller('statisticsController', ['$scope', '$http', 'WebSock
 
     // Statistics
     $scope.getStatistics = function() {
+      console.log($scope.selectedQueue);
       socket.emit('getAverageQueueTime', {
           queue:$scope.selectedQueue,
           start:$scope.fromTime.getTime(),
@@ -168,6 +171,14 @@ queueControllers.controller('statisticsController', ['$scope', '$http', 'WebSock
       });
       console.log("Requested averageQueueTime");
     };
+
+    function getQueue (queue) {
+      for(var index in $scope.queues){
+        if($scope.queues[index].name === queue){
+          return $scope.queues[index];
+        }
+      }
+    }
 
 }]);
 
