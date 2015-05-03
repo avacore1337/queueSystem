@@ -39,11 +39,13 @@ db.once('open', function callback () {
 var User2 = database.user;
 var Admin2 = database.admin;
 var Course2 = database.course;
+var Statistic2 = database.statistic;
 
 //---
 
 var courseList = [];
 var adminList = [];
+var statisticsList = [];
 
 //===============================================================
 // Methods for setting up or reading in the database (in production, only readIn should be used)
@@ -79,6 +81,8 @@ function setup(){
       var newUser = new User2({name: Math.random().toString(36).substring(7), place: 'Green', comment: 'lab1', startTime: randomTime});
       newCourse.addUser(newUser);
       newCourse.save();
+      var newStatistic = new Statistic2({name: newUser.name, course: newCourse.name, startTime: newUser.startTime, action: ''});
+      statisticsList.push(newStatistic);
 
 //---------------------------------------------------------------------------------------
 /*TEST*/      randomTime += Math.random() * 5 * 10000;
@@ -430,9 +434,13 @@ app.io.route('getAverageQueueTime', function(req) {
 
 
 app.io.route('numbersOfPeopleLeftQueue', function(req) {
-  var queue = req.data.queue;
+  var queueName = req.data.queueName;
+  var start = req.data.start;
+  var end = req.data.end;
 
-  var numbersOfPeopleLeft = 0;
+  console.log("Bounty hunting..");
+
+  var numbersOfPeopleLeft = numbersOfPeopleLeftQueue(queueName, start, end);
 
   app.io.room('statistics').broadcast('numbersOfPeopleLeftQueue', numbersOfPeopleLeft);
 });
@@ -465,8 +473,27 @@ function getAverageQueueTime(queueName, start, end) {
 }
 
 // number of people who joined the queue from 'start' and left before 'end'
-function numbersOfPeopleLeftQueue(queue, start, end) {
-  return 0;
+function numbersOfPeopleLeftQueue(queueName, start, end) {
+  var counter = 0;
+
+  for (var i = statisticsList.length - 1; i >= 0; i--) {
+    var statistic = statisticsList[i];
+
+    if (statistic.course === queueName) {
+            console.log('A');
+      if (statistic.startTime >= start && statistic.startTime < end) {
+            console.log('B');
+        if (statistic.leftQueue) {
+            console.log('C');
+          if (statistic.startTime + statistic.queueLength < end) {
+            counter++;
+          }
+        }
+      }
+    }
+  };
+
+  return counter;
 }
 
 //===============================================================

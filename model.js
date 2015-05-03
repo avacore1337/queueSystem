@@ -215,18 +215,13 @@ var booking = new Schema({
 var statisticSchema = new Schema({
   name: String,
   course: String,
-  time: { type: Number, default: Date.now },
+  startTime: { type: Number, default: Date.now },
   action: String,
   leftQueue: { type: Boolean, default: false },
   queueLength: { type: Number, default: 0},
 });
 
-statisticSchema.index({time: 1});
-
-//===============================================================
-// Schemas that will be used, but are not correctly formated as of this commit
-
-var UserStatistic2 = mongoose.model("UserStatistic", statisticSchema);
+statisticSchema.index({startTime: 1});
 
 //=========================================
 // The schemas that will be used in "index.js"
@@ -234,6 +229,7 @@ var UserStatistic2 = mongoose.model("UserStatistic", statisticSchema);
 var User = mongoose.model("User", userSchema);
 var Admin = mongoose.model("Admin", adminSchema);
 var Course = mongoose.model("Course", courseSchema);
+var Statistic = mongoose.model("UserStatistic", statisticSchema);
 
 //=========================================
 // Export data from this file to "index.js"
@@ -241,5 +237,6 @@ var Course = mongoose.model("Course", courseSchema);
 module.exports = {
   user: User,
   admin: Admin,
-  course: Course
+  course: Course,
+  statistic: Statistic
 };
