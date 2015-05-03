@@ -309,6 +309,7 @@ function doOnCourse(courseName, action){
   console.log('trying to ' + action + ' ' + courseName);
   app.io.room(courseName).broadcast(action);
   app.io.room("lobby").broadcast("lobby" + action, courseName);
+
   if (action === 'hibernate') {
     app.io.room("admin").broadcast('hibernate', courseName);
   } else if (action === 'unhibernate') {
@@ -512,8 +513,14 @@ app.io.route('addTeacher', function(req) {
   var teacherName = req.data.name;
 //  var username = req.data.username;
 /*TEST*/  var username = teacherName;
-  var queue = req.data.queue;
-  var course = req.data.course;
+  var queueName = req.data.queue;
+  var course = findCourse(queueName);
+
+  var newTeacher = new Admin2({name: teacherName, username: username});
+  adminList.push(newTeacher);
+
+  course.teacher.push(newTeacher);
+  course.save();
 
 /*  var newTeacher = new Teacher2({name: teacherName, course: course});
   teacherList.push(newTeacher);
