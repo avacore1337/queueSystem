@@ -271,7 +271,7 @@ queueControllers.controller('adminController', ['$scope', '$location', '$http', 
     $scope.queues = [];
     $http.get('/API/queueList').success(function(response){
       var temp = response.sort(function(a, b) {return a.name.localeCompare(b.name);});
-      for (var i = temp.length - 1; i >= 0; i--) {
+      for (var i in temp) {
         $http.get('/API/queue/' + temp[i].name).success(function(response){
           $scope.queues.push(response);
         });

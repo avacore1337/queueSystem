@@ -107,9 +107,15 @@
 		<div class="row col-md-6">
 			<h3>Teachers at Stay A While&nbsp;<a href="/help">?</a></h3>
 			<h5>New teachers might have to log out and in again in order to get all of their new privileges.</h5>
-			<div class="input-group col-md-9">
+			<!-- Real input -->
+			<div class="input-group col-md-9" ng-show="selectedQueue">
 				<input type="text" class="form-control" ng-model="newTeacher" placeholder="Add teacher" onfocus="this.placeholder = ''" onblur="this.placeholder = 'Add teacher'" id="adminAddTeacherInputField">
 				<span class="input-group-addon blue clickable text-white" style="border: 0px;" ng-click="addTeacher()" id="adminAddTeacherBtn"><span class="glyphicon glyphicon-plus"></span>Add</span>
+			</div>
+			<!-- Fake input -->
+			<div class="input-group col-md-9" ng-hide="selectedQueue">
+				<input type="text" class="form-control" id="adminAddTeacherNoQueueInputField" disabled>
+				<span class="input-group-addon text-white" style="border: 0px; background-color: rgb(200, 200, 200);" id="adminAddTeacherNoQueueBtn"><span class="glyphicon glyphicon-plus"></span>Add</span>
 			</div>
 			<div class="buffer"></div>
 			<!-- TODO : Table of current teachers goes here -->
@@ -138,9 +144,15 @@
 		<div class="row col-md-6 left-divider">
 			<h3>Assistants at Stay A While&nbsp;<a href="/help">?</a></h3>
 			<h5>New assistants might have to log out and in again in order to get all of their new privileges.</h5>
-			<div class="input-group col-md-9">
+			<!-- Real input -->
+			<div class="input-group col-md-9" ng-show="selectedQueue">
 				<input type="text" class="form-control" ng-model="newAssistant" placeholder="Add assistant" onfocus="this.placeholder = ''" onblur="this.placeholder = 'Add assistant'" id="adminAddAssistantInputField">
 				<span class="input-group-addon blue clickable text-white" style="border: 0px;" ng-click="addAssistant()" id="adminAddAssistantBtn"><span class="glyphicon glyphicon-plus"></span>Add</span>
+			</div>
+			<!-- Fake input -->
+			<div class="input-group col-md-9" ng-hide="selectedQueue">
+				<input type="text" class="form-control" id="adminAddAssistantNoQueueInputField" disabled>
+				<span class="input-group-addon text-white" style="border: 0px; background-color: rgb(200, 200, 200);" id="adminAddAssistantNoQueueBtn"><span class="glyphicon glyphicon-plus"></span>Add</span>
 			</div>
 			<div class="buffer"></div>
 			<!-- TODO : Table of current assistants goes here -->
@@ -161,7 +173,7 @@
 				</table>
 			</div>
 			<div ng-hide="selectedQueue.assistant.length">
-				(No admins)
+				(No assistants)
 			</div>
 			<!-- End of TODO (Table of current assistants goes here) -->
 		</div>
