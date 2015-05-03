@@ -299,11 +299,12 @@ queueControllers.controller('adminController', ['$scope', '$location', '$http', 
 
   // Listen for an teacher being added to a queue.
   socket.on('removeAssistant', function(data) {
+    console.log("Backend wants to remove the assistant " + data.username + " from the queue " + data.queueName);
     for (var i = $scope.queues.length - 1; i >= 0; i--) {
       if($scope.queues[i].name === data.queueName){
-        for (var j = $scope.queues.assistant.length - 1; j >= 0; j--) {
-          if($scope.queues.assistant[j].username === data.username){
-            $scope.$apply($scope.queues.splice(i, 1));
+        for (var j = $scope.queues[i].assistant.length - 1; j >= 0; j--) {
+          if($scope.queues[i].assistant[j].username === data.username){
+            $scope.$apply($scope.queues[i].assistant.splice(j, 1));
             break;
           }
         }
@@ -337,11 +338,12 @@ queueControllers.controller('adminController', ['$scope', '$location', '$http', 
 
   // Listen for an teacher being added to a queue.
   socket.on('removeTeacher', function(data) {
+    console.log("Backend wants to remove the teacher " + data.username + " from the queue " + data.queueName);
     for (var i = $scope.queues.length - 1; i >= 0; i--) {
       if($scope.queues[i].name === data.queueName){
-        for (var j = $scope.queues.teacher.length - 1; j >= 0; j--) {
-          if($scope.queues.teacher[j].username === data.username){
-            $scope.$apply($scope.queues.splice(i, 1));
+        for (var j = $scope.queues[i].teacher.length - 1; j >= 0; j--) {
+          if($scope.queues[i].teacher[j].username === data.username){
+            $scope.$apply($scope.queues[i].teacher.splice(j, 1));
             break;
           }
         }
