@@ -716,13 +716,19 @@ app.get('/API/userData', function(req, res) {
 
 function teacherForCourses(username) {
   var teacherList = [];
-  for (var i = courseList.length - 1; i >= 0; i--) {
-    var course = courseList[i];
+
+  for (var n = courseList.length - 1; n >= 0; n--) {
+    var course = courseList[n];
     var courseName = course.name;
     var courseTeacherList = course.teacher;
+
+    console.log("Seacrhing in " + courseName);
+
     for (var i = courseTeacherList.length - 1; i >= 0; i--) {
       var teacher = courseTeacherList[i];
       if (teacher.name === username) {
+        console.log("Found " + username + " in " + courseName);
+
         teacherList.push(courseName);
         break;
       }
@@ -734,8 +740,8 @@ function teacherForCourses(username) {
 
 function assistantForCourses(username) {
   var assistantList = [];
-  for (var i = courseList.length - 1; i >= 0; i--) {
-    var course = courseList[i];
+  for (var n = courseList.length - 1; n >= 0; n--) {
+    var course = courseList[n];
     var courseName = course.name;
     var courseAssistantList = course.assistant;
     for (var i = courseAssistantList.length - 1; i >= 0; i--) {
