@@ -44,7 +44,7 @@
 	      			<tbody>
 	        			<tr id="admin.name" ng-repeat="admin in admins">
 	          				<td>{{ admin.name }}</td>
-	          				<td>{{ admin.username }} <span class="glyphicon glyphicon-remove text-red clickable" title="Remove admin" ng-click="removeAdmin(admin.name)" id="adminRemoveAdminBtn"></span></td>
+	          				<td>{{ admin.username }} <span class="glyphicon glyphicon-remove text-red clickable" title="Remove admin" ng-click="removeAdmin(admin)" id="adminRemoveAdminBtn"></span></td>
 		          		</tr>
 		          	</tbody>
 				</table>
@@ -86,7 +86,7 @@
 		        	<div class="col-md-11 text-left" id="dropdown">Select Queue</div> <span class="caret"></span>
 		        </button>
 		        <ul class="dropdown-menu">
-					<li ng-repeat="queue in queues"><a href="" ng-click="selectQueue(queue.name)" id="admin{{queue.name}}DropDownBtn">{{queue.name}}</a></li>
+					<li ng-repeat="queue in queues"><a href="" ng-click="selectQueue(queue)" id="admin{{queue.name}}DropDownBtn">{{queue.name}}</a></li>
 		        </ul>
 			</div>
 		</div>
@@ -107,13 +107,19 @@
 		<div class="row col-md-6">
 			<h3>Teachers at Stay A While&nbsp;<a href="/help">?</a></h3>
 			<h5>New teachers might have to log out and in again in order to get all of their new privileges.</h5>
-			<div class="input-group col-md-9">
+			<!-- Real input -->
+			<div class="input-group col-md-9" ng-show="selectedQueue">
 				<input type="text" class="form-control" ng-model="newTeacher" placeholder="Add teacher" onfocus="this.placeholder = ''" onblur="this.placeholder = 'Add teacher'" id="adminAddTeacherInputField">
 				<span class="input-group-addon blue clickable text-white" style="border: 0px;" ng-click="addTeacher()" id="adminAddTeacherBtn"><span class="glyphicon glyphicon-plus"></span>Add</span>
 			</div>
+			<!-- Fake input -->
+			<div class="input-group col-md-9" ng-hide="selectedQueue">
+				<input type="text" class="form-control" id="adminAddTeacherNoQueueInputField" disabled>
+				<span class="input-group-addon text-white" style="border: 0px; background-color: rgb(200, 200, 200);" id="adminAddTeacherNoQueueBtn"><span class="glyphicon glyphicon-plus"></span>Add</span>
+			</div>
 			<div class="buffer"></div>
 			<!-- TODO : Table of current teachers goes here -->
-			<div class="col-md-10" ng-show="admins.length" style="padding-left: 0px;">
+			<div class="col-md-10" ng-show="selectedQueue.teacher.length" style="padding-left: 0px;">
 				<table class="table table-striped">
 	      			<thead class="dark-grey">
 	        			<tr>
@@ -122,14 +128,14 @@
 		        		</tr>
 		      		</thead>
 		      		<tbody>
-		        		<tr id="admin.name" ng-repeat="admin in admins">
-		          			<td>{{ admin.name }}</td>
-		          			<td>{{ admin.username }} <span class="glyphicon glyphicon-remove text-red clickable" title="Remove teacher" ng-click="removeTeacher(admin.name)" id="adminRemoveTeacherBtn"></span></td>
+		        		<tr id="teacher.username" ng-repeat="teacher in selectedQueue.teacher">
+		          			<td>{{ teacher.name }}</td>
+		          			<td>{{ teacher.username }} <span class="glyphicon glyphicon-remove text-red clickable" title="Remove teacher" ng-click="removeTeacher(teacher.name)" id="adminRemoveTeacherBtn"></span></td>
 		          		</tr>
 		          	</tbody>
 				</table>
 			</div>
-			<div ng-hide="admins.length">
+			<div ng-hide="selectedQueue.teacher.length">
 				(No teachers)
 			</div>
 			<!-- End of TODO (Table of current teachers goes here) -->
@@ -138,13 +144,19 @@
 		<div class="row col-md-6 left-divider">
 			<h3>Assistants at Stay A While&nbsp;<a href="/help">?</a></h3>
 			<h5>New assistants might have to log out and in again in order to get all of their new privileges.</h5>
-			<div class="input-group col-md-9">
+			<!-- Real input -->
+			<div class="input-group col-md-9" ng-show="selectedQueue">
 				<input type="text" class="form-control" ng-model="newAssistant" placeholder="Add assistant" onfocus="this.placeholder = ''" onblur="this.placeholder = 'Add assistant'" id="adminAddAssistantInputField">
 				<span class="input-group-addon blue clickable text-white" style="border: 0px;" ng-click="addAssistant()" id="adminAddAssistantBtn"><span class="glyphicon glyphicon-plus"></span>Add</span>
 			</div>
+			<!-- Fake input -->
+			<div class="input-group col-md-9" ng-hide="selectedQueue">
+				<input type="text" class="form-control" id="adminAddAssistantNoQueueInputField" disabled>
+				<span class="input-group-addon text-white" style="border: 0px; background-color: rgb(200, 200, 200);" id="adminAddAssistantNoQueueBtn"><span class="glyphicon glyphicon-plus"></span>Add</span>
+			</div>
 			<div class="buffer"></div>
 			<!-- TODO : Table of current assistants goes here -->
-			<div class="col-md-10" ng-show="admins.length" style="padding-left: 0px;">
+			<div class="col-md-10" ng-show="selectedQueue.assistant.length" style="padding-left: 0px;">
 				<table class="table table-striped">
 	      			<thead class="dark-grey">
 	        			<tr>
@@ -153,15 +165,15 @@
 		        		</tr>
 		      		</thead>
 		      		<tbody>
-		        		<tr id="admin.name" ng-repeat="admin in admins">
-		          			<td>{{ admin.name }}</td>
-		          			<td>{{ admin.username }} <span class="glyphicon glyphicon-remove text-red clickable" title="Remove assistant" ng-click="removeAssistant(admin.name)" id="adminRemoveAssistantBtn"></span></td>
+		        		<tr id="assistant.name" ng-repeat="assistant in selectedQueue.assistant">
+		          			<td>{{ assistant.name }}</td>
+		          			<td>{{ assistant.username }} <span class="glyphicon glyphicon-remove text-red clickable" title="Remove assistant" ng-click="removeAssistant(assistant.name)" id="adminRemoveAssistantBtn"></span></td>
 		          		</tr>
 		          	</tbody>
 				</table>
 			</div>
-			<div ng-hide="admins.length">
-				(No admins)
+			<div ng-hide="selectedQueue.assistant.length">
+				(No assistants)
 			</div>
 			<!-- End of TODO (Table of current assistants goes here) -->
 		</div>
