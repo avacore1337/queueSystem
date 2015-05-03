@@ -483,7 +483,7 @@ app.io.route('addQueue', function(req) {
     //res.end();
     return;
   }
-  var queueName = req.data.queue;
+  var queueName = req.data.queueName;
 
   var newCourse = new Course2({name: queueName});
   courseList.push(newCourse);
