@@ -491,7 +491,7 @@ app.io.route('addQueue', function(req) {
 
   console.log(queueName + ' is getting created');
 
-  app.io.room('admin').broadcast('addQueue', newCourse);
+  app.io.room('admin').broadcast('addQueue', {course: newCourse});
 });
 
 //
