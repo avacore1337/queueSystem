@@ -92,6 +92,13 @@ function setup(){
 
     console.log(course  + " " +  newCourse.queue.length); // temporary for error-solving
   }
+
+  var newAdmin = new Admin2(name: pernyb, username: pernyb);
+  adminList.push(newAdmin);
+  newAdmin = new Admin2(name: antbac, username: antbac);
+  adminList.push(newAdmin);
+  newAdmin = new Admin2(name: rwb, username: rwb);
+  adminList.push(newAdmin);
 }
 
 // Read in courses and admins from the database
@@ -616,6 +623,13 @@ app.get('/API/queue/:queue', function(req, res) {
     console.log('queue '+ req.params.queue +' requested');
     console.log(course);
     res.end(JSON.stringify(course));
+});
+
+// returns the admin-list
+// needs to be restricted
+app.get('/API/adminList', function(req, res) {
+    res.setHeader('Content-Type', 'application/json');
+    res.end(JSON.stringify(adminList));
 });
 
 // TODO: add a list of admin
