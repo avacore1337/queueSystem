@@ -506,7 +506,7 @@ app.io.route('addAdmin', function(req) {
   newAdmin.save();
 
   console.log(adminName + ' is a new admin!');
-  app.io.room('admin').broadcast('addAdmin', {name: adminName, username: username});
+  app.io.room('admin').broadcast('addAdmin', {name: adminName, username: username, addedBy: ''});
 });
 
 //
