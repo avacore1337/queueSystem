@@ -124,7 +124,9 @@ queueControllers.controller('statisticsController', ['$scope', '$http', 'WebSock
     // Listen for new statistics.
     socket.on('numbersOfPeopleLeftQueue', function(amount) {
       $scope.$apply($scope.numbersOfPeopleLeftQueue = amount);
+      console.log("Amount to 'numbersOfPeopleLeftQueue' : " + amount);
     });
+    $scope.numbersOfPeopleLeftQueue = -1;
 
     // Queue selection
     $scope.queues = [];
@@ -161,7 +163,7 @@ queueControllers.controller('statisticsController', ['$scope', '$http', 'WebSock
     $scope.toTime = new Date();
 
     $scope.hstep = 1;
-    $scope.mstep = 5;
+    $scope.mstep = 1;
 
     // Statistics
     $scope.getStatistics = function() {
@@ -185,6 +187,7 @@ queueControllers.controller('statisticsController', ['$scope', '$http', 'WebSock
 queueControllers.controller('loginController', ['$scope', '$location', '$http', 'TitleService',
   function ($scope, $location, $http, title) {
     title.title = "Log in | Stay A While";
+
     $scope.done = function () {
       console.log("Reached done()");
       $http.post('/API/setUser', {
@@ -347,12 +350,12 @@ queueControllers.controller('adminController', ['$scope', '$location', '$http', 
   });
 
   // Listen for a queue being added.
-  socket.on('createQueue', function(queue) {
+  socket.on('addQueue', function(queue) {
     $scope.$apply($scope.queues.push(queue));
   });
 
   // Listen for the person leaving a queue event.
-  socket.on('deleteQueue', function(queue) {
+  socket.on('removeQueue', function(queue) {
     for (var i = $scope.queues.length - 1; i >= 0; i--) {
       if(queue === $scope.queues[i].name){
         $scope.$apply($scope.queues.splice(i, 1));
@@ -368,14 +371,14 @@ queueControllers.controller('adminController', ['$scope', '$location', '$http', 
     }
   }
 
-  $scope.createQueue = function(){
-    socket.emit('createQueue', {
-      queue:queue
+  $scope.addQueue = function(){
+    socket.emit('addQueue', {
+      queue:$scope.newQueue
     });
   };
 
-  $scope.deleteQueue = function(){
-    console.log("Called deleteQueue");
+  $scope.removeQueue = function(){
+    console.log("Called removeQueue");
     var modalInstance = $modal.open({
       templateUrl: 'warning.html',
       controller: function ($scope, $modalInstance, title, message, safeButtonText, dangerButtonText) {
@@ -408,7 +411,7 @@ queueControllers.controller('adminController', ['$scope', '$location', '$http', 
 
     modalInstance.result.then(function (message) {
       if(message === "delete"){
-        socket.emit('deleteQueue', {
+        socket.emit('removeQueue', {
           queue:$scope.selectedQueue.name
         });
         console.log("Trying to delete queue " + $scope.selectedQueue.name);
