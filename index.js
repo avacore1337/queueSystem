@@ -705,9 +705,36 @@ app.get('/API/adminList', function(req, res) {
 app.get('/API/userData', function(req, res) {
     console.log("user data: ");
     console.log(req.session.user);
+
+    var username = req.session.user.name;
+    var teacherList = teacherForCourses(username)
+    var assistantList = assistantForCourses(username)
+
     res.setHeader('Content-Type', 'application/json');
-    res.end(JSON.stringify(req.session.user));
+    res.end({sessionUser: JSON.stringify(req.session.user), teachers: teacherList, assistants: assistantList});
 });
+
+function teacherForCourses(username) {
+  var teacherList = [];
+  for (var i = courseList.length - 1; i >= 0; i--) {
+    var course = courseList[i];
+    var courseName = course.name;
+    var courseTeacherList = course.teacher;
+    for (var i = courseTeacherList.length - 1; i >= 0; i--) {
+      var teacher = courseTeacherList[i];
+      if (teacher.name === username) {
+        teacherList.push(courseName);
+        break;
+      }
+    };
+  };
+
+  return teacherList;
+}
+
+function assistantForCourses(username) {
+  return [];
+}
 
 app.post('/API/setUser', function(req,res) {
   req.session.user = req.body;
