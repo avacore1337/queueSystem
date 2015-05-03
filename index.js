@@ -503,7 +503,6 @@ app.io.route('addAdmin', function(req) {
   }*/
   var username = req.data.username;
   var adminName = username;
-  var queue = req.data.queue;
 
   var newAdmin = new Admin2({name: adminName, username: username});
   adminList.push(newAdmin);
@@ -569,7 +568,6 @@ app.io.route('removeAdmin', function(req) {
     return;
   }*/
   var username = req.data.username;
-  var queueName = req.data.queueName;
 
   for (var i = adminList.length - 1; i >= 0; i--) {
     var admin = adminList[i];
