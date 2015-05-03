@@ -555,7 +555,7 @@ $scope.addTeacher = function(){
   }
 };
 
-$scope.removeTeacher = function(name){
+$scope.removeTeacher = function(username){
   socket.emit('removeTeacher', {
     username:username,
     queueName:$scope.selectedQueue.name
