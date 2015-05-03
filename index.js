@@ -463,8 +463,7 @@ app.io.route('addQueue', function(req) {
     //res.end();
     return;
   }
-  var queueName = req.data.name;
-  var queue = req.data.queue;
+  var queueName = req.data.queue;
 
   var newCourse = new Course2({name: queueName});
   courseList.push(newCourse);
@@ -472,7 +471,7 @@ app.io.route('addQueue', function(req) {
 
   console.log(queueName + ' is getting created');
 
-  app.io.room('admin').broadcast('addQueue', queueName);
+  app.io.room('admin').broadcast('addQueue', newCourse);
 });
 
 //
