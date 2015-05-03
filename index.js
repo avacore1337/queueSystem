@@ -83,6 +83,7 @@ function setup(){
       newCourse.save();
       var newStatistic = new Statistic2({name: newUser.name, course: newCourse.name, startTime: newUser.startTime, action: ''});
       statisticsList.push(newStatistic);
+      newStatistic.save();
 
 //---------------------------------------------------------------------------------------
 /*TEST*/      randomTime += Math.random() * 5 * 10000;
@@ -91,23 +92,6 @@ function setup(){
 
     console.log(course  + " " +  newCourse.queue.length); // temporary for error-solving
   }
-
-  // -----
-
-  // Code to create collections in mongo    <--   temporary for error-solving
-  // var newAdmin = new Admin2({name: 'name'});
-  // newAdmin.save();
-
-  // var testAdmin = new Admin2({name: 'pernyb', admin: true});
-  // testAdmin.save();
-  // adminList.push(testAdmin);
-  // testAdmin = new Admin2({name: 'antbac', admin: true});
-  // testAdmin.save();
-  // adminList.push(testAdmin);
-
-  // var testTeacher = new Admin2({name : 'pernyb', teacher : true});
-  // testTeacher.save();
-//  teacherList.push(testTeacher);
 }
 
 // Read in courses and admins from the database
@@ -120,39 +104,6 @@ function readIn(){
        console.log('Course: ' + course.name + ' loaded!'); // temporary for error-solving
     });
   });
-
-  // All the admins
-  // Admin2.find(function (err, admins) {
-  //   admins.forEach(function (admin) {
-  //     if (admin.admin) {
-  //       adminList.push(admin);
-
-  //       console.log('Admin: ' + admin.name + ' loaded'); // temporary for error-solving
-  //     }
-  //   });
-  // });
-
-  // All the admins
-//   Admin2.find(function (err, teachers) {
-//     teachers.forEach(function (teacher) {
-//       if (teacher.teacher) {
-// //        teacherList.push(teacher);
-
-//         console.log('Teacher: ' + teacher.name + ' loaded'); // temporary for error-solving
-//       }
-//     });
-//   });
-
-//   // All the admins
-//   Admin2.find(function (err, assistants) {
-//     assistants.forEach(function (assistant) {
-//       if (assistant.assistant) {
-// //        assistantList.push(assistant);
-
-//         console.log('Assistant: ' + assistant.name + ' loaded'); // temporary for error-solving
-//       }
-//     });
-//   });
 }
 
 //===============================================================
@@ -302,6 +253,17 @@ app.io.route('leave', function(req) {
 
   var course = findCourse(queue);
   course.removeUser(user.name);
+
+  for (var i = statisticsList.length - 1; i >= 0; i--) {
+    var statistic = statisticsList[i];
+    if (statistic.name === user.name) {
+      var queueLength = Date.now() - statistic.startTime;
+      var newStatistic = new Statistic2({name: statistic.name, course: statistic.course, startTime: statistic.startTime, action: '', leftQueue: true, queueLength: queueLength});
+      statisticsList.splice(i, 1, newStatistic);
+      newStatistic.save();
+    }
+  };
+
 
 //  var newUserStatistic = new UserStatistic2({student: user.name, course: queue, action: '?'});
 //  newUserStatistic.save();
@@ -479,17 +441,11 @@ function numbersOfPeopleLeftQueue(queueName, start, end) {
   for (var i = statisticsList.length - 1; i >= 0; i--) {
     var statistic = statisticsList[i];
 
-    if (statistic.course === queueName) {
-            console.log('A');
-      if (statistic.startTime >= start && statistic.startTime < end) {
-            console.log('B');
-        if (statistic.leftQueue) {
-            console.log('C');
-          if (statistic.startTime + statistic.queueLength < end) {
-            counter++;
-          }
-        }
-      }
+    if (statistic.course === queueName && statistic.startTime >= start && 
+        statistic.startTime < end && 
+        statistic.leftQueue && 
+        statistic.startTime + statistic.queueLength < end) {
+          counter++;
     }
   };
 
@@ -499,10 +455,11 @@ function numbersOfPeopleLeftQueue(queueName, start, end) {
 //===============================================================
 
 //
-app.io.route('createQueue', function(req) {
+app.io.route('addQueue', function(req) {
+ console.log("Trying to add Queue!");
  // admin-validation
   if (!validate("pernyb", "type", "course")) {
-    console.log("validation for createQueue failed");
+    console.log("validation for addQueue failed");
     //res.end();
     return;
   }
@@ -514,24 +471,30 @@ app.io.route('createQueue', function(req) {
   newCourse.save();
 
   console.log(queueName + ' is getting created');
+
+  app.io.room('admin').broadcast('addQueue', queueName);
 });
 
 //
 app.io.route('addAdmin', function(req) {
  // admin-validation
+ console.log("Trying to add Admin!");
   if (!validate("pernyb", "type", "course")) {
     console.log("validation for addAdmin failed");
     //res.end();
     return;
   }
   var adminName = req.data.name;
+//  var username = req.data.username;
+/*TEST*/  var username = adminName;
   var queue = req.data.queue;
 
-  var newAdmin = new Admin2({name: adminName});
+  var newAdmin = new Admin2({name: adminName, username: username});
   adminList.push(newAdmin);
   newAdmin.save();
 
   console.log(adminName + ' is a new admin!');
+  app.io.room('admin').broadcast('addAdmin', {name: adminName, username: username});
 });
 
 //
@@ -543,6 +506,8 @@ app.io.route('addTeacher', function(req) {
     return;
   }
   var teacherName = req.data.name;
+//  var username = req.data.username;
+/*TEST*/  var username = teacherName;
   var queue = req.data.queue;
   var course = req.data.course;
 
@@ -551,6 +516,7 @@ app.io.route('addTeacher', function(req) {
   newTeacher.save();*/
 
   console.log(teacherName + ' is a new teacher (but not really)!');
+  app.io.room('admin').broadcast('addTeacher', {name: teacherName, username: username});
 });
 
 //
@@ -562,6 +528,8 @@ app.io.route('addAssistant', function(req) {
     return;
   }
   var assistantName = req.data.name;
+//  var username = req.data.username;
+/*TEST*/  var username = assistantName;
   var queue = req.data.queue;
   var course = req.data.course;
 
@@ -570,6 +538,7 @@ app.io.route('addAssistant', function(req) {
   newAssistant.save();*/
 
   console.log(assistantName + ' is a new assistant (but not really)!');
+  app.io.room('admin').broadcast('addAssistant', {name: assistantName, username: username});
 });
 
 //
