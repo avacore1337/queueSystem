@@ -43,7 +43,7 @@
   </div>
   <hr>
 <!-- Statistics goes here -->
-  <div class="row" ng-show="averageQueueTime || numbersOfPeopleLeftQueue">
+  <div class="row" ng-show="averageQueueTime || numbersOfPeopleLeftQueue !== -1">
     <table class="table table-striped">
       <thead>
         <th>Description</th>
@@ -54,7 +54,7 @@
           <td >Average queue time</td>
           <td>{{averageQueueTime}}</td>
         </tr>
-        <tr ng-show="numbersOfPeopleLeftQueue">
+        <tr ng-show="numbersOfPeopleLeftQueue !== -1">
           <td>Amount of people who left the queue</td>
           <td>{{numbersOfPeopleLeftQueue}}</td>
         </tr>

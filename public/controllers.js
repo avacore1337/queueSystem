@@ -124,7 +124,9 @@ queueControllers.controller('statisticsController', ['$scope', '$http', 'WebSock
     // Listen for new statistics.
     socket.on('numbersOfPeopleLeftQueue', function(amount) {
       $scope.$apply($scope.numbersOfPeopleLeftQueue = amount);
+      console.log("Amount to 'numbersOfPeopleLeftQueue' : " + amount);
     });
+    $scope.numbersOfPeopleLeftQueue = -1;
 
     // Queue selection
     $scope.queues = [];
