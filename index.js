@@ -495,6 +495,33 @@ app.io.route('addQueue', function(req) {
 });
 
 //
+app.io.route('removeQueue', function(req) {
+ console.log("Trying to remove Queue!");
+ // admin-validation
+  if (!validate("pernyb", "type", "course")) {
+    console.log("validation for addQueue failed");
+    //res.end();
+    return;
+  }
+
+
+  var queueName = req.data.queueName;
+
+  for (var i = courseList.length - 1; i >= 0; i--) {
+    var course = courseList[i];
+    if (course.name === queueName) {
+      courseList.splice(i, 1);
+      course.remove();
+      break;
+    }
+  };
+
+  console.log(queueName + ' is getting removed from queues');
+
+  app.io.room('admin').broadcast('removeQueue', queueName);
+});
+
+//
 app.io.route('addAdmin', function(req) {
  // admin-validation
  console.log("Trying to add Admin!");
