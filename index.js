@@ -71,7 +71,7 @@ function setup(){
     newCourse.save();
 
 //---------------------------------------------------------------------------------------
-/*TEST*/    var randomTime = Date.now() - Math.random() * 3 * 10000;
+/*TEST*/    var randomTime = Date.now() - Math.random() * 3 * 1000000;
 //---------------------------------------------------------------------------------------
     // for every course, create users
     var queues = Math.floor((Math.random() * 50) + 1);
@@ -81,7 +81,7 @@ function setup(){
       newCourse.save();
 
 //---------------------------------------------------------------------------------------
-/*TEST*/      randomTime -= Math.random() * 5 * 10000;
+/*TEST*/      randomTime += Math.random() * 5 * 10000;
 //---------------------------------------------------------------------------------------
     }
 
@@ -417,13 +417,13 @@ app.io.route('queueing users', function(req) {
 //---------------------------------------------------
 
 app.io.route('getAverageQueueTime', function(req) {
-  var queue = req.data.queue;
+  var queueName = req.data.queueName;
   var start = req.data.start;
   var end = req.data.end;
 
   console.log("Counting..");
 
-  var averageQueueTime = getAverageQueueTime(queue, start, end);
+  var averageQueueTime = getAverageQueueTime(queueName, start, end);
 
   app.io.room('statistics').broadcast('getAverageQueueTime', averageQueueTime);
 });
@@ -439,21 +439,29 @@ app.io.route('numbersOfPeopleLeftQueue', function(req) {
 
 // the average time in 'queue' of students who joined the queue 
 //  from 'start' and left before/was still in queue at 'end'
-function getAverageQueueTime(queue, start, end) {
-//  var queue = findCourse(queueName);
+function getAverageQueueTime(queueName, start, end) {
+  var course = findCourse(queueName);
+  var queue = course.queue;
+
   var counter = 0;
+  var totalTime = 0;
+  var now = Date.now();
 
-  queue.forEach(function (usr, i, queue) {
-    if (usr.startTime >= start && usr.startTime < end) {
-      var d = new Date(usr.startTime);
-      console.log("User " + usr.name + " started at " + d);
+  for (var i = queue.length - 1; i >= 0; i--) {
+    var user = queue[i];
+    if (user.startTime >= start && user.startTime < end) {
+      var d = new Date(user.startTime);
+      console.log("User " + user.name + " started at " + d);
 
+      totalTime += now - user.startTime;
       counter++;
     }
-  });
+  };
 
   console.log("Counted: " + counter);
-  return counter;
+  console.log("Total time: " + totalTime);
+  console.log("Average: " + totalTime/counter)
+  return totalTime/counter;
 }
 
 // number of people who joined the queue from 'start' and left before 'end'
