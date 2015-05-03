@@ -133,22 +133,26 @@ function findCourse(name) {
 // validates if a person is the privilege-type given for given course
 // TODO: make the validation more secure
 function validate(name, type, course) {
-  return true;
   var course = findCourse(course);
+
+  console.log(JSON.stringify(name));
 
   if (type === 'super') {
     return validateSuper(name);
   };
 
+  console.log(name + ' is not a valid admin'); // temporary for error-solving
+  return false;
+}
+
+function validateSuper(name) {
   for (var i = 0; i < adminList.length; i++) {
+    console.log("admin: " + adminList[i].name + " vs " + name);
     if (adminList[i].name === name) {
       console.log(name + ' is a valid admin'); // temporary for error-solving
       return true;
     }
   }
-
-  console.log(name + ' is not a valid admin'); // temporary for error-solving
-  return false;
 }
 
 // list of courses that a user is admin, teacher or TA for
@@ -198,6 +202,8 @@ app.io.route('join', function(req) {
 // user tries to join a queue with a "bad location"
 //  - do nothing in backend?
 app.io.route('badLocation', function(req) {
+  console.log(req.session.user);
+  var username = req.session.user.name;
   // assistant-validation
   if (!validate("pernyb", "type", "course")) {
     console.log("validation for badLocation failed");
@@ -211,8 +217,6 @@ app.io.route('badLocation', function(req) {
 
   app.io.room(queue).broadcast('badLocation', {message: message, sender: sender}); 
   console.log("Bad location at " + queue + " for " + name);
-
-  getAverageQueueTime(queue, 0, 0);
 });
 
 // user gets updated
@@ -374,33 +378,6 @@ app.io.route('unhibernate', function(req) {
 });
 
 //===============================================================
-// ### STATISTICS ###
-
-// not done yet -> should be implemented in a different way
-app.io.route('numbers helped', function(req) {
-  var queue = req.data.queue;
-  var starttime = req.data.starttime;
-  var endtime = req.data.endtime;
-
-  var helpedList = [];
-
-  // MAGIC WHERE WE GET ALL THE PEOPLE THAT LEFT THE QUEUE, BY AN ASSISTENT, BEFORE ENDTIME
-
-  app.io.room(queue).broadcast('numbers helped', helpedList);
-});
-
-app.io.route('queueing users', function(req) {
-  var queue = req.data.queue;
-  var time = req.data.startTime;
-
-  var course = findCourse(queue);
-  var length = course.queue.length;
-
-  console.log('queueing users: ' + length);
-  app.io.room(queue).broadcast('queueing users', length);
-});
-
-//---------------------------------------------------
 
 app.io.route('getAverageQueueTime', function(req) {
   var queueName = req.data.queueName;
@@ -477,8 +454,9 @@ function numbersOfPeopleLeftQueue(queueName, start, end) {
 //
 app.io.route('addQueue', function(req) {
  console.log("Trying to add Queue!");
+ var username = req.session.user;
  // admin-validation
-  if (!validate("pernyb", "type", "course")) {
+  if (!validate(username, "super", "course")) {
     console.log("validation for addQueue failed");
     //res.end();
     return;
@@ -497,13 +475,13 @@ app.io.route('addQueue', function(req) {
 //
 app.io.route('removeQueue', function(req) {
  console.log("Trying to remove Queue!");
+ var username = req.session.user;
  // admin-validation
-  if (!validate("pernyb", "type", "course")) {
-    console.log("validation for addQueue failed");
+  if (!(validate(username, "super", "course") || validate("pernyb", "type", "course"))) {
+    console.log("validation for removeQueue failed");
     //res.end();
     return;
   }
-
 
   var queueName = req.data.queueName;
 
@@ -523,13 +501,16 @@ app.io.route('removeQueue', function(req) {
 
 //
 app.io.route('addAdmin', function(req) {
- // admin-validation
- console.log("Trying to add Admin!");
-/*  if (!validate("pernyb", "type", "course")) {
+  console.log("Trying to add Admin!");
+
+  var username = req.session.user.name;
+  // admin-validation
+  if (!validate(username, "super", "course")) {
     console.log("validation for addAdmin failed");
     //res.end();
     return;
-  }*/
+  }
+
   var username = req.data.username;
   var adminName = username;
 
@@ -543,12 +524,14 @@ app.io.route('addAdmin', function(req) {
 
 //
 app.io.route('addTeacher', function(req) {
+ var username = req.session.user.name;
  // admin-validation
-/*  if (!validate("pernyb", "type", "course")) {
+  if (!(validate(username, "super", "course") || validate("pernyb", "type", "course"))) {
     console.log("validation for addTeacher failed");
     //res.end();
     return;
-  }*/
+  }
+
   var username = req.data.username;
   var teacherName = username;
   var queueName = req.data.queueName;
@@ -585,13 +568,16 @@ app.io.route('addAssistant', function(req) {
 
 //
 app.io.route('removeAdmin', function(req) {
- // admin-validation
  console.log("Trying to remove Admin!");
-/*  if (!validate("pernyb", "type", "course")) {
-    console.log("validation for addAdmin failed");
+
+  var username = req.session.user.name;
+  // admin-validation
+  if (!validate(username, "super", "course")) {
+    console.log("validation for removeAdmin failed");
     //res.end();
     return;
-  }*/
+  }
+
   var username = req.data.username;
 
   for (var i = adminList.length - 1; i >= 0; i--) {
@@ -668,6 +654,7 @@ app.io.route('setUser', function(req) {
   req.session.user = req.data;
   console.log('Socket-setUser: ' + JSON.stringify(req.data));
 });
+
 
 // =================================================================================
 
