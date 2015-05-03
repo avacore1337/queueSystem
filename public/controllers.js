@@ -104,25 +104,24 @@ queueControllers.controller('statisticsController', ['$scope', '$http', 'WebSock
     socket.emit('listen', 'statistics');
 
     // Listen for new statistics.
-    socket.on('getAverageQueueTime', function(time) {
-      var x = time / 1000;
-      var seconds = x % 60;
-      x /= 60;
-      var minutes = x % 60;
-      x /= 60;
-      var hours = x % 24;
-      if(hours !== 0){
-        $scope.averageQueueTime = hours + "h " + minutes + "m " + seconds + "s";
-      }else if(minutes !== 0){
-        $scope.averageQueueTime = minutes + "m " + seconds + "s";
-      }else if(seconds !== 0){
-        $scope.averageQueueTime = seconds + "s"; 
+    socket.on('getAverageQueueTime', function(milliseconds) {
+      var seconds = (milliseconds / 1000) % 60 ;
+      var minutes = (milliseconds / (1000*60)) % 60;
+      var hours   = (milliseconds / (1000*60*60)) % 24;
+      if(hours > 1){
+        $scope.averageQueueTime = Math.floor(hours) + "h " + Math.floor(minutes) + "m " + Math.floor(seconds) + "s";
+      }else if(minutes > 1){
+        $scope.averageQueueTime = Math.floor(minutes) + "m " + Math.floor(seconds) + "s";
+      }else if(seconds > 1){
+        $scope.averageQueueTime = Math.floor(seconds) + "s";
       }else{
-        $scope.averageQueueTime = "0s"; 
+        $scope.averageQueueTime = "0s";
       }
-      console.log("Received data : " + time);
+      $scope.$apply();
+      console.log("Received data : " + milliseconds);
       console.log("Average time = : " + $scope.averageQueueTime);
     });
+    $scope.averageQueueTime = "";
 
     // Queue selection
     $scope.queues = [];
@@ -132,8 +131,8 @@ queueControllers.controller('statisticsController', ['$scope', '$http', 'WebSock
 
     $scope.selectedQueue = undefined;
     $scope.selectQueue = function(queue){
-      $scope.selectedQueue = getQueue(queue);
-      document.getElementById('dropdown').innerHTML = queue;
+      $scope.selectedQueue = queue;
+      document.getElementById('dropdown').innerHTML = queue.name;
       console.log("selected queue = " + $scope.selectedQueue);
     };
 
@@ -171,14 +170,6 @@ queueControllers.controller('statisticsController', ['$scope', '$http', 'WebSock
       });
       console.log("Requested averageQueueTime");
     };
-
-    function getQueue (queue) {
-      for(var index in $scope.queues){
-        if($scope.queues[index].name === queue){
-          return $scope.queues[index];
-        }
-      }
-    }
 
 }]);
 

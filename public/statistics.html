@@ -9,7 +9,7 @@
             <div class="col-md-11 text-left" id="dropdown">Select Queue</div> <span class="caret"></span>
           </button>
           <ul class="dropdown-menu">
-        <li ng-repeat="queue in queues"><a href="" ng-click="selectQueue(queue.name)" id="statistics{{queue.name}}DropDownBtn">{{queue.name}}</a></li>
+        <li ng-repeat="queue in queues"><a href="" ng-click="selectQueue(queue)" id="statistics{{queue.name}}DropDownBtn">{{queue.name}}</a></li>
           </ul>
     </div>
     </div>
@@ -51,7 +51,7 @@
       </thead>
       <tbody>
         <tr>
-          <td>Average queueing time</td>
+          <td>Average queue time</td>
           <td>{{averageQueueTime}}</td>
         </tr>
       </tbody>
