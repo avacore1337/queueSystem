@@ -374,6 +374,7 @@ queueControllers.controller('adminController', ['$scope', '$location', '$http', 
 
   // Listen for a queue being added.
   socket.on('addQueue', function(queue) {
+    console.log("Backend wants to add the queue " + queue.name);
     $scope.$apply($scope.queues.push(queue));
   });
 
@@ -396,10 +397,12 @@ queueControllers.controller('adminController', ['$scope', '$location', '$http', 
   }
 
   $scope.addQueue = function(){
+    if($scope.newQueue !== ""){
     socket.emit('addQueue', {
-      queue:$scope.newQueue
+      queueName:$scope.newQueue
     });
     $scope.newQueue = "";
+    }
   };
 
   $scope.removeQueue = function(){
