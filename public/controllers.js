@@ -105,8 +105,21 @@ queueControllers.controller('statisticsController', ['$scope', '$http', 'WebSock
 
     // Listen for new statistics.
     socket.on('getAverageQueueTime', function(time) {
-      $scope.averageQueueTime = time;
+      var x = time / 1000;
+      var seconds = x % 60;
+      x /= 60;
+      var minutes = x % 60;
+      x /= 60;
+      var hours = x % 24;
+      if(hours !== 0){
+        $scope.averageQueueTime = hours + "h " + minutes + "m " + seconds + "s";  
+      }else if(minutes !== 0){
+        $scope.averageQueueTime = minutes + "m " + seconds + "s";  
+      }else{
+        $scope.averageQueueTime = seconds + "s";  
+      }
       console.log("Received data : " + time);
+      console.log("Average time = : " + $scope.averageQueueTime);
     });
 
     // Queue selection
@@ -149,7 +162,7 @@ queueControllers.controller('statisticsController', ['$scope', '$http', 'WebSock
     // Statistics
     $scope.getStatistics = function() {
       socket.emit('getAverageQueueTime', {
-          queueName:$scope.selectedQueue.name,
+          queue:$scope.selectedQueue,
           start:$scope.fromTime.getTime(),
           end:$scope.toTime.getTime()
       });
