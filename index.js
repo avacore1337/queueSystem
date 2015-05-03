@@ -517,14 +517,9 @@ app.io.route('addTeacher', function(req) {
   var course = findCourse(queueName);
 
   var newTeacher = new Admin2({name: teacherName, username: username});
-  adminList.push(newTeacher);
 
   course.teacher.push(newTeacher);
   course.save();
-
-/*  var newTeacher = new Teacher2({name: teacherName, course: course});
-  teacherList.push(newTeacher);
-  newTeacher.save();*/
 
   console.log(teacherName + ' is a new teacher (but not really)!');
   app.io.room('admin').broadcast('addTeacher', {name: teacherName, username: username, queueName: queueName});
@@ -541,15 +536,16 @@ app.io.route('addAssistant', function(req) {
   var assistantName = req.data.name;
 //  var username = req.data.username;
 /*TEST*/  var username = assistantName;
-  var queue = req.data.queue;
-  var course = req.data.course;
+  var queueName = req.data.queue;
+  var course = findCourse(queueName);
 
-/*  var newAssistant = new Assistant2({name: assistantName, course: course});
-  assistantList.push(newAssistant);
-  newAssistant.save();*/
+  var newAssistant = new Admin2({name: assistantName, username: username});
+
+  course.teacher.push(newAssistant);
+  course.save();
 
   console.log(assistantName + ' is a new assistant (but not really)!');
-  app.io.room('admin').broadcast('addAssistant', {name: assistantName, username: username});
+  app.io.room('admin').broadcast('addAssistant', {name: assistantName, username: username, queueName: queueName});
 });
 
 //
