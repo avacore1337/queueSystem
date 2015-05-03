@@ -41,6 +41,63 @@ userSchema.methods.toJSON = function () {
 
 //-----
 
+
+//---------------------------------------------------------------------------------------
+/*TEST*/
+// the average time in 'queue' of students who joined the queue 
+//  from 'start' and left before/was still in queue at 'end'
+function getAverageQueueTime(queue, start, end) {
+//  var queue = findCourse(queueName);
+  var counter = 0;
+
+  queue.forEach(function (usr, i, queue) {
+    if (usr.startTime >= start && usr.startTime < end) {
+      var d = new Date(usr.startTime);
+      console.log("User " + usr.name + " started at " + d);
+
+      counter++;
+    }
+  });
+
+  console.log("Counted: " + counter);
+  return counter;
+}
+
+// number of people who joined the queue from 'start' and left before 'end'
+function numbersOfPeopleLeftQueue(course, start, end) {
+// 1. Get all statistics-object from a specific course
+// 2. Filter out all those who was in the queue before set "start"-time
+// 3. Filter out all those who entered the queue after set "end"-time
+// 4. Retrieve those who has a 'queueLength+startTime <= end' 
+
+/*
+    var statisticSchema = new Schema({
+      name: String,
+      course: String,
+      time: { type: Number, default: Date.now },
+      action: String,
+      leftQueue: { type: Boolean, default: false },
+      queueLength: { type: Number, default: 0},
+*/
+
+//  var queue = findCourse(queueName);
+  var counter = 0;
+
+  queue.forEach(function (usr, i, queue) {
+    if (usr.startTime >= start && usr.startTime < end) {
+      var d = new Date(usr.startTime);
+      console.log("User " + usr.name + " started at " + d);
+
+      counter++;
+    }
+  });
+
+  console.log("Counted: " + counter);
+  return counter;
+}
+
+//---------------------------------------------------------------------------------------
+
 // Schema used for courses
 var courseSchema = new Schema({
   name: String,
@@ -65,6 +122,13 @@ courseSchema.methods.removeUser = function (username) {
     return user.name !== username;
   });
   this.save();
+
+//---------------------------------------------------------------------------------------
+/*TEST*/
+  var oneMinute = 60 * 1000;
+  var fiveMinutes = 5 * oneMinute;
+  getAverageQueueTime(this.queue, Date.now() - fiveMinutes, Date.now() - oneMinute);
+//---------------------------------------------------------------------------------------
 };
 
 // locks the queue

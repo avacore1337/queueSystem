@@ -48,8 +48,8 @@ var adminList = [];
 //===============================================================
 // Methods for setting up or reading in the database (in production, only readIn should be used)
 
-//setup(); // temporary method
-readIn();
+setup(); // temporary method
+//readIn();
 
 function setup(){
   // list of courses to be used
@@ -70,12 +70,19 @@ function setup(){
     courseList.push(newCourse);
     newCourse.save();
 
+//---------------------------------------------------------------------------------------
+/*TEST*/    var randomTime = Date.now() - Math.random() * 3 * 10000;
+//---------------------------------------------------------------------------------------
     // for every course, create users
     var queues = Math.floor((Math.random() * 50) + 1);
     for (var j = 0; j < queues; j++) {
-      var newUser = new User2({name: Math.random().toString(36).substring(7), place: 'Green', comment: 'lab1'});
+      var newUser = new User2({name: Math.random().toString(36).substring(7), place: 'Green', comment: 'lab1', startTime: randomTime});
       newCourse.addUser(newUser);
       newCourse.save();
+
+//---------------------------------------------------------------------------------------
+/*TEST*/      randomTime -= Math.random() * 5 * 10000;
+//---------------------------------------------------------------------------------------
     }
 
     console.log(course  + " " +  newCourse.queue.length); // temporary for error-solving
@@ -191,17 +198,6 @@ function privilegeList(name) {
   return list;
 }
 
-// the average time in 'queue' of students who joined the queue 
-//  from 'start' and left before/was still in queue at 'end'
-function getAverageQueueTime(queue, start, end) {
-  return 0;
-}
-
-// number of people who joined the queue from 'start' and left before 'end'
-function numbersOfPeopleLeftQueue(queue, start, end) {
-  return 0;
-}
-
 //===============================================================
 
 // TODO: should a cookie be created/be received here?
@@ -248,6 +244,8 @@ app.io.route('badLocation', function(req) {
 
   app.io.room(queue).broadcast('badLocation', {message: message, sender: sender}); 
   console.log("Bad location at " + queue + " for " + name);
+
+  getAverageQueueTime(queue, 0, 0);
 });
 
 // user gets updated
@@ -415,6 +413,38 @@ app.io.route('queueing users', function(req) {
   console.log('queueing users: ' + length);
   app.io.room(queue).broadcast('queueing users', length);
 });
+
+//---------------------------------------------------
+
+app.io.route('getAverageQueueTime', function(req) {
+  var queue = req.data.queue;
+
+  app.io.room('statistics').broadcast('getAverageQueueTime', averageQueueTime);
+});
+
+// the average time in 'queue' of students who joined the queue 
+//  from 'start' and left before/was still in queue at 'end'
+function getAverageQueueTime(queuename, start, end) {
+  var queue = findCourse(queueName);
+  var counter = 0;
+
+  queue.forEach(function (usr, i, queue) {
+    if (usr.startTime >= start && usr.startTime < end) {
+      var d = new Date(usr.startTime);
+      console.log("User " + usr.name + " started at " + d);
+
+      counter++;
+    }
+  });
+
+  console.log("Counted: " + counter);
+  return counter;
+}
+
+// number of people who joined the queue from 'start' and left before 'end'
+function numbersOfPeopleLeftQueue(queue, start, end) {
+  return 0;
+}
 
 //===============================================================
 
