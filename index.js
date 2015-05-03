@@ -439,7 +439,7 @@ app.io.route('numbersOfPeopleLeftQueue', function(req) {
 
 // the average time in 'queue' of students who joined the queue 
 //  from 'start' and left before/was still in queue at 'end'
-function getAverageQueueTime(queuename, start, end) {
+function getAverageQueueTime(queueName, start, end) {
   var queue = findCourse(queueName);
   var counter = 0;
 
