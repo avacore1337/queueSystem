@@ -165,7 +165,7 @@ queueControllers.controller('statisticsController', ['$scope', '$http', 'WebSock
     $scope.getStatistics = function() {
       console.log($scope.selectedQueue);
       socket.emit('getAverageQueueTime', {
-          queue:$scope.selectedQueue,
+          queueName:$scope.selectedQueue.name,
           start:$scope.fromTime.getTime(),
           end:$scope.toTime.getTime()
       });
