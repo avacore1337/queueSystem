@@ -484,11 +484,11 @@ app.io.route('addQueue', function(req) {
 app.io.route('addAdmin', function(req) {
  // admin-validation
  console.log("Trying to add Admin!");
-  if (!validate("pernyb", "type", "course")) {
+/*  if (!validate("pernyb", "type", "course")) {
     console.log("validation for addAdmin failed");
     //res.end();
     return;
-  }
+  }*/
   var adminName = req.data.name;
 //  var username = req.data.username;
 /*TEST*/  var username = adminName;
@@ -505,11 +505,11 @@ app.io.route('addAdmin', function(req) {
 //
 app.io.route('addTeacher', function(req) {
  // admin-validation
-  if (!validate("pernyb", "type", "course")) {
+/*  if (!validate("pernyb", "type", "course")) {
     console.log("validation for addTeacher failed");
     //res.end();
     return;
-  }
+  }*/
   var teacherName = req.data.name;
 //  var username = req.data.username;
 /*TEST*/  var username = teacherName;
@@ -518,7 +518,7 @@ app.io.route('addTeacher', function(req) {
 
   var newTeacher = new Admin2({name: teacherName, username: username});
 
-  course.teacher.push(newTeacher);
+  course.teacher = course.teacher.push(newTeacher);
   course.save();
 
   console.log(teacherName + ' is a new teacher (but not really)!');
@@ -528,11 +528,11 @@ app.io.route('addTeacher', function(req) {
 //
 app.io.route('addAssistant', function(req) {
  // teacher-validation
-  if (!validate("pernyb", "super", "course")) {
+/*  if (!validate("pernyb", "super", "course")) {
     console.log("validation for addAssistant failed");
     //res.end();
     return;
-  }
+  }*/
   var assistantName = req.data.name;
 //  var username = req.data.username;
 /*TEST*/  var username = assistantName;
@@ -546,6 +546,31 @@ app.io.route('addAssistant', function(req) {
 
   console.log(assistantName + ' is a new assistant (but not really)!');
   app.io.room('admin').broadcast('addAssistant', {name: assistantName, username: username, queueName: queueName});
+});
+
+//
+app.io.route('removeAdmin', function(req) {
+ // admin-validation
+ console.log("Trying to remove Admin!");
+/*  if (!validate("pernyb", "type", "course")) {
+    console.log("validation for addAdmin failed");
+    //res.end();
+    return;
+  }*/
+  var username = req.data.username;
+  var queueName = req.data.queueName;
+
+  for (var i = adminList.length - 1; i >= 0; i--) {
+    var admin = adminList[i];
+    if (admin.username === username) {
+      adminList.splice(i, 1);
+      break;
+    }
+  };
+  adminList.save();
+
+  console.log(adminName + ' is a removed from admin!');
+  app.io.room('admin').broadcast('removeAdmin', username);
 });
 
 //
