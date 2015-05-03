@@ -527,7 +527,7 @@ app.io.route('addTeacher', function(req) {
   newTeacher.save();*/
 
   console.log(teacherName + ' is a new teacher (but not really)!');
-  app.io.room('admin').broadcast('addTeacher', {name: teacherName, username: username});
+  app.io.room('admin').broadcast('addTeacher', {name: teacherName, username: username, queueName: queueName});
 });
 
 //
