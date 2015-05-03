@@ -123,13 +123,34 @@ courseSchema.methods.removeUser = function (username) {
     return user.name !== username;
   });
   this.save();
+};
 
-//---------------------------------------------------------------------------------------
-/*TEST*/
-  var oneMinute = 60 * 1000;
-  var fiveMinutes = 5 * oneMinute;
-  getAverageQueueTime(this.queue, Date.now() - fiveMinutes, Date.now() - oneMinute);
-//---------------------------------------------------------------------------------------
+// takes a user as a parameter and adds to the queue
+courseSchema.methods.addTeacher = function (teacher) {
+  this.teacher.push(teacher);
+  this.save();
+};
+
+// takes a username as a parameter and removes the user form the queue
+courseSchema.methods.removeTeacher = function (username) {
+  this.teacher = this.teacher.filter(function (teacher) {
+    return teacher.name !== username;
+  });
+  this.save();
+};
+
+// takes a user as a parameter and adds to the queue
+courseSchema.methods.addAssistant = function (assistant) {
+  this.assistant.push(assistant);
+  this.save();
+};
+
+// takes a username as a parameter and removes the user form the queue
+courseSchema.methods.removeAssistant = function (username) {
+  this.assistant = this.assistant.filter(function (assistant) {
+    return assistant.name !== username;
+  });
+  this.save();
 };
 
 // locks the queue
