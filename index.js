@@ -263,6 +263,8 @@ app.io.route('leave', function(req) {
   var queue = req.data.queue;
   var user = req.data.user;
 
+  console.log("Validerande: " + JSON.stringify(req.session.user));
+
   var course = findCourse(queue);
   course.removeUser(user.name);
 
@@ -503,7 +505,6 @@ app.io.route('addAdmin', function(req) {
   }*/
   var username = req.data.username;
   var adminName = username;
-  var queue = req.data.queue;
 
   var newAdmin = new Admin2({name: adminName, username: username});
   adminList.push(newAdmin);
@@ -521,16 +522,14 @@ app.io.route('addTeacher', function(req) {
     //res.end();
     return;
   }*/
-  var teacherName = req.data.name;
-//  var username = req.data.username;
-/*TEST*/  var username = teacherName;
-  var queueName = req.data.queue;
+  var username = req.data.username;
+  var teacherName = username;
+  var queueName = req.data.queueName;
   var course = findCourse(queueName);
 
   var newTeacher = new Admin2({name: teacherName, username: username});
 
-  course.teacher = course.teacher.push(newTeacher);
-  course.save();
+  course.addTeacher(newTeacher);
 
   console.log(teacherName + ' is a new teacher (but not really)!');
   app.io.room('admin').broadcast('addTeacher', {name: teacherName, username: username, queueName: queueName});
@@ -544,16 +543,14 @@ app.io.route('addAssistant', function(req) {
     //res.end();
     return;
   }*/
-  var assistantName = req.data.name;
-//  var username = req.data.username;
-/*TEST*/  var username = assistantName;
-  var queueName = req.data.queue;
+  var username = req.data.username;
+  var assistantName = username;
+  var queueName = req.data.queueName;
   var course = findCourse(queueName);
 
   var newAssistant = new Admin2({name: assistantName, username: username});
 
-  course.teacher.push(newAssistant);
-  course.save();
+  course.addAssistant(newAssistant);
 
   console.log(assistantName + ' is a new assistant (but not really)!');
   app.io.room('admin').broadcast('addAssistant', {name: assistantName, username: username, queueName: queueName});
@@ -569,7 +566,6 @@ app.io.route('removeAdmin', function(req) {
     return;
   }*/
   var username = req.data.username;
-  var queueName = req.data.queueName;
 
   for (var i = adminList.length - 1; i >= 0; i--) {
     var admin = adminList[i];
@@ -607,6 +603,7 @@ app.io.route('flag', function(req) {
 //
 app.io.route('setUser', function(req) {
   req.session.user = req.data;
+  console.log('Socket-setUser: ' + JSON.stringify(req.data));
 });
 
 // =================================================================================
