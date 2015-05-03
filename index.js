@@ -309,6 +309,11 @@ function doOnCourse(courseName, action){
   console.log('trying to ' + action + ' ' + courseName);
   app.io.room(courseName).broadcast(action);
   app.io.room("lobby").broadcast("lobby" + action, courseName);
+  if (action === 'hibernate') {
+    app.io.room("admin").broadcast('hibernate', courseName);
+  } else if (action === 'unhibernate') {
+    app.io.room("admin").broadcast('unhibernate', courseName);
+  }
 }
 
 // admin locks a queue
