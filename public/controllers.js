@@ -557,7 +557,7 @@ $scope.addTeacher = function(){
 
 $scope.removeTeacher = function(name){
   socket.emit('removeTeacher', {
-    username:$scope.newTeacher,
+    username:username,
     queueName:$scope.selectedQueue.name
   });
   console.log("Removing teacher " + name + " in the queue " + $scope.selectedQueue.name);
@@ -574,9 +574,9 @@ $scope.addAssistant = function(){
   }
 };
 
-$scope.removeAssistant = function(name){
+$scope.removeAssistant = function(username){
   socket.emit('removeAssistant', {
-    username:$scope.newAssistant,
+    username:username,
     queueName:$scope.selectedQueue.name
   });
   console.log("Removing assistant " + name  + " in the queue " + $scope.selectedQueue.name);
