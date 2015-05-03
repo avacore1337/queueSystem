@@ -118,10 +118,13 @@ queueControllers.controller('statisticsController', ['$scope', '$http', 'WebSock
         $scope.averageQueueTime = "0s";
       }
       $scope.$apply();
-      console.log("Received data : " + milliseconds);
-      console.log("Average time = : " + $scope.averageQueueTime);
     });
     $scope.averageQueueTime = "";
+
+    // Listen for new statistics.
+    socket.on('numbersOfPeopleLeftQueue', function(amount) {
+      $scope.$apply($scope.numbersOfPeopleLeftQueue = amount);
+    });
 
     // Queue selection
     $scope.queues = [];
@@ -169,6 +172,12 @@ queueControllers.controller('statisticsController', ['$scope', '$http', 'WebSock
           end:$scope.toTime.getTime()
       });
       console.log("Requested averageQueueTime");
+      socket.emit('numbersOfPeopleLeftQueue', {
+          queueName:$scope.selectedQueue.name,
+          start:$scope.fromTime.getTime(),
+          end:$scope.toTime.getTime()
+      });
+      console.log("Requested numbersOfPeopleLeftQueue");
     };
 
 }]);
@@ -191,8 +200,8 @@ queueControllers.controller('loginController', ['$scope', '$location', '$http', 
 
   }]);
 
-queueControllers.controller('navigationController', ['$scope', '$location', 'UserService',
-  function ($scope, $location, user) {
+queueControllers.controller('navigationController', ['$scope', '$location', 'UserService', '$http',
+  function ($scope, $location, user, $http) {
     $scope.location = $location.path();
 
     $scope.loggedIn = user.username !== undefined && user.username !== "";
@@ -206,7 +215,7 @@ queueControllers.controller('navigationController', ['$scope', '$location', 'Use
 
     $scope.$watch(function () { return user.username; }, function(newValue, oldValue) {
       $scope.name = newValue;
-      $scope.loggedIn = user.username !== undefined && user.username !== "";
+      $scope.loggedIn = $scope.name !== undefined && $scope.name !== "";
       console.log("Detected update to user.username (oldValue = " + oldValue + ", newValue = " + newValue + ")");
     });
 
@@ -215,6 +224,19 @@ queueControllers.controller('navigationController', ['$scope', '$location', 'Use
       console.log("Detected update to user.admin (oldValue = " + oldValue + ", newValue = " + newValue + ")");
     });
 
+    // Loggin out
+    $scope.logOut = function(){
+      $http.post('/API/setUser', {
+        name: "",
+        admin: false
+      },
+      {withCredentials: true}).success(function(response){
+        $location.path('list');
+        user.admin = false;
+        user.name = "";
+        console.log("logged out");
+      });
+    };
 
   // This function should direct the user to the wanted page
   $scope.redirect = function(address){

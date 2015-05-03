@@ -40,7 +40,7 @@
 					<ul class="nav navbar-nav navbar-right">
 						<li class="unresponsive hidden-xs" id="indexNameTextField"><a class="unresponsive">{{name}}</a></li>
 						<li ng-show="!loggedIn" ng-click="redirect('login')" id="indexLogInBtn"><a style="cursor: pointer;">Log in</a></li>
-						<li ng-show="loggedIn" ng-click="redirect('login')" id="indexLogOutBtn"><a style="cursor: pointer;">Log out</a></li>
+						<li ng-show="loggedIn" ng-click="logOut()" id="indexLogOutBtn"><a style="cursor: pointer;">Log out</a></li>
 					</ul>
 				</div><!-- /.navbar-collapse -->
 			</div><!-- /.container-fluid -->
