@@ -184,9 +184,11 @@ queueControllers.controller('statisticsController', ['$scope', '$http', 'WebSock
 
 }]);
 
-queueControllers.controller('loginController', ['$scope', '$location', '$http', 'TitleService',
-  function ($scope, $location, $http, title) {
+queueControllers.controller('loginController', ['$scope', '$location', '$http', 'TitleService', 'WebSocketService',
+  function ($scope, $location, $http, title, socket) {
     title.title = "Log in | Stay A While";
+
+    socket.emit('listen', 'lobby');
 
     $scope.done = function () {
       console.log("Reached done()");
@@ -199,6 +201,12 @@ queueControllers.controller('loginController', ['$scope', '$location', '$http', 
         $location.path('list');
         console.log("logged in");
       });
+      console.log("I set the user with http");
+      socket.emit('setUser', {
+        name: $scope.name,
+        admin: $scope.type === 'admin'
+      });
+      console.log("I set the user with socket");
     };
 
   }]);
@@ -263,11 +271,12 @@ queueControllers.controller('adminController', ['$scope', '$location', '$http', 
     $scope.selectedQueue = undefined;
     $scope.dropdown = undefined;
     $scope.newAdmin = '';
-    $scope.admins = [
-    {name:'Anton',  username:'antbac'},
-    {name:'Robert',  username:'robertwb'},
-    {name:'Per',  username:'pernyb'}
-    ];
+
+    $scope.admins = [];
+    $http.get('/API/adminList').success(function(response){
+      $scope.admins = response;
+    });
+
     $scope.queues = [];
     $http.get('/API/queueList').success(function(response){
       var temp = response.sort(function(a, b) {return a.name.localeCompare(b.name);});
