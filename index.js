@@ -711,7 +711,7 @@ app.get('/API/userData', function(req, res) {
     var assistantList = assistantForCourses(username)
 
     res.setHeader('Content-Type', 'application/json');
-    res.end(JSON.stringify({sessionUser: req.session.user, teachers: teacherList, assistants: assistantList}));
+    res.end(JSON.stringify({name: username, admin: req.session.user.admin, teacher: teacherList, assistant: assistantList}));
 });
 
 function teacherForCourses(username) {
@@ -741,7 +741,7 @@ function assistantForCourses(username) {
     for (var i = courseAssistantList.length - 1; i >= 0; i--) {
       var assistant = courseAssistantList[i];
       if (assistant.name === username) {
-        teacherList.push(courseName);
+        assistantList.push(courseName);
         break;
       }
     };
