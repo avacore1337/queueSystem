@@ -242,7 +242,11 @@ queueControllers.controller('navigationController', ['$scope', '$location', 'Use
     });
 
     $scope.$watch(function () { return user.teacher; }, function(newValue, oldValue) {
-      $scope.teacher = newValue.length !== 0;
+      if(newValue === undefined){
+        $scope.teacher = false;
+      }else{
+        $scope.teacher = newValue.length !== 0;
+      }
       console.log("Detected update to user.isTeacher (oldValue = " + oldValue + ", newValue = " + newValue + ")");
     });
 
