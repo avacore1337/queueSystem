@@ -253,3 +253,9 @@ button:focus
     color: #777777;
     cursor: default;
 }
+table.table-striped > tbody > tr.light-blue-background > td{
+   background-color: #C5E7FF;
+}
+table.table-striped > tbody > tr.light-blue-background > td{
+   background-color: #C5E7FF;
+}

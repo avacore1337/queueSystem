@@ -5,6 +5,10 @@ angular.module('queue')
 	return {
 		admin: false,
 
+		teacher: [],
+
+		assistant: [],
+
 		username: "",
 
 		setName: function (name) {
@@ -21,6 +25,22 @@ angular.module('queue')
 
 		setAdmin: function (bool) {
 			this.admin = bool;
+		},
+
+		isTeacher: function (course) {
+			return $.inArray(course, this.teacher);
+		},
+
+		setTeacher: function (list) {
+			this.teacher = list;
+		},
+
+		isAssistant: function (course) {
+			return $.inArray(course, this.assistant);
+		},
+
+		setAssistant: function (list) {
+			this.assistant = list;
 		},
 
 		/**
