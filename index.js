@@ -546,7 +546,7 @@ app.io.route('addTeacher', function(req) {
 
   course.addTeacher(newTeacher);
 
-  console.log(teacherName + ' is a new teacher (but not really)!');
+  console.log(teacherName + ' is a new teacher!');
   app.io.room('admin').broadcast('addTeacher', {name: teacherName, username: username, queueName: queueName});
 });
 
@@ -555,7 +555,7 @@ app.io.route('addAssistant', function(req) {
   var username = req.session.user.name;
   // admin-validation
   if (!(validate(username, "super", "course") || validate("pernyb", "type", "course"))) {
-    console.log("validation for addTeacher failed");
+    console.log("validation for addAssistant failed");
     //res.end();
     return;
   }
@@ -569,7 +569,7 @@ app.io.route('addAssistant', function(req) {
 
   course.addAssistant(newAssistant);
 
-  console.log(assistantName + ' is a new assistant (but not really)!');
+  console.log(assistantName + ' is a new assistant!');
   app.io.room('admin').broadcast('addAssistant', {name: assistantName, username: username, queueName: queueName});
 });
 
