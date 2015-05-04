@@ -282,6 +282,7 @@ queueControllers.controller('adminController', ['$scope', '$location', '$http', 
   function ($scope, $location, $http, $modal, socket, user, title) {
     title.title = "Admin | Stay A While";
     console.log("Entered admin.html");
+    $scope.name = user.username;
     $scope.admin = user.isAdmin();
     $scope.selectedQueue = undefined;
     $scope.dropdown = undefined;
@@ -550,7 +551,8 @@ $scope.unhibernateQueue = function(){
 $scope.addAdmin = function(){
   if($scope.newAdmin !== ""){
     socket.emit('addAdmin', {
-      username:$scope.newAdmin
+      username:$scope.newAdmin,
+      addedBy:$scope.name
     });
     console.log("Adding admin " + $scope.newAdmin);
     $scope.newAdmin = '';
@@ -568,7 +570,8 @@ $scope.addTeacher = function(){
   if($scope.newTeacher !== "" && $scope.selectedQueue !== undefined){
     socket.emit('addTeacher', {
       username:$scope.newTeacher,
-      queueName:$scope.selectedQueue.name
+      queueName:$scope.selectedQueue.name,
+      addedBy:$scope.name
     });
     console.log("Adding teacher " + $scope.newTeacher + " in the queue " + $scope.selectedQueue.name);
     $scope.newTeacher = '';
@@ -587,7 +590,8 @@ $scope.addAssistant = function(){
   if($scope.newAssistant !== "" && $scope.selectedQueue !== undefined){
     socket.emit('addAssistant', {
       username:$scope.newAssistant,
-      queueName:$scope.selectedQueue.name
+      queueName:$scope.selectedQueue.name,
+      addedBy:$scope.name
     });
     console.log("Adding assistant " + $scope.newAssistant  + " in the queue " + $scope.selectedQueue.name);
     $scope.newAssistant = '';
