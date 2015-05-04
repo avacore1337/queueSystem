@@ -253,7 +253,7 @@ app.io.route('update', function(req) {
   var queue = req.data.queue;
   var user = req.data.user;
 
-  console.log(JSON.stringify(user)); // check which uses is given
+  console.log(JSON.stringify(user)); // check which uses is given --- need the one doing the action and the one who is "actioned"
 
   console.log('a was updated in ' + queue);
   app.io.room(queue).broadcast('update', user);
@@ -287,8 +287,6 @@ app.io.route('messageUser', function(req) {
   var sender = req.data.sender;
 
   app.io.room("user_" + name).broadcast('msg', {message: message, sender: sender}); // 
-  app.io.room("user_" + sender).broadcast('msg', {message: message, sender: sender}); // 
-//  app.io.room(queue).broadcast('msg', {message: message, sender: sender}); // Not having user as an identifier?
   console.log('user ' + name + ' was messaged from ' + sender + ' at ' + queue + ' with: ' + message);
 });
 
@@ -297,6 +295,13 @@ app.io.route('broadcast', function(req) {
   var queue = req.data.queue;
   var message = req.data.message;
   var sender = req.data.sender;
+
+  // teacher/assistant-validation
+  if (!(validate(username, "super", "course") || validate(username, "teacher", courseName) || validate(username, "assistant", courseName))) {
+    console.log("validation for broadcast failed");
+    //res.end();
+    return;
+  }
 
   app.io.room(queue).broadcast('msg', {message: message, sender: sender});
   console.log('broadcast in ' + queue + ', msg: ' + message);
@@ -307,6 +312,7 @@ app.io.route('leave', function(req) {
   var queue = req.data.queue;
   var user = req.data.user;
 
+  console.log(JSON.stringify(user)); // check which uses is given --- need the one doing the action and the one who is "actioned"
   console.log("Validerande: " + JSON.stringify(req.session.user));
 
   var course = findCourse(queue);
@@ -333,30 +339,27 @@ app.io.route('leave', function(req) {
 
 // admin purges a queue
 app.io.route('purge', function(req) {
-
   console.log("called purge:");
   console.log(req.session.user);
+
+  var courseName = req.data.queue;
+  var username = req.session.user.name;
   req.session.user = "troll";
-  // teacher-validation
-  if (!validate("pernyb", "type", "course")) {
+
+  // admin/teacher/assistant-validation
+  if (!(validate(username, "super", "course") || validate(username, "teacher", courseName) || validate(username, "assistant", courseName))) {
     console.log("validation for purge failed");
     //res.end();
     return;
   }
-  var queue = req.data.queue;
 
-  var course = findCourse(queue);
+  var course = findCourse(courseName);
   course.purgeQueue();
   course.queue = [];
 
-  console.log(req.data.queue + ' -list purged');
-  app.io.room(queue).broadcast('purge');
-  app.io.room("lobby").broadcast('lobbypurge', queue);
-
-  // ====== PrivList - testoutput =======
-  var usr = "pernyb";
-  var list = privilegeList(usr);
-  console.log("PrivList for " + usr + ": " + JSON.stringify(list));
+  console.log(req.data.courseName + ' -list purged by ' + username);
+  app.io.room(courseName).broadcast('purge');
+  app.io.room("lobby").broadcast('lobbypurge', courseName);
 });
 
 //===============================================================
@@ -377,43 +380,59 @@ function doOnCourse(courseName, action){
 
 // admin locks a queue
 app.io.route('lock', function(req) {
- // teacher-validation
-  if (!validate("pernyb", "type", "course")) {
+  var courseName = req.data.queue;
+  var username = req.session.user.name;
+
+  // admin/teacher-validation
+  if (!(validate(username, "super", "course") || validate(username, "teacher", courseName))) {
     console.log("validation for lock failed");
     //res.end();
     return;
   }
-  doOnCourse(req.data.queue, 'lock');
+
+  doOnCourse(courseName, 'lock');
 });
 
 // admin unlocks a queue
 app.io.route('unlock', function(req) {
- // teacher-validation
-  if (!validate("pernyb", "type", "course")) {
+  var courseName = req.data.queue;
+  var username = req.session.user.name;
+
+  // admin/teacher-validation
+  if (!(validate(username, "super", "course") || validate(username, "teacher", courseName))) {
     console.log("validation for unlock failed");
     //res.end();
     return;
   }
-  doOnCourse(req.data.queue, 'unlock');
+
+  doOnCourse(courseName, 'unlock');
 });
 
 app.io.route('hibernate', function(req) {
- // teacher-validation
-  if (!validate("pernyb", "type", "course")) {
+  var courseName = req.data.queue;
+  var username = req.session.user.name;
+
+  // admin/teacher-validation
+  if (!(validate(username, "super", "course") || validate(username, "teacher", courseName))) {
     console.log("validation for hibernate failed");
     //res.end();
     return;
   }
+
   doOnCourse(req.data.queue, 'hibernate');
 });
 
 app.io.route('unhibernate', function(req) {
- // teacher-validation
-  if (!validate("pernyb", "type", "course")) {
+  var courseName = req.data.queue;
+  var username = req.session.user.name;
+
+  // admin/teacher-validation
+  if (!(validate(username, "super", "course") || validate(username, "teacher", courseName))) {
     console.log("validation for unhibernate failed");
     //res.end();
     return;
   }
+
   doOnCourse(req.data.queue, 'unhibernate');
 });
 
@@ -514,29 +533,29 @@ app.io.route('addQueue', function(req) {
 
 //
 app.io.route('removeQueue', function(req) {
- console.log("Trying to remove Queue!");
- var username = req.session.user.name;
- // admin-validation
-  if (!(validate(username, "super", "course") || validate("pernyb", "type", "course"))) {
+  console.log("Trying to remove Queue!");
+  var username = req.session.user.name;
+  var courseName = req.data.queueName;
+
+  // admin/teacher-validation
+  if (!(validate(username, "super", "course") || validate(username, "teacher", courseName))) {
     console.log("validation for removeQueue failed");
     //res.end();
     return;
   }
 
-  var queueName = req.data.queueName;
-
   for (var i = courseList.length - 1; i >= 0; i--) {
     var course = courseList[i];
-    if (course.name === queueName) {
+    if (course.name === courseName) {
       courseList.splice(i, 1);
       course.remove();
       break;
     }
   };
 
-  console.log(queueName + ' is getting removed from queues');
+  console.log(courseName + ' is getting removed from queues');
 
-  app.io.room('admin').broadcast('removeQueue', queueName);
+  app.io.room('admin').broadcast('removeQueue', courseName);
 });
 
 //
@@ -564,9 +583,11 @@ app.io.route('addAdmin', function(req) {
 
 //
 app.io.route('addTeacher', function(req) {
- var username = req.session.user.name;
- // admin-validation
-  if (!(validate(username, "super", "course") || validate("pernyb", "type", "course"))) {
+  var username = req.session.user.name;
+  var courseName = req.data.queueName;
+
+  // admin/teacher-validation
+  if (!(validate(username, "super", "course") || validate(username, "teacher", courseName))) {
     console.log("validation for addTeacher failed");
     //res.end();
     return;
@@ -574,22 +595,23 @@ app.io.route('addTeacher', function(req) {
 
   var username = req.data.username;
   var teacherName = username;
-  var queueName = req.data.queueName;
-  var course = findCourse(queueName);
+  var course = findCourse(courseName);
 
   var newTeacher = new Admin2({name: teacherName, username: username});
 
   course.addTeacher(newTeacher);
 
   console.log(teacherName + ' is a new teacher!');
-  app.io.room('admin').broadcast('addTeacher', {name: teacherName, username: username, queueName: queueName});
+  app.io.room('admin').broadcast('addTeacher', {name: teacherName, username: username, queueName: courseName});
 });
 
 //
 app.io.route('addAssistant', function(req) {
   var username = req.session.user.name;
-  // admin-validation
-  if (!(validate(username, "super", "course") || validate("pernyb", "type", "course"))) {
+  var courseName = req.data.queueName;
+
+  // admin/teacher-validation
+  if (!(validate(username, "super", "course") || validate(username, "teacher", courseName))) {
     console.log("validation for addAssistant failed");
     //res.end();
     return;
@@ -597,7 +619,6 @@ app.io.route('addAssistant', function(req) {
 
   var username = req.data.username;
   var assistantName = username;
-  var queueName = req.data.queueName;
   var course = findCourse(queueName);
 
   var newAssistant = new Admin2({name: assistantName, username: username});
@@ -605,7 +626,7 @@ app.io.route('addAssistant', function(req) {
   course.addAssistant(newAssistant);
 
   console.log(assistantName + ' is a new assistant!');
-  app.io.room('admin').broadcast('addAssistant', {name: assistantName, username: username, queueName: queueName});
+  app.io.room('admin').broadcast('addAssistant', {name: assistantName, username: username, queueName: courseName});
 });
 
 //
@@ -637,62 +658,72 @@ app.io.route('removeAdmin', function(req) {
 
 //
 app.io.route('removeTeacher', function(req) {
- // teacher-validation
-/*  if (!validate("pernyb", "super", "course")) {
+  var username = req.session.user.name;
+  var courseName = req.data.queueName;
+
+  // admin/teacher-validation
+  if (!(validate(username, "super", "course") || validate(username, "teacher", courseName))) {
     console.log("validation for addAssistant failed");
     //res.end();
     return;
-  }*/
+  }
+
   var username = req.data.username;
-  var queueName = req.data.queueName;
-  var course = findCourse(queueName);
+  var course = findCourse(courseName);
 
   course.removeTeacher(username);
 
-  console.log(username + ' is a removed as a teacher in ' + queueName + '!');
-  app.io.room('admin').broadcast('removeTeacher',  {username: username, queueName: queueName});
+  console.log(username + ' is a removed as a teacher in ' + courseName + '!');
+  app.io.room('admin').broadcast('removeTeacher',  {username: username, queueName: courseName});
 });
 
 //
 app.io.route('removeAssistant', function(req) {
- // teacher-validation
-/*  if (!validate("pernyb", "super", "course")) {
+  var username = req.session.user.name;
+  var courseName = req.data.queueName;
+
+  // admin/teacher-validation
+  if (!(validate(username, "super", "course") || validate(username, "teacher", courseName))) {
     console.log("validation for addAssistant failed");
     //res.end();
     return;
-  }*/
+  }
+
   var username = req.data.username;
-  var queueName = req.data.queueName;
-  var course = findCourse(queueName);
+  var course = findCourse(courseName);
 
   course.removeAssistant(username);
 
-  console.log(username + ' is a removed as a assistant in ' + queueName + '!');
-  app.io.room('admin').broadcast('removeAssistant',  {username: username, queueName: queueName});
+  console.log(username + ' is a removed as a assistant in ' + courseName + '!');
+  app.io.room('admin').broadcast('removeAssistant',  {username: username, queueName: courseName});
 });
 
 //
 app.io.route('flag', function(req) {
- // assistant-validation
-  if (!validate("pernyb", "type", "course")) {
+  var username = req.data.name;
+  var courseName = req.data.queue;
+
+  // teacher/assistant-validation
+  if (!(validate(username, "teacher", courseName) || validate(username, "assistant", courseName))) {
     console.log("validation for flag failed");
     //res.end();
     return;
   }
-  var queue = req.data.queue;
+
   var sender = req.data.sender;
-  var name = req.data.name;
   var message = req.data.message;
  
-  var course = findCourse(queue);
-  course.addAssistantComment(name, sender, queue, message);
+  var course = findCourse(courseName);
+  course.addAssistantComment(username, sender, queue, message);
 
   console.log('flagged');
-  app.io.room(queue).broadcast('flag', name, message);
+  app.io.room(queue).broadcast('flag', username, message);
 });
 
 //
 app.io.route('setUser', function(req) {
+  req.io.join(req.name); // joina sitt eget rum, för privata meddelande etc
+
   req.session.user = req.data;
   console.log('Socket-setUser: ' + JSON.stringify(req.data));
 });
