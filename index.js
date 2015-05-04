@@ -459,7 +459,7 @@ function numbersOfPeopleLeftQueue(queueName, start, end) {
 //
 app.io.route('addQueue', function(req) {
  console.log("Trying to add Queue!");
- var username = req.session.user;
+ var username = req.session.user.name;
  // admin-validation
   if (!validate(username, "super", "course")) {
     console.log("validation for addQueue failed");
@@ -480,7 +480,7 @@ app.io.route('addQueue', function(req) {
 //
 app.io.route('removeQueue', function(req) {
  console.log("Trying to remove Queue!");
- var username = req.session.user;
+ var username = req.session.user.name;
  // admin-validation
   if (!(validate(username, "super", "course") || validate("pernyb", "type", "course"))) {
     console.log("validation for removeQueue failed");
