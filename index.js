@@ -279,7 +279,7 @@ app.io.route('help', function(req) {
   console.log(name + ' is getting help in ' + courseName);
 });
 
-// admin messages a user
+// teacher/assistant messages a user
 app.io.route('messageUser', function(req) {
   var queue = req.data.queue;
   var name = req.data.name;
@@ -290,11 +290,11 @@ app.io.route('messageUser', function(req) {
   console.log('user ' + name + ' was messaged from ' + sender + ' at ' + queue + ' with: ' + message);
 });
 
-// admin broadcasts to all users
+// teacher/assistant broadcasts to all users (teacher/assistant included)
 app.io.route('broadcast', function(req) {
-  var queue = req.data.queue;
+  var courseName = req.data.queue;
   var message = req.data.message;
-  var sender = req.data.sender;
+  var username = req.data.sender;
 
   // teacher/assistant-validation
   if (!(validate(username, "super", "course") || validate(username, "teacher", courseName) || validate(username, "assistant", courseName))) {
@@ -303,8 +303,41 @@ app.io.route('broadcast', function(req) {
     return;
   }
 
-  app.io.room(queue).broadcast('msg', {message: message, sender: sender});
-  console.log('broadcast in ' + queue + ', msg: ' + message);
+  app.io.room(courseName).broadcast('msg', {message: message, sender: username});
+  console.log('broadcast in ' + courseName + ', msg: ' + message);
+});
+
+// teacher/assistant broadcasts to all teacher/assistant
+app.io.route('broadcastTA', function(req) {
+  var courseName = req.data.queue;
+  var message = req.data.message;
+  var username = req.data.sender;
+
+  // teacher/assistant-validation
+  if (!(validate(username, "super", "course") || validate(username, "teacher", courseName) || validate(username, "assistant", courseName))) {
+    console.log("validation for broadcastTA failed");
+    //res.end();
+    return;
+  }
+
+  var course = findCourse(courseName);
+  var teacherList = course.teacher;
+  var assistantList = course.assistant;
+
+  for (var i = teacherList.length - 1; i >= 0; i--) {
+    var teacher = teacherList[i];
+    app.io.room("user_" + teacher.name).broadcast('msg', {message: message, sender: username});
+    console.log("broadcasting teacher: " + "user_" + teacher.name);
+  };
+
+  for (var i = assistantList.length - 1; i >= 0; i--) {
+    var assistant = assistantList[i];
+    app.io.room("user_" + assistant.name).broadcast('msg', {message: message, sender: username});
+    console.log("broadcasting assistant: " + assistant.name);
+  };
+
+//  app.io.room(courseName).broadcast('msg', {message: message, sender: username});
+  console.log('broadcastTA in ' + courseName + ', msg: ' + message);
 });
 
 // user leaves queue
@@ -439,26 +472,26 @@ app.io.route('unhibernate', function(req) {
 //===============================================================
 
 app.io.route('getAverageQueueTime', function(req) {
-  var queueName = req.data.queueName;
+  var courseName = req.data.queueName;
   var start = req.data.start;
   var end = req.data.end;
 
   console.log("Counting..");
 
-  var averageQueueTime = getAverageQueueTime(queueName, start, end);
+  var averageQueueTime = getAverageQueueTime(courseName, start, end);
 
   app.io.room('statistics').broadcast('getAverageQueueTime', averageQueueTime);
 });
 
 
 app.io.route('numbersOfPeopleLeftQueue', function(req) {
-  var queueName = req.data.queueName;
+  var courseName = req.data.queueName;
   var start = req.data.start;
   var end = req.data.end;
 
   console.log("Bounty hunting..");
 
-  var numbersOfPeopleLeft = numbersOfPeopleLeftQueue(queueName, start, end);
+  var numbersOfPeopleLeft = numbersOfPeopleLeftQueue(courseName, start, end);
 
   app.io.room('statistics').broadcast('numbersOfPeopleLeftQueue', numbersOfPeopleLeft);
 });
@@ -611,7 +644,7 @@ app.io.route('addAssistant', function(req) {
   var courseName = req.data.queueName;
 
   // admin/teacher-validation
-  if (!(validate(username, "super", "course") || validate(username, "teacher", courseName))) {
+  if (!(validate(username, "super", "course") /*|| validate(username, "teacher", courseName)*/)) {
     console.log("validation for addAssistant failed");
     //res.end();
     return;
@@ -619,7 +652,7 @@ app.io.route('addAssistant', function(req) {
 
   var username = req.data.username;
   var assistantName = username;
-  var course = findCourse(queueName);
+  var course = findCourse(courseName);
 
   var newAssistant = new Admin2({name: assistantName, username: username});
 
@@ -722,7 +755,7 @@ app.io.route('flag', function(req) {
 
 //
 app.io.route('setUser', function(req) {
-  req.io.join(req.name); // joina sitt eget rum, för privata meddelande etc
+  req.io.join("user_" + req.name); // joina sitt eget rum, för privata meddelande etc
 
   req.session.user = req.data;
   console.log('Socket-setUser: ' + JSON.stringify(req.data));
@@ -775,8 +808,6 @@ app.get('/API/userData', function(req, res) {
       var username = req.session.user.name;
       var teacherList = teacherForCourses(username);
       var assistantList = assistantForCourses(username);
-
-//      req.io.join("user_" + username); // for exclusive-broadcasts/private messages
 
       res.end(JSON.stringify({name: username, admin: req.session.user.admin, teacher: teacherList, assistant: assistantList}));
     }
