@@ -809,6 +809,8 @@ app.get('/API/userData', function(req, res) {
       var teacherList = teacherForCourses(username);
       var assistantList = assistantForCourses(username);
 
+//      req.io.join("user_" + username); // for exclusive-broadcasts/private messages
+
       res.end(JSON.stringify({name: username, admin: req.session.user.admin, teacher: teacherList, assistant: assistantList}));
     }
 });
