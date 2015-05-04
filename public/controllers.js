@@ -209,6 +209,7 @@ queueControllers.controller('loginController', ['$scope', '$location', '$http', 
         name: $scope.name,
         admin: $scope.type === 'admin'
       });
+      socket.emit('listen', 'user_' + $scope.name);
       console.log("I set the user with socket");
     };
 
