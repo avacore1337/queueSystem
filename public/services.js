@@ -27,16 +27,16 @@ angular.module('queue')
 			this.admin = bool;
 		},
 
-		isTeacher: function () {
-			return this.teacher.length !== 0;
+		isTeacher: function (course) {
+			return $.inArray(course, this.teacher);
 		},
 
 		setTeacher: function (list) {
 			this.teacher = list;
 		},
 
-		isAssistant: function () {
-			return this.assistant.length !== 0;
+		isAssistant: function (course) {
+			return $.inArray(course, this.assistant);
 		},
 
 		setAssistant: function (list) {

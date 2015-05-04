@@ -23,7 +23,10 @@
     $scope.comment = '';
     $scope.users = [];
     $scope.bookedUsers = [];
-    $scope.admin = user.isAdmin();
+    $scope.assistant = user.isAssistant($scope.queue) !== -1;
+    console.log("I am assistant in " + $scope.queue + ", (that was " + $scope.assistant + ")");
+    $scope.teacher = user.isTeacher($scope.queue) !== -1;
+    console.log("I am teacher in " + $scope.queue + ", (that was " + $scope.teacher + ")");
     $scope.loggedIn = user.getName() !== null && user.getName() !== "" && user.getName() !== undefined;
     $scope.enqueued = false;
 

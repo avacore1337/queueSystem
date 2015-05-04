@@ -100,7 +100,7 @@
             <th>User</th>
             <th>Location</th>
             <th>Comment</th>
-            <th class="hidden-xs">Time</th>
+            <th>Time</th>
           </tr>
         </thead>
         <tbody>
@@ -109,9 +109,9 @@
             <td>{{ user.name }}</td>
             <td>{{ user.place }}</td>
             <td>{{ user.comment }}</td>
-            <td class="hidden-xs"><span data-livestamp="{{user.time}}"></span></td>
+            <td><span data-livestamp="{{user.time}}"></span></td>
           </tr>
-          <tr ng-repeat-end ng-show="admin && user.optionsActivated" ng-dblclick="changeVisibility(user.name)">
+          <tr ng-repeat-end ng-show="(teacher || assistant) && user.optionsActivated" ng-dblclick="changeVisibility(user.name)">
             <td colspan="100%" class="text-right">
                 <span title="remove user">
                   <button class="btn red clickable" ng-click="removeUser(user.name)" id="queueRemoveUser{{user.name}}Btn">
@@ -179,9 +179,9 @@
           <span class="glyphicon glyphicon-pencil"></span>&nbsp;
           Update information
         </button>
-        <div class="buffer" ng-show="admin"></div>
+        <div class="buffer" ng-show="(teacher || assistant)"></div>
         <!-- Admin-options -->
-        <div class="btn-group col-xs-12" dropdown is-open="status.isopen" ng-show="admin" style="padding-left: 0; padding-right: 0;">
+        <div class="btn-group col-xs-12" dropdown is-open="status.isopen" ng-show="(teacher || assistant)" style="padding-left: 0; padding-right: 0;">
           <button type="button" class="btn btn-default dropdown-toggle col-xs-12" id="queueOptionsBtn" dropdown-toggle>
             <div class="col-xs-6 text-left">
               Options
@@ -192,31 +192,31 @@
           </button>
           <ul class="dropdown-menu col-xs-12" role="menu" style="padding: 5%;">
             <li>
-              <button class="blue clickable center-content frame expand" ng-show="admin" ng-click="broadcast()" id="queueBroadcastBtn">
+              <button class="blue clickable center-content frame expand" ng-show="(teacher || assistant)" ng-click="broadcast()" id="queueBroadcastBtn">
                 <span class="glyphicon glyphicon-bullhorn"></span>&nbsp;
                 Broadcast
               </button>
             </li>
             <li>
-              <button class="blue clickable center-content frame expand" ng-show="admin" ng-click="broadcastTA()" id="queueBroadcastToTasBtn">
+              <button class="blue clickable center-content frame expand" ng-show="(teacher || assistant)" ng-click="broadcastTA()" id="queueBroadcastToTasBtn">
                 <span class="glyphicon glyphicon-bullhorn"></span>&nbsp;
                 Broadcast to TAs
               </button>
             </li>
             <li>
-              <button class="red clickable center-content frame expand" ng-show="admin" ng-click="purge()" id="queuePurgeQueueBtn">
+              <button class="red clickable center-content frame expand" ng-show="(teacher || assistant)" ng-click="purge()" id="queuePurgeQueueBtn">
                 <span class="glyphicon glyphicon-remove"></span>&nbsp;
                 Purge queue
               </button>
             </li>
             <li>
-              <button class="red clickable center-content frame expand" ng-show="admin && !locked" ng-click="lock()" id="queueLockQueueBtn">
+              <button class="red clickable center-content frame expand" ng-show="(teacher || assistant) && !locked" ng-click="lock()" id="queueLockQueueBtn">
                 <span class="glyphicon glyphicon-lock"></span>&nbsp;
                 Lock queue
               </button>
             </li>
             <li>
-              <button class="green clickable center-content frame expand" ng-show="admin && locked" ng-click="unlock()" id="queueUnlockQueueBtn">
+              <button class="green clickable center-content frame expand" ng-show="(teacher || assistant) && locked" ng-click="unlock()" id="queueUnlockQueueBtn">
                 <span class="glyphicon glyphicon-lock"></span>&nbsp;
                 Unlock queue
               </button>
