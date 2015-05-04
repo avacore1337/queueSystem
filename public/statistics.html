@@ -26,11 +26,11 @@
 <!-- Timepicker (from) -->
           <timepicker ng-model="fromTime" minute-step="mstep" show-meridian="false" id="statisticsFromTimeTimepicker"></timepicker>
       </div>
-<!-- Datepicker (from) -->
+<!-- Datepicker (to) -->
       <div class="col-md-6">
           <h4>To</h4>
           <p class="input-group">
-            <input type="text" class="form-control" datepicker-popup="yyyy-MM-dd" ng-model="dtTo" is-open="openedTo" max-date="dt" close-text="Close" show-button-bar="false" id="statisticsToDateInputField"/>
+            <input type="text" class="form-control" datepicker-popup="yyyy-MM-dd" ng-model="dtTo" is-open="openedTo" max-date="today" close-text="Close" show-button-bar="false" id="statisticsToDateInputField"/>
             <span class="input-group-btn">
               <button type="button" class="btn btn-default" ng-click="open($event, 'openedTo')" id="statisticsToDateCalendarBtn"><i class="glyphicon glyphicon-calendar"></i></button>
             </span>
