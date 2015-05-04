@@ -15,6 +15,8 @@ queueControllers.controller('listController', ['$scope', '$http', '$location', '
       console.log(response);
       user.setName(response.name);
       user.setAdmin(response.admin);
+      user.setTeacher(response.teacher);
+      user.setAssistant(response.assistant);
       $scope.admin = user.isAdmin();
     });
 
@@ -219,6 +221,7 @@ queueControllers.controller('navigationController', ['$scope', '$location', 'Use
     $scope.loggedIn = user.username !== undefined && user.username !== "";
     $scope.name = user.username;
     $scope.admin = user.admin;
+    $scope.teacher = user.isTeacher();
 
     $scope.$watch(function () { return $location.path(); }, function(newValue, oldValue) {
       $scope.location = newValue;
@@ -234,6 +237,11 @@ queueControllers.controller('navigationController', ['$scope', '$location', 'Use
     $scope.$watch(function () { return user.admin; }, function(newValue, oldValue) {
       $scope.admin = newValue;
       console.log("Detected update to user.admin (oldValue = " + oldValue + ", newValue = " + newValue + ")");
+    });
+
+    $scope.$watch(function () { return user.isTeacher; }, function(newValue, oldValue) {
+      $scope.teacher = newValue;
+      console.log("Detected update to user.isTeacher (oldValue = " + oldValue + ", newValue = " + newValue + ")");
     });
 
     // Loggin out

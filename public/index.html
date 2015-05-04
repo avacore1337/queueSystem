@@ -34,8 +34,8 @@
 						<li ng-click="redirect('list')" ng-class="location == '/list' || location.match('/queue/.*') ? 'active' : ''" id="indexQueuesBtn"><a style="cursor: pointer;">Queues</a></li>
 						<li ng-click="redirect('about')" ng-class="location == '/about' ? 'active' : ''" id="indexAboutBtn"><a style="cursor: pointer;">About</a></li>
 						<li ng-click="redirect('help')" ng-class="location == '/help' ? 'active' : ''" id="indexHelpBtn"><a style="cursor: pointer;">Help</a></li>
-						<li ng-show="admin" ng-click="redirect('admin')" ng-class="location == '/admin' ? 'active' : ''" id="indexAdminBtn"><a style="cursor: pointer;">Admin</a></li>
-						<li ng-show="admin" ng-click="redirect('statistics')" ng-class="location == '/statistics' ? 'active' : ''" id="indexStatisticsBtn"><a style="cursor: pointer;">Statistics</a></li>
+						<li ng-show="admin || teacher" ng-click="redirect('admin')" ng-class="location == '/admin' ? 'active' : ''" id="indexAdminBtn"><a style="cursor: pointer;">Admin</a></li>
+						<li ng-show="admin || teacher" ng-click="redirect('statistics')" ng-class="location == '/statistics' ? 'active' : ''" id="indexStatisticsBtn"><a style="cursor: pointer;">Statistics</a></li>
 					</ul>
 					<ul class="nav navbar-nav navbar-right">
 						<li class="unresponsive hidden-xs" id="indexNameTextField"><a class="unresponsive">{{name}}</a></li>
