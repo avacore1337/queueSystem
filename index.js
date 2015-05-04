@@ -133,10 +133,6 @@ function findCourse(name) {
 // validates if a person is the privilege-type given for given course
 // TODO: make the validation more secure
 function validate(name, type, course) {
-//  var course = findCourse(course);
-
-  console.log(JSON.stringify(name));
-
   if (type === "super") {
     return validateSuper(name);
   } else if (type === "teacher") {
@@ -145,7 +141,7 @@ function validate(name, type, course) {
     return validateAssistant(name, course);
   };
 
-  console.log(name + ' is not a valid admin'); // temporary for error-solving
+  console.log("that privilege-type is not defined"); // temporary for error-solving
   return false;
 }
 
@@ -161,10 +157,8 @@ function validateSuper(name) {
 
 function validateTeacher(username, courseName) {
   var teacherList = teacherForCourses(username);
-  console.log("teacherlist for " + username + ": " + teacherList);
 
   for (var i = 0; i < teacherList.length; i++) {
-    console.log("courses: " + teacherList[i] + " vs " + courseName);
     if (teacherList[i] === courseName) {
       console.log(username + ' is a valid teacher'); // temporary for error-solving
       return true;
@@ -176,7 +170,6 @@ function validateAssistant(username, courseName) {
   var assistantList = assistantForCourses(username);
 
   for (var i = 0; i < assistantList.length; i++) {
-    console.log("course: " + assistantList[i] + " vs " + courseName);
     if (assistantList[i] === courseName) {
       console.log(username + ' is a valid assistant'); // temporary for error-solving
       return true;
@@ -186,6 +179,7 @@ function validateAssistant(username, courseName) {
 
 // list of courses that a user is admin, teacher or TA for
 // TODO: make the list containing a field which says which kind of privilege-type the person has
+// DEPREMERAD (DEPRECATED)
 function privilegeList(name) {
   var list = [];
   for (var i = 0; i < adminList.length; i++) {
@@ -239,8 +233,7 @@ app.io.route('badLocation', function(req) {
   var username = req.session.user.name;
   var courseName = req.data.queue;
 
-  console.log("the name is: " + username);
-  // assistant-validation
+  // teacher/assistant-validation
   if (!(validate(username, "teacher", courseName) || validate(username, "assistant", courseName))) {
     console.log("validation for badLocation failed");
     //res.end();
@@ -260,6 +253,8 @@ app.io.route('update', function(req) {
   var queue = req.data.queue;
   var user = req.data.user;
 
+  console.log(JSON.stringify(user)); // check which uses is given
+
   console.log('a was updated in ' + queue);
   app.io.room(queue).broadcast('update', user);
 
@@ -269,12 +264,19 @@ app.io.route('update', function(req) {
 
 // admin helps a user (marked in the queue)
 app.io.route('help', function(req) {
-  var queue = req.data.queue;
+  var courseName = req.data.queue;
   var name = req.data.name;
-  var helper = req.data.helper;
+  var username = req.data.helper;
 
-  app.io.room(queue).broadcast('help', helper);
-  console.log(name + ' is getting help in ' + queue);
+  // teacher/assistant-validation
+  if (!(validate(username, "teacher", courseName) || validate(username, "assistant", courseName))) {
+    console.log("validation for help failed");
+    //res.end();
+    return;
+  }
+
+  app.io.room(courseName).broadcast('help', username);
+  console.log(name + ' is getting help in ' + courseName);
 });
 
 // admin messages a user
@@ -284,7 +286,9 @@ app.io.route('messageUser', function(req) {
   var message = req.data.message;
   var sender = req.data.sender;
 
-  app.io.room(queue).broadcast('msg', {message: message, sender: sender}); // Not having user as an identifier?
+  app.io.room("user_" + name).broadcast('msg', {message: message, sender: sender}); // 
+  app.io.room("user_" + sender).broadcast('msg', {message: message, sender: sender}); // 
+//  app.io.room(queue).broadcast('msg', {message: message, sender: sender}); // Not having user as an identifier?
   console.log('user ' + name + ' was messaged from ' + sender + ' at ' + queue + ' with: ' + message);
 });
 
@@ -730,16 +734,18 @@ app.get('/API/adminList', function(req, res) {
 app.get('/API/userData', function(req, res) {
     res.setHeader('Content-Type', 'application/json');
     console.log("user data: ");
-    if(req.session.user === undefined){
+    if(req.session.user === undefined) {
       console.log("not logged in yet");
       res.end();
     }
     else{   
-      console.log(req.session.user);
+      console.log("userData - logged in: " + JSON.stringify(req.session.user));
 
       var username = req.session.user.name;
       var teacherList = teacherForCourses(username);
       var assistantList = assistantForCourses(username);
+
+//      req.io.join("user_" + username); // for exclusive-broadcasts/private messages
 
       res.end(JSON.stringify({name: username, admin: req.session.user.admin, teacher: teacherList, assistant: assistantList}));
     }
