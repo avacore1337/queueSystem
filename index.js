@@ -690,15 +690,21 @@ app.get('/API/adminList', function(req, res) {
 
 // TODO: add a list of admin
 app.get('/API/userData', function(req, res) {
-    console.log("user data: ");
-    console.log(req.session.user);
-
-    var username = req.session.user.name;
-    var teacherList = teacherForCourses(username)
-    var assistantList = assistantForCourses(username)
-
     res.setHeader('Content-Type', 'application/json');
-    res.end(JSON.stringify({name: username, admin: req.session.user.admin, teacher: teacherList, assistant: assistantList}));
+    console.log("user data: ");
+    if(req.session.user === undefined){
+      console.log("not logged in yet");
+      res.end();
+    }
+    else{   
+      console.log(req.session.user);
+
+      var username = req.session.user.name;
+      var teacherList = teacherForCourses(username)
+      var assistantList = assistantForCourses(username)
+
+      res.end(JSON.stringify({name: username, admin: req.session.user.admin, teacher: teacherList, assistant: assistantList}));
+    }
 });
 
 function teacherForCourses(username) {
