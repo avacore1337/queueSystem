@@ -220,8 +220,10 @@ queueControllers.controller('navigationController', ['$scope', '$location', 'Use
 
     $scope.loggedIn = user.username !== undefined && user.username !== "";
     $scope.name = user.username;
-    $scope.admin = user.admin;
+    $scope.admin = user.isAdmin();
     $scope.teacher = user.isTeacher();
+    console.log("I am an admin. (that was " + $scope.admin + ")");
+    console.log("I am a teacher. (that was " + $scope.teacher + ")");
 
     $scope.$watch(function () { return $location.path(); }, function(newValue, oldValue) {
       $scope.location = newValue;
@@ -239,8 +241,8 @@ queueControllers.controller('navigationController', ['$scope', '$location', 'Use
       console.log("Detected update to user.admin (oldValue = " + oldValue + ", newValue = " + newValue + ")");
     });
 
-    $scope.$watch(function () { return user.isTeacher; }, function(newValue, oldValue) {
-      $scope.teacher = newValue;
+    $scope.$watch(function () { return user.teacher; }, function(newValue, oldValue) {
+      $scope.teacher = newValue.length !== 0;
       console.log("Detected update to user.isTeacher (oldValue = " + oldValue + ", newValue = " + newValue + ")");
     });
 
