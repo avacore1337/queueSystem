@@ -133,12 +133,16 @@ function findCourse(name) {
 // validates if a person is the privilege-type given for given course
 // TODO: make the validation more secure
 function validate(name, type, course) {
-  var course = findCourse(course);
+//  var course = findCourse(course);
 
   console.log(JSON.stringify(name));
 
   if (type === "super") {
     return validateSuper(name);
+  } else if (type === "teacher") {
+    return validateTeacher(name, course);
+  } else if (type === "assistant") {
+    return validateAssistant(name, course);
   };
 
   console.log(name + ' is not a valid admin'); // temporary for error-solving
@@ -149,7 +153,32 @@ function validateSuper(name) {
   for (var i = 0; i < adminList.length; i++) {
     console.log("admin: " + adminList[i].name + " vs " + name);
     if (adminList[i].name === name) {
-      console.log(name + ' is a valid admin'); // temporary for error-solving
+      console.log(name + ' is a valid super-admin'); // temporary for error-solving
+      return true;
+    }
+  }
+}
+
+function validateTeacher(username, courseName) {
+  var teacherList = teacherForCourses(username);
+  console.log("teacherlist for " + username + ": " + teacherList);
+
+  for (var i = 0; i < teacherList.length; i++) {
+    console.log("courses: " + teacherList[i] + " vs " + courseName);
+    if (teacherList[i] === courseName) {
+      console.log(username + ' is a valid teacher'); // temporary for error-solving
+      return true;
+    }
+  }
+}
+
+function validateAssistant(username, courseName) {
+  var assistantList = assistantForCourses(username);
+
+  for (var i = 0; i < assistantList.length; i++) {
+    console.log("course: " + assistantList[i] + " vs " + courseName);
+    if (assistantList[i] === courseName) {
+      console.log(username + ' is a valid assistant'); // temporary for error-solving
       return true;
     }
   }
@@ -207,21 +236,23 @@ app.io.route('join', function(req) {
 // user tries to join a queue with a "bad location"
 //  - do nothing in backend?
 app.io.route('badLocation', function(req) {
-  console.log(req.session.user);
   var username = req.session.user.name;
+  var courseName = req.data.queue;
+
+  console.log("the name is: " + username);
   // assistant-validation
-  if (!validate("pernyb", "type", "course")) {
+  if (!(validate(username, "teacher", courseName) || validate(username, "assistant", courseName))) {
     console.log("validation for badLocation failed");
     //res.end();
     return;
   }
-  var queue = req.data.queue;
+
   var name = req.data.name;
   var message = "Bad location given";
   var sender = req.data.sender;
 
-  app.io.room(queue).broadcast('badLocation', {message: message, sender: sender}); 
-  console.log("Bad location at " + queue + " for " + name);
+  app.io.room(courseName).broadcast('badLocation', {message: message, sender: sender}); 
+  console.log("Bad location at " + courseName + " for " + name);
 });
 
 // user gets updated
@@ -716,6 +747,8 @@ app.get('/API/userData', function(req, res) {
 
 function teacherForCourses(username) {
   var teacherList = [];
+
+  console.log("Looking for courses with " + username);
 
   for (var n = courseList.length - 1; n >= 0; n--) {
     var course = courseList[n];
