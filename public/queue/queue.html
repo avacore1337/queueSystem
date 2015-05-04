@@ -104,7 +104,7 @@
           </tr>
         </thead>
         <tbody>
-          <tr ng-repeat-start="user in users track by $index" ng-class="user.gettingHelp ? 'pulse' : ''" ng-dblclick="changeVisibility(user.name)"  id="queue{{user.name}}Btn">
+          <tr ng-repeat-start="user in users track by $index" ng-class="{'pulse' : user.gettingHelp, 'light-blue-background' : user.name === name}" ng-dblclick="changeVisibility(user.name)"  id="queue{{user.name}}Btn">
             <td class="hidden-xs">{{ $index + 1 }}</td>
             <td>{{ user.name }}</td>
             <td>{{ user.place }}</td>
