@@ -137,7 +137,7 @@ function validate(name, type, course) {
 
   console.log(JSON.stringify(name));
 
-  if (type === 'super') {
+  if (type === "super") {
     return validateSuper(name);
   };
 
@@ -196,7 +196,12 @@ app.io.route('join', function(req) {
   app.io.room("lobby").broadcast('lobbyjoin', queue);
 
   var course = findCourse(queue);
-  course.addUser(new User2({name: user.name, place: user.place, comment: user.comment}));
+  var newUser = new User2({name: user.name, place: user.place, comment: user.comment});
+  course.addUser(newUser);
+
+  var newStatistic = new Statistic2({name: newUser.name, course: queue, startTime: newUser.startTime, action: ''});
+  statisticsList.push(newStatistic);
+  newStatistic.save();
 });
 
 // user tries to join a queue with a "bad location"
@@ -547,12 +552,14 @@ app.io.route('addTeacher', function(req) {
 
 //
 app.io.route('addAssistant', function(req) {
- // teacher-validation
-/*  if (!validate("pernyb", "super", "course")) {
-    console.log("validation for addAssistant failed");
+  var username = req.session.user.name;
+  // admin-validation
+  if (!(validate(username, "super", "course") || validate("pernyb", "type", "course"))) {
+    console.log("validation for addTeacher failed");
     //res.end();
     return;
-  }*/
+  }
+
   var username = req.data.username;
   var assistantName = username;
   var queueName = req.data.queueName;
@@ -694,8 +701,8 @@ app.get('/API/userData', function(req, res) {
     console.log(req.session.user);
 
     var username = req.session.user.name;
-    var teacherList = teacherForCourses(username)
-    var assistantList = assistantForCourses(username)
+    var teacherList = teacherForCourses(username);
+    var assistantList = assistantForCourses(username);
 
     res.setHeader('Content-Type', 'application/json');
     res.end(JSON.stringify({name: username, admin: req.session.user.admin, teacher: teacherList, assistant: assistantList}));
