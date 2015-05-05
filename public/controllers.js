@@ -195,8 +195,7 @@ queueControllers.controller('loginController', ['$scope', '$location', '$http', 
     $scope.done = function () {
       console.log("Reached done()");
       $http.post('/API/setUser', {
-        name: $scope.name,
-        admin: $scope.type === 'admin'
+        name: $scope.name
       },
       {withCredentials: true}).success(function(response){
         console.log("with credentials success");
@@ -253,13 +252,13 @@ queueControllers.controller('navigationController', ['$scope', '$location', 'Use
     // Loggin out
     $scope.logOut = function(){
       $http.post('/API/setUser', {
-        name: "",
-        admin: false
+        name: ""
       },
       {withCredentials: true}).success(function(response){
         $location.path('list');
-        user.admin = false;
         user.name = "";
+        $scope.name = "";
+        $scope.loggedIn = false;
         console.log("logged out");
       });
     };
