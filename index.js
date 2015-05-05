@@ -753,7 +753,7 @@ app.io.route('flag', function(req) {
   app.io.room(queue).broadcast('flag', username, message);
 });
 
-//
+// TODO : Robert look here
 app.io.route('setUser', function(req) {
   req.io.join("user_" + req.name); // joina sitt eget rum, för privata meddelande etc
 

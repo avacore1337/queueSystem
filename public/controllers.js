@@ -204,6 +204,7 @@ queueControllers.controller('loginController', ['$scope', '$location', '$http', 
       });
       console.log("I set the user with http");
       // TODO : This should be removed later on
+      // TODO : Robert look here
       socket.emit('setUser', {
         name: $scope.name,
         admin: $scope.type === 'admin'
