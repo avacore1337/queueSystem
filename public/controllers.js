@@ -258,6 +258,7 @@ queueControllers.controller('navigationController', ['$scope', '$location', 'Use
         $location.path('list');
         user.name = "";
         $scope.name = "";
+        $scope.admin = false;
         $scope.loggedIn = false;
         console.log("logged out");
       });

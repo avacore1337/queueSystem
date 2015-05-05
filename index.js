@@ -808,10 +808,11 @@ app.get('/API/userData', function(req, res) {
       var username = req.session.user.name;
       var teacherList = teacherForCourses(username);
       var assistantList = assistantForCourses(username);
+      var admin = validateSuper(username);
 
 //      req.io.join("user_" + username); // for exclusive-broadcasts/private messages
 
-      res.end(JSON.stringify({name: username, admin: req.session.user.admin, teacher: teacherList, assistant: assistantList}));
+      res.end(JSON.stringify({name: username, admin: admin, teacher: teacherList, assistant: assistantList}));
     }
 });
 
