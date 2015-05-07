@@ -34,13 +34,13 @@
 						<li ng-click="redirect('list')" ng-class="location == '/list' || location.match('/queue/.*') ? 'active' : ''" id="indexQueuesBtn"><a style="cursor: pointer;">Queues</a></li>
 						<li ng-click="redirect('about')" ng-class="location == '/about' ? 'active' : ''" id="indexAboutBtn"><a style="cursor: pointer;">About</a></li>
 						<li ng-click="redirect('help')" ng-class="location == '/help' ? 'active' : ''" id="indexHelpBtn"><a style="cursor: pointer;">Help</a></li>
-						<li ng-show="admin || teacher" ng-click="redirect('admin')" ng-class="location == '/admin' ? 'active' : ''" id="indexAdminBtn"><a style="cursor: pointer;">Admin</a></li>
-						<li ng-show="admin || teacher" ng-click="redirect('statistics')" ng-class="location == '/statistics' ? 'active' : ''" id="indexStatisticsBtn"><a style="cursor: pointer;">Statistics</a></li>
+						<li ng-show="accessLevel() > 1" ng-click="redirect('admin')" ng-class="location == '/admin' ? 'active' : ''" id="indexAdminBtn"><a style="cursor: pointer;">Admin</a></li>
+						<li ng-show="accessLevel() > 1" ng-click="redirect('statistics')" ng-class="location == '/statistics' ? 'active' : ''" id="indexStatisticsBtn"><a style="cursor: pointer;">Statistics</a></li>
 					</ul>
 					<ul class="nav navbar-nav navbar-right">
 						<li class="unresponsive hidden-xs" id="indexNameTextField"><a class="unresponsive">{{name}}</a></li>
-						<li ng-hide="loggedIn" ng-click="redirect('login')" id="indexLogInBtn"><a style="cursor: pointer;">Log in</a></li>
-						<li ng-show="loggedIn" ng-click="logOut()" id="indexLogOutBtn"><a style="cursor: pointer;">Log out</a></li>
+						<li ng-hide="name" ng-click="redirect('login')" id="indexLogInBtn"><a style="cursor: pointer;">Log in</a></li>
+						<li ng-show="name" ng-click="logOut()" id="indexLogOutBtn"><a style="cursor: pointer;">Log out</a></li>
 					</ul>
 				</div><!-- /.navbar-collapse -->
 			</div><!-- /.container-fluid -->

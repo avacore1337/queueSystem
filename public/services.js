@@ -28,7 +28,7 @@ angular.module('queue')
 		},
 
 		isTeacher: function (course) {
-			return $.inArray(course, this.teacher);
+			return $.inArray(course, this.teacher) !== -1;
 		},
 
 		setTeacher: function (list) {
@@ -36,7 +36,7 @@ angular.module('queue')
 		},
 
 		isAssistant: function (course) {
-			return $.inArray(course, this.assistant);
+			return $.inArray(course, this.assistant) !== -1;
 		},
 
 		setAssistant: function (list) {

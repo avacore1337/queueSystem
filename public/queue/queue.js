@@ -1,80 +1,79 @@
 (function(){
   var app = angular.module("queue.queue", [
-  'ui.bootstrap',
-  'ngRoute'
-  ]);
+    'ui.bootstrap',
+    'ngRoute'
+    ]);
   
   app.config(['$routeProvider',
-  function($routeProvider) {
-    $routeProvider.
+    function($routeProvider) {
+      $routeProvider.
       when('/queue/:queue', {
         templateUrl: 'queue/queue.html',
         controller: 'queueController'
       });
-  }])
+    }])
 
 
   .controller('queueController', ['$scope', '$http', '$routeParams', '$location', '$modal', 'WebSocketService', 'UserService', 'TitleService',
-  function ($scope, $http, $routeParams, $location, $modal, socket, user, title) {
-    $scope.queue = $routeParams.queue;
-    title.title = $scope.queue + " | Stay A While";
-    $scope.name = user.getName();
-    $scope.location = '';
-    $scope.comment = '';
-    $scope.users = [];
-    $scope.bookedUsers = [];
-    $scope.assistant = user.isAssistant($scope.queue) !== -1;
-    console.log("I am assistant in " + $scope.queue + ", (that was " + $scope.assistant + ")");
-    $scope.teacher = user.isTeacher($scope.queue) !== -1;
-    console.log("I am teacher in " + $scope.queue + ", (that was " + $scope.teacher + ")");
-    $scope.loggedIn = user.getName() !== null && user.getName() !== "" && user.getName() !== undefined;
-    $scope.enqueued = false;
+    function ($scope, $http, $routeParams, $location, $modal, socket, user, title) {
+      $scope.queue = $routeParams.queue;
+      title.title = $scope.queue + " | Stay A While";
+      $scope.name = user.getName();
+      $scope.users = [];
+      $scope.bookedUsers = [];
+      $scope.enqueued = false;
 
-    $scope.locked = true;
-    $scope.hibernating = true;
-    $scope.motd = "";
-    $http.get('/API/queue/' + $routeParams.queue)
-    .success(function(response) {
-      $scope.users = response.queue;
-      $scope.locked = response.locked;
-      $scope.hibernating = response.hibernating;
-      $scope.motd = response.motd;
-      for (var i = 0; i < $scope.users.length; i++) {
-        $scope.users[i].optionsActivated = false;
-        $scope.users[i].time = $scope.users[i].time/1000;
-        if($scope.users[i].name === $scope.name){
-          $scope.enqueued = true;
-          title.title = "["  + (i+1) + "] " + $scope.queue + " | Stay A while";
-          $scope.location = $scope.users[i].place;
-          $scope.comment = $scope.users[i].comment;
-        }
+      $scope.accessLevel = 0;
+      if(user.isAssistant($scope.queue)){
+        $scope.accessLevel = 1;
       }
+      if(user.isTeacher($scope.queue)){
+        $scope.accessLevel = 2;
+      }
+
+      $scope.locked = false;
+      $scope.hibernating = false;
+      $scope.motd = "";
+      $http.get('/API/queue/' + $routeParams.queue)
+      .success(function(response) {
+        $scope.users = response.queue;
+        $scope.locked = response.locked;
+        $scope.hibernating = response.hibernating;
+        $scope.motd = response.motd;
+        for (var i = 0; i < $scope.users.length; i++) {
+          $scope.users[i].optionsActivated = false;
+          $scope.users[i].time = $scope.users[i].time/1000;
+          if($scope.users[i].name === $scope.name){
+            $scope.enqueued = true;
+            title.title = "["  + (i+1) + "] " + $scope.queue + " | Stay A while";
+            $scope.location = $scope.users[i].place;
+            $scope.comment = $scope.users[i].comment;
+          }
+        }
       //if($scope.motd !== ""){
       //  alert($scope.motd);
       //}
     });
 
-    $scope.bookedUsers = [
-      {name:'Anton',  place:"Red 01" , comment:"Labb 1", time:"15:00"},
-      {name:'Joakim',  place:"Red 06" , comment:"Labb 3", time:"15:30"},
-      {name:'Per',  place:"Red 07" , comment:"Labb 2", time:"16:00"}
-    ];
+// TODO : Remove this when you connect the two backends
+$scope.bookedUsers = [
+{name:'Anton',  place:"Red 01" , comment:"Labb 1", time:"15:00"},
+{name:'Joakim',  place:"Red 06" , comment:"Labb 3", time:"15:30"},
+{name:'Per',  place:"Red 07" , comment:"Labb 2", time:"16:00"}
+];
 
     //$http.get('/API/booked/' + $routeParams.queue)
     //  .success(function(response) {
     //  $scope.bookedUsers = response;
     //});
 
-    $scope.newUser = true;
+socket.emit('stopListening', 'lobby');
+socket.emit('listen', $scope.queue);
 
-    socket.emit('stopListening', 'lobby');
-    socket.emit('listen', $routeParams.queue);
-
-    console.log('testing');
+console.log('testing');
 
     // Listen for the person joining a queue event.
     socket.on('join', function(data) {
-      console.log("I get this time to 'join' : " + data.time);
       if(data.name === $scope.name){
         $scope.enqueued = true;
         title.title = "["  + ($scope.users.length+1) + "] " + $scope.queue + " | Stay A while";
@@ -86,6 +85,7 @@
     socket.on('leave', function(data) {
       if(data.name === $scope.name){
         $scope.enqueued = false;
+        $scope.comment = '';
         title.title = $scope.queue + " | Stay A while";
       }
       for(var i = $scope.users.length - 1; i >= 0; i--) {
@@ -244,7 +244,6 @@
         queue:$routeParams.queue,
         user:{name:name, place:tempPlace, comment:tempComment}
       });
-      $scope.comment = '';
       console.log("Called removeUser");
     };
 
@@ -469,7 +468,7 @@
     };
 
     // When an admin wants to see the admin options
-     $scope.changeVisibility = function(name){
+    $scope.changeVisibility = function(name){
       for(var i = 0; i < $scope.users.length; i++){
         if($scope.users[i].name === name){
           $scope.users[i].optionsActivated = !$scope.users[i].optionsActivated;
@@ -485,5 +484,5 @@
     console.log("location = " + $scope.location);
   };
 
-  }]);
+}]);
 })();

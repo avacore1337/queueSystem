@@ -3,7 +3,6 @@ var queueControllers = angular.module('queueControllers', []);
 queueControllers.controller('listController', ['$scope', '$http', '$location', 'WebSocketService', 'UserService', 'TitleService',
   function ($scope, $http, $location, socket, user, title) {
     title.title = "Stay A While";
-    $scope.admin = false;
     $scope.queues = [];
     $http.get('/API/queueList').success(function(response){
       $scope.queues = response.sort(function(a, b) {return a.name.localeCompare(b.name);});
@@ -11,13 +10,13 @@ queueControllers.controller('listController', ['$scope', '$http', '$location', '
 
     console.log("API/userData");
     $http.get('/API/userData').success(function(response){
-      console.log("user data requested");
-      console.log(response);
+      console.log("User from API = " + JSON.stringify(response));
+      console.log("User from service = " + JSON.stringify(user));
       user.setName(response.name);
       user.setAdmin(response.admin);
       user.setTeacher(response.teacher);
       user.setAssistant(response.assistant);
-      $scope.admin = user.isAdmin();
+      console.log("Now the user from service = " + JSON.stringify(user));
     });
 
     socket.emit('listen', 'lobby');
@@ -73,32 +72,46 @@ queueControllers.controller('listController', ['$scope', '$http', '$location', '
   }
   // This function should direct the user to the wanted page
   $scope.redirect = function(queue){
-    for(var index in $scope.queues){
-      if($scope.queues[index].name === queue){
-        if(!$scope.queues[index].locked || $scope.admin){
-          $location.path('/queue/' + queue);
-        }
-        break;
-      }
+    console.log("Trying to enter queue : " + queue.name);
+    if(!queue.locked || $scope.accessLevel(queue.name) > 0){
+      console.log("Allowed to enter queue : " + queue.name);
+      $location.path('/queue/' + queue.name);
     }
-    //console.log("User wants to enter " + queue);
   };
+
+  $scope.accessLevel = function (queueName) {
+    var ret = 0;
+    if(user.username === ""){
+      return ret;
+    }
+    if(user.isAssistant(queueName)){
+      ret = 1;
+    }
+    if(user.isTeacher(queueName)){
+      ret = 2;
+    }
+    if(user.isAdmin()){
+      ret = 3;
+    }
+    return ret;
+  };
+
 }]);
 
-queueControllers.controller('aboutController', ['$scope', '$http', 'TitleService',
-  function ($scope, $http, title) {
+queueControllers.controller('aboutController', ['$scope', 'TitleService',
+  function ($scope, title) {
     title.title = "About | Stay A While";
     console.log('entered about.html');
   }]);
 
-queueControllers.controller('helpController', ['$scope', '$http', 'TitleService',
-  function ($scope, $http, title) {
+queueControllers.controller('helpController', ['$scope', '$http', 'TitleService', 'UserService',
+  function ($scope, $http, title, user) {
     title.title = "Help | Stay A While";
     console.log('entered help.html');
   }]);
 
-queueControllers.controller('statisticsController', ['$scope', '$http', 'WebSocketService', 'TitleService',
-  function ($scope, $http, socket, title) {
+queueControllers.controller('statisticsController', ['$scope', '$http', 'WebSocketService', 'TitleService', 'UserService',
+  function ($scope, $http, socket, title, user) {
     title.title = "Statistics | Stay A While";
     console.log('entered statistics.html');
 
@@ -133,7 +146,12 @@ queueControllers.controller('statisticsController', ['$scope', '$http', 'WebSock
     // Queue selection
     $scope.queues = [];
     $http.get('/API/queueList').success(function(response){
-      $scope.queues = response.sort(function(a, b) {return a.name.localeCompare(b.name);});
+      var temp = response.sort(function(a, b) {return a.name.localeCompare(b.name);});
+      for(var index in temp){
+        if(user.isAdmin() || user.isTeacher(temp[index].name)){
+          $scope.queues.push(temp[index]);
+        }
+      }
     });
 
     $scope.selectedQueue = undefined;
@@ -171,20 +189,37 @@ queueControllers.controller('statisticsController', ['$scope', '$http', 'WebSock
     $scope.getStatistics = function() {
       console.log($scope.selectedQueue);
       socket.emit('getAverageQueueTime', {
-          queueName:$scope.selectedQueue.name,
-          start:$scope.fromTime.getTime(),
-          end:$scope.toTime.getTime()
+        queueName:$scope.selectedQueue.name,
+        start:$scope.fromTime.getTime(),
+        end:$scope.toTime.getTime()
       });
       console.log("Requested averageQueueTime");
       socket.emit('numbersOfPeopleLeftQueue', {
-          queueName:$scope.selectedQueue.name,
-          start:$scope.fromTime.getTime(),
-          end:$scope.toTime.getTime()
+        queueName:$scope.selectedQueue.name,
+        start:$scope.fromTime.getTime(),
+        end:$scope.toTime.getTime()
       });
       console.log("Requested numbersOfPeopleLeftQueue");
     };
 
-}]);
+    $scope.accessLevel = function() {
+      var ret = 0;
+      if(!user.username){
+        return ret;
+      }
+      if(user.assistant.length > 0){
+        ret = 1;
+      }
+      if(user.teacher.length > 0){
+        ret = 2;
+      }
+      if(user.isAdmin()){
+        ret = 3;
+      }
+      return ret;
+    };
+
+  }]);
 
 queueControllers.controller('loginController', ['$scope', '$location', '$http', 'TitleService', 'WebSocketService',
   function ($scope, $location, $http, title, socket) {
@@ -217,13 +252,7 @@ queueControllers.controller('loginController', ['$scope', '$location', '$http', 
 queueControllers.controller('navigationController', ['$scope', '$location', 'UserService', '$http',
   function ($scope, $location, user, $http) {
     $scope.location = $location.path();
-
-    $scope.loggedIn = user.username !== undefined && user.username !== "";
     $scope.name = user.username;
-    $scope.admin = user.isAdmin();
-    $scope.teacher = user.isTeacher();
-    console.log("I am an admin. (that was " + $scope.admin + ")");
-    console.log("I am a teacher. (that was " + $scope.teacher + ")");
 
     $scope.$watch(function () { return $location.path(); }, function(newValue, oldValue) {
       $scope.location = newValue;
@@ -232,36 +261,22 @@ queueControllers.controller('navigationController', ['$scope', '$location', 'Use
 
     $scope.$watch(function () { return user.username; }, function(newValue, oldValue) {
       $scope.name = newValue;
-      $scope.loggedIn = $scope.name !== undefined && $scope.name !== "";
       console.log("Detected update to user.username (oldValue = " + oldValue + ", newValue = " + newValue + ")");
-    });
-
-    $scope.$watch(function () { return user.admin; }, function(newValue, oldValue) {
-      $scope.admin = newValue;
-      console.log("Detected update to user.admin (oldValue = " + oldValue + ", newValue = " + newValue + ")");
-    });
-
-    $scope.$watch(function () { return user.teacher; }, function(newValue, oldValue) {
-      if(newValue === undefined){
-        $scope.teacher = false;
-      }else{
-        $scope.teacher = newValue.length !== 0;
-      }
-      console.log("Detected update to user.isTeacher (oldValue = " + oldValue + ", newValue = " + newValue + ")");
     });
 
     // Loggin out
     $scope.logOut = function(){
       $http.post('/API/setUser', {
-        name: ""
+        name: "",
+        admin: false,
+        teacher: [],
+        assistant: []
       },
       {withCredentials: true}).success(function(response){
-        $location.path('list');
-        user.name = "";
+        user.setName("");
         $scope.name = "";
-        $scope.admin = false;
-        $scope.loggedIn = false;
         console.log("logged out");
+        $location.path('list');
       });
     };
 
@@ -270,6 +285,23 @@ queueControllers.controller('navigationController', ['$scope', '$location', 'Use
     $location.path('/' + address);
     $scope.location = $location.path();
     console.log("location = " + $scope.location);
+  };
+
+  $scope.accessLevel = function() {
+    var ret = 0;
+    if(!user.username){
+      return ret;
+    }
+    if(user.assistant.length > 0){
+      ret = 1;
+    }
+    if(user.teacher.length > 0){
+      ret = 2;
+    }
+    if(user.isAdmin()){
+      ret = 3;
+    }
+    return ret;
   };
 
   $(document).ready(function () {
@@ -284,11 +316,8 @@ queueControllers.controller('adminController', ['$scope', '$location', '$http', 
     title.title = "Admin | Stay A While";
     console.log("Entered admin.html");
     $scope.name = user.username;
-    $scope.admin = user.isAdmin();
     $scope.selectedQueue = undefined;
     $scope.dropdown = undefined;
-    $scope.newAdmin = '';
-
     $scope.admins = [];
     $http.get('/API/adminList').success(function(response){
       $scope.admins = response;
@@ -297,10 +326,13 @@ queueControllers.controller('adminController', ['$scope', '$location', '$http', 
     $scope.queues = [];
     $http.get('/API/queueList').success(function(response){
       var temp = response.sort(function(a, b) {return a.name.localeCompare(b.name);});
+      console.log(JSON.stringify(temp));
       for (var i in temp) {
-        $http.get('/API/queue/' + temp[i].name).success(function(response){
-          $scope.queues.push(response);
-        });
+        if(user.isAdmin() || user.isTeacher(temp[i].name)){
+          $http.get('/API/queue/' + temp[i].name).success(function(response){
+            $scope.queues.push(response);
+          });
+        }
       }
     });
 
@@ -310,7 +342,10 @@ queueControllers.controller('adminController', ['$scope', '$location', '$http', 
   // Listen for an assistant being added to a queue.
   socket.on('addAssistant', function(data) {
     console.log("adding assistant (from backend) queueName = " + data.queueName + ", name = " + data.name + ", username = " + data.username);
-    $scope.$apply(getQueue(data.queueName).assistant.push({name:data.name, username:data.username}));
+    var queue = getQueue(data.queueName);
+    if(queue){
+      $scope.$apply(getQueue(data.queueName).assistant.push({name:data.name, username:data.username}));
+    }
   });
 
   // Listen for an teacher being added to a queue.
@@ -349,7 +384,10 @@ queueControllers.controller('adminController', ['$scope', '$location', '$http', 
   // Listen for an teacher being added to a queue.
   socket.on('addTeacher', function(data) {
     console.log("adding teacher (from backend) queueName = " + data.queueName + ", name = " + data.name + ", username = " + data.username);
-    $scope.$apply(getQueue(data.queueName).teacher.push({name:data.name, username:data.username}));
+    var queue = getQueue(data.queueName);
+    if(queue){
+      $scope.$apply(getQueue(data.queueName).teacher.push({name:data.name, username:data.username}));
+    }
   });
 
   // Listen for an teacher being added to a queue.
@@ -414,10 +452,10 @@ queueControllers.controller('adminController', ['$scope', '$location', '$http', 
 
   $scope.addQueue = function(){
     if($scope.newQueue !== ""){
-    socket.emit('addQueue', {
-      queueName:$scope.newQueue
-    });
-    $scope.newQueue = "";
+      socket.emit('addQueue', {
+        queueName:$scope.newQueue
+      });
+      $scope.newQueue = "";
     }
   };
 
@@ -568,7 +606,8 @@ $scope.removeAdmin = function(username){
 };
 
 $scope.addTeacher = function(){
-  if($scope.newTeacher !== "" && $scope.selectedQueue !== undefined){
+  console.log("Trying to add a new teacher by the name '" + $scope.newTeacher + "'");
+  if($scope.newTeacher){
     socket.emit('addTeacher', {
       username:$scope.newTeacher,
       queueName:$scope.selectedQueue.name,
@@ -588,7 +627,7 @@ $scope.removeTeacher = function(username){
 };
 
 $scope.addAssistant = function(){
-  if($scope.newAssistant !== "" && $scope.selectedQueue !== undefined){
+  if($scope.newAssistant){
     socket.emit('addAssistant', {
       username:$scope.newAssistant,
       queueName:$scope.selectedQueue.name,
@@ -612,6 +651,24 @@ $scope.selectQueue = function(queue){
   document.getElementById('dropdown').innerHTML = queue.name;
   console.log("selected queue = " + $scope.selectedQueue.name);
 };
+
+$scope.accessLevel = function() {
+  var ret = 0;
+  if(!user.username){
+    return ret;
+  }
+  if(user.assistant.length > 0){
+    ret = 1;
+  }
+  if(user.teacher.length > 0){
+    ret = 2;
+  }
+  if(user.isAdmin()){
+    ret = 3;
+  }
+  return ret;
+};
+
 
 }]);
 

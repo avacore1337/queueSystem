@@ -417,7 +417,7 @@ app.io.route('lock', function(req) {
   var username = req.session.user.name;
 
   // admin/teacher-validation
-  if (!(validate(username, "super", "course") || validate(username, "teacher", courseName))) {
+  if (!(validate(username, "super", "course") || validate(username, "teacher", courseName) || validate(username, "assistant", courseName))) {
     console.log("validation for lock failed");
     //res.end();
     return;
@@ -432,7 +432,7 @@ app.io.route('unlock', function(req) {
   var username = req.session.user.name;
 
   // admin/teacher-validation
-  if (!(validate(username, "super", "course") || validate(username, "teacher", courseName))) {
+  if (!(validate(username, "super", "course") || validate(username, "teacher", courseName) || validate(username, "assistant", courseName))) {
     console.log("validation for unlock failed");
     //res.end();
     return;
@@ -644,7 +644,7 @@ app.io.route('addAssistant', function(req) {
   var courseName = req.data.queueName;
 
   // admin/teacher-validation
-  if (!(validate(username, "super", "course") /*|| validate(username, "teacher", courseName)*/)) {
+  if (!(validate(username, "super", "course") || validate(username, "teacher", courseName))) {
     console.log("validation for addAssistant failed");
     //res.end();
     return;
