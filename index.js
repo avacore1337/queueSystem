@@ -231,6 +231,7 @@ app.io.route('join', function(req) {
 //  - do nothing in backend?
 app.io.route('badLocation', function(req) {
   var username = req.session.user.name;
+  var name = req.data.name;
   var courseName = req.data.queue;
 
   // teacher/assistant-validation
@@ -241,10 +242,9 @@ app.io.route('badLocation', function(req) {
   }
 
   var name = req.data.name;
-  var message = "Bad location given";
   var sender = req.data.sender;
 
-  app.io.room(courseName).broadcast('badLocation', {message: message, sender: sender}); 
+  app.io.room(courseName).broadcast('badLocation', {name: name, sender: sender}); 
   console.log("Bad location at " + courseName + " for " + name);
 });
 
@@ -275,7 +275,7 @@ app.io.route('help', function(req) {
     return;
   }
 
-  app.io.room(courseName).broadcast('help', username);
+  app.io.room(courseName).broadcast('help', {name:name, helper:username});
   console.log(name + ' is getting help in ' + courseName);
 });
 
@@ -735,22 +735,21 @@ app.io.route('removeAssistant', function(req) {
 app.io.route('flag', function(req) {
   var username = req.data.name;
   var courseName = req.data.queue;
+  var sender = req.data.sender;
+  var message = req.data.message;
 
   // teacher/assistant-validation
-  if (!(validate(username, "teacher", courseName) || validate(username, "assistant", courseName))) {
+  if (!(validate(sender, "teacher", courseName) || validate(sender, "assistant", courseName))) {
     console.log("validation for flag failed");
     //res.end();
     return;
   }
-
-  var sender = req.data.sender;
-  var message = req.data.message;
  
   var course = findCourse(courseName);
-  course.addAssistantComment(username, sender, queue, message);
+  course.addAssistantComment(username, sender, queue, message); // TODO : change "queue" for "course" or "courseName"
 
   console.log('flagged');
-  app.io.room(queue).broadcast('flag', username, message);
+  app.io.room(courseName).broadcast('flag', {name:username, message:message});
 });
 
 // TODO : Robert look here

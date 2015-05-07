@@ -149,9 +149,15 @@ console.log('testing');
 
     // Listen for a user getting flagged
     socket.on('flag', function(data) {
+      console.log("Flaggin " + data.name);
       for(var i = $scope.users.length - 1; i >= 0; i--) {
         if($scope.users[i].name === data.name) {
-          $scope.$apply($scope.users[i].messages.push(data.message));
+          if($scope.users[i].messages === undefined){
+            $scope.$apply($scope.users[i].messages = [data.message]);
+          }else{
+            $scope.$apply($scope.users[i].messages.push(data.message));
+          }
+          console.log("Pushed the message : " + data.message);
           break;
         }
       }
@@ -160,7 +166,7 @@ console.log('testing');
     // Listen for a person getting help.
     socket.on('help', function(data) {
       for(var i = 0; i < $scope.users.length; i++){
-        if($scope.users[i] === data.person){
+        if($scope.users[i].name === data.name){
           $scope.$apply($scope.users[i].gettingHelp = true);
           $scope.$apply($scope.users[i].helper = data.helper);
           break;
@@ -179,26 +185,31 @@ console.log('testing');
     });
 
     // Listen for a badLocation warning
-    socket.on('badLocation', function() {
-      var modalInstance = $modal.open({
-        templateUrl: 'receiveMessage.html',
-        controller: function ($scope, $modalInstance, title, message, sender) {
-          $scope.title = title;
-          $scope.message = message;
-          $scope.sender = sender;
-        },
-        resolve: {
-          title: function () {
-            return "Unclear location";
+    socket.on('badLocation', function(data) {
+      console.log("badLocation detected !!!");
+      if($scope.name === data.name){
+        var modalInstance = $modal.open({
+          templateUrl: 'receiveMessage.html',
+          controller: function ($scope, $modalInstance, title, message, sender) {
+            $scope.title = title;
+            $scope.message = message;
+            $scope.sender = sender;
           },
-          message: function () {
-            return "You have to enter a more descriptive location.";
-          },
-          sender: function () {
-            return "Anton Bäckström";
+          resolve: {
+            title: function () {
+              return "Unclear location";
+            },
+            message: function () {
+              return "You have to enter a more descriptive location.";
+            },
+            sender: function () {
+              return data.sender;
+            }
           }
-        }
-      });
+        });
+      }else{
+        console.log("No worries, it wasn't you.");
+      }
     });
 
     $scope.addUser = function(){
@@ -372,7 +383,7 @@ console.log('testing');
     $scope.readMessages = function(name){
       console.log("Called readMessages");
       for(var index in $scope.users){
-        if($scope.users[index].name == name){
+        if($scope.users[index].name === name){
           var modalInstance = $modal.open({
             templateUrl: 'readMessages.html',
             controller: function ($scope, $modalInstance, messages) {
@@ -380,8 +391,7 @@ console.log('testing');
             },
             resolve: {
               messages: function () {
-                //return $scope.users[index].messages;
-                return ["He is the greatest.","I have never met anyone more stupid.","Wow, what a genious.","F***ing moron ...","Hello, World!"];
+                return $scope.users[index].messages;
               }
             }
           });
