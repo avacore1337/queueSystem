@@ -53,7 +53,7 @@
 					<tbody>
 						<tr id="admin.name" ng-repeat="admin in admins">
 							<td>{{ admin.name }}</td>
-							<td>{{ admin.username }} <span class="glyphicon glyphicon-remove text-red clickable" title="Remove admin" ng-click="removeAdmin(admin.username)" id="adminRemoveAdminBtn"></span></td>
+							<td>{{ admin.username }} <span class="glyphicon glyphicon-remove text-red clickable" title="Remove admin" ng-click="removeAdmin(admin.username)" id="adminRemoveAdminBtn" ng-show="admins.length > 1"></span></td>
 							<td>{{ admin.addedBy }}</td>
 						</tr>
 					</tbody>

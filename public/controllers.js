@@ -75,6 +75,7 @@ queueControllers.controller('listController', ['$scope', '$http', '$location', '
     console.log("Trying to enter queue : " + queue.name);
     if(!queue.locked || $scope.accessLevel(queue.name) > 0){
       console.log("Allowed to enter queue : " + queue.name);
+      $location.hash("");
       $location.path('/queue/' + queue.name);
     }
   };
@@ -96,6 +97,13 @@ queueControllers.controller('listController', ['$scope', '$http', '$location', '
     return ret;
   };
 
+  $scope.noMatch = function (queueName) {
+    if(!$scope.search){
+      return false;
+    }
+    return !(new RegExp($scope.search).test(queueName));
+  };
+
 }]);
 
 queueControllers.controller('aboutController', ['$scope', 'TitleService',
@@ -108,6 +116,21 @@ queueControllers.controller('helpController', ['$scope', '$http', 'TitleService'
   function ($scope, $http, title, user) {
     title.title = "Help | Stay A While";
     console.log('entered help.html');
+    if(!user.username){
+      $scope.accessLevel = -1;
+    }else{
+      $scope.accessLevel = 0;
+      if(user.assistant.length > 0){
+        $scope.accessLevel = 1;
+      }
+      if(user.teacher.length > 0){
+        $scope.accessLevel = 2;
+      }
+      if(user.isAdmin()){
+        $scope.accessLevel = 3;
+      }
+    }
+    console.log("$scope.accessLevel = " + $scope.accessLevel);
   }]);
 
 queueControllers.controller('statisticsController', ['$scope', '$http', 'WebSocketService', 'TitleService', 'UserService',
@@ -282,6 +305,7 @@ queueControllers.controller('navigationController', ['$scope', '$location', 'Use
 
   // This function should direct the user to the wanted page
   $scope.redirect = function(address){
+    $location.hash("");
     $location.path('/' + address);
     $scope.location = $location.path();
     console.log("location = " + $scope.location);
@@ -537,6 +561,9 @@ queueControllers.controller('adminController', ['$scope', '$location', '$http', 
 
 modalInstance.result.then(function (message) {
   if(message === "hibernate"){
+    socket.emit('purge', {
+      queue:$scope.selectedQueue.name
+    });
     socket.emit('hibernate', {
       queue:$scope.selectedQueue.name
     });

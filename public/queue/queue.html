@@ -65,8 +65,11 @@
     </div>
   </div>
 
-
-
+  <div class="row" style="margin-bottom: 1%;" ng-show="bookedUsers.length || users.length">
+    <div class="col-md-3 pull-right" style="padding: 0;">
+      <input type="text" class="search" ng-model="search" placeholder="Search" style="height: 3em; margin-bottom: 2%; width: 100%; padding-left: 1em;">
+    </div>
+  </div>
 
   <div class="row">
     <!-- Queues -->
@@ -82,7 +85,7 @@
             <th>Time</th>
           </thead>
           <tbody>
-            <tr ng-repeat="user in bookedUsers">
+            <tr ng-repeat="user in bookedUsers" ng-show="matchBooked(user)">
               <td>{{user.name}}</td>
               <td>{{user.place}}</td>
               <td>{{user.comment}}</td>
@@ -104,7 +107,7 @@
           </tr>
         </thead>
         <tbody>
-          <tr ng-repeat-start="user in users track by $index" ng-class="{'pulse' : user.gettingHelp, 'light-blue-background' : user.name === name}" ng-dblclick="changeVisibility(user.name)"  id="queue{{user.name}}Btn">
+          <tr ng-repeat-start="user in users track by $index" ng-class="{'pulse' : user.gettingHelp, 'light-blue-background' : user.name === name}" ng-dblclick="changeVisibility(user.name)"  id="queue{{user.name}}Btn" ng-show="match(user)">
             <td class="hidden-xs">{{ $index + 1 }}</td>
             <td>{{ user.name }}</td>
             <td>{{ user.place }}</td>
@@ -113,36 +116,36 @@
           </tr>
           <tr ng-repeat-end ng-show="accessLevel && user.optionsActivated" ng-dblclick="changeVisibility(user.name)">
             <td colspan="100%" class="text-right">
-                <span title="remove user">
-                  <button class="btn red clickable" ng-click="removeUser(user.name)" id="queueRemoveUser{{user.name}}Btn">
-                    <span class="glyphicon glyphicon-trash"></span>
-                  </button>
-                </span>
-                <span title="send message">
-                  <button class="btn btn-success" ng-click="messageUser(user.name)" id="queueSendMessage{{user.name}}Btn">
-                    <span class="glyphicon glyphicon-envelope"></span>
-                  </button>
-                </span>
-                <span title="help">
-                  <button class="btn btn-success" ng-click="helpUser(user.name)" id="queueHelp{{user.name}}Btn">
-                    <span class="glyphicon glyphicon-check"></span>
-                  </button>
-                </span>
-                <span title="bad location">
-                  <button class="btn btn-success" ng-click="badLocation(user.name)" id="queueBadLocation{{user.name}}Btn">
-                    <span class="glyphicon glyphicon-question-sign"></span>
-                  </button>
-                </span>
-                <span title="add comment">
-                  <button class="btn btn-success" ng-click="flag(user.name)" id="queueAddComment{{user.name}}Btn">
-                    <span class="glyphicon glyphicon-tag"></span>
-                  </button>
-                </span>
-                <span ng-show="user.messages.length > 0" title="read comment">
-                  <button class="btn btn-success" ng-click="readMessages(user.name)" id="queueReadComment{{user.name}}Btn">
-                    <span class="glyphicon glyphicon-search"></span>
-                  </button>
-                </span>
+              <span title="remove user">
+                <button class="btn red clickable" ng-click="removeUser(user.name)" id="queueRemoveUser{{user.name}}Btn">
+                  <span class="glyphicon glyphicon-trash"></span>
+                </button>
+              </span>
+              <span title="send message">
+                <button class="btn btn-success" ng-click="messageUser(user.name)" id="queueSendMessage{{user.name}}Btn">
+                  <span class="glyphicon glyphicon-envelope"></span>
+                </button>
+              </span>
+              <span title="help">
+                <button class="btn btn-success" ng-click="helpUser(user.name)" id="queueHelp{{user.name}}Btn">
+                  <span class="glyphicon glyphicon-check"></span>
+                </button>
+              </span>
+              <span title="bad location">
+                <button class="btn btn-success" ng-click="badLocation(user.name)" id="queueBadLocation{{user.name}}Btn">
+                  <span class="glyphicon glyphicon-question-sign"></span>
+                </button>
+              </span>
+              <span title="add comment">
+                <button class="btn btn-success" ng-click="flag(user.name)" id="queueAddComment{{user.name}}Btn">
+                  <span class="glyphicon glyphicon-tag"></span>
+                </button>
+              </span>
+              <span ng-show="user.messages.length > 0" title="read comment">
+                <button class="btn btn-success" ng-click="readMessages(user.name)" id="queueReadComment{{user.name}}Btn">
+                  <span class="glyphicon glyphicon-search"></span>
+                </button>
+              </span>
             </td>
           </tr>
         </tbody>

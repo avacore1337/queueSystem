@@ -489,10 +489,30 @@ console.log('testing');
 
   // This function should direct the user to the wanted page
   $scope.redirect = function(address){
+    $location.hash("");
     $location.path('/' + address);
     $scope.location = $location.path();
     console.log("location = " + $scope.location);
   };
 
-}]);
+  // This function checks if a person in the normal queue matches the search-string.
+  $scope.match = function (user) {
+    if(!$scope.search){
+      return true;
+    }
+    var regEx = new RegExp($scope.search.toLowerCase());
+    return regEx.test(user.place.toLowerCase()) || regEx.test(user.comment.toLowerCase());
+  };
+
+    // This function checks if a person in the booked queue matches the search-string.
+    $scope.matchBooked = function (user) {
+      console.log("Searching for : " + user.name);
+      if(!$scope.search){
+        return true;
+      }
+      var regEx = new RegExp($scope.search.toLowerCase());
+      return (regEx.test(user.name.toLowerCase()) || regEx.test(user.place.toLowerCase()) ||  regEx.test(user.comment.toLowerCase()) ||  regEx.test(user.time.toLowerCase()));
+    };
+
+  }]);
 })();

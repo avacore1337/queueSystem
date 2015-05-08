@@ -259,3 +259,14 @@ table.table-striped > tbody > tr.light-blue-background > td{
 table.table-striped > tbody > tr.light-blue-background > td{
    background-color: #C5E7FF;
 }
+div.panel
+{
+  font-size: 1.2em;
+  background-color: #F2F2F2;
+  padding: 2%;
+  border: 1px solid #E0E0E0;
+}
+.search{
+  background: url(images/magnifying-glass.png) no-repeat;
+  background-position:right center
+}
