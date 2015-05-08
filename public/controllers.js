@@ -496,7 +496,7 @@ queueControllers.controller('adminController', ['$scope', '$location', '$http', 
   }
 
   $scope.addQueue = function(){
-    if($scope.newQueue !== ""){
+    if($scope.newQueue){
       socket.emit('addQueue', {
         queueName:$scope.newQueue
       });
@@ -636,7 +636,7 @@ $scope.unhibernateQueue = function(){
 };
 
 $scope.addAdmin = function(){
-  if($scope.newAdmin !== ""){
+  if($scope.newAdmin){
     socket.emit('addAdmin', {
       username:$scope.newAdmin,
       addedBy:$scope.name

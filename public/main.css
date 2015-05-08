@@ -228,7 +228,8 @@ button:focus
     background-color: transparent;
 }
 .navbar > .container .navbar-brand-centered, 
-.navbar > .container-fluid .navbar-brand-centered {
+.navbar > .container-fluid .navbar-brand-centered
+{
     margin-left: -80px;
 }
 .navbar
@@ -249,14 +250,17 @@ button:focus
 {    
   background-color: #1C65EB;
 }
-.nav.navbar-nav.navbar-right > li > a.unresponsive:hover {
+.nav.navbar-nav.navbar-right > li > a.unresponsive:hover
+{
     color: #777777;
     cursor: default;
 }
-table.table-striped > tbody > tr.light-blue-background > td{
+table.table-striped > tbody > tr.light-blue-background > td
+{
    background-color: #C5E7FF;
 }
-table.table-striped > tbody > tr.light-blue-background > td{
+table.table-striped > tbody > tr.light-blue-background > td
+{
    background-color: #C5E7FF;
 }
 div.panel
@@ -266,12 +270,18 @@ div.panel
   padding: 2%;
   border: 1px solid #E0E0E0;
 }
-.search{
+.search
+{
   background: url(images/magnifying-glass.png) no-repeat;
   background-position:right center
 }
-img.frame {
+img.frame
+{
   background-color: #FFFFFF;
   padding: 5%;
   border: 1px solid #DDDDDD;
+}
+tr.pointer
+{
+  cursor: pointer;
 }
