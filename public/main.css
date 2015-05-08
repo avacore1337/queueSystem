@@ -1,4 +1,4 @@
-.html, main-body
+.html, body
 {
   margin: 0;
   padding: 0;
@@ -269,4 +269,9 @@ div.panel
 .search{
   background: url(images/magnifying-glass.png) no-repeat;
   background-position:right center
+}
+img.frame {
+  background-color: #FFFFFF;
+  padding: 5%;
+  border: 1px solid #DDDDDD;
 }
