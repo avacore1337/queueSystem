@@ -33,13 +33,11 @@
 
       $scope.locked = false;
       $scope.hibernating = false;
-      $scope.motd = "";
       $http.get('/API/queue/' + $routeParams.queue)
       .success(function(response) {
         $scope.users = response.queue;
         $scope.locked = response.locked;
         $scope.hibernating = response.hibernating;
-        $scope.motd = response.motd;
         for (var i = 0; i < $scope.users.length; i++) {
           $scope.users[i].optionsActivated = false;
           $scope.users[i].time = $scope.users[i].time/1000;
@@ -50,24 +48,42 @@
             $scope.comment = $scope.users[i].comment;
           }
         }
-      //if($scope.motd !== ""){
-      //  alert($scope.motd);
-      //}
-    });
+        if(response.motd){
+          var modalInstance = $modal.open({
+            templateUrl: 'receiveMessage.html',
+            controller: function ($scope, $modalInstance, title, message, sender) {
+              $scope.title = title;
+              $scope.message = message;
+              $scope.sender = sender;
+            },
+            resolve: {
+              title: function () {
+                return "Message of the day";
+              },
+              message: function () {
+                return response.motd;
+              },
+              sender: function () {
+                return "Some admin";
+              }
+            }
+          });
+        }
+      });
 
-      $scope.$on("$destroy", function(){
-        console.log("Bye bye!");
-        socket.removeListener('join', socketJoin);
-        socket.removeListener('leave', socketLeave);
-        socket.removeListener('update', socketUpdate);
-        socket.removeListener('purge', socketPurge);
-        socket.removeListener('msg', socketMsg);
-        socket.removeListener('flag', socketFlag);
-        socket.removeListener('help', socketHelp);
-        socket.removeListener('lock', socketLock);
-        socket.removeListener('unlock', socketUnlock);
-        socket.removeListener('badLocation', socketBadLocation);
-    });
+$scope.$on("$destroy", function(){
+  console.log("Bye bye!");
+  socket.removeListener('join', socketJoin);
+  socket.removeListener('leave', socketLeave);
+  socket.removeListener('update', socketUpdate);
+  socket.removeListener('purge', socketPurge);
+  socket.removeListener('msg', socketMsg);
+  socket.removeListener('flag', socketFlag);
+  socket.removeListener('help', socketHelp);
+  socket.removeListener('lock', socketLock);
+  socket.removeListener('unlock', socketUnlock);
+  socket.removeListener('badLocation', socketBadLocation);
+});
 
 // TODO : Remove this when you connect the two backends
 $scope.bookedUsers = [
@@ -75,11 +91,6 @@ $scope.bookedUsers = [
 {name:'Joakim',  place:"Red 06" , comment:"Labb 3", time:"15:30"},
 {name:'Per',  place:"Red 07" , comment:"Labb 2", time:"16:00"}
 ];
-
-    //$http.get('/API/booked/' + $routeParams.queue)
-    //  .success(function(response) {
-    //  $scope.bookedUsers = response;
-    //});
 
 socket.emit('stopListening', 'lobby');
 socket.emit('listen', $scope.queue);
