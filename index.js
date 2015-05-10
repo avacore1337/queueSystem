@@ -216,7 +216,7 @@ app.io.route('join', function(req) {
   var user = req.data.user;
   console.log('a user joined to ' + queue);
   app.io.room(queue).broadcast('join', user);
-  app.io.room("lobby").broadcast('lobbyjoin', queue);
+  app.io.room("lobby").broadcast('lobbyjoin', {queueName:queue, username:user.name});
 
   var course = findCourse(queue);
   var newUser = new User2({name: user.name, place: user.place, comment: user.comment});
@@ -782,7 +782,8 @@ app.get('/API/queue/:queue', function(req, res) {
     res.setHeader('Content-Type', 'application/json');
     var course = findCourse(req.params.queue);
     console.log('queue '+ req.params.queue +' requested');
-    console.log(course);
+    //console.log(course);
+    res.status(200);
     res.end(JSON.stringify(course));
 });
 
