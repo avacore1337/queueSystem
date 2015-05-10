@@ -367,7 +367,7 @@ app.io.route('leave', function(req) {
 
   console.log('a user left ' + queue);
   app.io.room(queue).broadcast('leave', user);
-  app.io.room("lobby").broadcast('lobbyleave', queue);
+  app.io.room("lobby").broadcast('lobbyleave', {queueName:queue, username:user.name});
 });
 
 // admin purges a queue

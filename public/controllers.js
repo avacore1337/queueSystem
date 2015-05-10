@@ -6,6 +6,24 @@ queueControllers.controller('listController', ['$scope', '$http', '$location', '
     $scope.queues = [];
     $http.get('/API/queueList').success(function(response){
       $scope.queues = response.sort(function(a, b) {return a.name.localeCompare(b.name);});
+      for(var index in $scope.queues){
+        $http.get('/API/queue/' + $scope.queues[index].name).success(function(resp){
+          if(resp.name === "dbas"){
+            var test = false;
+            for(var index1 in resp.queue){
+              if(resp.queue[index1].name === user.username){
+                test = true;
+                console.log("Found user in dbas");
+              }
+            }
+            if(!test){
+              console.log("Unable to find user in dbas");
+            }
+          }
+          $scope.queues[index].queue = resp.queue;
+          console.log(JSON.stringify($scope.queues[index]));
+        });
+      }
     });
 
     console.log("API/userData");
@@ -102,6 +120,22 @@ queueControllers.controller('listController', ['$scope', '$http', '$location', '
       return false;
     }
     return !(new RegExp($scope.search).test(queueName));
+  };
+
+  $scope.position = function (queue) {
+    console.log("Position for user : " + user.username);
+    if(!user.username){
+      console.log("Not a valid username");
+      return -1;
+    }
+    for (var index in queue) {
+      if(queue[index].name === user.username){
+        console.log("Found you");
+        return index+1;
+      }
+    }
+    console.log("Did not find you");
+    return -1;;
   };
 
 }]);
@@ -374,7 +408,7 @@ queueControllers.controller('adminController', ['$scope', '$location', '$http', 
       console.log(JSON.stringify(temp));
       for (var i in temp) {
         if(user.isAdmin() || user.isTeacher(temp[i].name)){
-          $http.get('/API/queue/' + temp[i].name).success(function(response){
+          $http.get('/API/queue/' + temp[i].name).success(function(response){ 
             $scope.queues.push(response);
           });
         }
