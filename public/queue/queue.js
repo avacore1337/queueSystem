@@ -538,5 +538,9 @@ console.log('testing');
       return (regEx.test(user.name.toLowerCase()) || regEx.test(user.place.toLowerCase()) ||  regEx.test(user.comment.toLowerCase()) ||  regEx.test(user.time.toLowerCase()));
     };
 
+    $scope.toggleQueue = function(){
+      $scope.bookedQueue = !$scope.bookedQueue;
+    }
+
   }]);
 })();

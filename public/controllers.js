@@ -149,7 +149,7 @@ queueControllers.controller('aboutController', ['$scope', 'TitleService',
     title.title = "About | Stay A While";
     console.log('entered about.html');
     $scope.contributors = {
-      StayAWhile:[{name:"Anton Bäckström", gravatar:"7eaf43cc9a0edf01b4994318e03fe368", twitter:"", github:"Antecation", facebook:"anton.backstrom.94"},
+      StayAWhile:[{name:"Anton Bäckström", gravatar:"7eaf43cc9a0edf01b4994318e03fe368", twitter:"antonbcm", github:"Antecation", facebook:"anton.backstrom.94"},
       {name:"Per Nyberg", gravatar:"", twitter:"", github:"", facebook:"per.nyberg.9"},
       {name:"Robert Welin-Berger", gravatar:"", twitter:"", github:"", facebook:"robertwelin"},
       {name:"Edvard Mickos", gravatar:"", twitter:"", github:"", facebook:"edvard.mickos"},

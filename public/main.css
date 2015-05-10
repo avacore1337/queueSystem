@@ -294,3 +294,7 @@ div.light-blue-background:hover
   background-color: #B5DAF5;
   cursor: pointer;
 }
+a.no-text-decoration
+{
+  text-decoration: none;
+}
