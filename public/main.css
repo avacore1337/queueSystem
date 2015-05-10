@@ -285,3 +285,12 @@ tr.pointer
 {
   cursor: pointer;
 }
+div.light-blue-background
+{
+  background-color: #C5E7FF;
+}
+div.light-blue-background:hover
+{
+  background-color: #B5DAF5;
+  cursor: pointer;
+}

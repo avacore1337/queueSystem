@@ -4,57 +4,77 @@ queueControllers.controller('listController', ['$scope', '$http', '$location', '
   function ($scope, $http, $location, socket, user, title) {
     title.title = "Stay A While";
     $scope.queues = [];
-    $http.get('/API/queueList').success(function(response){
+    $http.get('/API/queueList')
+    .success(function(response){
       $scope.queues = response.sort(function(a, b) {return a.name.localeCompare(b.name);});
       for(var index in $scope.queues){
-        $http.get('/API/queue/' + $scope.queues[index].name).success(function(resp){
-          if(resp.name === "dbas"){
-            var test = false;
-            for(var index1 in resp.queue){
-              if(resp.queue[index1].name === user.username){
-                test = true;
-                console.log("Found user in dbas");
-              }
-            }
-            if(!test){
-              console.log("Unable to find user in dbas");
-            }
-          }
-          $scope.queues[index].queue = resp.queue;
-          console.log(JSON.stringify($scope.queues[index]));
-        });
+        $http.get('/API/queue/' + $scope.queues[index].name)
+        .success(apiGetQueue);
       }
     });
 
+  function apiGetQueue (resp){
+    var queue = getQueue(resp.name);
+    queue.position = -1;
+    queue.queue = resp.queue;
+    console.log("Looking for " + user.username + " in " + queue.name);
+    for(var i in queue.queue){
+      if(queue.queue[i].name === user.username){
+        queue.position = parseInt(i,10)+1;
+        break;
+      }
+    }
+    console.log("Queue " + queue.name + " : " + queue.position);
+  }
+
     console.log("API/userData");
     $http.get('/API/userData').success(function(response){
-      console.log("User from API = " + JSON.stringify(response));
-      console.log("User from service = " + JSON.stringify(user));
       user.setName(response.name);
       user.setAdmin(response.admin);
       user.setTeacher(response.teacher);
       user.setAssistant(response.assistant);
-      console.log("Now the user from service = " + JSON.stringify(user));
     });
 
     socket.emit('listen', 'lobby');
 
   // Listen for a person joining a queue.
-  socket.on('lobbyjoin', function(queue) {
-    console.log("A user joined (lobby) " + queue);
-    $scope.$apply(getQueue(queue).length++);
+  socket.on('lobbyjoin', function(data) {
+    console.log("A user joined (lobby) " + data.queueName);
+    var queue = getQueue(data.queueName);
+    queue.queue.push({name:data.username});
+    queue.length++;
+    if(data.username === user.username){
+      $scope.$apply(getQueue(data.queueName).position = getQueue(data.queueName).length);
+    }
   });
 
   // Listen for a person leaving a queue.
-  socket.on('lobbyleave', function(queue) {
-    console.log("A user left (lobby) " + queue);
-    $scope.$apply(getQueue(queue).length--);
+  socket.on('lobbyleave', function(data) {
+    console.log("A user left (lobby) " + data.queueName);
+    var queue = getQueue(data.queueName);
+    queue.length--;
+    for(var i in queue.queue){
+      if(queue.queue[i].name === data.username){
+        queue.queue.splice(i, 1);
+        if(parseInt(i,10)+1 === queue.position){
+          queue.position = -1;
+        }else if(parseInt(i,10)+1 < queue.position){
+          queue.position--;
+        }
+        break;
+      }
+    }
+    $scope.$apply();
   });
 
   // Listen for queue geting purged.
-  socket.on('lobbypurge', function(queue) {
-    console.log(queue + " was purged (lobby)");
-    $scope.$apply(getQueue(queue).length = 0);
+  socket.on('lobbypurge', function(queueName) {
+    console.log(queueName + " was purged (lobby)");
+    var queue = getQueue(queueName);
+    queue.length = 0;
+    queue.queue = [];
+    queue.position = -1;
+    $scope.$apply();
   });
 
   // Listen for a queue being locked.
@@ -120,22 +140,6 @@ queueControllers.controller('listController', ['$scope', '$http', '$location', '
       return false;
     }
     return !(new RegExp($scope.search).test(queueName));
-  };
-
-  $scope.position = function (queue) {
-    console.log("Position for user : " + user.username);
-    if(!user.username){
-      console.log("Not a valid username");
-      return -1;
-    }
-    for (var index in queue) {
-      if(queue[index].name === user.username){
-        console.log("Found you");
-        return index+1;
-      }
-    }
-    console.log("Did not find you");
-    return -1;;
   };
 
 }]);
