@@ -166,19 +166,19 @@ courseSchema.methods.unlock = function () {
 };
 
 // hide the schema
-courseSchema.methods.hibernate = function (user) {
+courseSchema.methods.hibernate = function () {
   this.hibernating = true;
   this.save();
 };
 
 // unhide the schema
-courseSchema.methods.unhibernate = function (user) {
+courseSchema.methods.unhibernate = function () {
   this.hibernating = false;
   this.save();
 };
 
 // empty the queue
-courseSchema.methods.purgeQueue = function (course) {
+courseSchema.methods.purgeQueue = function () {
   this.queue.forEach(function (usr, i, queue) {
   });
 
