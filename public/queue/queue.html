@@ -62,10 +62,12 @@
     <div class="text-center col-md-3" ng-class="{'text-red' : locked}">
       <h2>
         <span class="glyphicon glyphicon-lock" ng-show="locked"></span>
-        {{queue}}
-        <span class="glyphicon glyphicon-chevron-right" style="font-size: .6em;"></span>
-        <a ng-show="bookedQueue" ng-click="toggleQueue()" class="no-text-decoration" style="cursor: pointer;">booked</a>
-        <a ng-hide="bookedQueue" ng-click="toggleQueue()" class="no-text-decoration" style="cursor: pointer;">queue</a>
+        {{queue}} /
+        <span style="cursor: pointer;" ng-click="toggleQueue()">
+        <a ng-show="bookedQueue" class="no-text-decoration">booked</a>
+        <a ng-hide="bookedQueue" class="no-text-decoration">queue</a>
+        <span class="text-black glyphicon glyphicon-chevron-down" style="font-size: .4em;"></span>
+        </span>
       </h2>
     </div>
   </div>
@@ -81,7 +83,7 @@
     <div class="col-md-9 col-md-push-3">
       <!-- Users with bookings -->
       <div ng-show="bookedQueue">
-        <div ng-hide="bookedUsers.length"><h4>This queue is empty</h4></div>
+        <div ng-hide="bookedUsers.length"><h4>No booked users</h4></div>
         <div class="col-md-12" ng-show="bookedUsers.length">
           <table class="table table-striped booked">
             <thead>
