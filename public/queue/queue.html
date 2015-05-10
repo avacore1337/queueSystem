@@ -70,7 +70,7 @@
     </div>
   </div>
 
-  <div class="row" style="margin-bottom: 1%;" ng-show="bookedUsers.length || users.length">
+  <div class="row" style="margin-bottom: 1%;" ng-show="(bookedQueue && bookedUsers.length) || (!bookedQueue && users.length)">
     <div class="col-md-3 pull-right" style="padding: 0;">
       <input type="text" class="search" ng-model="search" placeholder="Search" style="height: 3em; margin-bottom: 2%; width: 100%; padding-left: 1em;">
     </div>
@@ -82,7 +82,7 @@
       <!-- Users with bookings -->
       <div ng-show="bookedQueue">
         <div ng-hide="bookedUsers.length"><h4>This queue is empty</h4></div>
-        <div class="col-md-12" ng-sow="bookedUsers.length">
+        <div class="col-md-12" ng-show="bookedUsers.length">
           <table class="table table-striped booked">
             <thead>
               <th>User</th>

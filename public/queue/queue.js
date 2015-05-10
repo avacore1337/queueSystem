@@ -91,6 +91,7 @@ $scope.bookedUsers = [
 {name:'Joakim',  place:"Red 06" , comment:"Labb 3", time:"15:30"},
 {name:'Per',  place:"Red 07" , comment:"Labb 2", time:"16:00"}
 ];
+$scope.bookedUsers = [];
 
 socket.emit('stopListening', 'lobby');
 socket.emit('listen', $scope.queue);

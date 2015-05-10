@@ -5,7 +5,7 @@
       <h1>Queues</h1>
       <div class="row" style="margin-bottom: 1%;">
         <div class="col-md-3 pull-right" style="padding: 0;">
-          <input type="text" class="search" ng-model="search" placeholder="Search" style="height: 3em; margin-bottom: 2%; width: 100%; padding-left: 1em;">
+          <input type="text" class="search" ng-model="search" placeholder="Search" style="height: 3em; margin-bottom: 2%; width: 100%; padding-left: 1em;" ng-show="queues">
         </div>
       </div>
       <div class="well row" ng-repeat="queue in queues | orderBy:'locked':false" ng-class="{'light-blue-background' : queue.position !== -1, 'white' : queue.position === -1,'clickable' : accessLevel(queue.name) > 0 || !queue.locked}" ng-click="redirect(queue)" id="list{{queue.name}}Btn" ng-hide="noMatch(queue.name) || (accessLevel(queue.name) < 2 && queue.hibernating)" clear:both>
