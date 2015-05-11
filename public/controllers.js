@@ -604,16 +604,16 @@ queueControllers.controller('adminController', ['$scope', '$location', '$http', 
       },
       resolve: {
         title: function () {
-          return "Hibernate queue";
+          return "Hide queue";
         },
         message: function () {
-          return "Are you sure that you wish to hibernate " + $scope.selectedQueue.name + "? This means that only admins, teachers, and assistants can enter and see the queue.";
+          return "Are you sure that you wish to hide " + $scope.selectedQueue.name + "? This means that only teachers and admins can enter and see the queue.";
         },
         safeButtonText: function () {
-          return "No, keep it awake.";
+          return "No, keep it visible.";
         },
         dangerButtonText: function () {
-          return "Yes, allow it some rest.";
+          return "Yes, and conceal it well.";
         }
       }
     });
@@ -649,16 +649,16 @@ $scope.unhibernateQueue = function(){
     },
     resolve: {
       title: function () {
-        return "Wake up queue";
+        return "Reveal queue";
       },
       message: function () {
-        return "Are you sure that you wish to unhibernate " + $scope.selectedQueue.name + "? This means that anyone can see and enter the queue.";
+        return "Are you sure that you wish to reveal " + $scope.selectedQueue.name + "? This means that anyone can see and enter the queue.";
       },
       safeButtonText: function () {
-        return "No, let it sleep.";
+        return "No, keep it from prying eyes.";
       },
       dangerButtonText: function () {
-        return "Yes, rise and shine.";
+        return "Yes, show yourself!";
       }
     }
   });
