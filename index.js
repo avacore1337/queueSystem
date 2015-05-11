@@ -443,11 +443,13 @@ app.io.route('unlock', function(req) {
 
 app.io.route('hibernate', function(req) {
   var courseName = req.data.queue;
-  var username = req.session.user.name;
+  //var username = req.session.user.name; // TODO : change back after demo
+  var username = req.data.username; // TODO : remove after demo
 
   // admin/teacher-validation
   if (!(validate(username, "super", "course") || validate(username, "teacher", courseName))) {
-    console.log("validation for hibernate failed");
+    console.log("Current user " + username + " is not a teacher for that queue or an admin.");
+    //console.log("validation for hibernate failed");
     //res.end();
     return;
   }
@@ -457,7 +459,8 @@ app.io.route('hibernate', function(req) {
 
 app.io.route('unhibernate', function(req) {
   var courseName = req.data.queue;
-  var username = req.session.user.name;
+  //var username = req.session.user.name; // TODO : change back after demo
+  var username = req.data.username; // TODO : remove after demo
 
   // admin/teacher-validation
   if (!(validate(username, "super", "course") || validate(username, "teacher", courseName))) {
@@ -546,7 +549,8 @@ function numbersOfPeopleLeftQueue(queueName, start, end) {
 //
 app.io.route('addQueue', function(req) {
  console.log("Trying to add Queue!");
- var username = req.session.user.name;
+ //var username = req.session.user.name; // TODO : change back after demo
+  var username = req.data.username; // TODO : remove after demo
  // admin-validation
   if (!validate(username, "super", "course")) {
     console.log("validation for addQueue failed");
@@ -567,7 +571,8 @@ app.io.route('addQueue', function(req) {
 //
 app.io.route('removeQueue', function(req) {
   console.log("Trying to remove Queue!");
-  var username = req.session.user.name;
+  //var username = req.session.user.name; // TODO : change back after demo
+  var username = req.data.username; // TODO : remove after demo
   var courseName = req.data.queueName;
 
   // admin/teacher-validation
@@ -595,7 +600,8 @@ app.io.route('removeQueue', function(req) {
 app.io.route('addAdmin', function(req) {
   console.log("Trying to add Admin!");
 
-  var username = req.session.user.name;
+  //var username = req.session.user.name; // TODO : change back after demo
+  var username = req.data.addedBy; // TODO : remove after demo
   // admin-validation
   if (!validate(username, "super", "course")) {
     console.log("validation for addAdmin failed");
@@ -616,7 +622,8 @@ app.io.route('addAdmin', function(req) {
 
 //
 app.io.route('addTeacher', function(req) {
-  var username = req.session.user.name;
+  //var username = req.session.user.name; // TODO : change back after demo
+  var username = req.data.addedBy; // TODO : remove after demo
   var courseName = req.data.queueName;
 
   // admin/teacher-validation
@@ -640,7 +647,8 @@ app.io.route('addTeacher', function(req) {
 
 //
 app.io.route('addAssistant', function(req) {
-  var username = req.session.user.name;
+    //var username = req.session.user.name; // TODO : change back after demo
+  var username = req.data.addedBy; // TODO : remove after demo
   var courseName = req.data.queueName;
 
   // admin/teacher-validation
@@ -666,7 +674,9 @@ app.io.route('addAssistant', function(req) {
 app.io.route('removeAdmin', function(req) {
  console.log("Trying to remove Admin!");
 
-  var username = req.session.user.name;
+  //var username = req.session.user.name; // TODO : change back after demo
+  var username = req.data.remover; // TODO : remove after demo
+
   // admin-validation
   if (!validate(username, "super", "course")) {
     console.log("validation for removeAdmin failed");
@@ -691,7 +701,8 @@ app.io.route('removeAdmin', function(req) {
 
 //
 app.io.route('removeTeacher', function(req) {
-  var username = req.session.user.name;
+    //var username = req.session.user.name; // TODO : change back after demo
+  var username = req.data.remover; // TODO : remove after demo
   var courseName = req.data.queueName;
 
   // admin/teacher-validation
@@ -712,7 +723,8 @@ app.io.route('removeTeacher', function(req) {
 
 //
 app.io.route('removeAssistant', function(req) {
-  var username = req.session.user.name;
+      //var username = req.session.user.name; // TODO : change back after demo
+  var username = req.data.remover; // TODO : remove after demo
   var courseName = req.data.queueName;
 
   // admin/teacher-validation

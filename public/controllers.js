@@ -536,7 +536,8 @@ queueControllers.controller('adminController', ['$scope', '$location', '$http', 
   $scope.addQueue = function(){
     if($scope.newQueue){
       socket.emit('addQueue', {
-        queueName:$scope.newQueue
+        queueName:$scope.newQueue,
+        username:user.username
       });
       $scope.newQueue = "";
     }
@@ -577,7 +578,8 @@ queueControllers.controller('adminController', ['$scope', '$location', '$http', 
     modalInstance.result.then(function (message) {
       if(message === "delete"){
         socket.emit('removeQueue', {
-          queueName:$scope.selectedQueue.name
+          queueName:$scope.selectedQueue.name,
+          username:user.username
         });
         console.log("Trying to delete queue " + $scope.selectedQueue.name);
         document.getElementById('dropdown').innerHTML = "Select Queue";
@@ -624,7 +626,8 @@ modalInstance.result.then(function (message) {
       queue:$scope.selectedQueue.name
     });
     socket.emit('hibernate', {
-      queue:$scope.selectedQueue.name
+      queue:$scope.selectedQueue.name,
+      username:user.username
     });
     console.log("Trying to hibernate queue " + $scope.selectedQueue.name);
   }
@@ -666,7 +669,8 @@ $scope.unhibernateQueue = function(){
   modalInstance.result.then(function (message) {
     if(message === "unhibernate"){
       socket.emit('unhibernate', {
-        queue:$scope.selectedQueue.name
+        queue:$scope.selectedQueue.name,
+        username:user.username // TODO : remove after demo
       });
       console.log("Trying to unhibernate queue " + $scope.selectedQueue.name);
     }
@@ -686,7 +690,8 @@ $scope.addAdmin = function(){
 
 $scope.removeAdmin = function(username){
   socket.emit('removeAdmin', {
-    username:username
+    username:username,
+    remover:user.username
   });
   console.log("Removing admin " + username);
 };
@@ -707,7 +712,8 @@ $scope.addTeacher = function(){
 $scope.removeTeacher = function(username){
   socket.emit('removeTeacher', {
     username:username,
-    queueName:$scope.selectedQueue.name
+    queueName:$scope.selectedQueue.name,
+    remover:user.username
   });
   console.log("Removing teacher " + name + " in the queue " + $scope.selectedQueue.name);
 };
@@ -727,7 +733,8 @@ $scope.addAssistant = function(){
 $scope.removeAssistant = function(username){
   socket.emit('removeAssistant', {
     username:username,
-    queueName:$scope.selectedQueue.name
+    queueName:$scope.selectedQueue.name,
+    remover:user.username
   });
   console.log("Removing assistant " + name  + " in the queue " + $scope.selectedQueue.name);
 };
