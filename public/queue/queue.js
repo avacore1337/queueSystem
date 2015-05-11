@@ -91,7 +91,6 @@ $scope.bookedUsers = [
 {name:'Joakim',  place:"Red 06" , comment:"Labb 3", time:"15:30"},
 {name:'Per',  place:"Red 07" , comment:"Labb 2", time:"16:00"}
 ];
-$scope.bookedUsers = [];
 
 socket.emit('stopListening', 'lobby');
 socket.emit('listen', $scope.queue);
@@ -549,10 +548,5 @@ console.log('testing');
       var regEx = new RegExp($scope.search.toLowerCase());
       return (regEx.test(user.name.toLowerCase()) || regEx.test(user.place.toLowerCase()) ||  regEx.test(user.comment.toLowerCase()) ||  regEx.test(user.time.toLowerCase()));
     };
-
-    $scope.toggleQueue = function(){
-      $scope.bookedQueue = !$scope.bookedQueue;
-    }
-
   }]);
 })();
