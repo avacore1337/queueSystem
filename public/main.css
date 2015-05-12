@@ -119,60 +119,28 @@
 {
   border: solid #FFFFFF 1px;
 }
-.pulse {
-  -webkit-animation: pulse 3.8s linear infinite;
-  -moz-animation: pulse 3.8s linear infinite;
-  -ms-animation: pulse 3.8s linear infinite;
-  animation: pulse 3.8s linear infinite;
+
+table.table-striped > tbody > tr:nth-child(odd).pulse > td{
+  -webkit-animation: oddPulse 1.75s infinite;
+}
+table.table-striped > tbody > tr:nth-child(even).pulse > td{
+  -webkit-animation: evenPulse 1.75s infinite;
 }
 
-@keyframes "pulse" {
- 0% {
-   color: rgba(0,0,0,0.4);
- }
- 50% {
-   color: rgba(0,0,0,1.0);
- }
- 100% {
-   color: rgba(0,0,0,0.4);
- }
+@-webkit-keyframes oddPulse
+{
+  0%   {background-color: #5CFF5C;}
+  50%  {background: #B3F5B8;}
+  100% {background: #5CFF5C;}
 }
 
-@-moz-keyframes pulse {
- 0% {
-   color: rgba(0,0,0,0.4);
- }
- 50% {
-   color: rgba(0,0,0,1.0);
- }
- 100% {
-   color: rgba(0,0,0,0.4);
- }
+@-webkit-keyframes evenPulse
+{
+  0%   {background-color: #57DE57;}
+  50%  {background: #ACFAA7;}
+  100% {background: #57DE57;}
 }
 
-@-webkit-keyframes "pulse" {
- 0% {
-   color: rgba(0,0,0,0.4);
- }
- 50% {
-   color: rgba(0,0,0,1.0);
- }
- 100% {
-   color: rgba(0,0,0,0.4);
- }
-}
-
-@-ms-keyframes "pulse" {
- 0% {
-   color: rgba(0,0,0,0.4);
- }
- 50% {
-   color: rgba(0,0,0,1.0);
- }
- 100% {
-   color: rgba(0,0,0,0.4);
- }
-}
 .spoiler
 {
   overflow: hidden;
@@ -204,7 +172,7 @@
   text-align: center;
   float: left;
 }
-button.expand
+.expand
 {
   width:100%;
 }
@@ -250,7 +218,7 @@ button:focus
 {    
   background-color: #1C65EB;
 }
-.nav.navbar-nav.navbar-right > li > a.unresponsive:hover
+.nav.navbar-nav.navbar-right > li > .unresponsive:hover
 {
     color: #777777;
     cursor: default;
@@ -263,7 +231,7 @@ table.table-striped > tbody > tr.light-blue-background > td
 {
    background-color: #C5E7FF;
 }
-div.panel
+.panel
 {
   font-size: 1.2em;
   background-color: #F2F2F2;
@@ -281,7 +249,7 @@ img.frame
   padding: 5%;
   border: 1px solid #DDDDDD;
 }
-tr.pointer
+tr.pointer:hover
 {
   cursor: pointer;
 }
@@ -294,7 +262,7 @@ div.light-blue-background:hover
   background-color: #B5DAF5;
   cursor: pointer;
 }
-a.no-text-decoration
+.no-text-decoration
 {
   text-decoration: none;
 }
