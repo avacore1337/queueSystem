@@ -1,44 +1,51 @@
 <div class="container">
 
-  <div class="row">
-    <section class="col-md-10 col-md-offset-1">
+  <section class="col-md-10 col-md-offset-1">
+    <div class="row">
       <h1>Queues</h1>
-      <div class="row" style="margin-bottom: 1%;">
-        <div class="col-md-3 pull-right" style="padding: 0;">
-          <input type="text" class="search" ng-model="search" placeholder="Search" style="height: 3em; margin-bottom: 2%; width: 100%; padding-left: 1em;" ng-show="queues">
-        </div>
-      </div>
-      <div class="well row" ng-repeat="queue in queues | orderBy:'locked':false" ng-class="{'light-blue-background' : queue.position !== -1, 'white' : queue.position === -1,'clickable' : accessLevel(queue.name) > 0 || !queue.locked}" ng-click="redirect(queue)" id="list{{queue.name}}Btn" ng-hide="noMatch(queue.name) || (accessLevel(queue.name) < 2 && queue.hibernating)" clear:both>
-        <div class="col-xs-6">
-          <h4 ng-show="queue.locked && !queue.hibernating" class="text-red">
-            <span class="glyphicon glyphicon-lock"></span>
-            {{queue.name}}
-          </h4>
-          <h4 ng-show="!queue.locked && !queue.hibernating">
-            <a href="">{{queue.name}}</a>
-          </h4>
-          <h4 ng-show="accessLevel(queue.name) > 1 && queue.hibernating" class="text-light-gray">
-            <span class="glyphicon glyphicon-eye-close"></span>
-            <a href="" style="color: rgb(185, 185, 185);">{{queue.name}}</a>
-          </h4>
-        </div>
+    </div>
 
-        <div class="col-xs-6">
-          <span class="pull-right">
-            <h4 ng-show="queue.hibernating" class="text-light-gray">
-              {{queue.length}}
-              <i class="glyphicon glyphicon-user"></i>
+    <div class="row">
+      <div class="col-xs-12 col-md-offset-9 col-md-3" style="padding: 0; margin-bottom: 1%;">
+        <input type="text" class="search" ng-model="search" placeholder="Search" style="height: 3em; margin-bottom: 2%; width: 100%; padding-left: 1em;">
+      </div>
+    </div>
+
+    <div class="row">
+      <div class="well" ng-repeat="queue in queues | orderBy:'locked':false" ng-class="{'light-blue-background' : queue.position !== -1, 'white' : queue.position === -1,'clickable' : accessLevel(queue.name) > 0 || !queue.locked}" ng-click="redirect(queue)" id="list{{queue.name}}Btn" ng-hide="noMatch(queue.name) || (accessLevel(queue.name) < 2 && queue.hibernating)" clear:both>
+        <div class="row">
+          <div class="col-xs-6">
+            <h4 ng-show="queue.locked && !queue.hibernating" class="text-red">
+              <span class="glyphicon glyphicon-lock"></span>
+              {{queue.name}}
             </h4>
-            <h4 ng-show="!queue.hibernating && queue.position === -1">
-              {{queue.length}}
-              <i class="glyphicon glyphicon-user"></i>
+            <h4 ng-show="!queue.locked && !queue.hibernating">
+              <a href="">{{queue.name}}</a>
             </h4>
-            <h4 ng-show="!queue.hibernating && queue.position !== -1">
-              {{queue.position}}/{{queue.length}}
-              <i class="glyphicon glyphicon-user"></i>
+            <h4 ng-show="accessLevel(queue.name) > 1 && queue.hibernating" class="text-light-gray">
+              <span class="glyphicon glyphicon-eye-close"></span>
+              <a href="" style="color: rgb(185, 185, 185);">{{queue.name}}</a>
             </h4>
-          </span>
+          </div>
+
+          <div class="col-xs-6">
+            <span class="pull-right">
+              <h4 ng-show="queue.hibernating" class="text-light-gray">
+                {{queue.length}}
+                <i class="glyphicon glyphicon-user"></i>
+              </h4>
+              <h4 ng-show="!queue.hibernating && queue.position === -1">
+                {{queue.length}}
+                <i class="glyphicon glyphicon-user"></i>
+              </h4>
+              <h4 ng-show="!queue.hibernating && queue.position !== -1">
+                {{queue.position}}/{{queue.length}}
+                <i class="glyphicon glyphicon-user"></i>
+              </h4>
+            </span>
+          </div>
         </div>
       </div>
-    </section>
-  </div>
+    </div>
+  </section>
+</div>

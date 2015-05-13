@@ -222,6 +222,7 @@ console.log('testing');
     // Listen for a badLocation warning
     function socketBadLocation(data) {
       console.log("badLocation detected !!!");
+      console.log("Sender : " + data.sender);
       if($scope.name === data.name){
         var modalInstance = $modal.open({
           templateUrl: 'receiveMessage.html',

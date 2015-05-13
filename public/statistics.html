@@ -6,19 +6,23 @@
   <div ng-show="accessLevel() > 1">
     <div class="row">
       <!-- Dropdown of queues -->
+      
       <div class="col-md-12">
         <h4>Queue</h4>
         <div class="dropdown">
-          <button class="btn btn-default dropdown-toggle col-md-5" type="button" data-toggle="dropdown" id="statisticsSelectQueueDropDown">
-            <div class="col-md-11 text-left" id="dropdown">Select Queue</div> <span class="caret"></span>
+          <button class="btn btn-default dropdown-toggle col-xs-12 col-md-5" type="button" data-toggle="dropdown" id="statisticsSelectQueueDropDown">
+            <div class="col-xs-11 text-left" id="dropdown">Select Queue</div> <span class="caret"></span>
           </button>
           <ul class="dropdown-menu">
             <li ng-repeat="queue in queues"><a href="" ng-click="selectQueue(queue)" id="statistics{{queue.name}}DropDownBtn">{{queue.name}}</a></li>
           </ul>
         </div>
       </div>
-      <!-- Dropdown ends here -->
-      <!-- Datepicker (from) -->
+    </div>
+
+    <!-- Dropdown ends here -->
+    <!-- Datepicker (from) -->
+    <div class="row">
       <div class="col-md-6">
         <h4>From</h4>
         <p class="input-group">
@@ -42,28 +46,37 @@
         <!-- Timepicker (to) -->
         <timepicker ng-model="toTime" minute-step="mstep" show-meridian="false" id="statisticsToTimeTimepicker"></timepicker>
       </div>
-      <button class="btn btn-primary pull-right" ng-show="selectedQueue" ng-click="getStatistics()" id="statisticsGetStatisticsBtn">Get statistics</button>
-      <button class="btn btn-primary pull-right" ng-hide="selectedQueue" popover="You must choose a queue first."  popover-trigger="focus" popover-placement="top" id="statisticsPromptQueueBtn">Get statistics</button>
     </div>
+
+    <div class="row">
+      <div class="col-xs-12">
+        <button class="btn btn-primary pull-right" ng-show="selectedQueue" ng-click="getStatistics()" id="statisticsGetStatisticsBtn">Get statistics</button>
+        <button class="btn btn-primary pull-right" ng-hide="selectedQueue" popover="You must choose a queue first."  popover-trigger="focus" popover-placement="top" id="statisticsPromptQueueBtn">Get statistics</button>
+      </div>
+    </div>
+
     <hr>
     <!-- Statistics goes here -->
     <div class="row" ng-show="averageQueueTime || numbersOfPeopleLeftQueue !== -1">
-      <table class="table table-striped">
-        <thead>
-          <th>Description</th>
-          <th>Statistics</th>
-        </thead>
-        <tbody>
-          <tr ng-show="averageQueueTime">
-            <td >Average queue time</td>
-            <td>{{averageQueueTime}}</td>
-          </tr>
-          <tr ng-show="numbersOfPeopleLeftQueue !== -1">
-            <td>Amount of people who left the queue</td>
-            <td>{{numbersOfPeopleLeftQueue}}</td>
-          </tr>
-        </tbody>
-      </table>
+      <div class="col-xs-12">
+        <table class="table table-striped">
+          <thead>
+            <th>Description</th>
+            <th>Statistics</th>
+          </thead>
+          <tbody>
+            <tr ng-show="averageQueueTime">
+              <td >Average queue time</td>
+              <td>{{averageQueueTime}}</td>
+            </tr>
+            <tr ng-show="numbersOfPeopleLeftQueue !== -1">
+              <td>Amount of people who left the queue</td>
+              <td>{{numbersOfPeopleLeftQueue}}</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
     </div>
   </div>
+</div>
 </div>

@@ -94,8 +94,8 @@
 		<div class="row">
 			<div class="col-md-12">
 				<div class="dropdown">
-					<button class="btn btn-default dropdown-toggle col-xs-3" type="button" data-toggle="dropdown" id="adminSelectQueueDropDown">
-						<div class="col-md-11 text-left" id="dropdown">Select Queue</div> <span class="caret"></span>
+					<button class="btn btn-default dropdown-toggle col-xs-12 col-md-3" type="button" data-toggle="dropdown" id="adminSelectQueueDropDown">
+						<div class="col-xs-11 text-left" id="dropdown">Select Queue</div> <span class="caret"></span>
 					</button>
 					<ul class="dropdown-menu">
 						<li ng-repeat="queue in queues"><a href="" ng-click="selectQueue(queue)" id="admin{{queue.name}}DropDownBtn">{{queue.name}}</a></li>

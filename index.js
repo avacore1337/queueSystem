@@ -241,10 +241,7 @@ app.io.route('badLocation', function(req) {
     return;
   }
 
-  var name = req.data.name;
-  var sender = req.data.sender;
-
-  app.io.room(courseName).broadcast('badLocation', {name: name, sender: sender}); 
+  app.io.room(courseName).broadcast('badLocation', {name: name, sender: username}); 
   console.log("Bad location at " + courseName + " for " + name);
 });
 
