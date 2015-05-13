@@ -443,8 +443,7 @@ app.io.route('unlock', function(req) {
 
 app.io.route('hibernate', function(req) {
   var courseName = req.data.queue;
-  //var username = req.session.user.name; // TODO : change back after demo
-  var username = req.data.username; // TODO : remove after demo
+  var username = req.session.user.name;
 
   // admin/teacher-validation
   if (!(validate(username, "super", "course") || validate(username, "teacher", courseName))) {
@@ -459,8 +458,7 @@ app.io.route('hibernate', function(req) {
 
 app.io.route('unhibernate', function(req) {
   var courseName = req.data.queue;
-  //var username = req.session.user.name; // TODO : change back after demo
-  var username = req.data.username; // TODO : remove after demo
+  var username = req.session.user.name;
 
   // admin/teacher-validation
   if (!(validate(username, "super", "course") || validate(username, "teacher", courseName))) {
@@ -549,8 +547,7 @@ function numbersOfPeopleLeftQueue(queueName, start, end) {
 //
 app.io.route('addQueue', function(req) {
  console.log("Trying to add Queue!");
- //var username = req.session.user.name; // TODO : change back after demo
-  var username = req.data.username; // TODO : remove after demo
+ var username = req.session.user.name;
  // admin-validation
   if (!validate(username, "super", "course")) {
     console.log("validation for addQueue failed");
@@ -571,8 +568,7 @@ app.io.route('addQueue', function(req) {
 //
 app.io.route('removeQueue', function(req) {
   console.log("Trying to remove Queue!");
-  //var username = req.session.user.name; // TODO : change back after demo
-  var username = req.data.username; // TODO : remove after demo
+  var username = req.session.user.name;
   var courseName = req.data.queueName;
 
   // admin/teacher-validation
@@ -599,9 +595,7 @@ app.io.route('removeQueue', function(req) {
 //
 app.io.route('addAdmin', function(req) {
   console.log("Trying to add Admin!");
-
-  //var username = req.session.user.name; // TODO : change back after demo
-  var username = req.data.addedBy; // TODO : remove after demo
+  var username = req.session.user.name;
   // admin-validation
   if (!validate(username, "super", "course")) {
     console.log("validation for addAdmin failed");
@@ -622,8 +616,7 @@ app.io.route('addAdmin', function(req) {
 
 //
 app.io.route('addTeacher', function(req) {
-  //var username = req.session.user.name; // TODO : change back after demo
-  var username = req.data.addedBy; // TODO : remove after demo
+  var username = req.session.user.name;
   var courseName = req.data.queueName;
 
   // admin/teacher-validation
@@ -647,8 +640,7 @@ app.io.route('addTeacher', function(req) {
 
 //
 app.io.route('addAssistant', function(req) {
-    //var username = req.session.user.name; // TODO : change back after demo
-  var username = req.data.addedBy; // TODO : remove after demo
+  var username = req.session.user.name;
   var courseName = req.data.queueName;
 
   // admin/teacher-validation
@@ -674,8 +666,7 @@ app.io.route('addAssistant', function(req) {
 app.io.route('removeAdmin', function(req) {
  console.log("Trying to remove Admin!");
 
-  //var username = req.session.user.name; // TODO : change back after demo
-  var username = req.data.remover; // TODO : remove after demo
+  var username = req.session.user.name;
 
   // admin-validation
   if (!validate(username, "super", "course")) {
@@ -701,8 +692,7 @@ app.io.route('removeAdmin', function(req) {
 
 //
 app.io.route('removeTeacher', function(req) {
-    //var username = req.session.user.name; // TODO : change back after demo
-  var username = req.data.remover; // TODO : remove after demo
+  var username = req.session.user.name;
   var courseName = req.data.queueName;
 
   // admin/teacher-validation
@@ -723,8 +713,7 @@ app.io.route('removeTeacher', function(req) {
 
 //
 app.io.route('removeAssistant', function(req) {
-      //var username = req.session.user.name; // TODO : change back after demo
-  var username = req.data.remover; // TODO : remove after demo
+  var username = req.session.user.name;
   var courseName = req.data.queueName;
 
   // admin/teacher-validation
@@ -758,7 +747,7 @@ app.io.route('flag', function(req) {
   }
  
   var course = findCourse(courseName);
-  course.addAssistantComment(username, sender, queue, message); // TODO : change "queue" for "course" or "courseName"
+  course.addAssistantComment(username, sender, courseName, message);
 
   console.log('flagged');
   app.io.room(courseName).broadcast('flag', {name:username, message:message});
