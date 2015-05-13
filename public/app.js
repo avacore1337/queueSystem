@@ -25,8 +25,8 @@
         templateUrl: 'login.html',
         controller: 'loginController'
       }).
-      when('/admin', {
-        templateUrl: 'admin.html',
+      when('/administration', {
+        templateUrl: 'administration.html',
         controller: 'adminController'
       }).
       when('/statistics', {

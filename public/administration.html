@@ -24,22 +24,22 @@
 		<p>Please be careful on this page. Here, you have the power to change everything.</p>
 	</div>
 	<div ng-show="accessLevel() > 2">
-		<h1>Admins of Stay A While&nbsp;<a href="/help">?</a></h1>
-		<h5>New admins might have to log out and in again in order to get all of their new privileges.</h5>
+		<h1>Administrators of Stay A While&nbsp;<a href="/#/help#administrator">?</a></h1>
+		<h5>New administrators might have to log out and in again in order to get all of their new privileges.</h5>
 	</div>
 	<br>
 
 	<div class="row" ng-show="accessLevel() > 2">
 		<div class="col-md-6">
 			<!-- Add admins -->
-			<p>Insert the new admins username</p>
+			<p>Insert the new administrators username</p>
 			<div class="input-group col-md-8">
-				<input type="text" class="form-control" ng-model="newAdmin" placeholder="Add admin" onfocus="this.placeholder = ''" onblur="this.placeholder = 'Add admin'" id="adminAdminInputField">
+				<input type="text" class="form-control" ng-model="newAdmin" placeholder="Add administrator" onfocus="this.placeholder = ''" onblur="this.placeholder = 'Add admin'" id="adminAdminInputField">
 				<span class="input-group-addon blue clickable text-white" style="border: 0px;" id="adminAddAdminBtn" ng-click="addAdmin()"><span class="glyphicon glyphicon-plus"></span>Add</span>
 			</div>
 			<!-- Remove admins -->
 			<br>
-			Admins
+			Administrators
 			<br>
 			<div ng-show="admins.length">
 				<table class="table table-striped">
@@ -117,7 +117,7 @@
 		<div class="row col-md-12">
 			<!-- Adding teachers -->
 			<div class="row col-md-6">
-				<h3>Teachers at Stay A While&nbsp;<a href="/help">?</a></h3>
+				<h3>Teachers at Stay A While&nbsp;<a href="/#/help#teacher">?</a></h3>
 				<h5>New teachers might have to log out and in again in order to get all of their new privileges.</h5>
 				<!-- Real input -->
 				<p>Insert the new teachers username</p>
@@ -155,7 +155,7 @@
 			</div>
 			<!-- Adding teaching assistants -->
 			<div class="row col-md-6 left-divider">
-				<h3>Assistants at Stay A While&nbsp;<a href="/help">?</a></h3>
+				<h3>Assistants at Stay A While&nbsp;<a href="/#/help#assistant">?</a></h3>
 				<h5>New assistants might have to log out and in again in order to get all of their new privileges.</h5>
 				<!-- Real input -->
 				<p>Insert the new assistants username</p>
