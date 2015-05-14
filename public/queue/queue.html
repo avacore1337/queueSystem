@@ -106,7 +106,7 @@
           </tr>
         </thead>
         <tbody>
-          <tr ng-repeat-start="user in users track by $index" ng-class="{'pointer' : accessLevel > 0, 'pulse' : user.gettingHelp, 'light-blue-background' : user.name === name}" ng-dblclick="changeVisibility(user.name)"  id="queue{{user.name}}Btn" ng-show="match(user)">
+          <tr ng-repeat-start="user in users track by $index" ng-class="{'pointer' : accessLevel > 0, 'pulse' : user.gettingHelp, 'light-blue-background' : user.name === name}" ng-click="changeVisibility(user.name)"  id="queue{{user.name}}Btn" ng-show="match(user)">
             <td class="hidden-xs">{{ $index + 1 }}</td>
             <td>{{ user.name }}</td>
             <td>{{ user.place }}</td>
@@ -114,43 +114,43 @@
             <td><span data-livestamp="{{user.time}}"></span></td>
           </tr>
           <tr></tr> <!-- Hack-solution -->
-          <tr ng-repeat-end class="text-center" ng-show="accessLevel && user.optionsActivated" ng-dblclick="changeVisibility(user.name)">
+          <tr ng-repeat-end class="text-center" ng-show="accessLevel && user.optionsActivated" ng-click="changeVisibility(user.name)">
             <td colspan="100%;">
-              <span title="remove user" class="col-xs-2">
-                <button class="btn red clickable" ng-click="removeUser(user.name)" id="queueRemoveUser{{user.name}}Btn">
-                  <span class="glyphicon glyphicon-trash"></span>
+              <div title="remove user" class="col-xs-2">
+                <button class="red clickable frame center-content expand" ng-click="removeUser(user.name)" id="queueRemoveUser{{user.name}}Btn">
+                  <span class="glyphicon glyphicon-remove"></span>
                 </button>
-              </span>
-              <span title="send message" class="col-xs-2">
-                <button class="btn btn-success" ng-click="messageUser(user.name)" id="queueSendMessage{{user.name}}Btn">
+              </div>
+              <div title="send message" class="col-xs-2">
+                <button class="green clickable frame center-content expand" ng-click="messageUser(user.name)" id="queueSendMessage{{user.name}}Btn">
                   <span class="glyphicon glyphicon-envelope"></span>
                 </button>
-              </span>
-              <span title="help" class="col-xs-2">
-                <button class="btn btn-success" ng-click="helpUser(user.name)" id="queueHelp{{user.name}}Btn">
+              </div>
+              <div title="help" class="col-xs-2">
+                <button class="green clickable frame center-content expand" ng-click="helpUser(user.name)" id="queueHelp{{user.name}}Btn">
                   <span class="glyphicon glyphicon-check"></span>
                 </button>
-              </span>
-              <span title="bad location" class="col-xs-2">
-                <button class="btn btn-success" ng-click="badLocation(user.name)" id="queueBadLocation{{user.name}}Btn">
+              </div>
+              <div title="bad location" class="col-xs-2">
+                <button class="green clickable frame center-content expand" ng-click="badLocation(user.name)" id="queueBadLocation{{user.name}}Btn">
                   <span class="glyphicon glyphicon-question-sign"></span>
                 </button>
-              </span>
-              <span title="add comment" class="col-xs-2">
-                <button class="btn btn-success" ng-click="flag(user.name)" id="queueAddComment{{user.name}}Btn">
+              </div>
+              <div title="add comment" class="col-xs-2">
+                <button class="green clickable frame center-content expand" ng-click="flag(user.name)" id="queueAddComment{{user.name}}Btn">
                   <span class="glyphicon glyphicon-tag"></span>
                 </button>
-              </span>
-              <span ng-show="user.messages.length" title="read comment" class="col-xs-2">
-                <button class="btn btn-success" ng-click="readMessages(user.name)" id="queueReadComment{{user.name}}Btn">
+              </div>
+              <div ng-show="user.messages.length" title="read comment" class="col-xs-2">
+                <button class="green clickable frame center-content expand" ng-click="readMessages(user.name)" id="queueReadComment{{user.name}}Btn">
                   <span class="glyphicon glyphicon-search"></span>
                 </button>
-              </span>
-              <span ng-hide="user.messages.length" title="read comment" class="col-xs-2">
-                <button class="btn btn-default" id="queueReadComment{{user.name}}Btn" disabled>
+              </div>
+              <div ng-hide="user.messages.length" title="read comment" class="col-xs-2">
+                <button class="frame center-content expand" id="queueCanNotReadComment{{user.name}}Btn" disabled>
                   <span class="glyphicon glyphicon-search"></span>
                 </button>
-              </span>
+              </div>
             </td>
           </tr>
         </tbody>
@@ -176,15 +176,15 @@
           Join queue
         </button>
         <button class="red clickable center-content frame expand" ng-show="enqueued" ng-click="removeUser(name)" id="queueLeaveQueueBtn">
-          <span class="glyphicon glyphicon-remove"></span>&nbsp;
+          <span class="glyphicon glyphicon-remove"></span>
           Leave queue
         </button>
         <button class="green clickable center-content frame expand" ng-show="enqueued && location" ng-click="updateUser()" id="queueUpdateInformationBtn">
-          <span class="glyphicon glyphicon-pencil"></span>&nbsp;
+          <span class="glyphicon glyphicon-pencil"></span>
           Update information
         </button>
         <button class="green clickable frame center-content expand" ng-show="enqueued && !location" popover="You must enter your location again"  popover-trigger="focus" popover-placement="bottom" id="queuePromptLocationUpdateBtn">
-          <span class="glyphicon glyphicon-pencil"></span>&nbsp;
+          <span class="glyphicon glyphicon-pencil"></span>
           Update information
         </button>
         <div class="buffer" ng-show="accessLevel"></div>
@@ -201,31 +201,31 @@
           <ul class="dropdown-menu col-xs-12" role="menu" style="padding: 5%;">
             <li>
               <button class="blue clickable center-content frame expand" ng-show="accessLevel" ng-click="broadcast()" id="queueBroadcastBtn">
-                <span class="glyphicon glyphicon-bullhorn"></span>&nbsp;
+                <span class="glyphicon glyphicon-bullhorn"></span>
                 Broadcast
               </button>
             </li>
-            <!--<li>
+            <li>
               <button class="blue clickable center-content frame expand" ng-show="accessLevel" ng-click="broadcastTA()" id="queueBroadcastToTasBtn">
                 <span class="glyphicon glyphicon-bullhorn"></span>&nbsp;
                 Broadcast to TAs
               </button>
-            </li>-->
+            </li>
             <li>
               <button class="red clickable center-content frame expand" ng-show="accessLevel" ng-click="purge()" id="queuePurgeQueueBtn">
-                <span class="glyphicon glyphicon-remove"></span>&nbsp;
+                <span class="glyphicon glyphicon-remove"></span>
                 Purge queue
               </button>
             </li>
             <li>
               <button class="red clickable center-content frame expand" ng-show="accessLevel && !locked" ng-click="lock()" id="queueLockQueueBtn">
-                <span class="glyphicon glyphicon-lock"></span>&nbsp;
+                <span class="glyphicon glyphicon-lock"></span>
                 Lock queue
               </button>
             </li>
             <li>
               <button class="green clickable center-content frame expand" ng-show="accessLevel && locked" ng-click="unlock()" id="queueUnlockQueueBtn">
-                <span class="glyphicon glyphicon-lock"></span>&nbsp;
+                <span class="glyphicon glyphicon-lock"></span>
                 Unlock queue
               </button>
             </li>

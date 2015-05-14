@@ -516,10 +516,28 @@ console.log('testing');
 
     // When an admin wants to see the admin options
     $scope.changeVisibility = function(name){
-      for(var i = 0; i < $scope.users.length; i++){
-        if($scope.users[i].name === name){
-          $scope.users[i].optionsActivated = !$scope.users[i].optionsActivated;
-          break;
+      if( /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent) ) {
+        for(var i = 0; i < $scope.users.length; i++){
+          if($scope.users[i].name === name){
+            $scope.users[i].optionsActivated = !$scope.users[i].optionsActivated;
+            break;
+          }
+        }
+      }else{
+        if($scope.lastClick === name){
+          if(Date.now() - $scope.clickTime <= 500){
+            for(var i = 0; i < $scope.users.length; i++){
+              if($scope.users[i].name === name){
+                $scope.users[i].optionsActivated = !$scope.users[i].optionsActivated;
+                break;
+              }
+            }
+          }else{
+            $scope.clickTime = Date.now();
+          }
+        }else{
+          $scope.lastClick = name;
+          $scope.clickTime = Date.now();
         }
       }
     };

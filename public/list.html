@@ -12,7 +12,7 @@
     </div>
 
     <div class="row">
-      <div class="well" ng-repeat="queue in queues | orderBy:'locked':false" ng-class="{'light-blue-background' : queue.position !== -1, 'white' : queue.position === -1,'clickable' : accessLevel(queue.name) > 0 || !queue.locked}" ng-click="redirect(queue)" id="list{{queue.name}}Btn" ng-hide="noMatch(queue.name) || (accessLevel(queue.name) < 2 && queue.hibernating)" clear:both>
+      <div class="well" ng-repeat="queue in queues | orderBy:'locked':false" ng-class="{'light-blue-background' : queue.position !== -1, 'white' : queue.position === -1,'clickable' : accessLevel(queue.name) > 0 || !queue.locked}" ng-click="redirect(queue)" id="list{{queue.name}}Btn" ng-hide="noMatch(queue.name) || (accessLevel(queue.name) < 2 && queue.hibernating)" style="padding-left: 5%; padding-right: 5%;">
         <div class="row">
           <div class="col-xs-6">
             <h4 ng-show="queue.locked && !queue.hibernating" class="text-red">
