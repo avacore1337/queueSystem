@@ -526,9 +526,9 @@ console.log('testing');
       }else{
         if($scope.lastClick === name){
           if(Date.now() - $scope.clickTime <= 500){
-            for(var i = 0; i < $scope.users.length; i++){
-              if($scope.users[i].name === name){
-                $scope.users[i].optionsActivated = !$scope.users[i].optionsActivated;
+            for(var j = 0; j < $scope.users.length; j++){
+              if($scope.users[j].name === name){
+                $scope.users[j].optionsActivated = !$scope.users[j].optionsActivated;
                 break;
               }
             }

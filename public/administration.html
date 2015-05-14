@@ -33,10 +33,15 @@
 		<div class="col-md-6">
 			<!-- Add admins -->
 			<p>Insert the new administrators username</p>
-			<div class="input-group col-md-8">
-				<input type="text" class="form-control" ng-model="newAdmin" placeholder="Add administrator" onfocus="this.placeholder = ''" onblur="this.placeholder = 'Add admin'" id="adminAdminInputField">
-				<span class="input-group-addon blue clickable text-white" style="border: 0px;" id="adminAddAdminBtn" ng-click="addAdmin()"><span class="glyphicon glyphicon-plus"></span>Add</span>
-			</div>
+			<form ng-submit="addAdmin()">
+				<div class="input-group col-md-8">
+					<input type="text" class="form-control" ng-model="newAdmin" placeholder="Add administrator" onfocus="this.placeholder = ''" onblur="this.placeholder = 'Add admin'" id="adminAdminInputField">
+					<span class="input-group-addon blue clickable text-white" style="border: 0px;" id="adminAddAdminBtn" type="submit" ng-click="addAdmin()">
+						<span class="glyphicon glyphicon-plus"></span>
+						Add
+					</span>
+				</div>
+			</form>
 			<!-- Remove admins -->
 			<br>
 			Administrators
@@ -66,10 +71,15 @@
 		<!-- Adding queues -->
 		<div class="col-md-6">
 			<p>Insert the name of the new queue</p>
-			<div class="input-group col-md-8">
-				<input type="text" class="form-control" ng-model="newQueue" placeholder="Add queue" onfocus="this.placeholder = ''" onblur="this.placeholder = 'Add queue'" id="adminQueueInputField">
-				<span class="input-group-addon blue clickable text-white" style="border: 0px;" id="adminAddQueueBtn" ng-click="addQueue()"><span class="glyphicon glyphicon-plus"></span>Add</span>
-			</div>
+			<form ng-submit="addQueue()">
+				<div class="input-group col-md-8">
+					<input type="text" class="form-control" ng-model="newQueue" placeholder="Add queue" onfocus="this.placeholder = ''" onblur="this.placeholder = 'Add queue'" id="adminQueueInputField">
+					<span class="input-group-addon blue clickable text-white" style="border: 0px;" id="adminAddQueueBtn" type="submit" ng-click="addQueue()">
+						<span class="glyphicon glyphicon-plus"></span>
+						Add
+					</span>
+				</div>
+			</form>
 			<table class="table table-striped">
 				<thead>
 					<tr>
@@ -121,10 +131,15 @@
 				<h5>New teachers might have to log out and in again in order to get all of their new privileges.</h5>
 				<!-- Real input -->
 				<p>Insert the new teachers username</p>
-				<div class="input-group col-md-9" ng-show="selectedQueue">
-					<input type="text" class="form-control" ng-model="newTeacher" placeholder="Add teacher" onfocus="this.placeholder = ''" onblur="this.placeholder = 'Add teacher'" id="adminAddTeacherInputField">
-					<span class="input-group-addon blue clickable text-white" style="border: 0px;" ng-click="addTeacher()" id="adminAddTeacherBtn"><span class="glyphicon glyphicon-plus"></span>Add</span>
-				</div>
+				<form ng-submit="addTeacher()" ng-show="selectedQueue">
+					<div class="input-group col-md-8">
+						<input type="text" class="form-control" ng-model="newTeacher" placeholder="Add teacher" onfocus="this.placeholder = ''" onblur="this.placeholder = 'Add teacher'" id="adminAddTeacherInputField">
+						<span class="input-group-addon blue clickable text-white" style="border: 0px;" id="adminAddTeacherBtn" type="submit" ng-click="addTeacher()">
+							<span class="glyphicon glyphicon-plus"></span>
+							Add
+						</span>
+					</div>
+				</form>
 				<!-- Fake input -->
 				<div class="input-group col-md-9" ng-hide="selectedQueue">
 					<input type="text" class="form-control" id="adminAddTeacherNoQueueInputField" disabled>
@@ -159,10 +174,15 @@
 				<h5>New assistants might have to log out and in again in order to get all of their new privileges.</h5>
 				<!-- Real input -->
 				<p>Insert the new assistants username</p>
-				<div class="input-group col-md-9" ng-show="selectedQueue">
-					<input type="text" class="form-control" ng-model="newAssistant" placeholder="Add assistant" onfocus="this.placeholder = ''" onblur="this.placeholder = 'Add assistant'" id="adminAddAssistantInputField">
-					<span class="input-group-addon blue clickable text-white" style="border: 0px;" ng-click="addAssistant()" id="adminAddAssistantBtn"><span class="glyphicon glyphicon-plus"></span>Add</span>
-				</div>
+				<form ng-submit="addAssistant()" ng-show="selectedQueue">
+					<div class="input-group col-md-8">
+						<input type="text" class="form-control" ng-model="newAssistant" placeholder="Add assistant" onfocus="this.placeholder = ''" onblur="this.placeholder = 'Add assistant'" id="adminAddAssistantInputField">
+						<span class="input-group-addon blue clickable text-white" style="border: 0px;" id="adminAddAssistantBtn" type="submit" ng-click="addAssistant()">
+							<span class="glyphicon glyphicon-plus"></span>
+							Add
+						</span>
+					</div>
+				</form>
 				<!-- Fake input -->
 				<div class="input-group col-md-9" ng-hide="selectedQueue">
 					<input type="text" class="form-control" id="adminAddAssistantNoQueueInputField" disabled>
