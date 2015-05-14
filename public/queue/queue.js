@@ -550,6 +550,11 @@ console.log('testing');
     console.log("location = " + $scope.location);
   };
 
+  // This function changes what queue is shown
+  $scope.switchQueue = function(){
+    $scope.bookedQueue = !$scope.bookedQueue;
+  };
+
   // This function checks if a person in the normal queue matches the search-string.
   $scope.match = function (user) {
     if(!$scope.search){

@@ -65,18 +65,42 @@
     </div>
   </div>
 
-    <div class="col-xs-12 col-md-3 pull-right" style="padding: 0; margin-bottom: 1%;" ng-show="bookedUsers.length || users.length">
-      <input type="text" class="search" ng-model="search" placeholder="Search" style="height: 3em; margin-bottom: 2%; width: 100%; padding-left: 1em;">
-    </div>
+  <div class="col-xs-12 col-md-3 pull-right" style="padding: 0; margin-bottom: 1%;" ng-show="bookedUsers.length || users.length">
+    <input type="text" class="search" ng-model="search" placeholder="Search" style="height: 3em; margin-bottom: 2%; width: 100%; padding-left: 1em;">
+  </div>
 
 
   <div class="row">
     <!-- Queues -->
     <div class="col-md-9 col-md-push-3">
+      <!-- Left -->
+      <div class="col-xs-6 text-left" ng-show="bookedQueue">
+        <span ng-click="switchQueue()" style="cursor: pointer;">
+          <span class="glyphicon glyphicon-chevron-left"></span> 
+          Show queue
+        </span>
+      </div>
+      <div class="col-xs-6 text-left text-light-gray" ng-hide="bookedQueue">
+        <!--<span class="glyphicon glyphicon-chevron-left"></span> -->
+        Show queue
+      </div>
+
+      <!-- Right -->
+      <div class="col-xs-6 text-right" ng-hide="bookedQueue">
+        <span ng-click="switchQueue()" style="cursor: pointer;">
+          Show booked users 
+          <span class="glyphicon glyphicon-chevron-right"></span>
+        </span>
+      </div>
+      <div class="col-xs-6 text-right text-light-gray" ng-show="bookedQueue">
+        Show booked users 
+        <!--<span class="glyphicon glyphicon-chevron-right"></span>-->
+      </div>
+
       <!-- Users with bookings -->
-      <input class="spoilerbutton" type="button" value="Show booked users" onclick="this.value=this.value=='Show booked users' ? 'Hide booked users' : 'Show booked users';" class="spoilerbutton" ng-show="bookedUsers.length"  id="queueShowBookedUsersBtn">
-      <div class="col-md-12 spoiler" ng-sow="bookedUsers.length">
-        <table class="table table-striped booked">
+      <div ng-show="bookedQueue">
+        <h4 ng-hide="bookedUsers.length">There are no booked users</h4>
+        <table class="table table-striped booked" ng-show="bookedUsers.length">
           <thead>
             <th>User</th>
             <th>Location</th>
@@ -93,69 +117,73 @@
           </tbody>
         </table>
       </div>
+
       <!-- Users without bookings -->
-      <div ng-hide="users.length"><h4>This queue is empty</h4></div>
-      <table class="table table-striped" ng-show="users.length">
-        <thead>
-          <tr>
-            <th class="hidden-xs">#</th>
-            <th>User</th>
-            <th>Location</th>
-            <th>Comment</th>
-            <th>Time</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr ng-repeat-start="user in users track by $index" ng-class="{'pointer' : accessLevel > 0, 'pulse' : user.gettingHelp, 'light-blue-background' : user.name === name}" ng-click="changeVisibility(user.name)"  id="queue{{user.name}}Btn" ng-show="match(user)">
-            <td class="hidden-xs">{{ $index + 1 }}</td>
-            <td>{{ user.name }}</td>
-            <td>{{ user.place }}</td>
-            <td>{{ user.comment }}</td>
-            <td><span data-livestamp="{{user.time}}"></span></td>
-          </tr>
-          <tr></tr> <!-- Hack-solution -->
-          <tr ng-repeat-end class="text-center" ng-show="accessLevel && user.optionsActivated" ng-click="changeVisibility(user.name)">
-            <td colspan="100%;">
-              <div title="remove user" class="col-xs-2">
-                <button class="red clickable frame center-content expand" ng-click="removeUser(user.name)" id="queueRemoveUser{{user.name}}Btn">
-                  <span class="glyphicon glyphicon-remove"></span>
-                </button>
-              </div>
-              <div title="send message" class="col-xs-2">
-                <button class="green clickable frame center-content expand" ng-click="messageUser(user.name)" id="queueSendMessage{{user.name}}Btn">
-                  <span class="glyphicon glyphicon-envelope"></span>
-                </button>
-              </div>
-              <div title="help" class="col-xs-2">
-                <button class="green clickable frame center-content expand" ng-click="helpUser(user.name)" id="queueHelp{{user.name}}Btn">
-                  <span class="glyphicon glyphicon-check"></span>
-                </button>
-              </div>
-              <div title="bad location" class="col-xs-2">
-                <button class="green clickable frame center-content expand" ng-click="badLocation(user.name)" id="queueBadLocation{{user.name}}Btn">
-                  <span class="glyphicon glyphicon-question-sign"></span>
-                </button>
-              </div>
-              <div title="add comment" class="col-xs-2">
-                <button class="green clickable frame center-content expand" ng-click="flag(user.name)" id="queueAddComment{{user.name}}Btn">
-                  <span class="glyphicon glyphicon-tag"></span>
-                </button>
-              </div>
-              <div ng-show="user.messages.length" title="read comment" class="col-xs-2">
-                <button class="green clickable frame center-content expand" ng-click="readMessages(user.name)" id="queueReadComment{{user.name}}Btn">
-                  <span class="glyphicon glyphicon-search"></span>
-                </button>
-              </div>
-              <div ng-hide="user.messages.length" title="read comment" class="col-xs-2">
-                <button class="frame center-content expand" id="queueCanNotReadComment{{user.name}}Btn" disabled>
-                  <span class="glyphicon glyphicon-search"></span>
-                </button>
-              </div>
-            </td>
-          </tr>
-        </tbody>
-      </table>
+      <div ng-hide="bookedQueue">
+        <h4 ng-hide="users.length">This queue is empty</h4>
+        <table class="table table-striped" ng-show="users.length">
+          <thead>
+            <tr>
+              <th class="hidden-xs">#</th>
+              <th>User</th>
+              <th>Location</th>
+              <th>Comment</th>
+              <th>Time</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr ng-repeat-start="user in users track by $index" ng-class="{'pointer' : accessLevel > 0, 'pulse' : user.gettingHelp, 'light-blue-background' : user.name === name}" ng-click="changeVisibility(user.name)"  id="queue{{user.name}}Btn" ng-show="match(user)">
+              <td class="hidden-xs">{{ $index + 1 }}</td>
+              <td>{{ user.name }}</td>
+              <td>{{ user.place }}</td>
+              <td>{{ user.comment }}</td>
+              <td><span data-livestamp="{{user.time}}"></span></td>
+            </tr>
+            <tr></tr> <!-- Hack-solution -->
+            <tr ng-repeat-end class="text-center" ng-show="accessLevel && user.optionsActivated" ng-click="changeVisibility(user.name)">
+              <td colspan="100%;">
+                <div title="remove user" class="col-xs-2">
+                  <button class="red clickable frame center-content expand" ng-click="removeUser(user.name)" id="queueRemoveUser{{user.name}}Btn">
+                    <span class="glyphicon glyphicon-remove"></span>
+                  </button>
+                </div>
+                <div title="send message" class="col-xs-2">
+                  <button class="green clickable frame center-content expand" ng-click="messageUser(user.name)" id="queueSendMessage{{user.name}}Btn">
+                    <span class="glyphicon glyphicon-envelope"></span>
+                  </button>
+                </div>
+                <div title="help" class="col-xs-2">
+                  <button class="green clickable frame center-content expand" ng-click="helpUser(user.name)" id="queueHelp{{user.name}}Btn">
+                    <span class="glyphicon glyphicon-check"></span>
+                  </button>
+                </div>
+                <div title="bad location" class="col-xs-2">
+                  <button class="green clickable frame center-content expand" ng-click="badLocation(user.name)" id="queueBadLocation{{user.name}}Btn">
+                    <span class="glyphicon glyphicon-question-sign"></span>
+                  </button>
+                </div>
+                <div title="add comment" class="col-xs-2">
+                  <button class="green clickable frame center-content expand" ng-click="flag(user.name)" id="queueAddComment{{user.name}}Btn">
+                    <span class="glyphicon glyphicon-tag"></span>
+                  </button>
+                </div>
+                <div ng-show="user.messages.length" title="read comment" class="col-xs-2">
+                  <button class="green clickable frame center-content expand" ng-click="readMessages(user.name)" id="queueReadComment{{user.name}}Btn">
+                    <span class="glyphicon glyphicon-search"></span>
+                  </button>
+                </div>
+                <div ng-hide="user.messages.length" title="read comment" class="col-xs-2">
+                  <button class="frame center-content expand" id="queueCanNotReadComment{{user.name}}Btn" disabled>
+                    <span class="glyphicon glyphicon-search"></span>
+                  </button>
+                </div>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
     </div>
+
     <!-- Buttons and inputs -->
     <div class="col-md-3 col-md-pull-9">
       <!-- Logged in -->
