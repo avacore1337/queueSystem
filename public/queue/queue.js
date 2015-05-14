@@ -49,6 +49,7 @@
           }
         }
         if(response.motd){
+          $scope.MOTD = response.motd;
           var modalInstance = $modal.open({
             templateUrl: 'receiveMessage.html',
             controller: function ($scope, $modalInstance, title, message, sender) {
@@ -83,6 +84,7 @@ $scope.$on("$destroy", function(){
   socket.removeListener('lock', socketLock);
   socket.removeListener('unlock', socketUnlock);
   socket.removeListener('badLocation', socketBadLocation);
+  socket.removeListener('addMOTD', socketaddMOTD);
 });
 
 // TODO : Remove this when you connect the two backends
@@ -206,6 +208,12 @@ console.log('testing');
       }
     }
     socket.on('help', socketHelp);
+
+    // Listen for a new MOTD.
+    function socketaddMOTD(data) {
+      $scope.MOTD = data;
+    }
+    socket.on('addMOTD', socketaddMOTD);
 
     // Listen for locking the queue
     function socketLock(){
@@ -514,6 +522,48 @@ console.log('testing');
       console.log("Called badLocation");
     };
 
+    // Function to add am essage of the day
+    $scope.addMOTD = function(){
+      console.log("Called addMOTD");
+      var modalInstance = $modal.open({
+        templateUrl: 'enterMessage.html',
+        controller: function ($scope, $modalInstance, title, placeholder, buttonText) {
+          $scope.title = title;
+          $scope.placeholder = placeholder;
+          $scope.buttonText = buttonText;
+          $scope.ok = function () {
+            $modalInstance.close($scope.message);
+          };
+        },
+        resolve: {
+          title: function () {
+            return "Enter a new message of the day";
+          },
+          placeholder: function () {
+            if($scope.MOTD){
+              return "Current MOTD: " + $scope.MOTD;
+            }else{
+              return "";
+            }
+          },
+          buttonText: function () {
+            return "Add MOTD";
+          }
+        }
+      });
+
+      modalInstance.result.then(function (MOTD) {
+        console.log("MOTD = " + MOTD);
+        if(MOTD){
+          socket.emit('addMOTD', {
+            queue:$routeParams.queue,
+            MOTD:MOTD,
+            sender: $scope.name
+          });
+        }
+      }, function () {});
+    };    
+
     // When an admin wants to see the admin options
     $scope.changeVisibility = function(name){
       if( /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent) ) {
@@ -564,13 +614,13 @@ console.log('testing');
     return regEx.test(user.place.toLowerCase()) || regEx.test(user.comment.toLowerCase());
   };
 
-    // This function checks if a person in the booked queue matches the search-string.
-    $scope.matchBooked = function (user) {
-      if(!$scope.search){
-        return true;
-      }
-      var regEx = new RegExp($scope.search.toLowerCase());
-      return (regEx.test(user.name.toLowerCase()) || regEx.test(user.place.toLowerCase()) ||  regEx.test(user.comment.toLowerCase()) ||  regEx.test(user.time.toLowerCase()));
-    };
+  // This function checks if a person in the booked queue matches the search-string.
+  $scope.matchBooked = function (user) {
+    if(!$scope.search){
+      return true;
+    }
+    var regEx = new RegExp($scope.search.toLowerCase());
+    return (regEx.test(user.name.toLowerCase()) || regEx.test(user.place.toLowerCase()) ||  regEx.test(user.comment.toLowerCase()) ||  regEx.test(user.time.toLowerCase()));
+  };
   }]);
 })();

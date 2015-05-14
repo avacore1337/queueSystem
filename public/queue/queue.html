@@ -1,61 +1,61 @@
 <div class="container">
 
   <script type="text/ng-template" id="enterMessage.html">
-  <div class="modal-header">
-  <h4>{{title}}</h4>
-  </div>
-  <div class="modal-body">
-  <div class="form-group">
-  <textarea class="form-control" rows="3" ng-model="message" id="queueEnterMessageTextArea"></textarea>
-  </div>
-  </div>
-  <div class="modal-footer">
-  <button class="btn btn-primary" ng-click="ok()" id="queue{{buttonText}}Btn">{{buttonText}}</button>
-  </div>
+    <div class="modal-header">
+      <h4>{{title}}</h4>
+    </div>
+    <div class="modal-body">
+      <div class="form-group">
+        <textarea class="form-control" rows="3" ng-model="message" placeholder="{{placeholder}}" id="queueEnterMessageTextArea"></textarea>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-primary" ng-click="ok()" id="queue{{buttonText}}Btn">{{buttonText}}</button>
+    </div>
   </script>
 
   <script type="text/ng-template" id="receiveMessage.html">
-  <div class="modal-header">
-  <h4>{{title}}</h4>
-  </div>
-  <div class="modal-body">
-  <div class="form-group">
-  <p>{{message}}</p>
-  </div>
-  </div>
-  <div class="modal-footer">
-  <i class="text-light-gray">- {{sender}}</>
-  </div>
+    <div class="modal-header">
+      <h4>{{title}}</h4>
+    </div>
+    <div class="modal-body">
+      <div class="form-group">
+        <p>{{message}}</p>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <i class="text-light-gray">- {{sender}}</>
+    </div>
   </script>
 
   <script type="text/ng-template" id="purgeQueue.html">
-  <div class="modal-header">
-  <h4>Purge queue</h4>
-  </div>
-  <div class="modal-body">
-  <div class="form-group">
-  <p>Are you sure you want to remove everyone in the queue?</p>
-  </div>
-  </div>
-  <div class="modal-footer">
-  <button class="btn btn-success" ng-click="doNotPurge()" id="queueDoNotPurgeBtn">No, leave them alone.</button>
-  <button class="btn btn-danger" ng-click="purge()" id="queueDoPurgeBtn">Yes, kick them all out.</button>
-  </div>
+    <div class="modal-header">
+      <h4>Purge queue</h4>
+    </div>
+    <div class="modal-body">
+      <div class="form-group">
+        <p>Are you sure you want to remove everyone in the queue?</p>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-success" ng-click="doNotPurge()" id="queueDoNotPurgeBtn">No, leave them alone.</button>
+      <button class="btn btn-danger" ng-click="purge()" id="queueDoPurgeBtn">Yes, kick them all out.</button>
+    </div>
   </script>
 
   <script type="text/ng-template" id="readMessages.html">
-  <div class="modal-header">
-  <h4>Messages</h4>
-  </div>
-  <div class="modal-body">
-  <div class="form-group">
-  <ul>
-  <li ng-repeat="message in messages">
-  {{message}}
-  </li>
-  </ul>
-  </div>
-  </div>
+    <div class="modal-header">
+      <h4>Messages</h4>
+    </div>
+    <div class="modal-body">
+      <div class="form-group">
+        <ul>
+          <li ng-repeat="message in messages">
+            {{message}}
+          </li>
+        </ul>
+      </div>
+    </div>
   </script>
 
   <div class="row">
@@ -73,28 +73,28 @@
   <div class="row">
     <!-- Queues -->
     <div class="col-md-9 col-md-push-3">
-      <!-- Left -->
-      <div class="col-xs-6 text-left" ng-show="bookedQueue">
-        <span ng-click="switchQueue()" style="cursor: pointer;">
-          <span class="glyphicon glyphicon-chevron-left"></span> 
-          Show queue
-        </span>
-      </div>
-      <div class="col-xs-6 text-left text-light-gray" ng-hide="bookedQueue">
-        <!--<span class="glyphicon glyphicon-chevron-left"></span> -->
-        Show queue
-      </div>
+      <div ng-class="{'buffer' : (bookedQueue && !bookedUsers.length) || (!bookedQueue && !users.length)}">
+        <!-- Left -->
+        <div class="col-xs-6 text-left" ng-show="bookedQueue">
+          <span ng-click="switchQueue()" style="cursor: pointer;">
+            <span class="glyphicon glyphicon-chevron-left"></span> 
+            <strong>Show queue</strong>
+          </span>
+        </div>
+        <div class="col-xs-6 text-left text-light-gray" ng-hide="bookedQueue">
+          <strong>Show queue</strong>
+        </div>
 
-      <!-- Right -->
-      <div class="col-xs-6 text-right" ng-hide="bookedQueue">
-        <span ng-click="switchQueue()" style="cursor: pointer;">
-          Show booked users 
-          <span class="glyphicon glyphicon-chevron-right"></span>
-        </span>
-      </div>
-      <div class="col-xs-6 text-right text-light-gray" ng-show="bookedQueue">
-        Show booked users 
-        <!--<span class="glyphicon glyphicon-chevron-right"></span>-->
+        <!-- Right -->
+        <div class="col-xs-6 text-right" ng-hide="bookedQueue">
+          <span ng-click="switchQueue()" style="cursor: pointer;">
+            <strong>Show booked users </strong>
+            <span class="glyphicon glyphicon-chevron-right"></span>
+          </span>
+        </div>
+        <div class="col-xs-6 text-right text-light-gray" ng-show="bookedQueue">
+          <strong>Show booked users </strong>
+        </div>
       </div>
 
       <!-- Users with bookings -->
@@ -237,6 +237,12 @@
               <button class="blue clickable center-content frame expand" ng-show="accessLevel" ng-click="broadcastTA()" id="queueBroadcastToTasBtn">
                 <span class="glyphicon glyphicon-bullhorn"></span>&nbsp;
                 Broadcast to TAs
+              </button>
+            </li>
+            <li>
+              <button class="blue clickable center-content frame expand" ng-show="accessLevel" ng-click="addMOTD()" id="queueAddMOTDBtn">
+                <span class="glyphicon glyphicon-plus"></span>&nbsp;
+                add MOTD
               </button>
             </li>
             <li>
