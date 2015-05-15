@@ -73,7 +73,7 @@
   <div class="row">
     <!-- Queues -->
     <div class="col-md-9 col-md-push-3">
-      <div ng-class="{'buffer' : (bookedQueue && !bookedUsers.length) || (!bookedQueue && !users.length)}">
+      <div class="row" ng-class="{'buffer' : (bookedQueue && !bookedUsers.length) || (!bookedQueue && !users.length)}">
         <!-- Left -->
         <div class="col-xs-6 text-left" ng-show="bookedQueue">
           <span ng-click="switchQueue()" style="cursor: pointer;">
