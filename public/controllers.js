@@ -17,9 +17,9 @@ queueControllers.controller('listController', ['$scope', '$http', '$location', '
     var queue = getQueue(resp.name);
     queue.position = -1;
     queue.queue = resp.queue;
-    console.log("Looking for " + user.username + " in " + queue.name);
+    console.log("Looking for " + user.getName() + " in " + queue.name);
     for(var i in queue.queue){
-      if(queue.queue[i].name === user.username){
+      if(queue.queue[i].name === user.getName()){
         queue.position = parseInt(i,10)+1;
         break;
       }
@@ -43,7 +43,7 @@ queueControllers.controller('listController', ['$scope', '$http', '$location', '
     var queue = getQueue(data.queueName);
     queue.queue.push({name:data.username});
     queue.length++;
-    if(data.username === user.username){
+    if(data.username === user.getName()){
       $scope.$apply(getQueue(data.queueName).position = getQueue(data.queueName).length);
     }
   });
@@ -54,7 +54,7 @@ queueControllers.controller('listController', ['$scope', '$http', '$location', '
     var queue = getQueue(data.queueName);
     queue.length--;
     for(var i in queue.queue){
-      if(queue.queue[i].name === data.username){
+      if(queue.queue[i].name === data.getName()){
         queue.queue.splice(i, 1);
         if(parseInt(i,10)+1 === queue.position){
           queue.position = -1;
@@ -120,7 +120,7 @@ queueControllers.controller('listController', ['$scope', '$http', '$location', '
 
   $scope.accessLevel = function (queueName) {
     var ret = 0;
-    if(user.username === ""){
+    if(user.getName() === ""){
       return ret;
     }
     if(user.isAssistant(queueName)){
@@ -175,7 +175,7 @@ queueControllers.controller('helpController', ['$scope', '$http', 'TitleService'
   function ($scope, $http, title, user) {
     title.title = "Help | Stay A While";
     console.log('entered help.html');
-    if(!user.username){
+    if(!user.getName()){
       $scope.accessLevel = -1;
     }else{
       $scope.accessLevel = 0;
@@ -286,7 +286,7 @@ queueControllers.controller('statisticsController', ['$scope', '$http', 'WebSock
 
     $scope.accessLevel = function() {
       var ret = 0;
-      if(!user.username){
+      if(!user.getName()){
         return ret;
       }
       if(user.assistant.length > 0){
@@ -334,16 +334,16 @@ queueControllers.controller('loginController', ['$scope', '$location', '$http', 
 queueControllers.controller('navigationController', ['$scope', '$location', 'UserService', '$http',
   function ($scope, $location, user, $http) {
     $scope.location = $location.path();
-    $scope.name = user.username;
+    $scope.name = user.getName();
 
     $scope.$watch(function () { return $location.path(); }, function(newValue, oldValue) {
       $scope.location = newValue;
       console.log("Detected update to $location.path() (oldValue = " + oldValue + ", newValue = " + newValue + ")");
     });
 
-    $scope.$watch(function () { return user.username; }, function(newValue, oldValue) {
+    $scope.$watch(function () { return user.getName(); }, function(newValue, oldValue) {
       $scope.name = newValue;
-      console.log("Detected update to user.username (oldValue = " + oldValue + ", newValue = " + newValue + ")");
+      console.log("Detected update to user.getName() (oldValue = " + oldValue + ", newValue = " + newValue + ")");
     });
 
     // Loggin out
@@ -372,7 +372,7 @@ queueControllers.controller('navigationController', ['$scope', '$location', 'Use
 
   $scope.accessLevel = function() {
     var ret = 0;
-    if(!user.username){
+    if(!user.getName()){
       return ret;
     }
     if(user.assistant.length > 0){

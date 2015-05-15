@@ -1,77 +1,76 @@
 angular.module('queue')
 
-.factory('UserService', function () {
+.factory('UserService', function() {
 
-	return {
-		admin: false,
+  return {
+    admin: false,
 
-		teacher: [],
+    teacher: [],
 
-		assistant: [],
+    assistant: [],
 
-		username: "",
+    username: "",
 
-		setName: function (name) {
-			this.username = name;
-		},
+    setName: function(name) {
+      this.username = name;
+    },
 
-		getName: function () {
-			return this.username;
-		},
+    getName: function() {
+      return this.username;
+    },
 
-		isAdmin: function () {
-			return this.admin;
-		},
+    isAdmin: function() {
+      return this.admin;
+    },
 
-		setAdmin: function (bool) {
-			this.admin = bool;
-		},
+    setAdmin: function(bool) {
+      this.admin = bool;
+    },
 
-		isTeacher: function (course) {
-			return $.inArray(course, this.teacher) !== -1;
-		},
+    isTeacher: function(course) {
+      return $.inArray(course, this.teacher) !== -1;
+    },
 
-		setTeacher: function (list) {
-			this.teacher = list;
-		},
+    setTeacher: function(list) {
+      this.teacher = list;
+    },
 
-		isAssistant: function (course) {
-			return $.inArray(course, this.assistant) !== -1;
-		},
+    isAssistant: function(course) {
+      return $.inArray(course, this.assistant) !== -1;
+    },
 
-		setAssistant: function (list) {
-			this.assistant = list;
-		},
+    setAssistant: function(list) {
+      this.assistant = list;
+    },
 
-		/**
-		 * Function decorator.
-		 * Requires the user to be admin to run the functions.
-		 */
-		//admin: function (func) {
-		//	return function () {
-		//		if (admin) {
-		//			return func.apply(this, arguments);
-		//		}
-		//	};
-		//},
+    /**
+     * Function decorator.
+     * Requires the user to be admin to run the functions.
+     */
+    //admin: function (func) {
+    //	return function () {
+    //		if (admin) {
+    //			return func.apply(this, arguments);
+    //		}
+    //	};
+    //},
 
-		clearName: function () {
-			this.username = void 0;
-		}
-	};
+    clearName: function() {
+      this.username = void 0;
+    }
+  };
 })
 
-.factory('WebSocketService', function () {
+.factory('WebSocketService', function() {
 
-	var ws = io.connect();
+  var ws = io.connect();
 
-	return ws;
+  return ws;
 })
 
-.factory('TitleService', function () {
+.factory('TitleService', function() {
 
-	return {
-		title: "Stay A While"
-	};
+  return {
+    title: "Stay A While"
+  };
 });
-
