@@ -1,4 +1,4 @@
-(function () {
+(function() {
 
   angular.module('queue')
 
@@ -13,8 +13,8 @@
 
     var username = "";
 
-    function updateUserData () {
-      $http.get('/API/userData').success(function(response){
+    function updateUserData() {
+      $http.get('/API/userData').success(function(response) {
         username = response.name;
         admin = response.admin;
         teacher = response.teacher;
@@ -61,16 +61,16 @@
 
       accessLevel: function() {
         var ret = 0;
-        if(!username){
+        if (!username) {
           return 0;
         }
-        if(assistant.length > 0){
+        if (assistant.length > 0) {
           ret = 1;
         }
-        if(teacher.length > 0){
+        if (teacher.length > 0) {
           ret = 2;
         }
-        if(admin){
+        if (admin) {
           ret = 3;
         }
         return ret;
