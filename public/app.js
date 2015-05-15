@@ -3,7 +3,8 @@
   'ngRoute',
   'queueControllers',
   'ui.bootstrap',
-  'queue.queue'
+  'queue.queue',
+  'admin.admin'
   ]);
   
   app.config(['$routeProvider',
@@ -24,10 +25,6 @@
       when('/login', {
         templateUrl: 'login.html',
         controller: 'loginController'
-      }).
-      when('/administration', {
-        templateUrl: 'administration.html',
-        controller: 'adminController'
       }).
       when('/statistics', {
         templateUrl: 'statistics.html',
