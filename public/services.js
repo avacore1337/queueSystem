@@ -62,7 +62,7 @@
       accessLevel: function() {
         var ret = 0;
         if (!username) {
-          return 0;
+          return -1;
         }
         if (assistant.length > 0) {
           ret = 1;
