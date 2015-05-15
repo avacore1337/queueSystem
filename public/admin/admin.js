@@ -18,7 +18,7 @@
     function ($scope, $location, $http, $modal, socket, user, title) {
       title.title = "Admin | Stay A While";
       console.log("Entered admin.html");
-      $scope.name = user.username;
+      $scope.name = user.getName();
       $scope.selectedQueue = undefined;
       $scope.dropdown = undefined;
       $scope.admins = [];
@@ -68,9 +68,9 @@
     });
 
     // Listen for an teacher being added to a queue.
-    socket.on('addAdmin', function(user) {
-      $scope.$apply($scope.admins.push(user));
-      console.log("adding admin (from backend) name = " + user.name + ", username = " + user.username + ", addedBy = " + user.addedBy);
+    socket.on('addAdmin', function(admin) {
+      $scope.$apply($scope.admins.push(admin));
+      console.log("adding admin (from backend) name = " + admin.name + ", username = " + admin.username + ", addedBy = " + admin.addedBy);
     });
 
       // Listen for an teacher being added to a queue.
@@ -359,20 +359,7 @@
   };
 
   $scope.accessLevel = function() {
-    var ret = 0;
-    if(!user.username){
-      return ret;
-    }
-    if(user.assistant.length > 0){
-      ret = 1;
-    }
-    if(user.teacher.length > 0){
-      ret = 2;
-    }
-    if(user.isAdmin()){
-      ret = 3;
-    }
-    return ret;
+    return user.accessLevel();
   };
 
 

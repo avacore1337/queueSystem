@@ -284,22 +284,9 @@ queueControllers.controller('statisticsController', ['$scope', '$http', 'WebSock
       console.log("Requested numbersOfPeopleLeftQueue");
     };
 
-    $scope.accessLevel = function() {
-      var ret = 0;
-      if(!user.getName()){
-        return ret;
-      }
-      if(user.assistant.length > 0){
-        ret = 1;
-      }
-      if(user.teacher.length > 0){
-        ret = 2;
-      }
-      if(user.isAdmin()){
-        ret = 3;
-      }
-      return ret;
-    };
+    $scope.accessLevel = function () {
+      return user.accessLevel();
+    }
 
   }]);
 
@@ -371,20 +358,7 @@ queueControllers.controller('navigationController', ['$scope', '$location', 'Use
   };
 
   $scope.accessLevel = function() {
-    var ret = 0;
-    if(!user.getName()){
-      return ret;
-    }
-    if(user.assistant.length > 0){
-      ret = 1;
-    }
-    if(user.teacher.length > 0){
-      ret = 2;
-    }
-    if(user.isAdmin()){
-      ret = 3;
-    }
-    return ret;
+    return user.accessLevel();
   };
 
   $(document).ready(function () {

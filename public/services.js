@@ -43,16 +43,34 @@ angular.module('queue')
       this.assistant = list;
     },
 
+    accessLevel: function() {
+      console.log("username: " + this.username);
+      var ret = 0;
+      if(!this.username){
+        return 0;
+      }
+      if(this.assistant.length > 0){
+        ret = 1;
+      }
+      if(this.teacher.length > 0){
+        ret = 2;
+      }
+      if(this.admin){
+        ret = 3;
+      }
+      return ret;
+    },
+
     /**
      * Function decorator.
      * Requires the user to be admin to run the functions.
      */
     //admin: function (func) {
-    //	return function () {
-    //		if (admin) {
-    //			return func.apply(this, arguments);
-    //		}
-    //	};
+    //  return function () {
+    //    if (admin) {
+    //      return func.apply(this, arguments);
+    //    }
+    //  };
     //},
 
     clearName: function() {
