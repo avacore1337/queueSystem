@@ -2,60 +2,60 @@ angular.module('queue')
 
 .factory('UserService', function() {
 
+  var admin = false;
+
+  var teacher = [];
+
+  var assistant = [];
+
+  var username = "";
   return {
-    admin: false,
-
-    teacher: [],
-
-    assistant: [],
-
-    username: "",
 
     setName: function(name) {
-      this.username = name;
+      username = name;
     },
 
     getName: function() {
-      return this.username;
+      return username;
     },
 
     isAdmin: function() {
-      return this.admin;
+      return admin;
     },
 
     setAdmin: function(bool) {
-      this.admin = bool;
+      admin = bool;
     },
 
     isTeacher: function(course) {
-      return $.inArray(course, this.teacher) !== -1;
+      return $.inArray(course, teacher) !== -1;
     },
 
     setTeacher: function(list) {
-      this.teacher = list;
+      teacher = list;
     },
 
     isAssistant: function(course) {
-      return $.inArray(course, this.assistant) !== -1;
+      return $.inArray(course, assistant) !== -1;
     },
 
     setAssistant: function(list) {
-      this.assistant = list;
+      assistant = list;
     },
 
     accessLevel: function() {
-      console.log("username: " + this.username);
+      console.log("username: " + username);
       var ret = 0;
-      if(!this.username){
+      if(!username){
         return 0;
       }
-      if(this.assistant.length > 0){
+      if(assistant.length > 0){
         ret = 1;
       }
-      if(this.teacher.length > 0){
+      if(teacher.length > 0){
         ret = 2;
       }
-      if(this.admin){
+      if(admin){
         ret = 3;
       }
       return ret;
@@ -74,7 +74,7 @@ angular.module('queue')
     //},
 
     clearName: function() {
-      this.username = void 0;
+      username = void 0;
     }
   };
 })

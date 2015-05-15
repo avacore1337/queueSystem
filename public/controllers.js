@@ -175,20 +175,7 @@ queueControllers.controller('helpController', ['$scope', '$http', 'TitleService'
   function ($scope, $http, title, user) {
     title.title = "Help | Stay A While";
     console.log('entered help.html');
-    if(!user.getName()){
-      $scope.accessLevel = -1;
-    }else{
-      $scope.accessLevel = 0;
-      if(user.assistant.length > 0){
-        $scope.accessLevel = 1;
-      }
-      if(user.teacher.length > 0){
-        $scope.accessLevel = 2;
-      }
-      if(user.isAdmin()){
-        $scope.accessLevel = 3;
-      }
-    }
+    $scope.accessLevel = user.accessLevel();
     console.log("$scope.accessLevel = " + $scope.accessLevel);
   }]);
 
