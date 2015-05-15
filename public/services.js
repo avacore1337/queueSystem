@@ -1,94 +1,98 @@
-angular.module('queue')
+(function () {
 
-.factory('UserService', function() {
+  angular.module('queue')
 
-  var admin = false;
+  .factory('UserService', function($http) {
 
-  var teacher = [];
 
-  var assistant = [];
+    var admin = false;
 
-  var username = "";
-  return {
+    var teacher = [];
 
-    setName: function(name) {
-      username = name;
-    },
+    var assistant = [];
 
-    getName: function() {
-      return username;
-    },
+    var username = "";
 
-    isAdmin: function() {
-      return admin;
-    },
-
-    setAdmin: function(bool) {
-      admin = bool;
-    },
-
-    isTeacher: function(course) {
-      return $.inArray(course, teacher) !== -1;
-    },
-
-    setTeacher: function(list) {
-      teacher = list;
-    },
-
-    isAssistant: function(course) {
-      return $.inArray(course, assistant) !== -1;
-    },
-
-    setAssistant: function(list) {
-      assistant = list;
-    },
-
-    accessLevel: function() {
-      console.log("username: " + username);
-      var ret = 0;
-      if(!username){
-        return 0;
-      }
-      if(assistant.length > 0){
-        ret = 1;
-      }
-      if(teacher.length > 0){
-        ret = 2;
-      }
-      if(admin){
-        ret = 3;
-      }
-      return ret;
-    },
-
-    /**
-     * Function decorator.
-     * Requires the user to be admin to run the functions.
-     */
-    //admin: function (func) {
-    //  return function () {
-    //    if (admin) {
-    //      return func.apply(this, arguments);
-    //    }
-    //  };
-    //},
-
-    clearName: function() {
-      username = void 0;
+    function updateUserData () {
+      $http.get('/API/userData').success(function(response){
+        username = response.name;
+        admin = response.admin;
+        teacher = response.teacher;
+        assistant = response.assistant;
+      });
     }
-  };
-})
 
-.factory('WebSocketService', function() {
+    updateUserData();
 
-  var ws = io.connect();
+    return {
+      updateUserData: updateUserData,
 
-  return ws;
-})
+      setName: function(name) {
+        username = name;
+      },
 
-.factory('TitleService', function() {
+      getName: function() {
+        return username;
+      },
 
-  return {
-    title: "Stay A While"
-  };
-});
+      isAdmin: function() {
+        return admin;
+      },
+
+      setAdmin: function(bool) {
+        admin = bool;
+      },
+
+      isTeacher: function(course) {
+        return $.inArray(course, teacher) !== -1;
+      },
+
+      setTeacher: function(list) {
+        teacher = list;
+      },
+
+      isAssistant: function(course) {
+        return $.inArray(course, assistant) !== -1;
+      },
+
+      setAssistant: function(list) {
+        assistant = list;
+      },
+
+      accessLevel: function() {
+        var ret = 0;
+        if(!username){
+          return 0;
+        }
+        if(assistant.length > 0){
+          ret = 1;
+        }
+        if(teacher.length > 0){
+          ret = 2;
+        }
+        if(admin){
+          ret = 3;
+        }
+        return ret;
+      },
+
+      clearName: function() {
+        username = void 0;
+      }
+    };
+  })
+
+  .factory('WebSocketService', function() {
+
+    var ws = io.connect();
+
+    return ws;
+  })
+
+  .factory('TitleService', function() {
+
+    return {
+      title: "Stay A While"
+    };
+  });
+})();

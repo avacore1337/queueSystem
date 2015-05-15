@@ -26,16 +26,9 @@ queueControllers.controller('listController', ['$scope', '$http', '$location', '
     }
     console.log("Queue " + queue.name + " : " + queue.position);
   }
+  user.updateUserData();
 
-    console.log("API/userData");
-    $http.get('/API/userData').success(function(response){
-      user.setName(response.name);
-      user.setAdmin(response.admin);
-      user.setTeacher(response.teacher);
-      user.setAssistant(response.assistant);
-    });
-
-    socket.emit('listen', 'lobby');
+  socket.emit('listen', 'lobby');
 
   // Listen for a person joining a queue.
   socket.on('lobbyjoin', function(data) {
