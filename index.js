@@ -4,20 +4,27 @@ var express = require('express'),
   bodyParser = require('body-parser'),
   http = require('http'),
   app = express(),
-  session = require('express-session')({
-    secret: "MoveFromHereOrTheSecretWillBeOnGit",
-    resave: true,
-    saveUninitialized: true
-  }),
+  expressSession = require('express-session'),
+  MongoStore = require('connect-mongo')(expressSession),
   sharedsession = require('express-socket.io-session'),
-  port = 8080;
+  port = 8080,
+  mongoose = require('mongoose');
+
+mongoose.connect('mongodb://localhost/queueBase');
 
 app.use(express.static(__dirname + '/public'));
 app.use(bodyParser.urlencoded({
   extended: true
 }));
 app.use(bodyParser.json());
+var session = expressSession({
+    secret: "MoveFromHereOrTheSecretWillBeOnGit",
+    resave: true,
+    saveUninitialized: true,
+    store: new MongoStore({mongooseConnection: mongoose.connection})
+  })
 app.use(session);
+
 
 var httpServer = http.Server(app);
 
@@ -26,10 +33,8 @@ var io = require('socket.io').listen(httpServer);
 io.use(sharedsession(session));
 
 
-var mongoose = require('mongoose');
 var database = require("./model/model.js"); // databas stuff
 
-mongoose.connect('mongodb://localhost/queueBase');
 
 var db = mongoose.connection;
 
@@ -56,7 +61,7 @@ var validateSuper = queueSystem.validateSuper;
 var validateTeacher = queueSystem.validateTeacher;
 var validateAssistant = queueSystem.validateAssistant;
 
-var router = require('./routes.js');
+var router = require('./routes/httpRoutes.js');
 app.use('/API',router);
 
 //===============================================================

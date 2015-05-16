@@ -1,7 +1,9 @@
 var express = require('express');
 var router = express.Router();
-var queueSystem = require('./model/queueSystem.js');
+var queueSystem = require('../model/queueSystem.js');
 
+var adminList = queueSystem.adminList;
+var statisticsList = queueSystem.statisticsList;
 var statisticsList = queueSystem.statisticsList;
 var validate = queueSystem.validate;
 var validateSuper = queueSystem.validateSuper;
