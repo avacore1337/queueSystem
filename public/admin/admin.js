@@ -39,20 +39,35 @@
         }
       });
 
-      socket.emit('stopListening', 'lobby');
-      socket.emit('listen', 'admin');
+$scope.$on("$destroy", function(){
+  console.log("Bye bye!");
+  socket.removeListener('addAssistant', socketAddAssistant);
+  socket.removeListener('removeAssistant', socketRemoveAssistant);
+  socket.removeListener('addAdmin', socketAddAdmin);
+  socket.removeListener('removeAdmin', socketRemoveAdmin);
+  socket.removeListener('addTeacher', socketAddTeacher);
+  socket.removeListener('removeTeacher', socketRemoveTeacher);
+  socket.removeListener('hibernate', socketHibernate);
+  socket.removeListener('unhibernate', socketUnhibernate);
+  socket.removeListener('addQueue', socketAddQueue);
+  socket.removeListener('removeQueue', socketRemoveQueue);
+});
+
+    socket.emit('stopListening', 'lobby');
+    socket.emit('listen', 'admin');
 
     // Listen for an assistant being added to a queue.
-    socket.on('addAssistant', function(data) {
+    function socketAddAssistant(data) {
       console.log("adding assistant (from backend) queueName = " + data.queueName + ", name = " + data.name + ", username = " + data.username);
       var queue = getQueue(data.queueName);
       if(queue){
         $scope.$apply(getQueue(data.queueName).assistant.push({name:data.name, username:data.username}));
       }
-    });
+    }
+    socket.on('addAssistant', socketAddAssistant);
 
-    // Listen for an teacher being added to a queue.
-    socket.on('removeAssistant', function(data) {
+    // Listen for a teacher being added to a queue.
+    function socketRemoveAssistant(data) {
       console.log("Backend wants to remove the assistant " + data.username + " from the queue " + data.queueName);
       for (var i = $scope.queues.length - 1; i >= 0; i--) {
         if($scope.queues[i].name === data.queueName){
@@ -65,36 +80,40 @@
           break;
         }
       }
-    });
+    }
+    socket.on('removeAssistant', socketRemoveAssistant);
 
     // Listen for an teacher being added to a queue.
-    socket.on('addAdmin', function(admin) {
+    function socketAddAdmin(admin) {
       $scope.$apply($scope.admins.push(admin));
       console.log("adding admin (from backend) name = " + admin.name + ", username = " + admin.username + ", addedBy = " + admin.addedBy);
-    });
-
-      // Listen for an teacher being added to a queue.
-      socket.on('removeAdmin', function(username) {
-        console.log("Backend wants to remove the admin " + username);
-        for (var i = $scope.admins.length - 1; i >= 0; i--) {
-          if($scope.admins[i].username === username){
-            $scope.$apply($scope.admins.splice(i, 1));
-            break;
-          }
-        }
-      });
+    }
+    socket.on('addAdmin', socketAddAdmin);
 
     // Listen for an teacher being added to a queue.
-    socket.on('addTeacher', function(data) {
+    function socketRemoveAdmin(username) {
+      console.log("Backend wants to remove the admin " + username);
+      for (var i = $scope.admins.length - 1; i >= 0; i--) {
+        if($scope.admins[i].username === username){
+          $scope.$apply($scope.admins.splice(i, 1));
+          break;
+        }
+      }
+    }
+    socket.on('removeAdmin', socketRemoveAdmin);
+
+    // Listen for an teacher being added to a queue.
+    function socketAddTeacher(data) {
       console.log("adding teacher (from backend) queueName = " + data.queueName + ", name = " + data.name + ", username = " + data.username);
       var queue = getQueue(data.queueName);
       if(queue){
         $scope.$apply(getQueue(data.queueName).teacher.push({name:data.name, username:data.username}));
       }
-    });
+    }
+    socket.on('addTeacher', socketAddTeacher);
 
     // Listen for an teacher being added to a queue.
-    socket.on('removeTeacher', function(data) {
+    function socketRemoveTeacher(data) {
       console.log("Backend wants to remove the teacher " + data.username + " from the queue " + data.queueName);
       for (var i = $scope.queues.length - 1; i >= 0; i--) {
         if($scope.queues[i].name === data.queueName){
@@ -107,43 +126,48 @@
           break;
         }
       }
-    });
+    }
+    socket.on('removeTeacher', socketRemoveTeacher);
 
     // Listen for a queue being hibernated.
-    socket.on('hibernate', function(queue) {
+    function socketHibernate(queue) {
       console.log("I will go to sleep (because backend)");
       for (var i = $scope.queues.length - 1; i >= 0; i--) {
         if(queue === $scope.queues[i].name){
           $scope.$apply($scope.queues[i].hibernating = true);
         }
       }
-    });
+    }
+    socket.on('hibernate', socketHibernate);
 
     // Listen for a queue being unhibernated.
-    socket.on('unhibernate', function(queue) {
+    function socketUnhibernate(queue) {
       console.log("I will wake up (because backend)");
       for (var i = $scope.queues.length - 1; i >= 0; i--) {
         if(queue === $scope.queues[i].name){
           $scope.$apply($scope.queues[i].hibernating = false);
         }
       }
-    });
+    }
+    socket.on('unhibernate', socketUnhibernate);
 
     // Listen for a queue being added.
-    socket.on('addQueue', function(queue) {
+    function socketAddQueue(queue) {
       console.log("Backend wants to add the queue " + queue.name);
       $scope.$apply($scope.queues.push(queue));
-    });
+    }
+    socket.on('addQueue', socketAddQueue);
 
     // Listen for the person leaving a queue event.
-    socket.on('removeQueue', function(queue) {
+    function socketRemoveQueue(queue) {
       console.log("Backend wants to remove queue " + queue);
       for (var i = $scope.queues.length - 1; i >= 0; i--) {
         if(queue === $scope.queues[i].name){
           $scope.$apply($scope.queues.splice(i, 1));
         }
       }
-    });
+    }
+    socket.on('removeQueue', socketRemoveQueue);
 
     function getQueue (queue) {
       for(var index in $scope.queues){
@@ -350,6 +374,38 @@
       queueName:$scope.selectedQueue.name
     });
     console.log("Removing assistant " + name  + " in the queue " + $scope.selectedQueue.name);
+  };
+
+  $scope.addServerMessage = function(){
+    console.log("Called addServerMessage");
+      var modalInstance = $modal.open({
+        templateUrl: 'enterMessage.html',
+        controller: function ($scope, $modalInstance, title, buttonText) {
+          $scope.title = title;
+          $scope.buttonText = buttonText;
+          $scope.ok = function () {
+            $modalInstance.close($scope.message);
+          };
+        },
+        resolve: {
+          title: function () {
+            return "Enter a message to show users upon loggin in";
+          },
+          buttonText: function () {
+            return "Add message";
+          }
+        }
+      });
+
+      modalInstance.result.then(function (message) {
+        console.log("Message = " + message);
+        if(message){
+          socket.emit('addServerMessage', {
+            sender:$scope.name,
+            message:message
+          });
+        }
+      }, function () {});
   };
 
   $scope.selectQueue = function(queue){
