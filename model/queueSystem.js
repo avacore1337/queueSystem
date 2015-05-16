@@ -13,6 +13,27 @@ var courseList = [];
 var adminList = [];
 var statisticsList = [];
 
+
+// return the course with the name "name"
+function findCourse(name) {
+  for (var i = 0; i < courseList.length; i++) {
+    if (courseList[i].name === name) {
+      return courseList[i];
+    }
+  }
+}
+
+function addCourse (courseName) {
+  var newCourse = new Course({
+    name: courseName
+  });
+  courseList.push(newCourse);
+  newCourse.save();
+
+  console.log(courseName + ' is getting created as ' + JSON.stringify(newCourse));
+  return newCourse;
+}
+
 function setup() {
   // list of courses to be used
   var tmpList = [
@@ -109,5 +130,7 @@ setup(); // temporary method
 module.exports = {
   courseList: courseList,
   adminList: adminList,
-  statisticsList: statisticsList
+  statisticsList: statisticsList,
+  findCourse: findCourse,
+  addCourse: addCourse
 };

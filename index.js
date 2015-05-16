@@ -59,14 +59,6 @@ var statisticsList = queueSystem.statisticsList;
 //===============================================================
 // 
 
-// return the course with the name "name"
-function findCourse(name) {
-  for (var i = 0; i < queueSystem.courseList.length; i++) {
-    if (queueSystem.courseList[i].name === name) {
-      return queueSystem.courseList[i];
-    }
-  }
-}
 
 // validates if a person is the privilege-type given for given course
 // TODO: make the validation more secure
@@ -136,7 +128,7 @@ function privilegeList(name) {
 
 
 function doOnCourse(courseName, action) {
-  var course = findCourse(courseName);
+  var course = queueSystem.findCourse(courseName);
   course[action]();
   console.log('trying to ' + action + ' ' + courseName);
   io.to(courseName).emit(action);
@@ -153,7 +145,7 @@ function doOnCourse(courseName, action) {
 // the average time in 'queue' of students who joined the queue 
 //  from 'start' and left before/was still in queue at 'end'
 function getAverageQueueTime(queueName, start, end) {
-  var course = findCourse(queueName);
+  var course = queueSystem.findCourse(queueName);
   var queue = course.queue;
 
   var counter = 0;
@@ -222,7 +214,7 @@ io.on('connection', function(socket) {
       username: user.name
     });
 
-    var course = findCourse(queue);
+    var course = queueSystem.findCourse(queue);
     var newUser = new User({
       name: user.name,
       place: user.place,
@@ -268,7 +260,7 @@ io.on('connection', function(socket) {
     console.log('a was updated in ' + queue);
     io.to(queue).emit('update', user);
 
-    var course = findCourse(queue);
+    var course = queueSystem.findCourse(queue);
     course.updateUser(user.name, user);
   });
 
@@ -339,7 +331,7 @@ io.on('connection', function(socket) {
       return;
     }
 
-    var course = findCourse(courseName);
+    var course = queueSystem.findCourse(courseName);
     var teacherList = course.teacher;
     var assistantList = course.assistant;
 
@@ -373,7 +365,7 @@ io.on('connection', function(socket) {
     console.log(JSON.stringify(user)); // check which uses is given --- need the one doing the action and the one who is "actioned"
     console.log("Validerande: " + JSON.stringify(socket.handshake.session.user));
 
-    var course = findCourse(queue);
+    var course = queueSystem.findCourse(queue);
     course.removeUser(user.name);
 
     for (var i = statisticsList.length - 1; i >= 0; i--) {
@@ -421,7 +413,7 @@ io.on('connection', function(socket) {
       return;
     }
 
-    var course = findCourse(courseName);
+    var course = queueSystem.findCourse(courseName);
     course.purgeQueue();
     course.queue = [];
 
@@ -534,13 +526,7 @@ io.on('connection', function(socket) {
     }
     var queueName = req.queueName;
 
-    var newCourse = new Course({
-      name: queueName
-    });
-    queueSystem.courseList.push(newCourse);
-    newCourse.save();
-
-    console.log(queueName + ' is getting created as ' + JSON.stringify(newCourse));
+    var newCourse = queueSystem.addCourse(queueName);
 
     io.to('admin').emit('addQueue', newCourse);
   });
@@ -615,7 +601,7 @@ io.on('connection', function(socket) {
 
     var username = req.username;
     var teacherName = username;
-    var course = findCourse(courseName);
+    var course = queueSystem.findCourse(courseName);
 
     var newTeacher = new Admin({
       name: teacherName,
@@ -646,7 +632,7 @@ io.on('connection', function(socket) {
 
     var username = req.username;
     var assistantName = username;
-    var course = findCourse(courseName);
+    var course = queueSystem.findCourse(courseName);
 
     var newAssistant = new Admin({
       name: assistantName,
@@ -704,7 +690,7 @@ io.on('connection', function(socket) {
     }
 
     var username = req.username;
-    var course = findCourse(courseName);
+    var course = queueSystem.findCourse(courseName);
 
     course.removeTeacher(username);
 
@@ -728,7 +714,7 @@ io.on('connection', function(socket) {
     }
 
     var username = req.username;
-    var course = findCourse(courseName);
+    var course = queueSystem.findCourse(courseName);
 
     course.removeAssistant(username);
 
@@ -753,7 +739,7 @@ io.on('connection', function(socket) {
       return;
     }
 
-    var course = findCourse(courseName);
+    var course = queueSystem.findCourse(courseName);
     course.addAssistantComment(username, sender, courseName, message);
 
     console.log('flagged');
@@ -801,7 +787,7 @@ app.get('/API/queueList', function(req, res) {
 // returns the queue-list
 app.get('/API/queue/:queue', function(req, res) {
   res.setHeader('Content-Type', 'application/json');
-  var course = findCourse(req.params.queue);
+  var course = queueSystem.findCourse(req.params.queue);
   console.log('queue ' + req.params.queue + ' requested');
   //console.log(course);
   res.status(200);
