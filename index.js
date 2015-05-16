@@ -43,7 +43,7 @@ db.once('open', function callback() {
 
 var User = database.user;
 var Admin = database.admin;
-var Course = database.course;
+var Queue = database.queue;
 var Statistic = database.statistic;
 
 //---
@@ -60,15 +60,15 @@ var statisticsList = queueSystem.statisticsList;
 // 
 
 
-// validates if a person is the privilege-type given for given course
+// validates if a person is the privilege-type given for given queue
 // TODO: make the validation more secure
-function validate(name, type, course) {
+function validate(name, type, queue) {
   if (type === "super") {
     return validateSuper(name);
   } else if (type === "teacher") {
-    return validateTeacher(name, course);
+    return validateTeacher(name, queue);
   } else if (type === "assistant") {
-    return validateAssistant(name, course);
+    return validateAssistant(name, queue);
   };
 
   console.log("that privilege-type is not defined"); // temporary for error-solving
@@ -85,29 +85,29 @@ function validateSuper(name) {
   }
 }
 
-function validateTeacher(username, courseName) {
-  var teacherList = teacherForCourses(username);
+function validateTeacher(username, queueName) {
+  var teacherList = teacherForQueues(username);
 
   for (var i = 0; i < teacherList.length; i++) {
-    if (teacherList[i] === courseName) {
+    if (teacherList[i] === queueName) {
       console.log(username + ' is a valid teacher'); // temporary for error-solving
       return true;
     }
   }
 }
 
-function validateAssistant(username, courseName) {
-  var assistantList = assistantForCourses(username);
+function validateAssistant(username, queueName) {
+  var assistantList = assistantForQueues(username);
 
   for (var i = 0; i < assistantList.length; i++) {
-    if (assistantList[i] === courseName) {
+    if (assistantList[i] === queueName) {
       console.log(username + ' is a valid assistant'); // temporary for error-solving
       return true;
     }
   }
 }
 
-// list of courses that a user is admin, teacher or TA for
+// list of queues that a user is admin, teacher or TA for
 // TODO: make the list containing a field which says which kind of privilege-type the person has
 // DEPREMERAD (DEPRECATED)
 function privilegeList(name) {
@@ -116,7 +116,7 @@ function privilegeList(name) {
     if (adminList[i].name === name) {
       var obj = {
         "name": adminList[i].name,
-        "course": "",
+        "queue": "",
         "type": "admin"
       };
       list.push(obj);
@@ -127,17 +127,17 @@ function privilegeList(name) {
 }
 
 
-function doOnCourse(courseName, action) {
-  var course = queueSystem.findCourse(courseName);
-  course[action]();
-  console.log('trying to ' + action + ' ' + courseName);
-  io.to(courseName).emit(action);
-  io.to("lobby").emit("lobby" + action, courseName);
+function doOnQueue(queueName, action) {
+  var queue = queueSystem.findQueue(queueName);
+  queue[action]();
+  console.log('trying to ' + action + ' ' + queueName);
+  io.to(queueName).emit(action);
+  io.to("lobby").emit("lobby" + action, queueName);
 
   if (action === 'hibernate') {
-    io.to("admin").emit('hibernate', courseName);
+    io.to("admin").emit('hibernate', queueName);
   } else if (action === 'unhibernate') {
-    io.to("admin").emit('unhibernate', courseName);
+    io.to("admin").emit('unhibernate', queueName);
   }
 }
 
@@ -145,8 +145,8 @@ function doOnCourse(courseName, action) {
 // the average time in 'queue' of students who joined the queue 
 //  from 'start' and left before/was still in queue at 'end'
 function getAverageQueueTime(queueName, start, end) {
-  var course = queueSystem.findCourse(queueName);
-  var queue = course.queue;
+  var queue = queueSystem.findQueue(queueName);
+  var queue = queue.queue;
 
   var counter = 0;
   var totalTime = 0;
@@ -176,7 +176,7 @@ function numbersOfPeopleLeftQueue(queueName, start, end) {
   for (var i = statisticsList.length - 1; i >= 0; i--) {
     var statistic = statisticsList[i];
 
-    if (statistic.course === queueName && statistic.startTime >= start &&
+    if (statistic.queue === queueName && statistic.startTime >= start &&
       statistic.startTime < end &&
       statistic.leftQueue &&
       statistic.startTime + statistic.queueLength < end) {
@@ -214,17 +214,17 @@ io.on('connection', function(socket) {
       username: user.name
     });
 
-    var course = queueSystem.findCourse(queue);
+    var queue = queueSystem.findQueue(queue);
     var newUser = new User({
       name: user.name,
       place: user.place,
       comment: user.comment
     });
-    course.addUser(newUser);
+    queue.addUser(newUser);
 
     var newStatistic = new Statistic({
       name: newUser.name,
-      course: queue,
+      queue: queue,
       startTime: newUser.startTime,
       action: ''
     });
@@ -237,17 +237,17 @@ io.on('connection', function(socket) {
   socket.on('badLocation', function(req) {
     var username = req.session.user.name;
     var name = req.name;
-    var courseName = req.queue;
+    var queueName = req.queue;
 
     // teacher/assistant-validation
-    if (!(validate(username, "teacher", courseName) || validate(username, "assistant", courseName))) {
+    if (!(validate(username, "teacher", queueName) || validate(username, "assistant", queueName))) {
       console.log("validation for badLocation failed");
       //res.end();
       return;
     }
 
-    io.to(courseName).emit('badLocation', {name: name, sender: username}); 
-    console.log("Bad location at " + courseName + " for " + name);
+    io.to(queueName).emit('badLocation', {name: name, sender: username}); 
+    console.log("Bad location at " + queueName + " for " + name);
   });
 
   // user gets updated
@@ -260,28 +260,28 @@ io.on('connection', function(socket) {
     console.log('a was updated in ' + queue);
     io.to(queue).emit('update', user);
 
-    var course = queueSystem.findCourse(queue);
-    course.updateUser(user.name, user);
+    var queue = queueSystem.findQueue(queue);
+    queue.updateUser(user.name, user);
   });
 
   // admin helps a user (marked in the queue)
   socket.on('help', function(req) {
-    var courseName = req.queue;
+    var queueName = req.queue;
     var name = req.name;
     var username = req.helper;
 
     // teacher/assistant-validation
-    if (!(validate(username, "teacher", courseName) || validate(username, "assistant", courseName))) {
+    if (!(validate(username, "teacher", queueName) || validate(username, "assistant", queueName))) {
       console.log("validation for help failed");
       //res.end();
       return;
     }
 
-    io.to(courseName).emit('help', {
+    io.to(queueName).emit('help', {
       name: name,
       helper: username
     });
-    console.log(name + ' is getting help in ' + courseName);
+    console.log(name + ' is getting help in ' + queueName);
   });
 
   // teacher/assistant messages a user
@@ -300,40 +300,40 @@ io.on('connection', function(socket) {
 
   // teacher/assistant emits to all users (teacher/assistant included)
   socket.on('broadcast', function(req) {
-    var courseName = req.queue;
+    var queueName = req.queue;
     var message = req.message;
     var username = req.sender;
 
     // teacher/assistant-validation
-    if (!(validate(username, "super", "course") || validate(username, "teacher", courseName) || validate(username, "assistant", courseName))) {
+    if (!(validate(username, "super", "queue") || validate(username, "teacher", queueName) || validate(username, "assistant", queueName))) {
       console.log("validation for emit failed");
       //res.end();
       return;
     }
 
-    io.to(courseName).emit('msg', {
+    io.to(queueName).emit('msg', {
       message: message,
       sender: username
     });
-    console.log('emit in ' + courseName + ', msg: ' + message);
+    console.log('emit in ' + queueName + ', msg: ' + message);
   });
 
   // teacher/assistant emits to all teacher/assistant
   socket.on('emitTA', function(req) {
-    var courseName = req.queue;
+    var queueName = req.queue;
     var message = req.message;
     var username = req.sender;
 
     // teacher/assistant-validation
-    if (!(validate(username, "super", "course") || validate(username, "teacher", courseName) || validate(username, "assistant", courseName))) {
+    if (!(validate(username, "super", "queue") || validate(username, "teacher", queueName) || validate(username, "assistant", queueName))) {
       console.log("validation for emitTA failed");
       //res.end();
       return;
     }
 
-    var course = queueSystem.findCourse(courseName);
-    var teacherList = course.teacher;
-    var assistantList = course.assistant;
+    var queue = queueSystem.findQueue(queueName);
+    var teacherList = queue.teacher;
+    var assistantList = queue.assistant;
 
     for (var i = teacherList.length - 1; i >= 0; i--) {
       var teacher = teacherList[i];
@@ -353,8 +353,8 @@ io.on('connection', function(socket) {
       console.log("emiting assistant: " + assistant.name);
     };
 
-    //  io.to(courseName).emit('msg', {message: message, sender: username});
-    console.log('emitTA in ' + courseName + ', msg: ' + message);
+    //  io.to(queueName).emit('msg', {message: message, sender: username});
+    console.log('emitTA in ' + queueName + ', msg: ' + message);
   });
 
   // user leaves queue
@@ -365,8 +365,8 @@ io.on('connection', function(socket) {
     console.log(JSON.stringify(user)); // check which uses is given --- need the one doing the action and the one who is "actioned"
     console.log("Validerande: " + JSON.stringify(socket.handshake.session.user));
 
-    var course = queueSystem.findCourse(queue);
-    course.removeUser(user.name);
+    var queue = queueSystem.findQueue(queue);
+    queue.removeUser(user.name);
 
     for (var i = statisticsList.length - 1; i >= 0; i--) {
       var statistic = statisticsList[i];
@@ -374,7 +374,7 @@ io.on('connection', function(socket) {
         var queueLength = Date.now() - statistic.startTime;
         var newStatistic = new Statistic({
           name: statistic.name,
-          course: statistic.course,
+          queue: statistic.queue,
           startTime: statistic.startTime,
           action: '',
           leftQueue: true,
@@ -386,7 +386,7 @@ io.on('connection', function(socket) {
     };
 
 
-    //  var newUserStatistic = new UserStatistic({student: user.name, course: queue, action: '?'});
+    //  var newUserStatistic = new UserStatistic({student: user.name, queue: queue, action: '?'});
     //  newUserStatistic.save();
 
     console.log('a user left ' + queue);
@@ -402,24 +402,24 @@ io.on('connection', function(socket) {
     console.log("called purge:");
     console.log(socket.handshake.session.user);
 
-    var courseName = req.queue;
+    var queueName = req.queue;
     var username = socket.handshake.session.user.name;
-    socket.handshake.session.user = "troll";
+    // socket.handshake.session.user = "troll";
 
     // admin/teacher/assistant-validation
-    if (!(validate(username, "super", "course") || validate(username, "teacher", courseName) || validate(username, "assistant", courseName))) {
+    if (!(validate(username, "super", "queue") || validate(username, "teacher", queueName) || validate(username, "assistant", queueName))) {
       console.log("validation for purge failed");
       //res.end();
       return;
     }
 
-    var course = queueSystem.findCourse(courseName);
-    course.purgeQueue();
-    course.queue = [];
+    var queue = queueSystem.findQueue(queueName);
+    queue.purgeQueue();
+    queue.queue = [];
 
-    console.log(req.courseName + ' -list purged by ' + username);
-    io.to(courseName).emit('purge');
-    io.to("lobby").emit('lobbypurge', courseName);
+    console.log(req.queueName + ' -list purged by ' + username);
+    io.to(queueName).emit('purge');
+    io.to("lobby").emit('lobbypurge', queueName);
   });
 
   //===============================================================
@@ -427,86 +427,86 @@ io.on('connection', function(socket) {
 
   // admin locks a queue
   socket.on('lock', function(req) {
-    var courseName = req.queue;
+    var queueName = req.queue;
     var username = socket.handshake.session.user.name;
 
     // admin/teacher-validation
-    if (!(validate(username, "super", "course") || validate(username, "teacher", courseName) || validate(username, "assistant", courseName))) {
+    if (!(validate(username, "super", "queue") || validate(username, "teacher", queueName) || validate(username, "assistant", queueName))) {
       console.log("validation for lock failed");
       //res.end();
       return;
     }
 
-    doOnCourse(courseName, 'lock');
+    doOnQueue(queueName, 'lock');
   });
 
   // admin unlocks a queue
   socket.on('unlock', function(req) {
-    var courseName = req.queue;
+    var queueName = req.queue;
     var username = socket.handshake.session.user.name;
 
     // admin/teacher-validation
-    if (!(validate(username, "super", "course") || validate(username, "teacher", courseName) || validate(username, "assistant", courseName))) {
+    if (!(validate(username, "super", "queue") || validate(username, "teacher", queueName) || validate(username, "assistant", queueName))) {
       console.log("validation for unlock failed");
       //res.end();
       return;
     }
 
-    doOnCourse(courseName, 'unlock');
+    doOnQueue(queueName, 'unlock');
   });
 
   socket.on('hibernate', function(req) {
-    var courseName = req.queue;
+    var queueName = req.queue;
     var username = socket.handshake.session.user.name;
 
     // admin/teacher-validation
-    if (!(validate(username, "super", "course") || validate(username, "teacher", courseName))) {
+    if (!(validate(username, "super", "queue") || validate(username, "teacher", queueName))) {
       console.log("Current user " + username + " is not a teacher for that queue or an admin.");
       //console.log("validation for hibernate failed");
       //res.end();
       return;
     }
 
-    doOnCourse(req.queue, 'hibernate');
+    doOnQueue(req.queue, 'hibernate');
   });
 
   socket.on('unhibernate', function(req) {
-    var courseName = req.queue;
+    var queueName = req.queue;
     var username = socket.handshake.session.user.name;
 
     // admin/teacher-validation
-    if (!(validate(username, "super", "course") || validate(username, "teacher", courseName))) {
+    if (!(validate(username, "super", "queue") || validate(username, "teacher", queueName))) {
       console.log("validation for unhibernate failed");
       //res.end();
       return;
     }
 
-    doOnCourse(req.queue, 'unhibernate');
+    doOnQueue(req.queue, 'unhibernate');
   });
 
   //===============================================================
 
   socket.on('getAverageQueueTime', function(req) {
-    var courseName = req.queueName;
+    var queueName = req.queueName;
     var start = req.start;
     var end = req.end;
 
     console.log("Counting..");
 
-    var averageQueueTime = getAverageQueueTime(courseName, start, end);
+    var averageQueueTime = getAverageQueueTime(queueName, start, end);
 
     io.to('statistics').emit('getAverageQueueTime', averageQueueTime);
   });
 
 
   socket.on('numbersOfPeopleLeftQueue', function(req) {
-    var courseName = req.queueName;
+    var queueName = req.queueName;
     var start = req.start;
     var end = req.end;
 
     console.log("Bounty hunting..");
 
-    var numbersOfPeopleLeft = numbersOfPeopleLeftQueue(courseName, start, end);
+    var numbersOfPeopleLeft = numbersOfPeopleLeftQueue(queueName, start, end);
 
     io.to('statistics').emit('numbersOfPeopleLeftQueue', numbersOfPeopleLeft);
   });
@@ -519,43 +519,43 @@ io.on('connection', function(socket) {
     console.log("Trying to add Queue!");
     var username = socket.handshake.session.user.name;
     // admin-validation
-    if (!validate(username, "super", "course")) {
+    if (!validate(username, "super", "queue")) {
       console.log("validation for addQueue failed");
       //res.end();
       return;
     }
     var queueName = req.queueName;
 
-    var newCourse = queueSystem.addCourse(queueName);
+    var newQueue = queueSystem.addQueue(queueName);
 
-    io.to('admin').emit('addQueue', newCourse);
+    io.to('admin').emit('addQueue', newQueue);
   });
 
   //
   socket.on('removeQueue', function(req) {
     console.log("Trying to remove Queue!");
     var username = socket.handshake.session.user.name;
-    var courseName = req.queueName;
+    var queueName = req.queueName;
 
     // admin/teacher-validation
-    if (!(validate(username, "super", "course") || validate(username, "teacher", courseName))) {
+    if (!(validate(username, "super", "queue") || validate(username, "teacher", queueName))) {
       console.log("validation for removeQueue failed");
       //res.end();
       return;
     }
 
-    for (var i = queueSystem.courseList.length - 1; i >= 0; i--) {
-      var course = queueSystem.courseList[i];
-      if (course.name === courseName) {
-        queueSystem.courseList.splice(i, 1);
-        course.remove();
+    for (var i = queueSystem.queueList.length - 1; i >= 0; i--) {
+      var queue = queueSystem.queueList[i];
+      if (queue.name === queueName) {
+        queueSystem.queueList.splice(i, 1);
+        queue.remove();
         break;
       }
     };
 
-    console.log(courseName + ' is getting removed from queues');
+    console.log(queueName + ' is getting removed from queues');
 
-    io.to('admin').emit('removeQueue', courseName);
+    io.to('admin').emit('removeQueue', queueName);
   });
 
   //
@@ -563,7 +563,7 @@ io.on('connection', function(socket) {
     console.log("Trying to add Admin!");
     var username = socket.handshake.session.user.name;
     // admin-validation
-    if (!validate(username, "super", "course")) {
+    if (!validate(username, "super", "queue")) {
       console.log("validation for addAdmin failed");
       //res.end();
       return;
@@ -590,10 +590,10 @@ io.on('connection', function(socket) {
   //
   socket.on('addTeacher', function(req) {
     var username = socket.handshake.session.user.name;
-    var courseName = req.queueName;
+    var queueName = req.queueName;
 
     // admin/teacher-validation
-    if (!(validate(username, "super", "course") || validate(username, "teacher", courseName))) {
+    if (!(validate(username, "super", "queue") || validate(username, "teacher", queueName))) {
       console.log("validation for addTeacher failed");
       //res.end();
       return;
@@ -601,30 +601,30 @@ io.on('connection', function(socket) {
 
     var username = req.username;
     var teacherName = username;
-    var course = queueSystem.findCourse(courseName);
+    var queue = queueSystem.findQueue(queueName);
 
     var newTeacher = new Admin({
       name: teacherName,
       username: username
     });
 
-    course.addTeacher(newTeacher);
+    queue.addTeacher(newTeacher);
 
     console.log(teacherName + ' is a new teacher!');
     io.to('admin').emit('addTeacher', {
       name: teacherName,
       username: username,
-      queueName: courseName
+      queueName: queueName
     });
   });
 
   //
   socket.on('addAssistant', function(req) {
     var username = socket.handshake.session.user.name;
-    var courseName = req.queueName;
+    var queueName = req.queueName;
 
     // admin/teacher-validation
-    if (!(validate(username, "super", "course") || validate(username, "teacher", courseName))) {
+    if (!(validate(username, "super", "queue") || validate(username, "teacher", queueName))) {
       console.log("validation for addAssistant failed");
       //res.end();
       return;
@@ -632,20 +632,20 @@ io.on('connection', function(socket) {
 
     var username = req.username;
     var assistantName = username;
-    var course = queueSystem.findCourse(courseName);
+    var queue = queueSystem.findQueue(queueName);
 
     var newAssistant = new Admin({
       name: assistantName,
       username: username
     });
 
-    course.addAssistant(newAssistant);
+    queue.addAssistant(newAssistant);
 
     console.log(assistantName + ' is a new assistant!');
     io.to('admin').emit('addAssistant', {
       name: assistantName,
       username: username,
-      queueName: courseName
+      queueName: queueName
     });
   });
 
@@ -656,7 +656,7 @@ io.on('connection', function(socket) {
     var username = socket.handshake.session.user.name;
 
     // admin-validation
-    if (!validate(username, "super", "course")) {
+    if (!validate(username, "super", "queue")) {
       console.log("validation for removeAdmin failed");
       //res.end();
       return;
@@ -680,70 +680,70 @@ io.on('connection', function(socket) {
   //
   socket.on('removeTeacher', function(req) {
     var username = socket.handshake.session.user.name;
-    var courseName = req.queueName;
+    var queueName = req.queueName;
 
     // admin/teacher-validation
-    if (!(validate(username, "super", "course") || validate(username, "teacher", courseName))) {
+    if (!(validate(username, "super", "queue") || validate(username, "teacher", queueName))) {
       console.log("validation for addAssistant failed");
       //res.end();
       return;
     }
 
     var username = req.username;
-    var course = queueSystem.findCourse(courseName);
+    var queue = queueSystem.findQueue(queueName);
 
-    course.removeTeacher(username);
+    queue.removeTeacher(username);
 
-    console.log(username + ' is a removed as a teacher in ' + courseName + '!');
+    console.log(username + ' is a removed as a teacher in ' + queueName + '!');
     io.to('admin').emit('removeTeacher', {
       username: username,
-      queueName: courseName
+      queueName: queueName
     });
   });
 
   //
   socket.on('removeAssistant', function(req) {
     var username = socket.handshake.session.user.name;
-    var courseName = req.queueName;
+    var queueName = req.queueName;
 
     // admin/teacher-validation
-    if (!(validate(username, "super", "course") || validate(username, "teacher", courseName))) {
+    if (!(validate(username, "super", "queue") || validate(username, "teacher", queueName))) {
       console.log("validation for addAssistant failed");
       //res.end();
       return;
     }
 
     var username = req.username;
-    var course = queueSystem.findCourse(courseName);
+    var queue = queueSystem.findQueue(queueName);
 
-    course.removeAssistant(username);
+    queue.removeAssistant(username);
 
-    console.log(username + ' is a removed as a assistant in ' + courseName + '!');
+    console.log(username + ' is a removed as a assistant in ' + queueName + '!');
     io.to('admin').emit('removeAssistant', {
       username: username,
-      queueName: courseName
+      queueName: queueName
     });
   });
 
   //
   socket.on('flag', function(req) {
     var username = req.name;
-    var courseName = req.queue;
+    var queueName = req.queue;
     var sender = req.sender;
     var message = req.message;
 
     // teacher/assistant-validation
-    if (!(validate(sender, "teacher", courseName) || validate(sender, "assistant", courseName))) {
+    if (!(validate(sender, "teacher", queueName) || validate(sender, "assistant", queueName))) {
       console.log("validation for flag failed");
       //res.end();
       return;
     }
 
-    var course = queueSystem.findCourse(courseName);
-    course.addAssistantComment(username, sender, courseName, message);
+    var queue = queueSystem.findQueue(queueName);
+    queue.addAssistantComment(username, sender, queueName, message);
 
     console.log('flagged');
-    io.to(courseName).emit('flag', {
+    io.to(queueName).emit('flag', {
       name: username,
       message: message
     });
@@ -769,29 +769,29 @@ io.on('connection', function(socket) {
 app.get('/API/queueList', function(req, res) {
   var retList = [];
 
-  for (var i = 0; i < queueSystem.courseList.length; i++) {
-    console.log("trying to get length of " + queueSystem.courseList[i].name + ": " + queueSystem.courseList[i].queue.length);
+  for (var i = 0; i < queueSystem.queueList.length; i++) {
+    console.log("trying to get length of " + queueSystem.queueList[i].name + ": " + queueSystem.queueList[i].queue.length);
     retList.push({
-      name: queueSystem.courseList[i].name,
-      length: queueSystem.courseList[i].queue.length,
-      locked: queueSystem.courseList[i].locked,
-      hibernating: queueSystem.courseList[i].hibernating
+      name: queueSystem.queueList[i].name,
+      length: queueSystem.queueList[i].queue.length,
+      locked: queueSystem.queueList[i].locked,
+      hibernating: queueSystem.queueList[i].hibernating
     });
   }
 
   res.setHeader('Content-Type', 'application/json');
   res.end(JSON.stringify(retList));
-  console.log('list of courses requested');
+  console.log('list of queues requested');
 });
 
 // returns the queue-list
 app.get('/API/queue/:queue', function(req, res) {
   res.setHeader('Content-Type', 'application/json');
-  var course = queueSystem.findCourse(req.params.queue);
+  var queue = queueSystem.findQueue(req.params.queue);
   console.log('queue ' + req.params.queue + ' requested');
-  //console.log(course);
+  //console.log(queue);
   res.status(200);
-  res.end(JSON.stringify(course));
+  res.end(JSON.stringify(queue));
 });
 
 // returns the admin-list
@@ -812,8 +812,8 @@ app.get('/API/userData', function(req, res) {
     console.log("userData - logged in: " + JSON.stringify(req.session.user));
 
     var username = req.session.user.name;
-    var teacherList = teacherForCourses(username);
-    var assistantList = assistantForCourses(username);
+    var teacherList = teacherForQueues(username);
+    var assistantList = assistantForQueues(username);
     var admin = validateSuper(username);
 
     //      socket.join("user_" + username); // for exclusive-emits/private messages
@@ -827,24 +827,24 @@ app.get('/API/userData', function(req, res) {
   }
 });
 
-function teacherForCourses(username) {
+function teacherForQueues(username) {
   var teacherList = [];
 
-  console.log("Looking for courses with " + username);
+  console.log("Looking for queues with " + username);
 
-  for (var n = queueSystem.courseList.length - 1; n >= 0; n--) {
-    var course = queueSystem.courseList[n];
-    var courseName = course.name;
-    var courseTeacherList = course.teacher;
+  for (var n = queueSystem.queueList.length - 1; n >= 0; n--) {
+    var queue = queueSystem.queueList[n];
+    var queueName = queue.name;
+    var queueTeacherList = queue.teacher;
 
-    console.log("Seacrhing in " + courseName);
+    console.log("Seacrhing in " + queueName);
 
-    for (var i = courseTeacherList.length - 1; i >= 0; i--) {
-      var teacher = courseTeacherList[i];
+    for (var i = queueTeacherList.length - 1; i >= 0; i--) {
+      var teacher = queueTeacherList[i];
       if (teacher.name === username) {
-        console.log("Found " + username + " in " + courseName);
+        console.log("Found " + username + " in " + queueName);
 
-        teacherList.push(courseName);
+        teacherList.push(queueName);
         break;
       }
     };
@@ -853,16 +853,16 @@ function teacherForCourses(username) {
   return teacherList;
 }
 
-function assistantForCourses(username) {
+function assistantForQueues(username) {
   var assistantList = [];
-  for (var n = queueSystem.courseList.length - 1; n >= 0; n--) {
-    var course = queueSystem.courseList[n];
-    var courseName = course.name;
-    var courseAssistantList = course.assistant;
-    for (var i = courseAssistantList.length - 1; i >= 0; i--) {
-      var assistant = courseAssistantList[i];
+  for (var n = queueSystem.queueList.length - 1; n >= 0; n--) {
+    var queue = queueSystem.queueList[n];
+    var queueName = queue.name;
+    var queueAssistantList = queue.assistant;
+    for (var i = queueAssistantList.length - 1; i >= 0; i--) {
+      var assistant = queueAssistantList[i];
       if (assistant.name === username) {
-        assistantList.push(courseName);
+        assistantList.push(queueName);
         break;
       }
     };

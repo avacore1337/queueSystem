@@ -48,7 +48,7 @@ userSchema.methods.toJSON = function () {
 // the average time in 'queue' of students who joined the queue 
 //  from 'start' and left before/was still in queue at 'end'
 function getAverageQueueTime(queue, start, end) {
-//  var queue = findCourse(queueName);
+//  var queue = findQueue(queueName);
   var counter = 0;
 
   queue.forEach(function (usr, i, queue) {
@@ -65,8 +65,8 @@ function getAverageQueueTime(queue, start, end) {
 }
 
 // number of people who joined the queue from 'start' and left before 'end'
-function numbersOfPeopleLeftQueue(course, start, end) {
-// 1. Get all statistics-object from a specific course
+function numbersOfPeopleLeftQueue(queue, start, end) {
+// 1. Get all statistics-object from a specific queue
 // 2. Filter out all those who was in the queue before set "start"-time
 // 3. Filter out all those who entered the queue after set "end"-time
 // 4. Retrieve those who has a 'queueLength+startTime <= end' 
@@ -74,14 +74,14 @@ function numbersOfPeopleLeftQueue(course, start, end) {
 /*
     var statisticSchema = new Schema({
       name: String,
-      course: String,
+      queue: String,
       time: { type: Number, default: Date.now },
       action: String,
       leftQueue: { type: Boolean, default: false },
       queueLength: { type: Number, default: 0},
 */
 
-//  var queue = findCourse(queueName);
+//  var queue = findQueue(queueName);
   var counter = 0;
 
   queue.forEach(function (usr, i, queue) {
@@ -99,8 +99,8 @@ function numbersOfPeopleLeftQueue(course, start, end) {
 
 //---------------------------------------------------------------------------------------
 
-// Schema used for courses
-var courseSchema = new Schema({
+// Schema used for queues
+var queueSchema = new Schema({
   name: String,
   locked: { type: Boolean, default: false },
   hibernating: { type: Boolean, default: false },
@@ -112,13 +112,13 @@ var courseSchema = new Schema({
 });
 
 // takes a user as a parameter and adds to the queue
-courseSchema.methods.addUser = function (user) {
+queueSchema.methods.addUser = function (user) {
   this.queue.push(user);
   this.save();
 };
 
 // takes a username as a parameter and removes the user form the queue
-courseSchema.methods.removeUser = function (username) {
+queueSchema.methods.removeUser = function (username) {
   this.queue = this.queue.filter(function (user) {
     return user.name !== username;
   });
@@ -126,13 +126,13 @@ courseSchema.methods.removeUser = function (username) {
 };
 
 // takes a user as a parameter and adds to the queue
-courseSchema.methods.addTeacher = function (teacher) {
+queueSchema.methods.addTeacher = function (teacher) {
   this.teacher.push(teacher);
   this.save();
 };
 
 // takes a username as a parameter and removes the user form the queue
-courseSchema.methods.removeTeacher = function (username) {
+queueSchema.methods.removeTeacher = function (username) {
   this.teacher = this.teacher.filter(function (teacher) {
     return teacher.name !== username;
   });
@@ -140,13 +140,13 @@ courseSchema.methods.removeTeacher = function (username) {
 };
 
 // takes a user as a parameter and adds to the queue
-courseSchema.methods.addAssistant = function (assistant) {
+queueSchema.methods.addAssistant = function (assistant) {
   this.assistant.push(assistant);
   this.save();
 };
 
 // takes a username as a parameter and removes the user form the queue
-courseSchema.methods.removeAssistant = function (username) {
+queueSchema.methods.removeAssistant = function (username) {
   this.assistant = this.assistant.filter(function (assistant) {
     return assistant.name !== username;
   });
@@ -154,31 +154,31 @@ courseSchema.methods.removeAssistant = function (username) {
 };
 
 // locks the queue
-courseSchema.methods.lock = function () {
+queueSchema.methods.lock = function () {
   this.locked = true;
   this.save();
 };
 
 // unlocks the queue
-courseSchema.methods.unlock = function () {
+queueSchema.methods.unlock = function () {
   this.locked = false;
   this.save();
 };
 
 // hide the schema
-courseSchema.methods.hibernate = function () {
+queueSchema.methods.hibernate = function () {
   this.hibernating = true;
   this.save();
 };
 
 // unhide the schema
-courseSchema.methods.unhibernate = function () {
+queueSchema.methods.unhibernate = function () {
   this.hibernating = false;
   this.save();
 };
 
 // empty the queue
-courseSchema.methods.purgeQueue = function () {
+queueSchema.methods.purgeQueue = function () {
   this.queue.forEach(function (usr, i, queue) {
   });
 
@@ -187,14 +187,14 @@ courseSchema.methods.purgeQueue = function () {
 };
 
 // takes a function "fn" and applies it on every user
-courseSchema.methods.forUser = function (fn) {
+queueSchema.methods.forUser = function (fn) {
   this.queue.forEach(fn);
   this.save();
 };
 
 // update a user (parameter "name" decides which user)
 // parameter "user" is the replacing user
-courseSchema.methods.updateUser = function (name, user) {
+queueSchema.methods.updateUser = function (name, user) {
   this.queue.forEach(function (usr, i, queue) {
     if (usr.name === name) {
       lodash.extend(queue[i], user);
@@ -204,7 +204,7 @@ courseSchema.methods.updateUser = function (name, user) {
 };
 
 // set a comment from a assistant to a user (comment regarding help given by the assistant)
-courseSchema.methods.addAssistantComment = function (name, sender, queue, message) {
+queueSchema.methods.addAssistantComment = function (name, sender, queue, message) {
   this.queue.forEach(function (usr, i, queue) {
     if (usr.name === name) {
       var user = usr;
@@ -216,8 +216,8 @@ courseSchema.methods.addAssistantComment = function (name, sender, queue, messag
 };
 
 // NOT IMPLEMENTED YET
-// set the "message of the day" for the course
-courseSchema.methods.setMOTD = function () {
+// set the "message of the day" for the queue
+queueSchema.methods.setMOTD = function () {
   // TODO
 };
 
@@ -236,7 +236,7 @@ var booking = new Schema({
 // Schema used for statistics 
 var statisticSchema = new Schema({
   name: String,
-  course: String,
+  queue: String,
   startTime: { type: Number, default: Date.now },
   action: String,
   leftQueue: { type: Boolean, default: false },
@@ -250,7 +250,7 @@ statisticSchema.index({startTime: 1});
 
 var User = mongoose.model("User", userSchema);
 var Admin = mongoose.model("Admin", adminSchema);
-var Course = mongoose.model("Course", courseSchema);
+var Queue = mongoose.model("Queue", queueSchema);
 var Statistic = mongoose.model("UserStatistic", statisticSchema);
 
 //=========================================
@@ -259,6 +259,6 @@ var Statistic = mongoose.model("UserStatistic", statisticSchema);
 module.exports = {
   user: User,
   admin: Admin,
-  course: Course,
+  queue: Queue,
   statistic: Statistic
 };

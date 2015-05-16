@@ -1,3 +1,5 @@
+/* jslint node: true */
+"use strict";
 
 
 
@@ -5,37 +7,37 @@ var database = require("./model.js"); // databas stuff
 
 var User = database.user;
 var Admin = database.admin;
-var Course = database.course;
+var Queue = database.queue;
 var Statistic = database.statistic;
 
 
-var courseList = [];
+var queueList = [];
 var adminList = [];
 var statisticsList = [];
 
 
-// return the course with the name "name"
-function findCourse(name) {
-  for (var i = 0; i < courseList.length; i++) {
-    if (courseList[i].name === name) {
-      return courseList[i];
+// return the queue with the name "name"
+function findQueue(name) {
+  for (var i = 0; i < queueList.length; i++) {
+    if (queueList[i].name === name) {
+      return queueList[i];
     }
   }
 }
 
-function addCourse (courseName) {
-  var newCourse = new Course({
-    name: courseName
+function addQueue (queueName) {
+  var newQueue = new Queue({
+    name: queueName
   });
-  courseList.push(newCourse);
-  newCourse.save();
+  queueList.push(newQueue);
+  newQueue.save();
 
-  console.log(courseName + ' is getting created as ' + JSON.stringify(newCourse));
-  return newCourse;
+  console.log(queueName + ' is getting created as ' + JSON.stringify(newQueue));
+  return newQueue;
 }
 
 function setup() {
-  // list of courses to be used
+  // list of queues to be used
   var tmpList = [
     "dbas",
     "inda",
@@ -46,20 +48,20 @@ function setup() {
     "mdi",
   ];
 
-  // creates database-objects from the list (of courses)
+  // creates database-objects from the list (of queues)
   for (var i = 0; i < tmpList.length; i++) {
-    var course = tmpList[i];
-    var newCourse = new Course({
-      name: course
+    var queue = tmpList[i];
+    var newQueue = new Queue({
+      name: queue
     });
-    courseList.push(newCourse);
-    newCourse.save();
+    queueList.push(newQueue);
+    newQueue.save();
 
     //---------------------------------------------------------------------------------------
     /*TEST*/
     var randomTime = Date.now() - Math.random() * 3 * 1000000;
     //---------------------------------------------------------------------------------------
-    // for every course, create users
+    // for every queue, create users
     var queues = Math.floor((Math.random() * 50) + 1);
     for (var j = 0; j < queues; j++) {
       var newUser = new User({
@@ -68,11 +70,11 @@ function setup() {
         comment: 'lab1',
         startTime: randomTime
       });
-      newCourse.addUser(newUser);
-      newCourse.save();
+      newQueue.addUser(newUser);
+      newQueue.save();
       var newStatistic = new Statistic({
         name: newUser.name,
-        course: newCourse.name,
+        queue: newQueue.name,
         startTime: newUser.startTime,
         action: ''
       });
@@ -85,7 +87,7 @@ function setup() {
       //---------------------------------------------------------------------------------------
     }
 
-    console.log(course + " " + newCourse.queue.length); // temporary for error-solving
+    console.log(queue + " " + newQueue.queue.length); // temporary for error-solving
   }
 
   var newAdmin = new Admin({
@@ -110,14 +112,14 @@ function setup() {
   newAdmin.save();
 }
 
-// Read in courses and admins from the database
+// Read in queues and admins from the database
 function readIn() {
-  // All the courses
-  Course.find(function(err, courses) {
-    courses.forEach(function(course) {
-      courseList.push(course);
+  // All the queues
+  Queue.find(function(err, queues) {
+    queues.forEach(function(queue) {
+      queueList.push(queue);
 
-      console.log('Course: ' + course.name + ' loaded!'); // temporary for error-solving
+      console.log('Queue: ' + queue.name + ' loaded!'); // temporary for error-solving
     });
   });
 }
@@ -128,9 +130,9 @@ setup(); // temporary method
 
 
 module.exports = {
-  courseList: courseList,
+  queueList: queueList,
   adminList: adminList,
   statisticsList: statisticsList,
-  findCourse: findCourse,
-  addCourse: addCourse
+  findQueue: findQueue,
+  addQueue: addQueue
 };
