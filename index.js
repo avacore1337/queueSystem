@@ -51,80 +51,16 @@ var Statistic = database.statistic;
 var queueSystem = require('./model/queueSystem.js');
 var adminList = queueSystem.adminList;
 var statisticsList = queueSystem.statisticsList;
+var validate = queueSystem.validate;
+var validateSuper = queueSystem.validateSuper;
+var validateTeacher = queueSystem.validateTeacher;
+var validateAssistant = queueSystem.validateAssistant;
 
-//===============================================================
-// Methods for setting up or reading in the database (in production, only readIn should be used)
-
+var router = require('./routes.js');
+app.use('/API',router);
 
 //===============================================================
 // 
-
-
-// validates if a person is the privilege-type given for given queue
-// TODO: make the validation more secure
-function validate(name, type, queue) {
-  if (type === "super") {
-    return validateSuper(name);
-  } else if (type === "teacher") {
-    return validateTeacher(name, queue);
-  } else if (type === "assistant") {
-    return validateAssistant(name, queue);
-  };
-
-  console.log("that privilege-type is not defined"); // temporary for error-solving
-  return false;
-}
-
-function validateSuper(name) {
-  for (var i = 0; i < adminList.length; i++) {
-    console.log("admin: " + adminList[i].name + " vs " + name);
-    if (adminList[i].name === name) {
-      console.log(name + ' is a valid super-admin'); // temporary for error-solving
-      return true;
-    }
-  }
-}
-
-function validateTeacher(username, queueName) {
-  var teacherList = teacherForQueues(username);
-
-  for (var i = 0; i < teacherList.length; i++) {
-    if (teacherList[i] === queueName) {
-      console.log(username + ' is a valid teacher'); // temporary for error-solving
-      return true;
-    }
-  }
-}
-
-function validateAssistant(username, queueName) {
-  var assistantList = assistantForQueues(username);
-
-  for (var i = 0; i < assistantList.length; i++) {
-    if (assistantList[i] === queueName) {
-      console.log(username + ' is a valid assistant'); // temporary for error-solving
-      return true;
-    }
-  }
-}
-
-// list of queues that a user is admin, teacher or TA for
-// TODO: make the list containing a field which says which kind of privilege-type the person has
-// DEPREMERAD (DEPRECATED)
-function privilegeList(name) {
-  var list = [];
-  for (var i = 0; i < adminList.length; i++) {
-    if (adminList[i].name === name) {
-      var obj = {
-        "name": adminList[i].name,
-        "queue": "",
-        "type": "admin"
-      };
-      list.push(obj);
-    }
-  }
-
-  return list;
-}
 
 
 function doOnQueue(queueName, action) {
@@ -359,13 +295,13 @@ io.on('connection', function(socket) {
 
   // user leaves queue
   socket.on('leave', function(req) {
-    var queue = req.queue;
+    var queueName = req.queue;
     var user = req.user;
 
     console.log(JSON.stringify(user)); // check which uses is given --- need the one doing the action and the one who is "actioned"
     console.log("Validerande: " + JSON.stringify(socket.handshake.session.user));
 
-    var queue = queueSystem.findQueue(queue);
+    var queue = queueSystem.findQueue(queueName);
     queue.removeUser(user.name);
 
     for (var i = statisticsList.length - 1; i >= 0; i--) {
@@ -389,10 +325,10 @@ io.on('connection', function(socket) {
     //  var newUserStatistic = new UserStatistic({student: user.name, queue: queue, action: '?'});
     //  newUserStatistic.save();
 
-    console.log('a user left ' + queue);
-    io.to(queue).emit('leave', user);
+    console.log('a user left ' + queueName);
+    io.to(queueName).emit('leave', user);
     io.to("lobby").emit('lobbyleave', {
-      queueName: queue,
+      queueName: queueName,
       username: user.name
     });
   });
@@ -417,7 +353,7 @@ io.on('connection', function(socket) {
     queue.purgeQueue();
     queue.queue = [];
 
-    console.log(req.queueName + ' -list purged by ' + username);
+    console.log(req.queue + ' -list purged by ' + username);
     io.to(queueName).emit('purge');
     io.to("lobby").emit('lobbypurge', queueName);
   });
@@ -544,14 +480,7 @@ io.on('connection', function(socket) {
       return;
     }
 
-    for (var i = queueSystem.queueList.length - 1; i >= 0; i--) {
-      var queue = queueSystem.queueList[i];
-      if (queue.name === queueName) {
-        queueSystem.queueList.splice(i, 1);
-        queue.remove();
-        break;
-      }
-    };
+    queueSystem.removeQueue(queueName);
 
     console.log(queueName + ' is getting removed from queues');
 
@@ -752,133 +681,11 @@ io.on('connection', function(socket) {
   // TODO : This has been changed to only have them join a room based on their ID, no more session interaction
   socket.on('setUser', function(req) {
     socket.join("user_" + req.name); // joina sitt eget rum, för privata meddelande etc
-
     socket.handshake.session.user = req;
     console.log('Socket-setUser: ' + JSON.stringify(req));
     console.log('session is: ' + JSON.stringify(socket.handshake.session.user));
   });
-
-
-
 });
-
-
-
-
-// returnerar alla kurser som finns (lista av strängar)
-app.get('/API/queueList', function(req, res) {
-  var retList = [];
-
-  for (var i = 0; i < queueSystem.queueList.length; i++) {
-    console.log("trying to get length of " + queueSystem.queueList[i].name + ": " + queueSystem.queueList[i].queue.length);
-    retList.push({
-      name: queueSystem.queueList[i].name,
-      length: queueSystem.queueList[i].queue.length,
-      locked: queueSystem.queueList[i].locked,
-      hibernating: queueSystem.queueList[i].hibernating
-    });
-  }
-
-  res.setHeader('Content-Type', 'application/json');
-  res.end(JSON.stringify(retList));
-  console.log('list of queues requested');
-});
-
-// returns the queue-list
-app.get('/API/queue/:queue', function(req, res) {
-  res.setHeader('Content-Type', 'application/json');
-  var queue = queueSystem.findQueue(req.params.queue);
-  console.log('queue ' + req.params.queue + ' requested');
-  //console.log(queue);
-  res.status(200);
-  res.end(JSON.stringify(queue));
-});
-
-// returns the admin-list
-// needs to be restricted
-app.get('/API/adminList', function(req, res) {
-  res.setHeader('Content-Type', 'application/json');
-  res.end(JSON.stringify(adminList));
-});
-
-// TODO: add a list of admin
-app.get('/API/userData', function(req, res) {
-  res.setHeader('Content-Type', 'application/json');
-  console.log("user data: ");
-  if (req.session.user === undefined) {
-    console.log("not logged in yet");
-    res.end();
-  } else {
-    console.log("userData - logged in: " + JSON.stringify(req.session.user));
-
-    var username = req.session.user.name;
-    var teacherList = teacherForQueues(username);
-    var assistantList = assistantForQueues(username);
-    var admin = validateSuper(username);
-
-    //      socket.join("user_" + username); // for exclusive-emits/private messages
-
-    res.end(JSON.stringify({
-      name: username,
-      admin: admin,
-      teacher: teacherList,
-      assistant: assistantList
-    }));
-  }
-});
-
-function teacherForQueues(username) {
-  var teacherList = [];
-
-  console.log("Looking for queues with " + username);
-
-  for (var n = queueSystem.queueList.length - 1; n >= 0; n--) {
-    var queue = queueSystem.queueList[n];
-    var queueName = queue.name;
-    var queueTeacherList = queue.teacher;
-
-    console.log("Seacrhing in " + queueName);
-
-    for (var i = queueTeacherList.length - 1; i >= 0; i--) {
-      var teacher = queueTeacherList[i];
-      if (teacher.name === username) {
-        console.log("Found " + username + " in " + queueName);
-
-        teacherList.push(queueName);
-        break;
-      }
-    };
-  };
-
-  return teacherList;
-}
-
-function assistantForQueues(username) {
-  var assistantList = [];
-  for (var n = queueSystem.queueList.length - 1; n >= 0; n--) {
-    var queue = queueSystem.queueList[n];
-    var queueName = queue.name;
-    var queueAssistantList = queue.assistant;
-    for (var i = queueAssistantList.length - 1; i >= 0; i--) {
-      var assistant = queueAssistantList[i];
-      if (assistant.name === username) {
-        assistantList.push(queueName);
-        break;
-      }
-    };
-  };
-
-  return assistantList;
-}
-
-app.post('/API/setUser', function(req, res) {
-  req.session.user = req.body;
-  // Robert-TODO: set socket
-  console.log("User settings set");
-  res.writeHead(200);
-  res.end();
-});
-
 
 httpServer.listen(port, function() {
   console.log("server listening on port", port);

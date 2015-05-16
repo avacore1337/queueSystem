@@ -117,6 +117,14 @@ queueSchema.methods.addUser = function (user) {
   this.save();
 };
 
+queueSchema.methods.forAssistant = function (fn) {
+  this.assistant.forEach(fn);
+};
+
+queueSchema.methods.forTeacher = function (fn) {
+  this.teacher.forEach(fn);
+};
+
 // takes a username as a parameter and removes the user form the queue
 queueSchema.methods.removeUser = function (username) {
   this.queue = this.queue.filter(function (user) {

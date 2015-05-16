@@ -15,6 +15,9 @@ var queueList = [];
 var adminList = [];
 var statisticsList = [];
 
+function forQueue (fn) {
+  queueList.forEach(fn);
+};
 
 // return the queue with the name "name"
 function findQueue(name) {
@@ -23,6 +26,17 @@ function findQueue(name) {
       return queueList[i];
     }
   }
+}
+
+function removeQueue(name){
+  for (var i = queueList.length - 1; i >= 0; i--) {
+    var queue = queueList[i];
+    if (queue.name === name) {
+      queueList.splice(i, 1);
+      queue.remove();
+      break;
+    }
+  };
 }
 
 function addQueue (queueName) {
@@ -34,6 +48,53 @@ function addQueue (queueName) {
 
   console.log(queueName + ' is getting created as ' + JSON.stringify(newQueue));
   return newQueue;
+}
+
+
+
+// validates if a person is the privilege-type given for given queue
+// TODO: make the validation more secure
+function validate(name, type, queue) {
+  if (type === "super") {
+    return validateSuper(name);
+  } else if (type === "teacher") {
+    return validateTeacher(name, queue);
+  } else if (type === "assistant") {
+    return validateAssistant(name, queue);
+  };
+
+  console.log("that privilege-type is not defined"); // temporary for error-solving
+  return false;
+}
+
+function validateSuper(name) {
+  for (var i = 0; i < adminList.length; i++) {
+    console.log("admin: " + adminList[i].name + " vs " + name);
+    if (adminList[i].name === name) {
+      console.log(name + ' is a valid super-admin'); // temporary for error-solving
+      return true;
+    }
+  }
+}
+
+function validateTeacher(username, queueName) {
+  findQueue(queueName).forTeacher(function(teacher) {
+    if (teacher === username) {
+      console.log(username + ' is a valid teacher'); // temporary for error-solving
+      return true;
+    }
+  });
+  return false;
+}
+
+function validateAssistant(username, queueName) {
+  findQueue(queueName).forAssistant(function(assistant) {
+    if (assistant === username) {
+      console.log(username + ' is a valid assistant'); // temporary for error-solving
+      return true;
+    }
+  });
+  return false;
 }
 
 function setup() {
@@ -134,5 +195,12 @@ module.exports = {
   adminList: adminList,
   statisticsList: statisticsList,
   findQueue: findQueue,
-  addQueue: addQueue
+  addQueue: addQueue,
+  forQueue: forQueue,
+  removeQueue: removeQueue,
+  validate: validate,
+  validateSuper: validateSuper,
+  validateTeacher: validateTeacher,
+  validateAssistant: validateAssistant
+
 };
