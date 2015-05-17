@@ -16,6 +16,9 @@
 
   .controller('queueController', ['$scope', '$http', '$routeParams', '$location', '$modal', 'WebSocketService', 'UserService', 'TitleService',
     function ($scope, $http, $routeParams, $location, $modal, socket, user, title) {
+      $scope.$on('$destroy', function (event) {
+        socket.removeAllListeners();
+      });
       $scope.queue = $routeParams.queue;
       title.title = $scope.queue + " | Stay A While";
       $scope.name = user.getName();
@@ -106,7 +109,7 @@ console.log('testing');
         $scope.enqueued = true;
         title.title = "["  + ($scope.users.length+1) + "] " + $scope.queue + " | Stay A while";
       }
-      $scope.$apply($scope.users.push({name:data.name, place:data.place, comment:data.comment, time:data.time/1000}));
+      $scope.users.push({name:data.name, place:data.place, comment:data.comment, time:data.time/1000});
     }
     socket.on('join', socketJoin);
 
@@ -119,7 +122,7 @@ console.log('testing');
       }
       for(var i = $scope.users.length - 1; i >= 0; i--) {
         if($scope.users[i].name === data.name) {
-          $scope.$apply($scope.users.splice(i, 1));
+          $scope.users.splice(i, 1);
           break;
         }
       }
@@ -139,8 +142,8 @@ console.log('testing');
       console.log(data);
       for(var i = $scope.users.length - 1; i >= 0; i--) {
         if($scope.users[i].name === data.name) {
-          $scope.$apply($scope.users[i].comment = data.comment);
-          $scope.$apply($scope.users[i].place = data.place);
+          $scope.users[i].comment = data.comment;
+          $scope.users[i].place = data.place;
           break;
         }
       }
@@ -150,8 +153,8 @@ console.log('testing');
 
     // Listen for an admin purging the queue.
     function socketPurge() {
-      $scope.$apply($scope.users = []);
-      $scope.$apply($scope.enqueued = false);
+      $scope.users = [];
+      $scope.enqueued = false;
     }
     socket.on('purge', socketPurge);
 
@@ -186,9 +189,9 @@ console.log('testing');
       for(var i = $scope.users.length - 1; i >= 0; i--) {
         if($scope.users[i].name === data.name) {
           if($scope.users[i].messages === undefined){
-            $scope.$apply($scope.users[i].messages = [data.message]);
+            $scope.users[i].messages = [data.message];
           }else{
-            $scope.$apply($scope.users[i].messages.push(data.message));
+            $scope.users[i].messages.push(data.message);
           }
           console.log("Pushed the message : " + data.message);
           break;
@@ -201,8 +204,8 @@ console.log('testing');
     function socketHelp(data) {
       for(var i = 0; i < $scope.users.length; i++){
         if($scope.users[i].name === data.name){
-          $scope.$apply($scope.users[i].gettingHelp = true);
-          $scope.$apply($scope.users[i].helper = data.helper);
+          $scope.users[i].gettingHelp = true;
+          $scope.users[i].helper = data.helper;
           break;
         }
       }
@@ -217,13 +220,13 @@ console.log('testing');
 
     // Listen for locking the queue
     function socketLock(){
-      $scope.$apply($scope.locked = true);
+      $scope.locked = true;
     }
     socket.on('lock', socketLock);
 
     // Listen for unlocking the queue
     function socketUnlock(){
-      $scope.$apply($scope.locked = false);
+      $scope.locked = false;
     }
     socket.on('unlock', socketUnlock);
 

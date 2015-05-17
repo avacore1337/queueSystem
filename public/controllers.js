@@ -2,6 +2,9 @@ var queueControllers = angular.module('queueControllers', []);
 
 queueControllers.controller('listController', ['$scope', '$http', '$location', 'WebSocketService', 'UserService', 'TitleService',
   function($scope, $http, $location, socket, user, title) {
+    $scope.$on('$destroy', function (event) {
+      socket.removeAllListeners();
+    });
     title.title = "Stay A While";
     $scope.queues = [];
     $http.get('/API/queueList')
@@ -41,7 +44,7 @@ queueControllers.controller('listController', ['$scope', '$http', '$location', '
       });
       queue.length++;
       if (data.username === user.getName()) {
-        $scope.$apply(getQueue(data.queueName).position = getQueue(data.queueName).length);
+        getQueue(data.queueName).position = getQueue(data.queueName).length;
       }
     });
 
@@ -61,7 +64,6 @@ queueControllers.controller('listController', ['$scope', '$http', '$location', '
           break;
         }
       }
-      $scope.$apply();
     });
 
     // Listen for queue geting purged.
@@ -71,31 +73,30 @@ queueControllers.controller('listController', ['$scope', '$http', '$location', '
       queue.length = 0;
       queue.queue = [];
       queue.position = -1;
-      $scope.$apply();
     });
 
     // Listen for a queue being locked.
     socket.on('lobbylock', function(queue) {
       console.log(queue + " was locked (lobby)");
-      $scope.$apply(getQueue(queue).locked = true);
+      getQueue(queue).locked = true;
     });
 
     // Listen for a queue being unlocked.
     socket.on('lobbyunlock', function(queue) {
       console.log(queue + " was unlocked (lobby)");
-      $scope.$apply(getQueue(queue).locked = false);
+      getQueue(queue).locked = false;
     });
 
     // Listen for a queue going to sleep.
     socket.on('lobbyhibernate', function(queue) {
       console.log(queue + " was sent to sleep (lobby)");
-      $scope.$apply(getQueue(queue).hibernating = true);
+      getQueue(queue).hibernating = true;
     });
 
     // Listen for a queue waking up.
     socket.on('lobbyunhibernate', function(queue) {
       console.log(queue + " was awoken (lobby)");
-      $scope.$apply(getQueue(queue).hibernating = false);
+      getQueue(queue).hibernating = false;
     });
 
     function getQueue(queue) {
@@ -166,6 +167,9 @@ queueControllers.controller('helpController', ['$scope', '$http', 'TitleService'
 
 queueControllers.controller('statisticsController', ['$scope', '$http', 'WebSocketService', 'TitleService', 'UserService',
   function($scope, $http, socket, title, user) {
+    $scope.$on('$destroy', function (event) {
+      socket.removeAllListeners();
+    });
     title.title = "Statistics | Stay A While";
     console.log('entered statistics.html');
 
@@ -186,13 +190,12 @@ queueControllers.controller('statisticsController', ['$scope', '$http', 'WebSock
       } else {
         $scope.averageQueueTime = "0s";
       }
-      $scope.$apply();
     });
     $scope.averageQueueTime = "";
 
     // Listen for new statistics.
     socket.on('numbersOfPeopleLeftQueue', function(amount) {
-      $scope.$apply($scope.numbersOfPeopleLeftQueue = amount);
+      $scope.numbersOfPeopleLeftQueue = amount;
       console.log("Amount to 'numbersOfPeopleLeftQueue' : " + amount);
     });
     $scope.numbersOfPeopleLeftQueue = -1;
@@ -267,6 +270,9 @@ queueControllers.controller('statisticsController', ['$scope', '$http', 'WebSock
 
 queueControllers.controller('loginController', ['$scope', '$location', '$http', 'TitleService', 'WebSocketService',
   function($scope, $location, $http, title, socket) {
+    $scope.$on('$destroy', function (event) {
+      socket.removeAllListeners();
+    });
     title.title = "Log in | Stay A While";
 
     socket.emit('listen', 'lobby');

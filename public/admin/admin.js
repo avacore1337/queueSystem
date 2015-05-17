@@ -16,6 +16,9 @@
 
   .controller('adminController', ['$scope', '$location', '$http', '$modal', 'WebSocketService', 'UserService', 'TitleService',
     function ($scope, $location, $http, $modal, socket, user, title) {
+      $scope.$on('$destroy', function (event) {
+        socket.removeAllListeners();
+      });
       title.title = "Admin | Stay A While";
       console.log("Entered admin.html");
       $scope.name = user.getName();
@@ -61,7 +64,7 @@ $scope.$on("$destroy", function(){
       console.log("adding assistant (from backend) queueName = " + data.queueName + ", name = " + data.name + ", username = " + data.username);
       var queue = getQueue(data.queueName);
       if(queue){
-        $scope.$apply(getQueue(data.queueName).assistant.push({name:data.name, username:data.username}));
+        getQueue(data.queueName).assistant.push({name:data.name, username:data.username});
       }
     }
     socket.on('addAssistant', socketAddAssistant);
@@ -73,7 +76,7 @@ $scope.$on("$destroy", function(){
         if($scope.queues[i].name === data.queueName){
           for (var j = $scope.queues[i].assistant.length - 1; j >= 0; j--) {
             if($scope.queues[i].assistant[j].username === data.username){
-              $scope.$apply($scope.queues[i].assistant.splice(j, 1));
+              $scope.queues[i].assistant.splice(j, 1);
               break;
             }
           }
@@ -85,7 +88,7 @@ $scope.$on("$destroy", function(){
 
     // Listen for an teacher being added to a queue.
     function socketAddAdmin(admin) {
-      $scope.$apply($scope.admins.push(admin));
+      $scope.admins.push(admin);
       console.log("adding admin (from backend) name = " + admin.name + ", username = " + admin.username + ", addedBy = " + admin.addedBy);
     }
     socket.on('addAdmin', socketAddAdmin);
@@ -95,7 +98,7 @@ $scope.$on("$destroy", function(){
       console.log("Backend wants to remove the admin " + username);
       for (var i = $scope.admins.length - 1; i >= 0; i--) {
         if($scope.admins[i].username === username){
-          $scope.$apply($scope.admins.splice(i, 1));
+          $scope.admins.splice(i, 1);
           break;
         }
       }
@@ -107,7 +110,7 @@ $scope.$on("$destroy", function(){
       console.log("adding teacher (from backend) queueName = " + data.queueName + ", name = " + data.name + ", username = " + data.username);
       var queue = getQueue(data.queueName);
       if(queue){
-        $scope.$apply(getQueue(data.queueName).teacher.push({name:data.name, username:data.username}));
+        getQueue(data.queueName).teacher.push({name:data.name, username:data.username});
       }
     }
     socket.on('addTeacher', socketAddTeacher);
@@ -119,7 +122,7 @@ $scope.$on("$destroy", function(){
         if($scope.queues[i].name === data.queueName){
           for (var j = $scope.queues[i].teacher.length - 1; j >= 0; j--) {
             if($scope.queues[i].teacher[j].username === data.username){
-              $scope.$apply($scope.queues[i].teacher.splice(j, 1));
+              $scope.queues[i].teacher.splice(j, 1);
               break;
             }
           }
@@ -134,7 +137,7 @@ $scope.$on("$destroy", function(){
       console.log("I will go to sleep (because backend)");
       for (var i = $scope.queues.length - 1; i >= 0; i--) {
         if(queue === $scope.queues[i].name){
-          $scope.$apply($scope.queues[i].hibernating = true);
+          $scope.queues[i].hibernating = true;
         }
       }
     }
@@ -145,7 +148,7 @@ $scope.$on("$destroy", function(){
       console.log("I will wake up (because backend)");
       for (var i = $scope.queues.length - 1; i >= 0; i--) {
         if(queue === $scope.queues[i].name){
-          $scope.$apply($scope.queues[i].hibernating = false);
+          $scope.queues[i].hibernating = false;
         }
       }
     }
@@ -154,7 +157,7 @@ $scope.$on("$destroy", function(){
     // Listen for a queue being added.
     function socketAddQueue(queue) {
       console.log("Backend wants to add the queue " + queue.name);
-      $scope.$apply($scope.queues.push(queue));
+      $scope.queues.push(queue);
     }
     socket.on('addQueue', socketAddQueue);
 
@@ -163,7 +166,7 @@ $scope.$on("$destroy", function(){
       console.log("Backend wants to remove queue " + queue);
       for (var i = $scope.queues.length - 1; i >= 0; i--) {
         if(queue === $scope.queues[i].name){
-          $scope.$apply($scope.queues.splice(i, 1));
+          $scope.queues.splice(i, 1);
         }
       }
     }
