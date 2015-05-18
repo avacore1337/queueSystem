@@ -39,6 +39,7 @@
       $http.get('/API/queue/' + $routeParams.queue)
       .success(function(response) {
         $scope.users = response.queue;
+        $scope.bookedUsers = response.bookings;
         $scope.locked = response.locked;
         $scope.hibernating = response.hibernating;
         for (var i = 0; i < $scope.users.length; i++) {
@@ -89,13 +90,6 @@ $scope.$on("$destroy", function(){
   socket.removeListener('badLocation', socketBadLocation);
   socket.removeListener('addMOTD', socketaddMOTD);
 });
-
-// TODO : Remove this when you connect the two backends
-$scope.bookedUsers = [
-{name:'Anton',  place:"Red 01" , comment:"Labb 1", time:"15:00"},
-{name:'Joakim',  place:"Red 06" , comment:"Labb 3", time:"15:30"},
-{name:'Per',  place:"Red 07" , comment:"Labb 2", time:"16:00"}
-];
 
 socket.emit('stopListening', 'lobby');
 socket.emit('listen', $scope.queue);
@@ -594,6 +588,17 @@ console.log('testing');
         }
       }
     };
+
+    // When an admin wants to see the admin options
+    // (This method is to prevent hiding the row when on a phone)
+    $scope.changeVisibilityDbl = function(name){
+      for(var i = 0; i < $scope.users.length; i++){
+        if($scope.users[i].name === name){
+          $scope.users[i].optionsActivated = !$scope.users[i].optionsActivated;
+          break;
+        }
+      }
+    }
 
   // This function should direct the user to the wanted page
   $scope.redirect = function(address){
