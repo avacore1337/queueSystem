@@ -18,16 +18,13 @@
 			</p>
 
 			<h2>Contributors</h2>
-			<div class="row">
+			<div class="row" style="font-size: .9em;">
 				<div class="col-md-4" ng-repeat="contributor in contributors.StayAWhile" style="margin-bottom: 2%;">
 					<div class="col-md-4">
 						<img class="frame" ng-src="http://gravatar.com/avatar/{{contributor.gravatar || '00000000000000000000000000000000'}}.png" alt="{{contributor.name}}">
 					</div>
 					<div class="col-md-8">
 						<h4>{{contributor.name}}</h4>
-						<a ng-if="contributor.twitter" href="https://twitter.com/{{contributor.twitter}}">
-							<img src="/images/twitter.svg" height="14" width="14"> {{contributor.twitter}}
-						</a>
 						<a ng-if="contributor.github" href="https://github.com/{{contributor.github}}">
 							<img src="/images/github.svg" height="14" width="14"> {{contributor.github}}
 						</a>
