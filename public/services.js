@@ -101,9 +101,9 @@
               callback.apply(socket, args);
             }
           });
-        })
+        });
       },
-      removeAllListeners: function(eventName, callback) {
+      removeAllListeners: function(eventName, callback) { // Does not seem to work
         socket.removeAllListeners(eventName, function() {
           var args = arguments;
           $rootScope.$apply(function() {

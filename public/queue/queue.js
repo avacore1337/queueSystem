@@ -39,7 +39,11 @@
       $http.get('/API/queue/' + $routeParams.queue)
       .success(function(response) {
         $scope.users = response.queue;
-        $scope.bookedUsers = response.bookings;
+        //$scope.bookedUsers = response.bookings;
+        $scope.bookedUsers = [{name: "Anton", place: "Home", comment: "Hello World", time: "15:30"},
+        {name: "Anton", place: "Home", comment: "Hello World", time: "15:30"},
+        {name: "Anton", place: "Home", comment: "Hello World", time: "15:30"},
+        {name: "Anton", place: "Home", comment: "Hello World", time: "15:30"}];
         $scope.locked = response.locked;
         $scope.hibernating = response.hibernating;
         for (var i = 0; i < $scope.users.length; i++) {
