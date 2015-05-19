@@ -1,5 +1,5 @@
 describe('Basic Queue Functionality:', function() {
-var name = 'Edvard';
+var name = 'emickos';
 var location = 'Red';
 var student = 'student';
 var ta = 'Admin';
@@ -15,6 +15,7 @@ var ta = 'Admin';
     element(by.id('queueOptionsBtn')).click();
     element(by.id('queuePurgeQueueBtn')).click();
     acceptDialogue();
+    browser.sleep(1000);
   });
 
 
@@ -28,7 +29,7 @@ var ta = 'Admin';
       }
     });
   element(by.id('loginInputField')).sendKeys(userName);
-  element(by.id('loginUserRadio')).click();
+  //element(by.id('loginUserRadio')).click();
   element(by.id('loginOKBtn')).click();
  };
 
@@ -41,21 +42,26 @@ function adminLogIn(userName){
       }
     });
   element(by.id('loginInputField')).sendKeys(userName);
-  element(by.id('loginAdminRadio')).click();
+  //element(by.id('loginAdminRadio')).click();
   element(by.id('loginOKBtn')).click();
  };
 
 
 function closeMOTD(){
-  browser.sleep(100);
-  browser.switchTo().alert().then(
-      function(alert) {  return alert.dismiss(); },
-      function(err) { }
-      );
+  // browser.sleep(100);
+  // browser.switchTo().alert().then(
+  //     function(alert) {  return alert.dismiss(); },
+  //     function(err) { }
+  //     );
+    var plot0 = element(by.css('body > div.modal.fade.ng-isolate-scope.in > div > div'));
+    browser.actions()
+      .mouseMove({x: 400, y: 0}) // 400px to the right of current location
+      .click()
+      .perform();
 };
 
 function acceptDialogue(){
-  //browser.sleep(100);
+  browser.sleep(1000);
   //browser.switchTo().alert().then(
   //    function(alert) {  return alert.accept(); },
   //   function(err) { }
