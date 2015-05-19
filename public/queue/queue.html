@@ -140,7 +140,7 @@
               <td><span data-livestamp="{{user.time}}"></span></td>
             </tr>
             <tr></tr> <!-- Hack-solution -->
-            <tr ng-repeat-end class="text-center" ng-show="accessLevel && user.optionsActivated" ng-click="changeVisibility(user.name)">
+            <tr ng-repeat-end class="text-center" ng-show="accessLevel && user.optionsActivated" ng-dblclick="changeVisibilityDbl(user.name)">
               <td colspan="100%;">
                 <div title="remove user" class="col-xs-2">
                   <button class="red clickable frame center-content expand" ng-click="removeUser(user.name)" id="queueRemoveUser{{user.name}}Btn">
@@ -236,7 +236,7 @@
             <li>
               <button class="blue clickable center-content frame expand" ng-show="accessLevel" ng-click="broadcastTA()" id="queueBroadcastToTasBtn">
                 <span class="glyphicon glyphicon-bullhorn"></span>&nbsp;
-                Broadcast to TAs
+                Broadcast faculty
               </button>
             </li>
             <li>
