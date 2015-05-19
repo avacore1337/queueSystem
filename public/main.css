@@ -64,24 +64,21 @@ span.text-red
 {
   color: red;
 }
-td.text-red.clickable:hover,
-h2.text-red.clickable:hover,
-h4.text-red.clickable:hover,
 span.text-red.clickable:hover
 {
   color: #BF0000;
   cursor: pointer;
 }
-div.buffer
+.buffer
 {
   margin-bottom: 5%;
 }
-button.center-content
+.center-content
 {
   text-align: center;
   padding: 5%;
 }
-div.main-body
+.main-body
 {
   position: absolute;
   top: 5em;
@@ -116,11 +113,11 @@ table.table-striped > tbody > tr:nth-child(even).pulse > td{
   100% {background: #57DE57;}
 }
 
-div.left-divider
+.left-divider
 {
   border-left: 1px solid rgb(180, 180, 180);
 }
-button.expand
+.expand
 {
   width:100%;
 }
@@ -179,14 +176,14 @@ table.table-striped > tbody > tr.light-blue-background > td
 {
    background-color: #C5E7FF;
 }
-div.panel
+.panel
 {
   font-size: 1.2em;
   background-color: #F2F2F2;
   padding: 2%;
   border: 1px solid #E0E0E0;
 }
-input.search
+.search
 {
   background: url(images/magnifying-glass.png) no-repeat;
   background-position:right center
