@@ -253,6 +253,13 @@ var statisticSchema = new Schema({
 
 statisticSchema.index({startTime: 1});
 
+// NO IDEA
+statisticSchema.methods.userLeaves = function () {
+  this.leftQueue = true;
+  this.save();
+};
+
+
 //=========================================
 // The schemas that will be used in "index.js"
 

@@ -93,13 +93,20 @@ function getAverageQueueTime(queueName, start, end) {
   var totalTime = 0;
   var now = Date.now();
 
+/* FIXA SÅ ATT JAG KAN LÄSA AV FOLK SOM INTE STÅR I KÖN */
   for (var i = queue.length - 1; i >= 0; i--) {
     var user = queue[i];
     if (user.startTime >= start && user.startTime < end) {
       var d = new Date(user.startTime);
       console.log("User " + user.name + " started at " + d);
 
-      totalTime += now - user.startTime;
+      if (user.leftQueue) {
+        totalTime += user.queueLength;
+      } else if (now > end) {
+        totalTime += end - user.startTime;
+      } else {
+        totalTime += now - user.startTime;
+      }
       counter++;
     }
   };
@@ -123,6 +130,8 @@ function numbersOfPeopleLeftQueue(queueName, start, end) {
   for (var i = statisticsList.length - 1; i >= 0; i--) {
     var statistic = statisticsList[i];
 
+    console.log(statistic);
+
     if (statistic.queue === queueName && statistic.startTime >= start &&
       statistic.startTime < end &&
       statistic.leftQueue &&
@@ -130,6 +139,8 @@ function numbersOfPeopleLeftQueue(queueName, start, end) {
       counter++;
     }
   };
+
+/**/ console.log(statisticsList.length);
 
   return counter;
 }
@@ -152,16 +163,16 @@ io.on('connection', function(socket) {
 
   // user joins queue
   socket.on('join', function(req) {
-    var queue = req.queue;
+    var queueName = req.queue;
     var user = req.user;
-    console.log('a user joined to ' + queue);
-    io.to(queue).emit('join', user);
+    console.log('a user joined to ' + queueName);
+    io.to(queueName).emit('join', user);
     io.to("lobby").emit('lobbyjoin', {
-      queueName: queue,
+      queueName: queueName,
       username: user.name
     });
 
-    var queue = queueSystem.findQueue(queue);
+    var queue = queueSystem.findQueue(queueName);
     var newUser = new User({
       name: user.name,
       place: user.place,
@@ -171,10 +182,11 @@ io.on('connection', function(socket) {
 
     var newStatistic = new Statistic({
       name: newUser.name,
-      queue: queue,
+      queue: queueName,
       startTime: newUser.startTime,
       action: ''
     });
+
     statisticsList.push(newStatistic);
     newStatistic.save();
   });
@@ -313,32 +325,8 @@ io.on('connection', function(socket) {
     console.log("Validerande: " + JSON.stringify(socket.handshake.session.user));
 
     var queue = queueSystem.findQueue(queueName);
-    queue.removeUser(user.name);
 
-    console.log(user.name + ' just left the compound');
-
-    for (var i = statisticsList.length - 1; i >= 0; i--) {
-      var statistic = statisticsList[i];
-      if (statistic.name === user.name) {
-        console.log('Pounding: ' + statistic);
-
-        var queueLength = Date.now() - statistic.startTime;
-        var newStatistic = new Statistic({
-          name: statistic.name + '-penis',
-          course: statistic.queueName,
-          startTime: statistic.startTime,
-          action: '',
-          leftQueue: true,
-          queueLength: queueLength
-        });
-        statisticsList.splice(i, 1, newStatistic);
-        newStatistic.save();
-      }
-    };
-
-
-    //  var newUserStatistic = new UserStatistic({student: user.name, queue: queue, action: '?'});
-    //  newUserStatistic.save();
+    userLeavesQueue(queue, user.name);
 
     console.log('a user left ' + queueName);
     io.to(queueName).emit('leave', user);
@@ -347,6 +335,20 @@ io.on('connection', function(socket) {
       username: user.name
     });
   });
+
+  function userLeavesQueue(queue, userName) {
+    queue.removeUser(userName);
+
+    for (var i = statisticsList.length - 1; i >= 0; i--) {
+      var statistic = statisticsList[i];
+      if (statistic.name === userName && !statistic.leftQueue) {
+        var queueLength = Date.now() - statistic.startTime;
+        statistic.userLeaves(queueLength);
+
+        statisticsList.splice(i, 1, statistic);
+      }
+    };
+  }
 
   // admin purges a queue
   socket.on('purge', function(req) {
@@ -367,6 +369,11 @@ io.on('connection', function(socket) {
     }
 
     var queue = queueSystem.findQueue(queueName);
+
+    for (var i = queue.queue.length - 1; i >= 0; i--) {
+      userLeavesQueue(queue, queue.queue[i].name);
+    };
+
     queue.purgeQueue();
     queue.queue = [];
 
