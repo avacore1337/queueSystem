@@ -163,7 +163,7 @@ io.on('connection', function(socket) {
 
   // user joins queue
   socket.on('join', function(req) {
-    var queueName = req.queue;
+    var queueName = req.queueName;
     var user = req.user;
     console.log('a user joined to ' + queueName);
     io.to(queueName).emit('join', user);
@@ -196,7 +196,7 @@ io.on('connection', function(socket) {
   socket.on('badLocation', function(req) {
     var username = req.session.user.name;
     var name = req.name;
-    var queueName = req.queue;
+    var queueName = req.queueName;
 
     // teacher/assistant-validation
     if (!(validate(username, "teacher", queueName) || validate(username, "assistant", queueName))) {
@@ -211,21 +211,21 @@ io.on('connection', function(socket) {
 
   // user gets updated
   socket.on('update', function(req) {
-    var queue = req.queue;
+    var queueName = req.queueName;
     var user = req.user;
 
     console.log(JSON.stringify(user)); // check which uses is given --- need the one doing the action and the one who is "actioned"
 
-    console.log('a was updated in ' + queue);
-    io.to(queue).emit('update', user);
+    console.log('a was updated in ' + queueName);
+    io.to(queueName).emit('update', user);
 
-    var queue = queueSystem.findQueue(queue);
+    var queue = queueSystem.findQueue(queueName);
     queue.updateUser(user.name, user);
   });
 
   // admin helps a user (marked in the queue)
   socket.on('help', function(req) {
-    var queueName = req.queue;
+    var queueName = req.queueName;
     var name = req.name;
     var username = req.helper;
 
@@ -245,7 +245,7 @@ io.on('connection', function(socket) {
 
   // teacher/assistant messages a user
   socket.on('messageUser', function(req) {
-    var queue = req.queue;
+    var queue = req.queueName;
     var name = req.name;
     var message = req.message;
     var sender = req.sender;
@@ -259,7 +259,7 @@ io.on('connection', function(socket) {
 
   // teacher/assistant emits to all users (teacher/assistant included)
   socket.on('broadcast', function(req) {
-    var queueName = req.queue;
+    var queueName = req.queueName;
     var message = req.message;
     var username = req.sender;
 
@@ -318,7 +318,27 @@ io.on('connection', function(socket) {
 
   // user leaves queue
   socket.on('leave', function(req) {
-    var queueName = req.queue;
+    var queueName = req.queueName;
+    var user = req.user;
+
+    console.log(JSON.stringify(user)); // check which uses is given --- need the one doing the action and the one who is "actioned"
+    console.log("Validerande: " + JSON.stringify(socket.handshake.session.user));
+
+    var queue = queueSystem.findQueue(queueName);
+
+    userLeavesQueue(queue, user.name);
+
+    console.log('a user left ' + queueName);
+    io.to(queueName).emit('leave', user);
+    io.to("lobby").emit('lobbyleave', {
+      queueName: queueName,
+      username: user.name
+    });
+  });
+
+  // user being kicked from queue
+  socket.on('kick', function(req) {
+    var queueName = req.queueName;
     var user = req.user;
 
     console.log(JSON.stringify(user)); // check which uses is given --- need the one doing the action and the one who is "actioned"
@@ -355,7 +375,7 @@ io.on('connection', function(socket) {
     console.log("called purge:");
     console.log(socket.handshake.session.user);
 
-    var queueName = req.queue;
+    var queueName = req.queueName;
     var username = socket.handshake.session.user.name;
     // socket.handshake.session.user = "troll";
 
@@ -387,7 +407,7 @@ io.on('connection', function(socket) {
 
   // admin locks a queue
   socket.on('lock', function(req) {
-    var queueName = req.queue;
+    var queueName = req.queueName;
     var username = socket.handshake.session.user.name;
 
     // admin/teacher-validation
@@ -402,7 +422,7 @@ io.on('connection', function(socket) {
 
   // admin unlocks a queue
   socket.on('unlock', function(req) {
-    var queueName = req.queue;
+    var queueName = req.queueName;
     var username = socket.handshake.session.user.name;
 
     // admin/teacher-validation
@@ -681,7 +701,7 @@ io.on('connection', function(socket) {
   //
   socket.on('flag', function(req) {
     var username = req.name;
-    var queueName = req.queue;
+    var queueName = req.queueName;
     var sender = req.sender;
     var message = req.message;
 
