@@ -46,10 +46,10 @@ div.text-light-gray
   color: #BEBEBE;
 }
 table.table-striped.booked > tbody > tr:nth-child(odd) > td{
-   background-color: #4FF07F;
+ background-color: #4FF07F;
 }
 table.table-striped.booked > tbody > tr:nth-child(even) > td{
-   background-color: #47FF70;
+ background-color: #47FF70;
 }
 button.text-white,
 span.text-white,
@@ -133,17 +133,17 @@ button:focus
   width: 100%;
 }
 .navbar-brand-centered {
-    position: absolute;
-    left: 50%;
-    display: block;
-    width: 160px;
-    text-align: center;
-    background-color: transparent;
+  position: absolute;
+  left: 50%;
+  display: block;
+  width: 160px;
+  text-align: center;
+  background-color: transparent;
 }
 .navbar > .container .navbar-brand-centered, 
 .navbar > .container-fluid .navbar-brand-centered
 {
-    margin-left: -80px;
+  margin-left: -80px;
 }
 .navbar
 {
@@ -151,7 +151,7 @@ button:focus
 }
 .navbar-default .navbar-nav > li:not(.active) > a:not(.unresponsive):hover
 {
-    background-color: #0E0E0E;
+  background-color: #0E0E0E;
 }
 .navbar-default .navbar-nav > .active > a,
 .navbar-default .navbar-nav > .active > a:focus
@@ -165,16 +165,16 @@ button:focus
 }
 .nav.navbar-nav.navbar-right > li > .unresponsive:hover
 {
-    color: #777777;
-    cursor: default;
+  color: #777777;
+  cursor: default;
 }
 table.table-striped > tbody > tr.light-blue-background > td
 {
-   background-color: #C5E7FF;
+ background-color: #C5E7FF;
 }
 table.table-striped > tbody > tr.light-blue-background > td
 {
-   background-color: #C5E7FF;
+ background-color: #C5E7FF;
 }
 .panel
 {
@@ -215,4 +215,41 @@ img
 {
   max-width: 100%;
   max-height: 100%;
+}
+@media (max-width: 1000px) {
+  .navbar-header {
+    float: none;
+  }
+  .navbar-toggle {
+    display: block;
+  }
+  .navbar-collapse {
+    border-top: 1px solid transparent;
+    box-shadow: inset 0 1px 0 rgba(255,255,255,0.1);
+  }
+  .navbar-collapse.collapse {
+    display: none!important;
+  }
+  .navbar-nav {
+    float: none!important;
+    margin: 7.5px -15px;
+  }
+  .navbar-nav>li {
+    float: none;
+  }
+  .navbar-nav>li>a {
+    padding-top: 10px;
+    padding-bottom: 10px;
+  }
+  .navbar-text {
+    float: none;
+    margin: 15px 0;
+  }
+  /* since 3.1.0 */
+  .navbar-collapse.collapse.in { 
+    display: block!important;
+  }
+  .collapsing {
+    overflow: hidden!important;
+  }
 }

@@ -203,20 +203,19 @@ queueControllers.controller('statisticsController', ['$scope', '$http', 'WebSock
     // Queue selection
     $scope.queues = [];
     $http.get('/API/queueList').success(function(response) {
-      var temp = response.sort(function(a, b) {
-        return a.name.localeCompare(b.name);
-      });
+      var temp = response.sort(function(a, b) {return a.name.localeCompare(b.name);});
       for (var index in temp) {
         if (user.isAdmin() || user.isTeacher(temp[index].name)) {
-          $scope.queues.push(temp[index]);
+          $scope.queues.push(temp[index].name);
         }
       }
     });
 
     $scope.selectedQueue = undefined;
     $scope.selectQueue = function(queue) {
+      console.log("Selected queue : " + queue);
       $scope.selectedQueue = queue;
-      document.getElementById('dropdown').innerHTML = queue.name;
+      document.getElementById('dropdown').innerHTML = queue;
       console.log("selected queue = " + $scope.selectedQueue);
     };
 
@@ -248,13 +247,13 @@ queueControllers.controller('statisticsController', ['$scope', '$http', 'WebSock
     $scope.getStatistics = function() {
       console.log($scope.selectedQueue);
       socket.emit('getAverageQueueTime', {
-        queueName: $scope.selectedQueue.name,
+        queueName: $scope.selectedQueue,
         start: $scope.fromTime.getTime(),
         end: $scope.toTime.getTime()
       });
       console.log("Requested averageQueueTime");
       socket.emit('numbersOfPeopleLeftQueue', {
-        queueName: $scope.selectedQueue.name,
+        queueName: $scope.selectedQueue,
         start: $scope.fromTime.getTime(),
         end: $scope.toTime.getTime()
       });
