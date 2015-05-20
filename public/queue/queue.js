@@ -559,7 +559,7 @@ console.log('testing');
           });
         }
       }, function () {});
-    };    
+    };
 
     // When an admin wants to see the admin options
     $scope.changeVisibility = function(name){

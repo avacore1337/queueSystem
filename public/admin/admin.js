@@ -31,14 +31,12 @@
 
       $scope.queues = [];
       $http.get('/API/queueList').success(function(response){
-        var temp = response.sort(function(a, b) {return a.name.localeCompare(b.name);});
-        console.log(JSON.stringify(temp));
-        for (var i in temp) {
-          if(user.isAdmin() || user.isTeacher(temp[i].name)){
-            $http.get('/API/queue/' + temp[i].name).success(function(response){ 
-              $scope.queues.push(response);
+        for (var i in response) {
+          if(user.isAdmin() || user.isTeacher(response[i].name)){
+            $http.get('/API/queue/' + response[i].name).success(function(resp){ 
+              $scope.queues.push(resp);
+              $scope.queues = $scope.queues.sort(function(a, b) {return a.name.localeCompare(b.name);});
             });
-            
           }
         }
       });
