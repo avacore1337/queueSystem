@@ -286,22 +286,22 @@ console.log('testing');
       }
     };
 
-    $scope.removeUser = function(name){
-      var tempPlace = '';
-      var tempComment = '';
-      for(var user in $scope.users){
-        if(name == user.name){
-          tempPlace = user.place;
-          tempComment = user.comment;
-          break;
-        }
-      }
-      console.log("tempPlace = " + tempPlace + " :  tempPlace = " + tempComment);
+    // Leave the queue
+    $scope.leave = function(){
       socket.emit('leave', {
         queue:$routeParams.queue,
-        user:{name:name, place:tempPlace, comment:tempComment}
+        user:{name:user.getName()}
       });
-      console.log("Called removeUser");
+      console.log("Called leave");
+    };
+
+    // Kick a user from the queue
+    $scope.kick = function(name){
+      socket.emit('kick', {
+        queue:$routeParams.queue,
+        user:{name:name}
+      });
+      console.log("Called kick");
     };
 
     // This function should remove every person in the queue
