@@ -78,23 +78,26 @@ function validateSuper(name) {
 }
 
 function validateTeacher(username, queueName) {
+  var valid = false;
   findQueue(queueName).forTeacher(function(teacher) {
-    if (teacher === username) {
+    console.log("teacher: " + teacher + " vs " + username);
+    if (teacher.name === username) {
       console.log(username + ' is a valid teacher'); // temporary for error-solving
-      return true;
-    }
+      valid = true;
+     }
   });
-  return false;
+  return valid;
 }
 
 function validateAssistant(username, queueName) {
+  var valid = false;
   findQueue(queueName).forAssistant(function(assistant) {
-    if (assistant === username) {
+    if (assistant.name === username) {
       console.log(username + ' is a valid assistant'); // temporary for error-solving
-      return true;
+      valid = true;
     }
   });
-  return false;
+  return valid;
 }
 
 function setup() {

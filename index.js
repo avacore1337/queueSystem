@@ -106,7 +106,13 @@ function getAverageQueueTime(queueName, start, end) {
 
   console.log("Counted: " + counter);
   console.log("Total time: " + totalTime);
+
+  if (counter == 0) {
+    counter = 1;
+  }
+
   console.log("Average: " + totalTime / counter)
+
   return totalTime / counter;
 }
 
@@ -309,13 +315,17 @@ io.on('connection', function(socket) {
     var queue = queueSystem.findQueue(queueName);
     queue.removeUser(user.name);
 
+    console.log(user.name + ' just left the compound');
+
     for (var i = statisticsList.length - 1; i >= 0; i--) {
       var statistic = statisticsList[i];
       if (statistic.name === user.name) {
+        console.log('Pounding: ' + statistic);
+
         var queueLength = Date.now() - statistic.startTime;
         var newStatistic = new Statistic({
-          name: statistic.name,
-          queue: statistic.queue,
+          name: statistic.name + '-penis',
+          course: statistic.queueName,
           startTime: statistic.startTime,
           action: '',
           leftQueue: true,
@@ -346,6 +356,8 @@ io.on('connection', function(socket) {
     var queueName = req.queue;
     var username = socket.handshake.session.user.name;
     // socket.handshake.session.user = "troll";
+
+    console.log(validate(username, "teacher", queueName));
 
     // admin/teacher/assistant-validation
     if (!(validate(username, "super", "queue") || validate(username, "teacher", queueName) || validate(username, "assistant", queueName))) {
