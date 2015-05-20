@@ -238,10 +238,29 @@ queueControllers.controller('statisticsController', ['$scope', '$http', 'WebSock
     $scope.fromTime = new Date();
     $scope.fromTime.setHours(0);
     $scope.fromTime.setMinutes(0);
+    $scope.fromTime.setSeconds(0);
     $scope.toTime = new Date();
 
     $scope.hstep = 1;
     $scope.mstep = 1;
+
+    $scope.$watch(function() {
+      return $scope.toTime;
+    }, function(newValue, oldValue) {
+      if(newValue < $scope.fromTime){
+        $scope.toTime = $scope.fromTime;
+      }
+      console.log("Detected update to $scope.toTime (oldValue = " + oldValue + ", newValue = " + newValue + ")");
+    });
+
+    $scope.$watch(function() {
+      return $scope.fromTime;
+    }, function(newValue, oldValue) {
+      if(newValue > $scope.toTime){
+        $scope.fromTime = $scope.toTime;
+      }
+      console.log("Detected update to $scope.fromTime (oldValue = " + oldValue + ", newValue = " + newValue + ")");
+    });
 
     // Statistics
     $scope.getStatistics = function() {
@@ -262,7 +281,7 @@ queueControllers.controller('statisticsController', ['$scope', '$http', 'WebSock
 
     $scope.accessLevel = function() {
       return user.accessLevel();
-    }
+    };
 
   }
 ]);
