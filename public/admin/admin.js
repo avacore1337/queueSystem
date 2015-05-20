@@ -38,6 +38,7 @@
             $http.get('/API/queue/' + temp[i].name).success(function(response){ 
               $scope.queues.push(response);
             });
+            
           }
         }
       });
