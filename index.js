@@ -194,7 +194,7 @@ io.on('connection', function(socket) {
   // user tries to join a queue with a "bad location"
   //  - do nothing in backend?
   socket.on('badLocation', function(req) {
-    var username = req.session.user.name;
+    var username = socket.handshake.session.user.name;
     var name = req.name;
     var queueName = req.queueName;
 
