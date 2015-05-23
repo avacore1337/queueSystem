@@ -1,21 +1,19 @@
 describe('Basic Queue Functionality:', function() {
 var name = 'emickos';
 var location = 'Red';
-var student = 'student';
-var ta = 'Admin';
+var ta = 'pernyb';
 
  beforeEach(function() {
-    browser.get('http://localhost:8080/#/list');
     browser.manage().deleteAllCookies();
+    browser.get('http://localhost:8080/#/list');
     browser.manage().window().maximize();
     browser.waitForAngular();
-    adminLogIn('delete');
+    userLogIn(ta);
     element(by.id('listdbasBtn')).click();
     closeMOTD();
     element(by.id('queueOptionsBtn')).click();
     element(by.id('queuePurgeQueueBtn')).click();
     acceptDialogue();
-    browser.sleep(1000);
   });
 
 
@@ -23,13 +21,13 @@ var ta = 'Admin';
  function userLogIn(userName){
   element(by.id('indexLogInBtn')).isDisplayed().then(function(isVisible) {
       if (isVisible){  
-        element(by.id('indexLogInBtn')).click(); 
+        element(by.id('indexLogInBtn')).click();
       } else {  
-        element(by.id('indexLogOutBtn')).click();  
+        element(by.id('indexLogOutBtn')).click();
+        element(by.id('indexLogInBtn')).click();  
       }
     });
   element(by.id('loginInputField')).sendKeys(userName);
-  //element(by.id('loginUserRadio')).click();
   element(by.id('loginOKBtn')).click();
  };
 
@@ -38,7 +36,8 @@ function adminLogIn(userName){
       if (isVisible){  
         element(by.id('indexLogInBtn')).click(); 
       } else {  
-        element(by.id('indexLogOutBtn')).click();  
+        element(by.id('indexLogOutBtn')).click();
+        element(by.id('indexLogInBtn')).click();  
       }
     });
   element(by.id('loginInputField')).sendKeys(userName);
@@ -61,7 +60,6 @@ function closeMOTD(){
 };
 
 function acceptDialogue(){
-  browser.sleep(1000);
   //browser.switchTo().alert().then(
   //    function(alert) {  return alert.accept(); },
   //   function(err) { }
@@ -88,39 +86,39 @@ function newBrowser(){
  });
 
 it('he TA class is able to, by interaction, Purge the queue of all Users', function(){
-  userLogIn(name);
+  userLogIn('emickos');
   userJoinQueue('dbas');
   newBrowser();
-  adminLogIn('TA');
+  adminLogIn(ta);
   element(by.id('listdbasBtn')).click();
   closeMOTD();
   element(by.id('queueOptionsBtn')).click();
   element(by.id('queuePurgeQueueBtn')).click();
   acceptDialogue();
-  expect(element(by.id('queueEdvardBtn')).isPresent()).toBeFalsy();
+  expect(element(by.id('queueemickosBtn')).isPresent()).toBeFalsy();
   newBrowser();
   userLogIn(name);
   userJoinQueue('dbas');
-  expect(element(by.id('queueEdvardBtn')).isPresent()).toBeTruthy();
+  expect(element(by.id('queueemickosBtn')).isPresent()).toBeTruthy();
 });
 
 it('a User should be able to log on', function() {
     userLogIn(name);
     closeMOTD();
-    expect(element(by.id('indexNameTextField')).getText()).toEqual('Edvard');
+    expect(element(by.id('indexNameTextField')).getText()).toEqual(name);
   });
 
 it('a User should be able to choose a queue and join a queue.', function() {
     userLogIn(name);
     userJoinQueue('dbas');
-    expect(element(by.id('queueEdvardBtn')).isPresent()).toBeTruthy();
+    expect(element(by.id('queue'+name+'Btn')).isPresent()).toBeTruthy();
   });
 
 it('a User should be able to leave a joined queue.', function() {
     userLogIn(name);
     userJoinQueue('dbas');
     element(by.id('queueLeaveQueueBtn')).click();
-    expect(element(by.id('queueEdvardBtn')).isPresent()).toBeFalsy();
+    expect(element(by.id('queue'+name+'Btn')).isPresent()).toBeFalsy();
   });
 
 it('Joining a queue with a booked time slot', function(){
@@ -134,13 +132,13 @@ it('The Student class will have the possibility the change their own data in the
     $('#queueLocationInputField').sendKeys(location);
     $('#queueCommentInputField').sendKeys('comment1');
     $('#queueJoinQueueBtn').click();
-    expect(element(by.id('queueEdvardBtn')).getText()).toMatch('1 Edvard Red comment1');
+    expect(element(by.id('queueemickosBtn')).getText()).toMatch('1 emickos Red comment1');
     $('#queueCommentInputField').clear();
     $('#queueLocationInputField').clear();
     $('#queueLocationInputField').sendKeys('Yellow');
     $('#queueCommentInputField').sendKeys('comment2');
     $('#queueUpdateInformationBtn').click()
-    expect(element(by.id('queueEdvardBtn')).getText()).toMatch('1 Edvard Yellow comment2');
+    expect(element(by.id('queue'+name+'Btn')).getText()).toMatch('1 emickos Yellow comment2');
   });
 
 it('Broadcasting in a Queue', function(){
@@ -151,7 +149,7 @@ it('The TA class is able to, by interaction, ‘Kick’ a User from the Queue', 
   userLogIn(name);
   userJoinQueue('dbas');
   newBrowser();
-  adminLogIn('TA');
+  adminLogIn(ta);
   $('#listdbasBtn').click();
   closeMOTD();
   browser.actions().doubleClick($('#queue'+name+'Btn')).perform();
@@ -160,7 +158,7 @@ it('The TA class is able to, by interaction, ‘Kick’ a User from the Queue', 
   });
 
 it('TA is able to use the interaction ‘Lock’ or ‘Unlock’ with a queue', function(){  
- adminLogIn('TA');
+ adminLogIn(ta);
  $('#listdbasBtn').click();
  element(by.id('queueOptionsBtn')).click();
  $('#queueLockQueueBtn').click();
@@ -169,7 +167,7 @@ it('TA is able to use the interaction ‘Lock’ or ‘Unlock’ with a queue', 
  $('#listdbasBtn').click();
  expect(browser.getCurrentUrl()).toMatch('http://localhost:8080/#/list');
  newBrowser();
- adminLogIn('TA');
+ adminLogIn(ta);
  $('#listdbasBtn').click();
  element(by.id('queueOptionsBtn')).click();
  $('#queueUnlockQueueBtn').click();
@@ -188,14 +186,14 @@ it('The users of class Teacher have the system rights to change other users user
 });
 
 it('The Teacher class is able to Hide or Reveal the Queue. Hiding the Queue will remove the Queue from the list of Queues for Users of the Student class', function(){
- adminLogIn('TA');
+ adminLogIn(ta);
  $('#listdbasBtn').click();
  $('#queueHibernateQueueBtn').click();
  newBrowser();
  userLogIn(name);
  expect($('#listdbasBtn').isDisplayed()).toBeFalsy();
  newBrowser();
- adminLogIn('TA');
+ adminLogIn(ta);
  $('#listdbasBtn').click();
  $('#queueWakeupQueueBtn').click();
  newBrowser();
