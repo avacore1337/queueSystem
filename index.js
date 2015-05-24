@@ -264,7 +264,8 @@ io.on('connection', function(socket) {
     var username = req.sender;
 
     // teacher/assistant-validation
-    if (!(validate(username, "super", "queue") || validate(username, "teacher", queueName) || validate(username, "assistant", queueName))) {
+    console.log("validation is :" + validate(username, "assistant", queueName));
+    if (!(validate(username, "assistant", queueName))) {
       console.log("validation for emit failed");
       //res.end();
       return;

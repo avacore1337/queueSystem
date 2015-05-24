@@ -17,7 +17,7 @@ var statisticsList = [];
 
 function forQueue (fn) {
   queueList.forEach(fn);
-};
+}
 
 // return the queue with the name "name"
 function findQueue(name) {
@@ -36,7 +36,7 @@ function removeQueue(name){
       queue.remove();
       break;
     }
-  };
+  }
 }
 
 function addQueue (queueName) {
@@ -60,32 +60,39 @@ function validate(name, type, queue) {
   } else if (type === "teacher") {
     return validateTeacher(name, queue);
   } else if (type === "assistant") {
-    return validateAssistant(name, queue);
-  };
+    var tmp = validateAssistant(name, queue) || validateTeacher(name,queue);
+    console.log("assistant " + validateAssistant(name, queue));
+    console.log("teacher " + validateTeacher(name, queue));
+    console.log("total " + tmp);
+    return tmp;
+  }
 
   console.log("that privilege-type is not defined"); // temporary for error-solving
   return false;
 }
 
 function validateSuper(name) {
+  var valid = false;
   for (var i = 0; i < adminList.length; i++) {
-    console.log("admin: " + adminList[i].name + " vs " + name);
+    // console.log("admin: " + adminList[i].name + " vs " + name);
     if (adminList[i].name === name) {
       console.log(name + ' is a valid super-admin'); // temporary for error-solving
-      return true;
+      valid = true;
     }
   }
+  return valid;
 }
 
 function validateTeacher(username, queueName) {
   var valid = false;
   findQueue(queueName).forTeacher(function(teacher) {
-    console.log("teacher: " + teacher + " vs " + username);
+    // console.log("teacher: " + teacher + " vs " + username);
     if (teacher.name === username) {
       console.log(username + ' is a valid teacher'); // temporary for error-solving
       valid = true;
      }
   });
+  console.log("in teacher, valid is: " + valid); // temporary for error-solving
   return valid;
 }
 
