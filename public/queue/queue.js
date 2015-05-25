@@ -76,20 +76,20 @@
         }
       });
 
-$scope.$on("$destroy", function(){
-  console.log("Bye bye!");
-  socket.removeListener('join', socketJoin);
-  socket.removeListener('leave', socketLeave);
-  socket.removeListener('update', socketUpdate);
-  socket.removeListener('purge', socketPurge);
-  socket.removeListener('msg', socketMsg);
-  socket.removeListener('flag', socketFlag);
-  socket.removeListener('help', socketHelp);
-  socket.removeListener('lock', socketLock);
-  socket.removeListener('unlock', socketUnlock);
-  socket.removeListener('badLocation', socketBadLocation);
-  socket.removeListener('addMOTD', socketaddMOTD);
-});
+// $scope.$on("$destroy", function(){
+//   console.log("Bye bye!");
+//   socket.removeListener('join', socketJoin);
+//   socket.removeListener('leave', socketLeave);
+//   socket.removeListener('update', socketUpdate);
+//   socket.removeListener('purge', socketPurge);
+//   socket.removeListener('msg', socketMsg);
+//   socket.removeListener('flag', socketFlag);
+//   socket.removeListener('help', socketHelp);
+//   socket.removeListener('lock', socketLock);
+//   socket.removeListener('unlock', socketUnlock);
+//   socket.removeListener('badLocation', socketBadLocation);
+//   socket.removeListener('addMOTD', socketaddMOTD);
+// });
 
 socket.emit('stopListening', 'lobby');
 socket.emit('listen', $scope.queue);

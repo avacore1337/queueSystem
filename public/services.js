@@ -86,6 +86,7 @@
     var socket = io.connect();
     return {
       on: function(eventName, callback) {
+        socket.removeAllListeners(eventName);
         socket.on(eventName, function() {
           var args = arguments;
           $rootScope.$apply(function() {
@@ -103,6 +104,7 @@
           });
         });
       },
+      // removeAllListeners: function(eventName, callback) { // Does not seem to work
       removeAllListeners: function(eventName, callback) { // Does not seem to work
         socket.removeAllListeners(eventName, function() {
           var args = arguments;
