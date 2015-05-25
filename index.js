@@ -54,7 +54,6 @@ var Statistic = database.statistic;
 //---
 
 var queueSystem = require('./model/queueSystem.js');
-var adminList = queueSystem.adminList;
 var statisticsList = queueSystem.statisticsList;
 var validate = queueSystem.validate;
 var validateSuper = queueSystem.validateSuper;
@@ -542,20 +541,12 @@ io.on('connection', function(socket) {
       //res.end();
       return;
     }
-
     var username = req.username;
-    var adminName = username;
+    queueSystem.addAdmin(username,username);
 
-    var newAdmin = new Admin({
-      name: adminName,
-      username: username
-    });
-    adminList.push(newAdmin);
-    newAdmin.save();
-
-    console.log(adminName + ' is a new admin!');
+    console.log(username + ' is a new admin!');
     io.to('admin').emit('addAdmin', {
-      name: adminName,
+      name: username,
       username: username,
       addedBy: ''
     });
@@ -638,15 +629,7 @@ io.on('connection', function(socket) {
 
     var username = req.username;
 
-    for (var i = adminList.length - 1; i >= 0; i--) {
-      var admin = adminList[i];
-      if (admin.username === username) {
-        adminList.splice(i, 1);
-        admin.remove();
-        break;
-      }
-    };
-
+    queueSystem.removeAdmin(username);
     console.log(username + ' is a removed from admin!');
     io.to('admin').emit('removeAdmin', username);
   });

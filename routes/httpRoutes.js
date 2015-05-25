@@ -2,13 +2,8 @@ var express = require('express');
 var router = express.Router();
 var queueSystem = require('../model/queueSystem.js');
 
-var adminList = queueSystem.adminList;
-var statisticsList = queueSystem.statisticsList;
 var statisticsList = queueSystem.statisticsList;
 var validate = queueSystem.validate;
-var validateSuper = queueSystem.validateSuper;
-var validateTeacher = queueSystem.validateTeacher;
-var validateAssistant = queueSystem.validateAssistant;
 // returnerar alla kurser som finns (lista av strängar)
 router.get('/queueList', function(req, res) {
   var retList = [];
@@ -42,7 +37,7 @@ router.get('/queue/:queue', function(req, res) {
 // needs to be restricted
 router.get('/adminList', function(req, res) {
   res.setHeader('Content-Type', 'application/json');
-  res.end(JSON.stringify(adminList));
+  res.end(JSON.stringify(queueSystem.getAdminList()));
 });
 
 // TODO: add a list of admin
@@ -58,7 +53,7 @@ router.get('/userData', function(req, res) {
     var username = req.session.user.name;
     var teacherList = teacherForQueues(username);
     var assistantList = assistantForQueues(username);
-    var admin = validateSuper(username);
+    var admin = validate(username, "super");
 
     //      socket.join("user_" + username); // for exclusive-emits/private messages
 

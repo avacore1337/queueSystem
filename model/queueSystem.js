@@ -1,6 +1,10 @@
 /* jslint node: true */
 "use strict";
 
+/**
+ * A module that contains the main system object!
+ * @module queueSystem
+ */
 
 
 var database = require("./model.js"); // databas stuff
@@ -13,22 +17,67 @@ var Statistic = database.statistic;
 
 var queueList = [];
 var adminList = [];
-var statisticsList = [];
+exports.statisticsList = [];
 
-function forQueue (fn) {
+/**
+ * Wrapper for the array For each for the queueList array.
+ * @param {function} fn - The function to be called for every element in the list.
+ */
+exports.forQueue = function (fn) {
   queueList.forEach(fn);
-}
+};
 
-// return the queue with the name "name"
-function findQueue(name) {
+/**
+ * Adds a superadmin to the system.
+ * @param {String} name - The name of the user.
+ * @param {String} username - The username of the user.
+ */
+exports.addAdmin = function (name, username) {
+  var admin = new Admin({
+    name: name,
+    username: username
+  });
+  adminList.push(admin);
+  admin.save();
+};
+
+/**
+ * Removes a super admin.
+ * @param {String} username - The username of the user.
+ */
+exports.removeAdmin = function (username) {
+  for (var i = adminList.length - 1; i >= 0; i--) {
+    var admin = adminList[i];
+    if (admin.username === username) {
+      adminList.splice(i, 1);
+      admin.remove();
+      break;
+    }
+  };
+};
+
+/** Returns the adminList */
+exports.getAdminList = function () {
+  return adminList;
+};
+
+/**
+ * Return the queue object with the matching name.
+ * @param {String} name - The name of the queue.
+ */
+exports.findQueue = function(name) {
   for (var i = 0; i < queueList.length; i++) {
     if (queueList[i].name === name) {
       return queueList[i];
     }
   }
-}
+};
 
-function removeQueue(name){
+/**
+ * Removes the queue object with the matching name.
+ * @param {String} name - The name of the queue.
+ */
+exports.removeQueue = function(name){
   for (var i = queueList.length - 1; i >= 0; i--) {
     var queue = queueList[i];
     if (queue.name === name) {
@@ -37,44 +86,50 @@ function removeQueue(name){
       break;
     }
   }
-}
+};
 
-function addQueue (queueName) {
+/**
+ * Creates a queue with the given name.
+ * @param {String} name - The name of the queue.
+ */
+exports.addQueue = function (name) {
   var newQueue = new Queue({
-    name: queueName
+    name: name
   });
   queueList.push(newQueue);
   newQueue.save();
 
-  console.log(queueName + ' is getting created as ' + JSON.stringify(newQueue));
+  console.log(name + ' is getting created as ' + JSON.stringify(newQueue));
   return newQueue;
-}
+};
 
-
-
-// validates if a person is the privilege-type given for given queue
-// TODO: make the validation more secure
-function validate(name, type, queue) {
+/**
+ * Validates if a user has the access rights to do the action on the 
+ * access level required for the given course
+ * @param {String} userName - The name of the user.
+ * @param {String} type - The needed access level - "super", "teacher" or "assistant".
+ * @param {String} queueName - The name of the queue.
+ */
+exports.validate = function(userName, type, queueName) {
   if (type === "super") {
-    return validateSuper(name);
+    return validateSuper(userName);
   } else if (type === "teacher") {
-    return validateTeacher(name, queue);
+    return validateTeacher(userName, queueName);
   } else if (type === "assistant") {
-    var tmp = validateAssistant(name, queue) || validateTeacher(name,queue);
-    console.log("assistant " + validateAssistant(name, queue));
-    console.log("teacher " + validateTeacher(name, queue));
-    console.log("total " + tmp);
-    return tmp;
+    return validateAssistant(userName, queueName) || validateTeacher(userName,queueName);
   }
 
   console.log("that privilege-type is not defined"); // temporary for error-solving
   return false;
-}
+};
 
+/**
+ * Validates if a user has the access rights to do super admin level actions.
+ * @param {String} userName - The name of the user.
+ */
 function validateSuper(name) {
   var valid = false;
   for (var i = 0; i < adminList.length; i++) {
-    // console.log("admin: " + adminList[i].name + " vs " + name);
     if (adminList[i].name === name) {
       console.log(name + ' is a valid super-admin'); // temporary for error-solving
       valid = true;
@@ -83,22 +138,32 @@ function validateSuper(name) {
   return valid;
 }
 
+/**
+ * Validates if a user has the access rights to do teacher level actions
+ * on the given queue.
+ * @param {String} userName - The name of the user.
+ * @param {String} queueName - The name of the queue.
+ */
 function validateTeacher(username, queueName) {
   var valid = false;
-  findQueue(queueName).forTeacher(function(teacher) {
-    // console.log("teacher: " + teacher + " vs " + username);
+  exports.findQueue(queueName).forTeacher(function(teacher) {
     if (teacher.name === username) {
       console.log(username + ' is a valid teacher'); // temporary for error-solving
       valid = true;
      }
   });
-  console.log("in teacher, valid is: " + valid); // temporary for error-solving
   return valid;
 }
 
+/**
+ * Validates if a user has the access rights to do teacher assistant level
+ * actions on the given queue.
+ * @param {String} userName - The name of the user.
+ * @param {String} queueName - The name of the queue.
+ */
 function validateAssistant(username, queueName) {
   var valid = false;
-  findQueue(queueName).forAssistant(function(assistant) {
+  exports.findQueue(queueName).forAssistant(function(assistant) {
     if (assistant.name === username) {
       console.log(username + ' is a valid assistant'); // temporary for error-solving
       valid = true;
@@ -107,6 +172,10 @@ function validateAssistant(username, queueName) {
   return valid;
 }
 
+/**
+ * A function that spoofs data to make sure there is something to test the 
+ * system with. Should be commented out in production.
+ */
 function setup() {
   // list of queues to be used
   var tmpList = [
@@ -149,7 +218,7 @@ function setup() {
         startTime: newUser.startTime,
         action: ''
       });
-      statisticsList.push(newStatistic);
+      exports.statisticsList.push(newStatistic);
       newStatistic.save();
 
       //---------------------------------------------------------------------------------------
@@ -183,34 +252,21 @@ function setup() {
   newAdmin.save();
 }
 
-// Read in queues and admins from the database
+/**
+ * Loads all the data from the database at startup. 
+ * Make sure this runs at system start.
+ */
 function readIn() {
   // All the queues
   Queue.find(function(err, queues) {
     queues.forEach(function(queue) {
       queueList.push(queue);
-
-      console.log('Queue: ' + queue.name + ' loaded!'); // temporary for error-solving
+      // to make sure everything loads
+      console.log('Queue: ' + queue.name + ' loaded!');
     });
   });
 }
 
 
-setup(); // temporary method
-//readIn();
-
-
-module.exports = {
-  queueList: queueList,
-  adminList: adminList,
-  statisticsList: statisticsList,
-  findQueue: findQueue,
-  addQueue: addQueue,
-  forQueue: forQueue,
-  removeQueue: removeQueue,
-  validate: validate,
-  validateSuper: validateSuper,
-  validateTeacher: validateTeacher,
-  validateAssistant: validateAssistant
-
-};
+setup(); // Use for seting up the test system
+//readIn(); //use this
