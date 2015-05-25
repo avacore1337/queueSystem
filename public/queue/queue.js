@@ -76,39 +76,21 @@
         }
       });
 
-// $scope.$on("$destroy", function(){
-//   console.log("Bye bye!");
-//   socket.removeListener('join', socketJoin);
-//   socket.removeListener('leave', socketLeave);
-//   socket.removeListener('update', socketUpdate);
-//   socket.removeListener('purge', socketPurge);
-//   socket.removeListener('msg', socketMsg);
-//   socket.removeListener('flag', socketFlag);
-//   socket.removeListener('help', socketHelp);
-//   socket.removeListener('lock', socketLock);
-//   socket.removeListener('unlock', socketUnlock);
-//   socket.removeListener('badLocation', socketBadLocation);
-//   socket.removeListener('addMOTD', socketaddMOTD);
-// });
-
 socket.emit('stopListening', 'lobby');
 socket.emit('listen', $scope.queue);
 
-console.log('testing');
-
     // Listen for the person joining a queue event.
-    function socketJoin(data) {
+    socket.on('join', function (data) {
       console.log("joining");
       if(data.name === $scope.name){
         $scope.enqueued = true;
         title.title = "["  + ($scope.users.length+1) + "] " + $scope.queue + " | Stay A while";
       }
       $scope.users.push({name:data.name, place:data.place, comment:data.comment, time:data.time/1000});
-    }
-    socket.on('join', socketJoin);
+    });
 
     // Listen for the person leaving a queue event.
-    function socketLeave(data) {
+    socket.on('leave', function (data) {
       if(data.name === $scope.name){
         $scope.enqueued = false;
         $scope.comment = '';
@@ -128,11 +110,16 @@ console.log('testing');
           }
         }
       }
-    }
-    socket.on('leave', socketLeave);
+    });
 
     // Listen for the person updateing a queue event.
-    function socketUpdate(data) {
+    socket.on('purge', function socketPurge() {
+      $scope.users = [];
+      $scope.enqueued = false;
+    });
+
+    // Listen for a user chageing their information
+    socket.on('update', function (data) {
       console.log(data);
       for(var i = $scope.users.length - 1; i >= 0; i--) {
         if($scope.users[i].name === data.name) {
@@ -142,18 +129,10 @@ console.log('testing');
         }
       }
       console.log($scope.users);
-    }
-    socket.on('update', socketUpdate);
-
-    // Listen for an admin purging the queue.
-    function socketPurge() {
-      $scope.users = [];
-      $scope.enqueued = false;
-    }
-    socket.on('purge', socketPurge);
+    });
 
     // Listen for a message.
-    function socketMsg(data) {
+    socket.on('msg', function (data) {
       console.log("Received message : " + data);
       var modalInstance = $modal.open({
         templateUrl: 'receiveMessage.html',
@@ -174,11 +153,10 @@ console.log('testing');
           }
         }
       });
-    }
-    socket.on('msg', socketMsg);
+    });
 
     // Listen for a user getting flagged
-    function socketFlag(data) {
+    socket.on('flag', function (data) {
       console.log("Flaggin " + data.name);
       for(var i = $scope.users.length - 1; i >= 0; i--) {
         if($scope.users[i].name === data.name) {
@@ -191,11 +169,10 @@ console.log('testing');
           break;
         }
       }
-    }
-    socket.on('flag', socketFlag);
+    });
 
     // Listen for a person getting help.
-    function socketHelp(data) {
+    socket.on('help', function (data) {
       for(var i = 0; i < $scope.users.length; i++){
         if($scope.users[i].name === data.name){
           $scope.users[i].gettingHelp = true;
@@ -203,29 +180,25 @@ console.log('testing');
           break;
         }
       }
-    }
-    socket.on('help', socketHelp);
+    });
 
     // Listen for a new MOTD.
-    function socketaddMOTD(data) {
+    socket.on('addMOTD', function (data) {
       $scope.MOTD = data;
-    }
-    socket.on('addMOTD', socketaddMOTD);
+    });
 
     // Listen for locking the queue
-    function socketLock(){
+    socket.on('lock', function (){
       $scope.locked = true;
-    }
-    socket.on('lock', socketLock);
+    });
 
     // Listen for unlocking the queue
-    function socketUnlock(){
+    socket.on('unlock', function (){
       $scope.locked = false;
-    }
-    socket.on('unlock', socketUnlock);
+    });
 
     // Listen for a badLocation warning
-    function socketBadLocation(data) {
+    socket.on('badLocation', function (data) {
       console.log("badLocation detected !!!");
       console.log("Sender : " + data.sender);
       if($scope.name === data.name){
@@ -251,8 +224,7 @@ console.log('testing');
       }else{
         console.log("No worries, it wasn't you.");
       }
-    }
-    socket.on('badLocation', socketBadLocation);
+    });
 
     $scope.addUser = function(){
       if(!$scope.locked && !$scope.hibernating){

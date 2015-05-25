@@ -41,35 +41,20 @@
         }
       });
 
-$scope.$on("$destroy", function(){
-  console.log("Bye bye!");
-  socket.removeListener('addAssistant', socketAddAssistant);
-  socket.removeListener('removeAssistant', socketRemoveAssistant);
-  socket.removeListener('addAdmin', socketAddAdmin);
-  socket.removeListener('removeAdmin', socketRemoveAdmin);
-  socket.removeListener('addTeacher', socketAddTeacher);
-  socket.removeListener('removeTeacher', socketRemoveTeacher);
-  socket.removeListener('hibernate', socketHibernate);
-  socket.removeListener('unhibernate', socketUnhibernate);
-  socket.removeListener('addQueue', socketAddQueue);
-  socket.removeListener('removeQueue', socketRemoveQueue);
-});
-
     socket.emit('stopListening', 'lobby');
     socket.emit('listen', 'admin');
 
     // Listen for an assistant being added to a queue.
-    function socketAddAssistant(data) {
+    socket.on('addAssistant', function (data) {
       console.log("adding assistant (from backend) queueName = " + data.queueName + ", name = " + data.name + ", username = " + data.username);
       var queue = getQueue(data.queueName);
       if(queue){
         getQueue(data.queueName).assistant.push({name:data.name, username:data.username});
       }
-    }
-    socket.on('addAssistant', socketAddAssistant);
+    });
 
     // Listen for a teacher being added to a queue.
-    function socketRemoveAssistant(data) {
+    socket.on('removeAssistant', function (data) {
       console.log("Backend wants to remove the assistant " + data.username + " from the queue " + data.queueName);
       for (var i = $scope.queues.length - 1; i >= 0; i--) {
         if($scope.queues[i].name === data.queueName){
@@ -82,18 +67,16 @@ $scope.$on("$destroy", function(){
           break;
         }
       }
-    }
-    socket.on('removeAssistant', socketRemoveAssistant);
+    });
 
     // Listen for an teacher being added to a queue.
-    function socketAddAdmin(admin) {
+    socket.on('addAdmin', function (admin) {
       $scope.admins.push(admin);
       console.log("adding admin (from backend) name = " + admin.name + ", username = " + admin.username + ", addedBy = " + admin.addedBy);
-    }
-    socket.on('addAdmin', socketAddAdmin);
+    });
 
     // Listen for an teacher being added to a queue.
-    function socketRemoveAdmin(username) {
+    socket.on('removeAdmin', function (username) {
       console.log("Backend wants to remove the admin " + username);
       for (var i = $scope.admins.length - 1; i >= 0; i--) {
         if($scope.admins[i].username === username){
@@ -101,21 +84,19 @@ $scope.$on("$destroy", function(){
           break;
         }
       }
-    }
-    socket.on('removeAdmin', socketRemoveAdmin);
+    });
 
     // Listen for an teacher being added to a queue.
-    function socketAddTeacher(data) {
+    socket.on('addTeacher', function (data) {
       console.log("adding teacher (from backend) queueName = " + data.queueName + ", name = " + data.name + ", username = " + data.username);
       var queue = getQueue(data.queueName);
       if(queue){
         getQueue(data.queueName).teacher.push({name:data.name, username:data.username});
       }
-    }
-    socket.on('addTeacher', socketAddTeacher);
+    });
 
     // Listen for an teacher being added to a queue.
-    function socketRemoveTeacher(data) {
+    socket.on('removeTeacher', function (data) {
       console.log("Backend wants to remove the teacher " + data.username + " from the queue " + data.queueName);
       for (var i = $scope.queues.length - 1; i >= 0; i--) {
         if($scope.queues[i].name === data.queueName){
@@ -128,48 +109,43 @@ $scope.$on("$destroy", function(){
           break;
         }
       }
-    }
-    socket.on('removeTeacher', socketRemoveTeacher);
+    });
 
     // Listen for a queue being hibernated.
-    function socketHibernate(queue) {
+    socket.on('hibernate', function (queue) {
       console.log("I will go to sleep (because backend)");
       for (var i = $scope.queues.length - 1; i >= 0; i--) {
         if(queue === $scope.queues[i].name){
           $scope.queues[i].hibernating = true;
         }
       }
-    }
-    socket.on('hibernate', socketHibernate);
+    });
 
     // Listen for a queue being unhibernated.
-    function socketUnhibernate(queue) {
+    socket.on('unhibernate', function (queue) {
       console.log("I will wake up (because backend)");
       for (var i = $scope.queues.length - 1; i >= 0; i--) {
         if(queue === $scope.queues[i].name){
           $scope.queues[i].hibernating = false;
         }
       }
-    }
-    socket.on('unhibernate', socketUnhibernate);
+    });
 
     // Listen for a queue being added.
-    function socketAddQueue(queue) {
+    socket.on('addQueue', function (queue) {
       console.log("Backend wants to add the queue " + queue.name);
       $scope.queues.push(queue);
-    }
-    socket.on('addQueue', socketAddQueue);
+    });
 
     // Listen for the person leaving a queue event.
-    function socketRemoveQueue(queue) {
+    socket.on('removeQueue', function (queue) {
       console.log("Backend wants to remove queue " + queue);
       for (var i = $scope.queues.length - 1; i >= 0; i--) {
         if(queue === $scope.queues[i].name){
           $scope.queues.splice(i, 1);
         }
       }
-    }
-    socket.on('removeQueue', socketRemoveQueue);
+    });
 
     function getQueue (queue) {
       for(var index in $scope.queues){
