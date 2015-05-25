@@ -85,8 +85,8 @@ function doOnQueue(queueName, action) {
 // the average time in 'queue' of students who joined the queue 
 //  from 'start' and left before/was still in queue at 'end'
 function getAverageQueueTime(queueName, start, end) {
-  var queue = queueSystem.findQueue(queueName);
-  var queue = queue.queue;
+  var theQueue = queueSystem.findQueue(queueName);
+  var queue = queue.theQueue;
 
   var counter = 0;
   var totalTime = 0;
@@ -108,16 +108,16 @@ function getAverageQueueTime(queueName, start, end) {
       }
       counter++;
     }
-  };
+  }
 
   console.log("Counted: " + counter);
   console.log("Total time: " + totalTime);
 
-  if (counter == 0) {
+  if (counter === 0) {
     counter = 1;
   }
 
-  console.log("Average: " + totalTime / counter)
+  console.log("Average: " + totalTime / counter);
 
   return totalTime / counter;
 }
@@ -137,7 +137,7 @@ function numbersOfPeopleLeftQueue(queueName, start, end) {
       statistic.startTime + statistic.queueLength < end) {
       counter++;
     }
-  };
+  }
 
 /**/ console.log(statisticsList.length);
 
@@ -204,7 +204,7 @@ io.on('connection', function(socket) {
       return;
     }
 
-    io.to(queueName).emit('badLocation', {name: name, sender: username}); 
+    io.to(queueName).emit('badLocation', {name: name, sender: username});
     console.log("Bad location at " + queueName + " for " + name);
   });
 
@@ -301,7 +301,7 @@ io.on('connection', function(socket) {
         sender: username
       });
       console.log("emiting teacher: " + "user_" + teacher.name);
-    };
+    }
 
     for (var i = assistantList.length - 1; i >= 0; i--) {
       var assistant = assistantList[i];
@@ -310,7 +310,7 @@ io.on('connection', function(socket) {
         sender: username
       });
       console.log("emiting assistant: " + assistant.name);
-    };
+    }
 
     //  io.to(queueName).emit('msg', {message: message, sender: username});
     console.log('emitTA in ' + queueName + ', msg: ' + message);
@@ -367,7 +367,7 @@ io.on('connection', function(socket) {
 
         statisticsList.splice(i, 1, statistic);
       }
-    };
+    }
   }
 
   // admin purges a queue
@@ -392,7 +392,7 @@ io.on('connection', function(socket) {
 
     for (var i = queue.queue.length - 1; i >= 0; i--) {
       userLeavesQueue(queue, queue.queue[i].name);
-    };
+    }
 
     queue.purgeQueue();
     queue.queue = [];

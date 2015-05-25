@@ -53,7 +53,7 @@ exports.removeAdmin = function (username) {
       admin.remove();
       break;
     }
-  };
+  }
 };
 
 /** Returns the adminList */
