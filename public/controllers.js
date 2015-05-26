@@ -4,7 +4,10 @@ queueControllers.controller('listController', ['$scope', '$http', '$location', '
   function($scope, $http, $location, socket, user, title) {
     $scope.$on('$destroy', function (event) {
       socket.removeAllListeners();
+      socket.emit('stopListening', 'lobby');
     });
+    socket.emit('listen', 'lobby');
+
     title.title = "Stay A While";
     $scope.queues = [];
     $http.get('/API/queueList')
@@ -32,8 +35,6 @@ queueControllers.controller('listController', ['$scope', '$http', '$location', '
       console.log("Queue " + queue.name + " : " + queue.position);
     }
     user.updateUserData();
-
-    socket.emit('listen', 'lobby');
 
     // Listen for a person joining a queue.
     socket.on('lobbyjoin', function(data) {
@@ -170,11 +171,9 @@ queueControllers.controller('statisticsController', ['$scope', '$http', 'WebSock
     $scope.$on('$destroy', function (event) {
       socket.removeAllListeners();
     });
-    title.title = "Statistics | Stay A While";
-    console.log('entered statistics.html');
-
-    socket.emit('stopListening', 'lobby');
     socket.emit('listen', 'statistics');
+    
+    title.title = "Statistics | Stay A While";
 
     // Listen for new statistics.
     socket.on('getAverageQueueTime', function(milliseconds) {
@@ -291,9 +290,8 @@ queueControllers.controller('loginController', ['$scope', '$location', '$http', 
     $scope.$on('$destroy', function (event) {
       socket.removeAllListeners();
     });
-    title.title = "Log in | Stay A While";
 
-    socket.emit('listen', 'lobby');
+    title.title = "Log in | Stay A While";
 
     $scope.done = function() {
       console.log("Reached done()");

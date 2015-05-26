@@ -16,10 +16,15 @@
 
   .controller('queueController', ['$scope', '$http', '$routeParams', '$location', '$modal', 'WebSocketService', 'UserService', 'TitleService',
     function ($scope, $http, $routeParams, $location, $modal, socket, user, title) {
+      $scope.queue = $routeParams.queue;
+
       $scope.$on('$destroy', function (event) {
         socket.removeAllListeners();
+        console.log("Leaving " + $scope.queue);
+        socket.emit('stopListening', $scope.queue);
       });
-      $scope.queue = $routeParams.queue;
+      socket.emit('listen', $scope.queue);
+      
       title.title = $scope.queue + " | Stay A While";
       $scope.name = user.getName();
       $scope.users = [];
@@ -75,9 +80,6 @@
           });
         }
       });
-
-socket.emit('stopListening', 'lobby');
-socket.emit('listen', $scope.queue);
 
     // Listen for the person joining a queue event.
     socket.on('join', function (data) {

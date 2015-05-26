@@ -18,7 +18,10 @@
     function ($scope, $location, $http, $modal, socket, user, title) {
       $scope.$on('$destroy', function (event) {
         socket.removeAllListeners();
+        socket.emit('stopListening', 'admin');
       });
+      socket.emit('listen', 'admin');
+
       title.title = "Admin | Stay A While";
       console.log("Entered admin.html");
       $scope.name = user.getName();
@@ -40,9 +43,6 @@
           }
         }
       });
-
-    socket.emit('stopListening', 'lobby');
-    socket.emit('listen', 'admin');
 
     // Listen for an assistant being added to a queue.
     socket.on('addAssistant', function (data) {
@@ -135,6 +135,7 @@
     socket.on('addQueue', function (queue) {
       console.log("Backend wants to add the queue " + queue.name);
       $scope.queues.push(queue);
+      $scope.queues = $scope.queues.sort(function(a, b) {return a.name.localeCompare(b.name);});
     });
 
     // Listen for the person leaving a queue event.
