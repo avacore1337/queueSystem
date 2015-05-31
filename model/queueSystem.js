@@ -6,6 +6,7 @@
  * @module queueSystem
  */
 
+var schedule = require('node-schedule');
 var request = require('request');
 var database = require("./model.js"); // databas stuff
 var http = require('http');
@@ -174,15 +175,36 @@ function validateAssistant(username, queueName) {
 }
 
 /**
+ * Sets up scheduled jobs for fetching data for the booked students
+ */
+function setupFetching (queue, body) {
+   for (var i = 0; i < body.length; i++) {
+      schedule.scheduleJob(new Date(body[i].start),function () {
+        fetchBookings(queue.name,function (err, response, body) {
+          for (var j = 0; j < body.length; j++) {
+            var users = body[j].otherUsers;
+            users.push(body[j].userID);
+            queue.addBooking({
+              users:users,
+              time:(new Date(body[j].start)).getTime(),
+              length:15,
+              comment:body[j].comment
+            });
+          };
+        });
+      });
+    };
+ }
+
+/**
  * updates all the bookings with the data from the bookingsystem.
  */
 exports.updateAllBookings = function () {
   exports.forQueue(function (queue) {
-    fetchbookings(queue.name, function (err, response, body) {
-      // queue.setBookings(response);
+    fetchSessions(queue.name, function (err, response, body) {
+      console.log("fetching data for: " + queue.name);
       if (!err && response.statusCode === 200) {
-        console.log("response body");
-        console.log(body) // Print the json response
+        setupFetching(queue, body);
       }
       else{
         console.log(err);
@@ -192,9 +214,17 @@ exports.updateAllBookings = function () {
 }
 
 /**
+ * fetches all the sessions from the bookingsystem for a queue/course
+ */
+function fetchSessions (queueName, callback) { //TODO make the path return a list of UNIQUE times when there should be more data.
+  var url = 'http://127.0.0.1:8088/API/todayssessions/' + queueName; //TODO move out url to config file
+  request({ url: url, json: true }, callback)
+}
+
+/**
  * fetches all the bookings from the bookingsystem for a queue/course
  */
-function fetchbookings (queueName, callback) {
+function fetchBookings (queueName, callback) {
   var url = 'http://127.0.0.1:8088/API/todaysbookings/' + queueName; //TODO move out url to config file
   request({ url: url, json: true }, callback)
 }

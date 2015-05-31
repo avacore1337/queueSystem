@@ -106,7 +106,7 @@ var queueSchema = new Schema({
   hibernating: { type: Boolean, default: false },
   motd: { type: String, default: "You can do it!" },
   queue: {type:[userSchema], default: []},
-  bookings: [String],
+  bookings: {type:[bookingSchema], default: []},
   teacher: {type:[adminSchema], default: []},
   assistant: {type:[adminSchema], default: []}
 });
@@ -114,6 +114,11 @@ var queueSchema = new Schema({
 // takes a user as a parameter and adds to the queue
 queueSchema.methods.addUser = function (user) {
   this.queue.push(user);
+  this.save();
+};
+
+queueSchema.methods.addBooking = function (bookingData) {
+  this.queue.push(new Booking(bookingData));
   this.save();
 };
 
@@ -232,11 +237,11 @@ queueSchema.methods.setMOTD = function () {
 //-----
 
 // Schema used for bookings
-var booking = new Schema({
+var bookingSchema = new Schema({
   users: [String],
   time: { type: Number, default: 0},
   length: { type: Number, default: 0},
-  information: String,
+  comment: String,
 });
 
 //-----
@@ -267,6 +272,7 @@ var User = mongoose.model("User", userSchema);
 var Admin = mongoose.model("Admin", adminSchema);
 var Queue = mongoose.model("Queue", queueSchema);
 var Statistic = mongoose.model("UserStatistic", statisticSchema);
+var Booking = mongoose.model("Booking", bookingSchema);
 
 //=========================================
 // Export data from this file to "index.js"

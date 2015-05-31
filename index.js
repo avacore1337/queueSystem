@@ -1,14 +1,14 @@
 /* jslint node: true */
 "use strict";
-var express = require('express'),
-  bodyParser = require('body-parser'),
-  http = require('http'),
-  app = express(),
-  expressSession = require('express-session'),
-  MongoStore = require('connect-mongo')(expressSession),
-  sharedsession = require('express-socket.io-session'),
-  port = 8080,
-  mongoose = require('mongoose');
+var express = require('express');
+var bodyParser = require('body-parser');
+var http = require('http');
+var app = express();
+var expressSession = require('express-session');
+var MongoStore = require('connect-mongo')(expressSession);
+var sharedsession = require('express-socket.io-session');
+var port = 8080;
+var mongoose = require('mongoose');
 
 mongoose.connect('mongodb://localhost/queueBase');
 
@@ -63,8 +63,15 @@ var validateAssistant = queueSystem.validateAssistant;
 var router = require('./routes/httpRoutes.js');
 app.use('/API',router);
 
+var utils = require('./utils.js');
+var scheduleForEveryNight = utils.scheduleForEveryNight;
 queueSystem.updateAllBookings();
 
+scheduleForEveryNight(function () {
+  queueSystem.forQueue(function (queue) {
+    queue.purgeQueue();
+  })
+});
 //===============================================================
 // 
 
