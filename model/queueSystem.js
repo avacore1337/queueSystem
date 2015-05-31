@@ -6,8 +6,9 @@
  * @module queueSystem
  */
 
-
+var request = require('request');
 var database = require("./model.js"); // databas stuff
+var http = require('http');
 
 var User = database.user;
 var Admin = database.admin;
@@ -173,6 +174,32 @@ function validateAssistant(username, queueName) {
 }
 
 /**
+ * updates all the bookings with the data from the bookingsystem.
+ */
+exports.updateAllBookings = function () {
+  exports.forQueue(function (queue) {
+    fetchbookings(queue.name, function (err, response, body) {
+      // queue.setBookings(response);
+      if (!err && response.statusCode === 200) {
+        console.log("response body");
+        console.log(body) // Print the json response
+      }
+      else{
+        console.log(err);
+      }
+    });
+  });
+}
+
+/**
+ * fetches all the bookings from the bookingsystem for a queue/course
+ */
+function fetchbookings (queueName, callback) {
+  var url = 'http://127.0.0.1:8088/API/todaysbookings/' + queueName; //TODO move out url to config file
+  request({ url: url, json: true }, callback)
+}
+
+/**
  * A function that spoofs data to make sure there is something to test the 
  * system with. Should be commented out in production.
  */
@@ -185,7 +212,7 @@ function setup() {
     "numme",
     "mvk",
     "progp",
-    "mdi",
+    "mdi"
   ];
 
   // creates database-objects from the list (of queues)

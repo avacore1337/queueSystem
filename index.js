@@ -63,6 +63,8 @@ var validateAssistant = queueSystem.validateAssistant;
 var router = require('./routes/httpRoutes.js');
 app.use('/API',router);
 
+queueSystem.updateAllBookings();
+
 //===============================================================
 // 
 
