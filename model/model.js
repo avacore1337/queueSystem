@@ -22,7 +22,7 @@ var adminSchema = new Schema({
 // Schema used for users in the queues
 var userSchema = new Schema({
   name: String,
-  place: String,
+  location: String,
   startTime: { type: Number, default: Date.now },
   messages: [String],
   action: { type: String, default: '' },
@@ -33,7 +33,7 @@ var userSchema = new Schema({
 userSchema.methods.toJSON = function () {
   return {
     name: this.name,
-    place: this.place,
+    location: this.location,
     time: this.startTime,
     action: this.action,
     comment: this.comment

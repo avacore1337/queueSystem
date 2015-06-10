@@ -99,12 +99,14 @@
             <th>Location</th>
             <th>Comment</th>
             <th>Time</th>
+            <th>Length</th>
           </thead>
           <tbody>
             <tr ng-repeat="user in bookedUsers" ng-show="matchBooked(user)">
-              <td>{{user.name}}</td>
-              <td>{{user.place}}</td>
+              <td><p ng-repeat="name in user.users">{{name}}</p></td>
+              <td>{{user.location}}</td>
               <td>{{user.comment}}</td>
+              <td>{{user.time}}</td>
               <td>{{user.time}}</td>
             </tr>
           </tbody>
@@ -127,7 +129,7 @@
             <tr ng-repeat-start="user in users track by $index" ng-class="{'pointer' : accessLevel > 0, 'pulse' : user.gettingHelp, 'light-blue-background' : user.name === name}" ng-click="changeVisibility(user.name)"  id="queue{{user.name}}Btn" ng-show="match(user)">
               <td class="hidden-xs">{{ $index + 1 }}</td>
               <td ng-show="accessLevel">{{ user.name }}</td>
-              <td>{{ user.place }}</td>
+              <td>{{ user.location }}</td>
               <td>{{ user.comment }}</td>
               <td><span data-livestamp="{{user.time}}"></span></td>
             </tr>

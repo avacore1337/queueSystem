@@ -263,7 +263,7 @@ function setup() {
     for (var j = 0; j < queues; j++) {
       var newUser = new User({
         name: Math.random().toString(36).substring(7),
-        place: 'Green',
+        location: 'Green',
         comment: 'lab1',
         startTime: randomTime
       });

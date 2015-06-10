@@ -184,7 +184,7 @@ io.on('connection', function(socket) {
     var queue = queueSystem.findQueue(queueName);
     var newUser = new User({
       name: user.name,
-      place: user.place,
+      location: user.location,
       comment: user.comment
     });
     queue.addUser(newUser);
