@@ -105,7 +105,7 @@
 				</thead>
 				<tbody>
 					<tr ng-repeat="queue in queues">
-						<td ng-class="{'text-light-gray' : queue.hibernating}">{{queue.name}}</td>
+						<td ng-class="{'text-light-gray' : queue.hiding}">{{queue.name}}</td>
 					</tr>
 				</tbody>
 			</table>
@@ -136,8 +136,8 @@
 		<div class="row" ng-show="selectedQueue !== undefined">
 			<div class="col-md-12">
 				<button class="btn btn-danger" ng-click="removeQueue()" id="administrationRemoveQueueBtn">Remove queue</button>
-				<button class="btn btn-warning" ng-click="hibernateQueue()" ng-show="!selectedQueue.hibernating" id="administrationHibernateQueueBtn">Hide queue</button>
-				<button class="btn btn-success" ng-click="unhibernateQueue()" ng-show="selectedQueue.hibernating" id="administrationUnHibernateQueueBtn">Reveal queue</button>
+				<button class="btn btn-warning" ng-click="hideQueue()" ng-show="!selectedQueue.hiding" id="administrationHideQueueBtn">Hide queue</button>
+				<button class="btn btn-success" ng-click="showQueue()" ng-show="selectedQueue.hiding" id="administrationShowQueueBtn">Reveal queue</button>
 			</div>
 		</div>
 

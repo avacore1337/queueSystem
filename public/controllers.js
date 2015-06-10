@@ -89,15 +89,15 @@ queueControllers.controller('listController', ['$scope', '$http', '$location', '
     });
 
     // Listen for a queue going to sleep.
-    socket.on('lobbyhibernate', function(queue) {
+    socket.on('lobbyhide', function(queue) {
       console.log(queue + " was sent to sleep (lobby)");
-      getQueue(queue).hibernating = true;
+      getQueue(queue).hiding = true;
     });
 
     // Listen for a queue waking up.
-    socket.on('lobbyunhibernate', function(queue) {
+    socket.on('lobbyshow', function(queue) {
       console.log(queue + " was awoken (lobby)");
-      getQueue(queue).hibernating = false;
+      getQueue(queue).hiding = false;
     });
 
     function getQueue(queue) {

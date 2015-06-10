@@ -103,7 +103,7 @@ function numbersOfPeopleLeftQueue(queue, start, end) {
 var queueSchema = new Schema({
   name: String,
   locked: { type: Boolean, default: false },
-  hibernating: { type: Boolean, default: false },
+  hiding: { type: Boolean, default: false },
   motd: { type: String, default: "You can do it!" },
   queue: {type:[userSchema], default: []},
   bookings: {type:[bookingSchema], default: []},
@@ -185,14 +185,14 @@ queueSchema.methods.unlock = function () {
 };
 
 // hide the schema
-queueSchema.methods.hibernate = function () {
-  this.hibernating = true;
+queueSchema.methods.hide = function () {
+  this.hiding = true;
   this.save();
 };
 
-// unhide the schema
-queueSchema.methods.unhibernate = function () {
-  this.hibernating = false;
+// show the schema
+queueSchema.methods.show = function () {
+  this.hiding = false;
   this.save();
 };
 

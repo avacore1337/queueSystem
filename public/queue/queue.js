@@ -40,13 +40,13 @@
       }
 
       $scope.locked = false;
-      $scope.hibernating = false;
+      $scope.hiding = false;
       $http.get('/API/queue/' + $scope.queue)
       .success(function(response) {
         $scope.users = response.queue;
         $scope.bookedUsers = response.bookings;
         $scope.locked = response.locked;
-        $scope.hibernating = response.hibernating;
+        $scope.hiding = response.hiding;
         for (var i = 0; i < $scope.users.length; i++) {
           $scope.users[i].optionsActivated = false;
           $scope.users[i].time = $scope.users[i].time/1000;
@@ -229,7 +229,7 @@
     });
 
     $scope.addUser = function(){
-      if(!$scope.locked && !$scope.hibernating){
+      if(!$scope.locked && !$scope.hiding){
         if($scope.location === ""){
           alert("You must enter a location.");
         }else{

@@ -111,22 +111,22 @@
       }
     });
 
-    // Listen for a queue being hibernated.
-    socket.on('hibernate', function (queue) {
+    // Listen for a queue being hided.
+    socket.on('hide', function (queue) {
       console.log("I will go to sleep (because backend)");
       for (var i = $scope.queues.length - 1; i >= 0; i--) {
         if(queue === $scope.queues[i].name){
-          $scope.queues[i].hibernating = true;
+          $scope.queues[i].hiding = true;
         }
       }
     });
 
-    // Listen for a queue being unhibernated.
-    socket.on('unhibernate', function (queue) {
+    // Listen for a queue being showd.
+    socket.on('show', function (queue) {
       console.log("I will wake up (because backend)");
       for (var i = $scope.queues.length - 1; i >= 0; i--) {
         if(queue === $scope.queues[i].name){
-          $scope.queues[i].hibernating = false;
+          $scope.queues[i].hiding = false;
         }
       }
     });
@@ -209,8 +209,8 @@
       }, function () {});
     };
 
-    $scope.hibernateQueue = function(){
-      console.log("Called hibernateQueue");
+    $scope.hideQueue = function(){
+      console.log("Called hideQueue");
       var modalInstance = $modal.open({
         templateUrl: 'warning.html',
         controller: function ($scope, $modalInstance, title, message, safeButtonText, dangerButtonText) {
@@ -219,7 +219,7 @@
           $scope.safeButtonText = safeButtonText;
           $scope.dangerButtonText = dangerButtonText;
           $scope.delete = function () {
-            $modalInstance.close("hibernate");
+            $modalInstance.close("hide");
           };
           $scope.doNotDelete = function () {
             $modalInstance.close("");
@@ -242,20 +242,20 @@
       });
 
   modalInstance.result.then(function (message) {
-    if(message === "hibernate"){
+    if(message === "hide"){
       socket.emit('purge', {
         queueName:$scope.selectedQueue.name
       });
-      socket.emit('hibernate', {
+      socket.emit('hide', {
         queueName:$scope.selectedQueue.name
       });
-      console.log("Trying to hibernate queue " + $scope.selectedQueue.name);
+      console.log("Trying to hide queue " + $scope.selectedQueue.name);
     }
   }, function () {});
   };
 
-  $scope.unhibernateQueue = function(){
-    console.log("Called unhibernateQueue");
+  $scope.showQueue = function(){
+    console.log("Called showQueue");
     var modalInstance = $modal.open({
       templateUrl: 'warning.html',
       controller: function ($scope, $modalInstance, title, message, safeButtonText, dangerButtonText) {
@@ -264,7 +264,7 @@
         $scope.safeButtonText = safeButtonText;
         $scope.dangerButtonText = dangerButtonText;
         $scope.delete = function () {
-          $modalInstance.close("unhibernate");
+          $modalInstance.close("show");
         };
         $scope.doNotDelete = function () {
           $modalInstance.close("");
@@ -287,11 +287,11 @@
     });
 
     modalInstance.result.then(function (message) {
-      if(message === "unhibernate"){
-        socket.emit('unhibernate', {
+      if(message === "show"){
+        socket.emit('show', {
           queue:$scope.selectedQueue.name
         });
-        console.log("Trying to unhibernate queue " + $scope.selectedQueue.name);
+        console.log("Trying to show queue " + $scope.selectedQueue.name);
       }
     }, function () {});
   };
