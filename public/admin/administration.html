@@ -1,4 +1,3 @@
-<!--<div ng-show="admin">-->
 <div class="container">
 
 	<script type="text/ng-template" id="enterMessage.html">
@@ -38,9 +37,7 @@
 		<p>Please be careful on this page. Here, you have the power to change everything.</p>
 	</div>
 	<div ng-show="accessLevel() > 2">
-<!-- Commented because of user tests
 		<button class="btn btn-primary" style="margin-bottom: 2%;" ng-click="addServerMessage()">Add server-message</button>
--->
 		<h1>Administrators of Stay A While&nbsp;<a href="/#/help#administrator">?</a></h1>
 		<h5>New administrators might have to log out and in again in order to get all of their new privileges.</h5>
 	</div>
@@ -75,7 +72,7 @@
 					<tbody>
 						<tr id="admin.name" ng-repeat="admin in admins">
 							<td>{{ admin.name }}</td>
-							<td>{{ admin.username }} <span class="glyphicon glyphicon-remove text-red clickable" title="Remove admin" ng-click="removeAdmin(admin.username)" id="administrationRemoveAdminBtn" ng-show="admins.length > 1"></span></td>
+							<td>{{ admin.username }} <span class="glyphicon glyphicon-remove text-red clickable" title="Remove admin" ng-click="removeAdmin(admin.username)" id="administrationRemoveAdmin{{admin.username}}Btn" ng-show="admins.length > 1"></span></td>
 							<td>{{ admin.addedBy }}</td>
 						</tr>
 					</tbody>
@@ -105,7 +102,7 @@
 				</thead>
 				<tbody>
 					<tr ng-repeat="queue in queues">
-						<td ng-class="{'text-light-gray' : queue.hibernating}">{{queue.name}}</td>
+						<td ng-class="{'text-light-gray' : queue.hiding}">{{queue.name}}</td>
 					</tr>
 				</tbody>
 			</table>
@@ -136,8 +133,8 @@
 		<div class="row" ng-show="selectedQueue !== undefined">
 			<div class="col-md-12">
 				<button class="btn btn-danger" ng-click="removeQueue()" id="administrationRemoveQueueBtn">Remove queue</button>
-				<button class="btn btn-warning" ng-click="hibernateQueue()" ng-show="!selectedQueue.hibernating" id="administrationHibernateQueueBtn">Hide queue</button>
-				<button class="btn btn-success" ng-click="unhibernateQueue()" ng-show="selectedQueue.hibernating" id="administrationUnHibernateQueueBtn">Reveal queue</button>
+				<button class="btn btn-warning" ng-click="hideQueue()" ng-show="!selectedQueue.hiding" id="administrationHideQueueBtn">Hide queue</button>
+				<button class="btn btn-success" ng-click="showQueue()" ng-show="selectedQueue.hiding" id="administrationShowQueueBtn">Reveal queue</button>
 			</div>
 		</div>
 
@@ -175,7 +172,7 @@
 						<tbody>
 							<tr id="teacher.username" ng-repeat="teacher in selectedQueue.teacher">
 								<td>{{ teacher.name }}</td>
-								<td>{{ teacher.username }} <span class="glyphicon glyphicon-remove text-red clickable" title="Remove teacher" ng-click="removeTeacher(teacher.username)" id="administrationRemoveTeacherBtn"></span></td>
+								<td>{{ teacher.username }} <span class="glyphicon glyphicon-remove text-red clickable" title="Remove teacher" ng-click="removeTeacher(teacher.username)" id="administrationRemoveTeacher{{teacher.username}}Btn"></span></td>
 								<td>{{ teacher.addedBy }}</td>
 							</tr>
 						</tbody>
@@ -184,7 +181,6 @@
 				<div ng-hide="selectedQueue.teacher.length">
 					(No teachers)
 				</div>
-				<!-- End of TODO (Table of current teachers goes here) -->
 			</div>
 			<!-- Adding teaching assistants -->
 			<div class="row col-md-6 left-divider">
@@ -207,7 +203,6 @@
 					<span class="input-group-addon text-white" style="border: 0px; background-color: rgb(200, 200, 200);" id="administrationAddAssistantNoQueueBtn"><span class="glyphicon glyphicon-plus"></span>Add</span>
 				</div>
 				<div class="buffer"></div>
-				<!-- TODO : Table of current assistants goes here -->
 				<div class="col-md-10" ng-show="selectedQueue.assistant.length" style="padding-left: 0px;">
 					<table class="table table-striped">
 						<thead>
@@ -220,7 +215,7 @@
 						<tbody>
 							<tr id="assistant.name" ng-repeat="assistant in selectedQueue.assistant">
 								<td>{{ assistant.name }}</td>
-								<td>{{ assistant.username }} <span class="glyphicon glyphicon-remove text-red clickable" title="Remove assistant" ng-click="removeAssistant(assistant.username)" id="administrationRemoveAssistantBtn"></span></td>
+								<td>{{ assistant.username }} <span class="glyphicon glyphicon-remove text-red clickable" title="Remove assistant" ng-click="removeAssistant(assistant.username)" id="administrationRemoveAssistant{{assistant.username}}Btn"></span></td>
 								<td>{{ assistant.addedBy }}</td>
 							</tr>
 						</tbody>
@@ -229,7 +224,6 @@
 				<div ng-hide="selectedQueue.assistant.length">
 					(No assistants)
 				</div>
-				<!-- End of TODO (Table of current assistants goes here) -->
 			</div>
 		</div>
 	</div>

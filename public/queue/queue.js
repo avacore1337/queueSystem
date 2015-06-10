@@ -40,20 +40,20 @@
       }
 
       $scope.locked = false;
-      $scope.hibernating = false;
+      $scope.hiding = false;
       $http.get('/API/queue/' + $scope.queue)
       .success(function(response) {
         $scope.users = response.queue;
         $scope.bookedUsers = response.bookings;
         $scope.locked = response.locked;
-        $scope.hibernating = response.hibernating;
+        $scope.hiding = response.hiding;
         for (var i = 0; i < $scope.users.length; i++) {
           $scope.users[i].optionsActivated = false;
           $scope.users[i].time = $scope.users[i].time/1000;
           if($scope.users[i].name === $scope.name){
             $scope.enqueued = true;
             title.title = "["  + (i+1) + "] " + $scope.queue + " | Stay A while";
-            $scope.location = $scope.users[i].place;
+            $scope.location = $scope.users[i].location;
             $scope.comment = $scope.users[i].comment;
           }
         }
@@ -74,7 +74,7 @@
                 return response.motd;
               },
               sender: function () {
-                return "Some admin";
+                return "";
               }
             }
           });
@@ -88,7 +88,7 @@
         $scope.enqueued = true;
         title.title = "["  + ($scope.users.length+1) + "] " + $scope.queue + " | Stay A while";
       }
-      $scope.users.push({name:data.name, place:data.place, comment:data.comment, time:data.time/1000});
+      $scope.users.push({name:data.name, location:data.location, comment:data.comment, time:data.time/1000});
     });
 
     // Listen for the person leaving a queue event.
@@ -126,7 +126,7 @@
       for(var i = $scope.users.length - 1; i >= 0; i--) {
         if($scope.users[i].name === data.name) {
           $scope.users[i].comment = data.comment;
-          $scope.users[i].place = data.place;
+          $scope.users[i].location = data.location;
           break;
         }
       }
@@ -151,7 +151,7 @@
             return data.message;
           },
           sender: function () {
-            return data.sender;
+            return "- " + data.sender;
           }
         }
       });
@@ -185,8 +185,9 @@
     });
 
     // Listen for a new MOTD.
-    socket.on('addMOTD', function (data) {
-      $scope.MOTD = data;
+    socket.on('addMOTD', function (MOTD) {
+      console.log("Backend wants to add the MOTD : " + MOTD);
+      $scope.MOTD = MOTD;
     });
 
     // Listen for locking the queue
@@ -229,15 +230,15 @@
     });
 
     $scope.addUser = function(){
-      if(!$scope.locked && !$scope.hibernating){
+      if(!$scope.locked && !$scope.hiding){
         if($scope.location === ""){
-          alert("You must enter a place.");
+          alert("You must enter a location.");
         }else{
           console.log("Current time = " + Date.now());
           socket.emit('join',
           {
             queueName:$scope.queue,
-            user:{name:$scope.name, place:$scope.location, comment:$scope.comment, time:Date.now()}
+            user:{name:$scope.name, location:$scope.location, comment:$scope.comment, time:Date.now()}
           });
           console.log("Called addUser");
         }
@@ -246,11 +247,11 @@
 
     $scope.updateUser = function(){
       if($scope.location === ""){
-        alert("You must enter a place.");
+        alert("You must enter a location.");
       }else{
         socket.emit('update', {
           queueName:$scope.queue,
-          user:{name:$scope.name, place:$scope.location, comment:$scope.comment}
+          user:{name:$scope.name, location:$scope.location, comment:$scope.comment}
         });
         console.log("Called updateUser");
       }
@@ -349,7 +350,8 @@
 
       modalInstance.result.then(function (message) {
         console.log("Message = " + message);
-        if(message !== null && message !== undefined){
+        if(message){
+          console.log("Sending message now");
           socket.emit('messageUser', {
             queueName:$scope.queue,
             sender:$scope.name,
@@ -474,8 +476,10 @@
 
       modalInstance.result.then(function (message) {
         console.log("Message = " + message);
-        if(message !== null && message !== undefined){
-          socket.emit('broadcastTA', {
+        if(message){
+          console.log("Sending message");
+          console.log("$scope.queue = " + $scope.queue);
+          socket.emit('broadcastFaculty', {
             queueName:$scope.queue,
             message:message,
             sender: $scope.name
@@ -497,13 +501,17 @@
     $scope.addMOTD = function(){
       console.log("Called addMOTD");
       var modalInstance = $modal.open({
-        templateUrl: 'enterMessage.html',
-        controller: function ($scope, $modalInstance, title, placeholder, buttonText) {
+        templateUrl: 'editMOTD.html',
+        controller: function ($scope, $modalInstance, title, placeholder, buttonEdit, buttonRemove) {
           $scope.title = title;
           $scope.placeholder = placeholder;
-          $scope.buttonText = buttonText;
-          $scope.ok = function () {
+          $scope.buttonEdit = buttonEdit;
+          $scope.buttonRemove = buttonRemove;
+          $scope.edit = function () {
             $modalInstance.close($scope.message);
+          };
+          $scope.remove = function () {
+            $modalInstance.close("");
           };
         },
         resolve: {
@@ -517,15 +525,18 @@
               return "";
             }
           },
-          buttonText: function () {
-            return "Add MOTD";
+          buttonEdit: function () {
+            return "Edit MOTD";
+          },
+          buttonRemove: function () {
+            return "Remove MOTD";
           }
         }
       });
 
       modalInstance.result.then(function (MOTD) {
         console.log("MOTD = " + MOTD);
-        if(MOTD){
+        if(MOTD !== undefined){
           socket.emit('addMOTD', {
             queueName:$scope.queue,
             MOTD:MOTD,
@@ -593,7 +604,7 @@
       return true;
     }
     var regEx = new RegExp($scope.search.toLowerCase());
-    return regEx.test(user.place.toLowerCase()) || regEx.test(user.comment.toLowerCase());
+    return regEx.test(user.location.toLowerCase()) || regEx.test(user.comment.toLowerCase());
   };
 
   // This function checks if a person in the booked queue matches the search-string.
@@ -602,7 +613,7 @@
       return true;
     }
     var regEx = new RegExp($scope.search.toLowerCase());
-    return (regEx.test(user.name.toLowerCase()) || regEx.test(user.place.toLowerCase()) ||  regEx.test(user.comment.toLowerCase()) ||  regEx.test(user.time.toLowerCase()));
+    return (regEx.test(user.name.toLowerCase()) || regEx.test(user.location.toLowerCase()) ||  regEx.test(user.comment.toLowerCase()) ||  regEx.test(user.time.toLowerCase()));
   };
   }]);
 })();

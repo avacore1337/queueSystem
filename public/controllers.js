@@ -25,14 +25,12 @@ queueControllers.controller('listController', ['$scope', '$http', '$location', '
       var queue = getQueue(resp.name);
       queue.position = -1;
       queue.queue = resp.queue;
-      console.log("Looking for " + user.getName() + " in " + queue.name);
       for (var i in queue.queue) {
         if (queue.queue[i].name === user.getName()) {
           queue.position = parseInt(i, 10) + 1;
           break;
         }
       }
-      console.log("Queue " + queue.name + " : " + queue.position);
     }
     user.updateUserData();
 
@@ -55,7 +53,7 @@ queueControllers.controller('listController', ['$scope', '$http', '$location', '
       var queue = getQueue(data.queueName);
       queue.length--;
       for (var i in queue.queue) {
-        if (queue.queue[i].name === data.getName()) {
+        if (queue.queue[i].name === data.username) {
           queue.queue.splice(i, 1);
           if (parseInt(i, 10) + 1 === queue.position) {
             queue.position = -1;
@@ -89,15 +87,15 @@ queueControllers.controller('listController', ['$scope', '$http', '$location', '
     });
 
     // Listen for a queue going to sleep.
-    socket.on('lobbyhibernate', function(queue) {
+    socket.on('lobbyhide', function(queue) {
       console.log(queue + " was sent to sleep (lobby)");
-      getQueue(queue).hibernating = true;
+      getQueue(queue).hiding = true;
     });
 
     // Listen for a queue waking up.
-    socket.on('lobbyunhibernate', function(queue) {
+    socket.on('lobbyshow', function(queue) {
       console.log(queue + " was awoken (lobby)");
-      getQueue(queue).hibernating = false;
+      getQueue(queue).hiding = false;
     });
 
     function getQueue(queue) {
@@ -175,8 +173,11 @@ queueControllers.controller('statisticsController', ['$scope', '$http', 'WebSock
     
     title.title = "Statistics | Stay A While";
 
+    $scope.rawJSON = ["milli 128379", "avera 897321"];
+
     // Listen for new statistics.
     socket.on('getAverageQueueTime', function(milliseconds) {
+      rawJSON.append("getAverageQueueTime: " + milliseconds);
       var seconds = (milliseconds / 1000) % 60;
       var minutes = (milliseconds / (1000 * 60)) % 60;
       var hours = (milliseconds / (1000 * 60 * 60)) % 24;
@@ -194,6 +195,7 @@ queueControllers.controller('statisticsController', ['$scope', '$http', 'WebSock
 
     // Listen for new statistics.
     socket.on('numbersOfPeopleLeftQueue', function(amount) {
+      rawJSON.append("numbersOfPeopleLeftQueue: " + amount);
       $scope.numbersOfPeopleLeftQueue = amount;
       console.log("Amount to 'numbersOfPeopleLeftQueue' : " + amount);
     });
@@ -264,6 +266,7 @@ queueControllers.controller('statisticsController', ['$scope', '$http', 'WebSock
     // Statistics
     $scope.getStatistics = function() {
       console.log($scope.selectedQueue);
+      $scope.rawJSON = [];
       socket.emit('getAverageQueueTime', {
         queueName: $scope.selectedQueue,
         start: $scope.fromTime.getTime(),
@@ -285,11 +288,33 @@ queueControllers.controller('statisticsController', ['$scope', '$http', 'WebSock
   }
 ]);
 
-queueControllers.controller('loginController', ['$scope', '$location', '$http', 'TitleService', 'WebSocketService',
-  function($scope, $location, $http, title, socket) {
+queueControllers.controller('loginController', ['$scope', '$location', '$http', 'TitleService', 'WebSocketService', '$modal',
+  function($scope, $location, $http, title, socket, $modal) {
     $scope.$on('$destroy', function (event) {
       socket.removeAllListeners();
     });
+
+    // Listen for a server-message
+    socket.on('serverMessage', function(message) {
+      console.log("Received server-message : " + message);
+      if(message){
+        var modalInstance = $modal.open({
+          templateUrl: 'serverMessage.html',
+          controller: function ($scope, $modalInstance, title, message) {
+            $scope.title = title;
+            $scope.message = message;
+          },
+          resolve: {
+            title: function () {
+              return "Server-message";
+            },
+            message: function () {
+              return message;
+            }
+          }
+        });
+      }
+  });
 
     title.title = "Log in | Stay A While";
 

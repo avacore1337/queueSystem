@@ -14,7 +14,7 @@ router.get('/queueList', function(req, res) {
       name: queue.name,
       length: queue.queue.length,
       locked: queue.locked,
-      hibernating: queue.hibernating
+      hiding: queue.hiding
     });
   });
 

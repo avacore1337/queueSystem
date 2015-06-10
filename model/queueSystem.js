@@ -245,6 +245,15 @@ function setup() {
     "mdi"
   ];
 
+  // All the queues
+  Admin.find(function(err, admins) {
+    admins.forEach(function(admin) {
+      adminList.push(admin);
+      // to make sure everything loads
+      console.log('Admin: ' + admin.name + ' loaded!');
+    });
+  });
+
   // creates database-objects from the list (of queues)
   for (var i = 0; i < tmpList.length; i++) {
     var queue = tmpList[i];
@@ -263,7 +272,7 @@ function setup() {
     for (var j = 0; j < queues; j++) {
       var newUser = new User({
         name: Math.random().toString(36).substring(7),
-        place: 'Green',
+        location: 'Green',
         comment: 'lab1',
         startTime: randomTime
       });
@@ -286,27 +295,6 @@ function setup() {
 
     console.log(queue + " " + newQueue.queue.length); // temporary for error-solving
   }
-
-  var newAdmin = new Admin({
-    name: "pernyb",
-    username: "pernyb"
-  });
-  adminList.push(newAdmin);
-  newAdmin.save();
-
-  newAdmin = new Admin({
-    name: "antbac",
-    username: "antbac"
-  });
-  adminList.push(newAdmin);
-  newAdmin.save();
-
-  newAdmin = new Admin({
-    name: "rwb",
-    username: "rwb"
-  });
-  adminList.push(newAdmin);
-  newAdmin.save();
 }
 
 /**
@@ -320,6 +308,15 @@ function readIn() {
       queueList.push(queue);
       // to make sure everything loads
       console.log('Queue: ' + queue.name + ' loaded!');
+    });
+  });
+
+  // All the queues
+  Admin.find(function(err, admins) {
+    admins.forEach(function(admin) {
+      adminList.push(admin);
+      // to make sure everything loads
+      console.log('Admin: ' + admin.name + ' loaded!');
     });
   });
 }

@@ -83,10 +83,10 @@ function doOnQueue(queueName, action) {
   io.to(queueName).emit(action);
   io.to("lobby").emit("lobby" + action, queueName);
 
-  if (action === 'hibernate') {
-    io.to("admin").emit('hibernate', queueName);
-  } else if (action === 'unhibernate') {
-    io.to("admin").emit('unhibernate', queueName);
+  if (action === 'hide') {
+    io.to("admin").emit('hide', queueName);
+  } else if (action === 'show') {
+    io.to("admin").emit('show', queueName);
   }
 }
 
@@ -102,6 +102,7 @@ function getAverageQueueTime(queueName, start, end) {
   var now = Date.now();
 
 /* FIXA SÅ ATT JAG KAN LÄSA AV FOLK SOM INTE STÅR I KÖN */
+/** DIRR */
   for (var i = queue.length - 1; i >= 0; i--) {
     var user = queue[i];
     if (user.startTime >= start && user.startTime < end) {
@@ -183,7 +184,7 @@ io.on('connection', function(socket) {
     var queue = queueSystem.findQueue(queueName);
     var newUser = new User({
       name: user.name,
-      place: user.place,
+      location: user.location,
       comment: user.comment
     });
     queue.addUser(newUser);
@@ -287,13 +288,18 @@ io.on('connection', function(socket) {
   });
 
   // teacher/assistant emits to all teacher/assistant
-  socket.on('emitTA', function(req) {
-    var queueName = req.queue;
+  socket.on('broadcastFaculty', function(req) {
+    console.log("Recevide request to send message to faculty");
+    var queueName = req.queueName;
     var message = req.message;
     var username = req.sender;
 
+    console.log("queueName = " + queueName);
+    console.log("message = " + message);
+    console.log("username = " + username);
+
     // teacher/assistant-validation
-    if (!(validate(username, "super", "queue") || validate(username, "teacher", queueName) || validate(username, "assistant", queueName))) {
+    if (!(validate(username, "teacher", queueName) || validate(username, "assistant", queueName))) {
       console.log("validation for emitTA failed");
       //res.end();
       return;
@@ -444,33 +450,33 @@ io.on('connection', function(socket) {
     doOnQueue(queueName, 'unlock');
   });
 
-  socket.on('hibernate', function(req) {
-    var queueName = req.queue;
+  socket.on('hide', function(req) {
+    var queueName = req.queueName;
     var username = socket.handshake.session.user.name;
 
     // admin/teacher-validation
     if (!(validate(username, "super", "queue") || validate(username, "teacher", queueName))) {
       console.log("Current user " + username + " is not a teacher for that queue or an admin.");
-      //console.log("validation for hibernate failed");
+      //console.log("validation for hide failed");
       //res.end();
       return;
     }
 
-    doOnQueue(req.queue, 'hibernate');
+    doOnQueue(queueName, 'hide');
   });
 
-  socket.on('unhibernate', function(req) {
+  socket.on('show', function(req) {
     var queueName = req.queue;
     var username = socket.handshake.session.user.name;
 
     // admin/teacher-validation
     if (!(validate(username, "super", "queue") || validate(username, "teacher", queueName))) {
-      console.log("validation for unhibernate failed");
+      console.log("validation for show failed");
       //res.end();
       return;
     }
 
-    doOnQueue(req.queue, 'unhibernate');
+    doOnQueue(req.queue, 'show');
   });
 
   //===============================================================
@@ -715,12 +721,60 @@ io.on('connection', function(socket) {
     });
   });
 
+  socket.on('addMOTD', function(req) {
+    var queueName = req.queueName;
+    var MOTD = req.MOTD;
+    var sender = req.sender;
+
+    // teacher/assistant-validation
+    if (!(validate(sender, "teacher", queueName) || validate(sender, "assistant", queueName))) {
+      console.log("validation for addMOTD failed");
+      //res.end();
+      return;
+    }
+
+    // * save MOTD to database
+    var course = queueSystem.findQueue(queueName);
+    course.addMOTD(MOTD);
+
+    console.log('\'' + MOTD + '\' added as a new MOTD in ' + queueName + '!');
+    io.to(queueName).emit('addMOTD', {
+      MOTD: MOTD
+    });
+  });
+
+  socket.on('addServerMessage', function(req) {
+    var globalMOTD = req.message;
+    var sender = req.sender;
+    console.log("sender = " + sender);
+
+    // teacher/assistant-validation
+    if (!validate(sender, "admin", "")) {
+      console.log("validation for addServerMessage failed");
+      //res.end();
+      return;
+    }
+
+    // * save globalMOTD to database
+    // get object from database
+    // edit object
+    // save object to database
+
+    console.log('\'' + globalMOTD + '\' added as a new global MOTD!');
+  });
+
+
   // TODO : This has been changed to only have them join a room based on their ID, no more session interaction
   socket.on('setUser', function(req) {
     socket.join("user_" + req.name); // joina sitt eget rum, för privata meddelande etc
     socket.handshake.session.user = req;
     console.log('Socket-setUser: ' + JSON.stringify(req));
     console.log('session is: ' + JSON.stringify(socket.handshake.session.user));
+
+    var globalMOTD = "Hello world";
+    // * get object from database
+
+    io.to("user_" + req.name).emit('serverMessage', globalMOTD);
   });
 });
 

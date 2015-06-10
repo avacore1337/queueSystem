@@ -10,6 +10,19 @@ var Schema = mongoose.Schema;
 
 //===============================================================
 
+// Schema used for global MOTD
+var globalMOTD = new Schema({
+  globalMOTD: { type: String, default: '' },
+});
+
+// Updates the MOTD
+globalMOTD.methods.addGlobalMOTD = function (message) {
+  this.globalMOTD = message;
+  this.save();
+};
+
+//-----
+
 // Schema used for admins, teachers and teacher assistans
 var adminSchema = new Schema({
   name: String,
@@ -22,7 +35,7 @@ var adminSchema = new Schema({
 // Schema used for users in the queues
 var userSchema = new Schema({
   name: String,
-  place: String,
+  location: String,
   startTime: { type: Number, default: Date.now },
   messages: [String],
   action: { type: String, default: '' },
@@ -33,7 +46,7 @@ var userSchema = new Schema({
 userSchema.methods.toJSON = function () {
   return {
     name: this.name,
-    place: this.place,
+    location: this.location,
     time: this.startTime,
     action: this.action,
     comment: this.comment
@@ -103,13 +116,19 @@ function numbersOfPeopleLeftQueue(queue, start, end) {
 var queueSchema = new Schema({
   name: String,
   locked: { type: Boolean, default: false },
-  hibernating: { type: Boolean, default: false },
+  hiding: { type: Boolean, default: false },
   motd: { type: String, default: "You can do it!" },
   queue: {type:[userSchema], default: []},
   bookings: {type:[bookingSchema], default: []},
   teacher: {type:[adminSchema], default: []},
   assistant: {type:[adminSchema], default: []}
 });
+
+// Updates the MOTD
+queueSchema.methods.addMOTD = function (message) {
+  this.motd = message;
+  this.save();
+};
 
 // takes a user as a parameter and adds to the queue
 queueSchema.methods.addUser = function (user) {
@@ -179,14 +198,14 @@ queueSchema.methods.unlock = function () {
 };
 
 // hide the schema
-queueSchema.methods.hibernate = function () {
-  this.hibernating = true;
+queueSchema.methods.hide = function () {
+  this.hiding = true;
   this.save();
 };
 
-// unhide the schema
-queueSchema.methods.unhibernate = function () {
-  this.hibernating = false;
+// show the schema
+queueSchema.methods.show = function () {
+  this.hiding = false;
   this.save();
 };
 
@@ -228,12 +247,6 @@ queueSchema.methods.addAssistantComment = function (name, sender, queue, message
   this.save();
 };
 
-// NOT IMPLEMENTED YET
-// set the "message of the day" for the queue
-queueSchema.methods.setMOTD = function () {
-  // TODO
-};
-
 //-----
 
 // Schema used for bookings
@@ -273,6 +286,7 @@ var Admin = mongoose.model("Admin", adminSchema);
 var Queue = mongoose.model("Queue", queueSchema);
 var Statistic = mongoose.model("UserStatistic", statisticSchema);
 var Booking = mongoose.model("Booking", bookingSchema);
+var GlobalMOTD = mongoose.model("GlobalMOTD", bookingSchema);
 
 //=========================================
 // Export data from this file to "index.js"
@@ -281,5 +295,6 @@ module.exports = {
   user: User,
   admin: Admin,
   queue: Queue,
-  statistic: Statistic
+  statistic: Statistic,
+  globalMOTD: GlobalMOTD
 };
