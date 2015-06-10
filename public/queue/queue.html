@@ -103,6 +103,7 @@
           </thead>
           <tbody>
             <tr ng-repeat="booking in bookedUsers | filter:{attending(booking) && soon(booking)}" ng-show="matchBooked(user)">
+            <!--<tr ng-repeat="booking in bookedUsers | filter: attending | filter: soon" ng-show="matchBooked(user)"> -->
               <td><p ng-repeat="name in booking.users">{{name}}</p></td>
               <td>{{booking.location}}</td>
               <td>{{booking.comment}}</td>
