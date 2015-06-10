@@ -92,8 +92,8 @@
       <h4 ng-hide="users.length || bookedUsers.length">This queue is empty</h4>
 
       <!-- Users with bookings -->
-      <div>
-        <table class="table table-striped booked" ng-show="bookedUsers.length">
+      <div ng-show="bookedUsers.length">
+        <table class="table table-striped booked">
           <thead>
             <th>User</th>
             <th>Location</th>
@@ -112,12 +112,12 @@
       </div>
 
       <!-- Users without bookings -->
-      <div>
-        <table class="table table-striped" ng-show="users.length">
+      <div ng-show="users.length">
+        <table class="table table-striped">
           <thead>
             <tr>
               <th class="hidden-xs">#</th>
-              <th>User</th>
+              <th ng-show="accessLevel">User</th>
               <th>Location</th>
               <th>Comment</th>
               <th>Time</th>
@@ -126,7 +126,7 @@
           <tbody>
             <tr ng-repeat-start="user in users track by $index" ng-class="{'pointer' : accessLevel > 0, 'pulse' : user.gettingHelp, 'light-blue-background' : user.name === name}" ng-click="changeVisibility(user.name)"  id="queue{{user.name}}Btn" ng-show="match(user)">
               <td class="hidden-xs">{{ $index + 1 }}</td>
-              <td>{{ user.name }}</td>
+              <td ng-show="accessLevel">{{ user.name }}</td>
               <td>{{ user.place }}</td>
               <td>{{ user.comment }}</td>
               <td><span data-livestamp="{{user.time}}"></span></td>
