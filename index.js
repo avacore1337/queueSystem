@@ -50,6 +50,7 @@ var User = database.user;
 var Admin = database.admin;
 var Queue = database.queue;
 var Statistic = database.statistic;
+var GlobalMOTD = database.globalMOTD;
 
 //---
 
@@ -228,8 +229,8 @@ io.on('connection', function(socket) {
     console.log('a was updated in ' + queueName);
     io.to(queueName).emit('update', user);
 
-    var queue = queueSystem.findQueue(queueName);
-    queue.updateUser(user.name, user);
+    var course = queueSystem.findQueue(queueName);
+    course.updateUser(user.name, user);
   });
 
   // admin helps a user (marked in the queue)
@@ -244,6 +245,9 @@ io.on('connection', function(socket) {
       //res.end();
       return;
     }
+
+    var course = queueSystem.findQueue(queueName);
+    course.helpingQueuer(name, queueName);
 
     io.to(queueName).emit('help', {
       name: name,
@@ -711,8 +715,8 @@ io.on('connection', function(socket) {
       return;
     }
 
-    var queue = queueSystem.findQueue(queueName);
-    queue.addAssistantComment(username, sender, queueName, message);
+    var course = queueSystem.findQueue(queueName);
+    course.addAssistantComment(username, sender, queueName, message);
 
     console.log('flagged');
     io.to(queueName).emit('flag', {
@@ -733,7 +737,7 @@ io.on('connection', function(socket) {
       return;
     }
 
-    // * save MOTD to database
+    // find the course and save the MOTD to the course in the database
     var course = queueSystem.findQueue(queueName);
     course.addMOTD(MOTD);
 
@@ -749,16 +753,21 @@ io.on('connection', function(socket) {
     console.log("sender = " + sender);
 
     // teacher/assistant-validation
-    if (!validate(sender, "admin", "")) {
+    if (!validate(sender, "super", "")) {
       console.log("validation for addServerMessage failed");
       //res.end();
       return;
     }
 
     // * save globalMOTD to database
-    // get object from database
-    // edit object
-    // save object to database
+    GlobalMOTD.find(function(err, globals) {
+      globals.forEach(function(global) {
+        // to make sure everything loads
+        global.addGlobalMOTD(globalMOTD);
+      });
+    });
+
+    queueSystem.setGlobalMOTD(globalMOTD);
 
     console.log('\'' + globalMOTD + '\' added as a new global MOTD!');
   });
@@ -771,8 +780,8 @@ io.on('connection', function(socket) {
     console.log('Socket-setUser: ' + JSON.stringify(req));
     console.log('session is: ' + JSON.stringify(socket.handshake.session.user));
 
-    var globalMOTD = "Hello world";
-    // * get object from database
+    var globalMOTD = queueSystem.getGlobalMOTD();
+    console.log(globalMOTD);
 
     io.to("user_" + req.name).emit('serverMessage', globalMOTD);
   });

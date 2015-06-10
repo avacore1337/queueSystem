@@ -99,12 +99,12 @@ queueControllers.controller('listController', ['$scope', '$http', '$location', '
     });
 
     function getQueue(queue) {
-        for (var index in $scope.queues) {
-          if ($scope.queues[index].name === queue) {
-            return $scope.queues[index];
-          }
+      for (var index in $scope.queues) {
+        if ($scope.queues[index].name === queue) {
+          return $scope.queues[index];
         }
       }
+    }
       // This function should direct the user to the wanted page
     $scope.redirect = function(queue) {
       console.log("Trying to enter queue : " + queue.name);
