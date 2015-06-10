@@ -9,6 +9,7 @@ var ta = 'pernyb';
     browser.manage().window().maximize();
     browser.waitForAngular();
     userLogIn(ta);
+    closeMOTD();
     element(by.id('listdbasBtn')).click();
     closeMOTD();
     element(by.id('queueOptionsBtn')).click();
@@ -29,20 +30,8 @@ var ta = 'pernyb';
     });
   element(by.id('loginInputField')).sendKeys(userName);
   element(by.id('loginOKBtn')).click();
- };
-
-function adminLogIn(userName){
-  element(by.id('indexLogInBtn')).isDisplayed().then(function(isVisible) {
-      if (isVisible){  
-        element(by.id('indexLogInBtn')).click(); 
-      } else {  
-        element(by.id('indexLogOutBtn')).click();
-        element(by.id('indexLogInBtn')).click();  
-      }
-    });
-  element(by.id('loginInputField')).sendKeys(userName);
-  //element(by.id('loginAdminRadio')).click();
-  element(by.id('loginOKBtn')).click();
+  closeMOTD();
+  browser.waitForAngular();
  };
 
 
@@ -54,7 +43,7 @@ function closeMOTD(){
   //     );
     var plot0 = element(by.css('body > div.modal.fade.ng-isolate-scope.in > div > div'));
     browser.actions()
-      .mouseMove({x: 400, y: 0}) // 400px to the right of current location
+      .mouseMove({x: 200, y: 0}) // 400px to the right of current location
       .click()
       .perform();
 };
@@ -89,7 +78,8 @@ it('he TA class is able to, by interaction, Purge the queue of all Users', funct
   userLogIn('emickos');
   userJoinQueue('dbas');
   newBrowser();
-  adminLogIn(ta);
+  userLogIn(ta);
+  closeMOTD();
   element(by.id('listdbasBtn')).click();
   closeMOTD();
   element(by.id('queueOptionsBtn')).click();
@@ -149,7 +139,8 @@ it('The TA class is able to, by interaction, ‘Kick’ a User from the Queue', 
   userLogIn(name);
   userJoinQueue('dbas');
   newBrowser();
-  adminLogIn(ta);
+  userLogIn(ta);
+  closeMOTD();
   $('#listdbasBtn').click();
   closeMOTD();
   browser.actions().doubleClick($('#queue'+name+'Btn')).perform();
@@ -158,16 +149,20 @@ it('The TA class is able to, by interaction, ‘Kick’ a User from the Queue', 
   });
 
 it('TA is able to use the interaction ‘Lock’ or ‘Unlock’ with a queue', function(){  
- adminLogIn(ta);
+ userLogIn(ta);
+ closeMOTD();
  $('#listdbasBtn').click();
+ closeMOTD();
  element(by.id('queueOptionsBtn')).click();
  $('#queueLockQueueBtn').click();
  newBrowser();
  userLogIn(name);
  expect($('#listdbasBtn').isPresent()).toBeFalsy();
  newBrowser();
- adminLogIn(ta);
+ userLogIn(ta);
+ closeMOTD();
  $('#listdbasBtn').click();
+ closeMOTD();
  element(by.id('queueOptionsBtn')).click();
  $('#queueUnlockQueueBtn').click();
  newBrowser();
@@ -182,8 +177,8 @@ it('TA is able to use the interaction ‘new MOTD’ (Message of the Day) with a
 it('The users of class Teacher have the system rights to change other users user class within the group:', function(){
  userLogIn(name);
  expect($('#indexAdminBtn').isPresent()).toBeFalsy();
- newBroser();
- adminLogIn(ta);
+ newBrowser();
+ userLogIn(ta);
  $('#indexAdminBtn').click();
  $('#administrationSelectQueueDropDown').click();
  $('#administrationdbasDropDownBtn').click();
@@ -192,8 +187,8 @@ it('The users of class Teacher have the system rights to change other users user
  newBrowser();
  userLogIn(name);
  expect($('#indexAdminBtn').isPresent()).toBeTruthy();
- newBroser();
- adminLogIn(ta);
+ newBrowser();
+ userLogIn(ta);
  $('#indexAdminBtn').click();
  $('#administrationSelectQueueDropDown').click();
  $('#administrationdbasDropDownBtn').click();
@@ -204,23 +199,24 @@ it('The users of class Teacher have the system rights to change other users user
 });
 
 it('The Teacher class is able to Hide or Reveal the Queue. Hiding the Queue will remove the Queue from the list of Queues for Users of the Student class', function(){
- adminLogIn(ta);
-
+ userLogIn(ta);
  $('#indexAdminBtn').click();
  $('#administrationSelectQueueDropDown').click();
  $('#administrationdbasDropDownBtn').click();
+ $('#administrationHideQueueBtn').click();
+ $('#administrationChangeBtn').click();
 
  newBrowser();
  userLogIn(name);
  expect($('#listdbasBtn').isDisplayed()).toBeFalsy();
  newBrowser();
- adminLogIn(ta);
- adminLogIn(ta);
+ userLogIn(ta);
+ userLogIn(ta);
 
  $('#indexAdminBtn').click();
  $('#administrationSelectQueueDropDown').click();
  $('#administrationdbasDropDownBtn').click();
- $('#administrationHibernateQueueBtn').click();
+ $('##administrationShowQueueBtn').click();
  $('#administrationChangeBtn').click();
 
  newBrowser();
