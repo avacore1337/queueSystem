@@ -244,10 +244,10 @@
   modalInstance.result.then(function (message) {
     if(message === "hibernate"){
       socket.emit('purge', {
-        queue:$scope.selectedQueue.name
+        queueName:$scope.selectedQueue.name
       });
       socket.emit('hibernate', {
-        queue:$scope.selectedQueue.name
+        queueName:$scope.selectedQueue.name
       });
       console.log("Trying to hibernate queue " + $scope.selectedQueue.name);
     }

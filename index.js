@@ -451,7 +451,7 @@ io.on('connection', function(socket) {
   });
 
   socket.on('hibernate', function(req) {
-    var queueName = req.queue;
+    var queueName = req.queueName;
     var username = socket.handshake.session.user.name;
 
     // admin/teacher-validation
@@ -462,7 +462,7 @@ io.on('connection', function(socket) {
       return;
     }
 
-    doOnQueue(req.queue, 'hibernate');
+    doOnQueue(queueName, 'hibernate');
   });
 
   socket.on('unhibernate', function(req) {
