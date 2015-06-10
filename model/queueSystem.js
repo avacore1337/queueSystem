@@ -24,6 +24,48 @@ var globalMOTD = "FEL!";
 exports.statisticsList = [];
 
 /**
+ * Creates a queue with the given name.
+ * @param {String} name - The name of the queue.
+ */
+exports.addQueue = function (name) {
+  var newQueue = new Queue({
+    name: name
+  });
+  queueList.push(newQueue);
+  newQueue.save();
+
+  console.log(name + ' is getting created as ' + JSON.stringify(newQueue));
+  return newQueue;
+};
+
+/**
+ * Removes the queue object with the matching name.
+ * @param {String} name - The name of the queue.
+ */
+exports.removeQueue = function(name){
+  for (var i = queueList.length - 1; i >= 0; i--) {
+    var queue = queueList[i];
+    if (queue.name === name) {
+      queueList.splice(i, 1);
+      queue.remove();
+      break;
+    }
+  }
+};
+
+/**
+ * Return the queue object with the matching name.
+ * @param {String} name - The name of the queue.
+ */
+exports.findQueue = function(name) {
+  for (var i = 0; i < queueList.length; i++) {
+    if (queueList[i].name === name) {
+      return queueList[i];
+    }
+  }
+};
+
+/**
  * Wrapper for the array For each for the queueList array.
  * @param {function} fn - The function to be called for every element in the list.
  */
@@ -63,48 +105,6 @@ exports.removeAdmin = function (username) {
 /** Returns the adminList */
 exports.getAdminList = function () {
   return adminList;
-};
-
-/**
- * Return the queue object with the matching name.
- * @param {String} name - The name of the queue.
- */
-exports.findQueue = function(name) {
-  for (var i = 0; i < queueList.length; i++) {
-    if (queueList[i].name === name) {
-      return queueList[i];
-    }
-  }
-};
-
-/**
- * Removes the queue object with the matching name.
- * @param {String} name - The name of the queue.
- */
-exports.removeQueue = function(name){
-  for (var i = queueList.length - 1; i >= 0; i--) {
-    var queue = queueList[i];
-    if (queue.name === name) {
-      queueList.splice(i, 1);
-      queue.remove();
-      break;
-    }
-  }
-};
-
-/**
- * Creates a queue with the given name.
- * @param {String} name - The name of the queue.
- */
-exports.addQueue = function (name) {
-  var newQueue = new Queue({
-    name: name
-  });
-  queueList.push(newQueue);
-  newQueue.save();
-
-  console.log(name + ' is getting created as ' + JSON.stringify(newQueue));
-  return newQueue;
 };
 
 /**
