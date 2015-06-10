@@ -126,7 +126,7 @@ it('Joining a queue with a booked time slot', function(){
 });
 
 it('The Student class will have the possibility the change their own data in the form of location commment and personal comment.', function() {
-    userLogIn(name, student);
+    userLogIn(name);
     $('#listdbasBtn').click();
     closeMOTD();
     $('#queueLocationInputField').sendKeys(location);
@@ -164,8 +164,7 @@ it('TA is able to use the interaction ‘Lock’ or ‘Unlock’ with a queue', 
  $('#queueLockQueueBtn').click();
  newBrowser();
  userLogIn(name);
- $('#listdbasBtn').click();
- expect(browser.getCurrentUrl()).toMatch('http://localhost:8080/#/list');
+ expect($('#listdbasBtn').isPresent()).toBeFalsy();
  newBrowser();
  adminLogIn(ta);
  $('#listdbasBtn').click();
@@ -173,8 +172,7 @@ it('TA is able to use the interaction ‘Lock’ or ‘Unlock’ with a queue', 
  $('#queueUnlockQueueBtn').click();
  newBrowser();
  userLogIn(name);
- $('#listdbasBtn').click();
- expect(browser.getCurrentUrl()).toMatch('http://localhost:8080/#/queue/dbas');
+ expect($('#listdbasBtn').isPresent()).toBeTruthy();
   });
 
 it('TA is able to use the interaction ‘new MOTD’ (Message of the Day) with a queue for a session which he is given privileges.', function(){
@@ -182,20 +180,49 @@ it('TA is able to use the interaction ‘new MOTD’ (Message of the Day) with a
 });
 
 it('The users of class Teacher have the system rights to change other users user class within the group:', function(){
-//TODO
+ userLogIn(name);
+ expect($('#indexAdminBtn').isPresent()).toBeFalsy();
+ newBroser();
+ adminLogIn(ta);
+ $('#indexAdminBtn').click();
+ $('#administrationSelectQueueDropDown').click();
+ $('#administrationdbasDropDownBtn').click();
+ $('#administrationAddAssistantInputField').sendKeys(name);
+ $('#administrationAddAssistantBtn').click();
+ newBrowser();
+ userLogIn(name);
+ expect($('#indexAdminBtn').isPresent()).toBeTruthy();
+ newBroser();
+ adminLogIn(ta);
+ $('#indexAdminBtn').click();
+ $('#administrationSelectQueueDropDown').click();
+ $('#administrationdbasDropDownBtn').click();
+ $('#administrationRemoveAssistantBtn').click
+ newBrowser();
+ userLogIn(name);
+ expect($('#indexAdminBtn').isPresent()).toBeFalsy();
 });
 
 it('The Teacher class is able to Hide or Reveal the Queue. Hiding the Queue will remove the Queue from the list of Queues for Users of the Student class', function(){
  adminLogIn(ta);
- $('#listdbasBtn').click();
- $('#queueHibernateQueueBtn').click();
+
+ $('#indexAdminBtn').click();
+ $('#administrationSelectQueueDropDown').click();
+ $('#administrationdbasDropDownBtn').click();
+
  newBrowser();
  userLogIn(name);
  expect($('#listdbasBtn').isDisplayed()).toBeFalsy();
  newBrowser();
  adminLogIn(ta);
- $('#listdbasBtn').click();
- $('#queueWakeupQueueBtn').click();
+ adminLogIn(ta);
+
+ $('#indexAdminBtn').click();
+ $('#administrationSelectQueueDropDown').click();
+ $('#administrationdbasDropDownBtn').click();
+ $('#administrationHibernateQueueBtn').click();
+ $('#administrationChangeBtn').click();
+
  newBrowser();
  userLogIn(name);
  expect($('#listdbasBtn').isDisplayed()).toBeTruthy();
