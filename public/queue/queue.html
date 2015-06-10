@@ -102,12 +102,13 @@
             <th>Length</th>
           </thead>
           <tbody>
-            <tr ng-repeat="user in bookedUsers" ng-show="matchBooked(user)">
-              <td><p ng-repeat="name in user.users">{{name}}</p></td>
-              <td>{{user.location}}</td>
-              <td>{{user.comment}}</td>
-              <td>{{user.time}}</td>
-              <td>{{user.length}}</td>
+            <tr ng-repeat="booking in bookedUsers | filter:{attending(booking) && soon(booking)}" ng-show="matchBooked(user)">
+            <!--<tr ng-repeat="booking in bookedUsers | filter: attending | filter: soon" ng-show="matchBooked(user)"> -->
+              <td><p ng-repeat="name in booking.users">{{name}}</p></td>
+              <td>{{booking.location}}</td>
+              <td>{{booking.comment}}</td>
+              <td>{{booking.time}}</td>
+              <td>{{booking.length}}</td>
             </tr>
           </tbody>
         </table>
@@ -126,7 +127,7 @@
             </tr>
           </thead>
           <tbody>
-            <tr ng-repeat-start="user in users track by $index" ng-class="{'pointer' : accessLevel > 0, 'pulse' : user.gettingHelp, 'light-blue-background' : user.name === name}" ng-click="changeVisibility(user.name)"  id="queue{{user.name}}Btn" ng-show="match(user)">
+            <tr ng-repeat-start="user in users track by $index | filter:hasBooking(user.name)" ng-class="{'pointer' : accessLevel > 0, 'pulse' : user.gettingHelp, 'light-blue-background' : user.name === name}" ng-click="changeVisibility(user.name)"  id="queue{{user.name}}Btn" ng-show="match(user)">
               <td class="hidden-xs">{{ $index + 1 }}</td>
               <td ng-show="accessLevel">{{ user.name }}</td>
               <td>{{ user.location }}</td>

@@ -16,6 +16,8 @@
 
   .controller('queueController', ['$scope', '$http', '$routeParams', '$location', '$modal', 'WebSocketService', 'UserService', 'TitleService',
     function ($scope, $http, $routeParams, $location, $modal, socket, user, title) {
+      var TIME_BOOKING = 1800000; // 30min in milliseconds
+
       $scope.queue = $routeParams.queue;
 
       $scope.$on('$destroy', function (event) {
@@ -40,13 +42,12 @@
       }
 
       $scope.locked = false;
-      $scope.hiding = false;
       $http.get('/API/queue/' + $scope.queue)
       .success(function(response) {
         $scope.users = response.queue;
-        $scope.bookedUsers = response.bookings;
+        //$scope.bookedUsers = response.bookings;
+        $scope.bookedUsers = [{time:Date.now(), comment:"Testing", users:["antbac"], length:"15min", location:"Blue bitch 01"}];
         $scope.locked = response.locked;
-        $scope.hiding = response.hiding;
         for (var i = 0; i < $scope.users.length; i++) {
           $scope.users[i].optionsActivated = false;
           $scope.users[i].time = $scope.users[i].time/1000;
@@ -230,7 +231,7 @@
     });
 
     $scope.addUser = function(){
-      if(!$scope.locked && !$scope.hiding){
+      if(!$scope.locked){
         if($scope.location === ""){
           alert("You must enter a location.");
         }else{
@@ -259,9 +260,17 @@
 
     // Leave the queue
     $scope.leave = function(){
+      var wasBooked = false;
+      if($scope.hasBooking(user.getName())){
+        var booking = getBooking(user.getName());
+        if($scope.soon(booking)){
+          wasBooked = true;
+        }
+      }
       socket.emit('leave', {
         queueName:$scope.queue,
-        user:{name:user.getName()}
+        user:{name:user.getName()},
+        booking: wasBooked
       });
       console.log("Called leave");
     };
@@ -593,10 +602,63 @@
     console.log("location = " + $scope.location);
   };
 
-  // This function changes what queue is shown
-  $scope.switchQueue = function(){
-    $scope.bookedQueue = !$scope.bookedQueue;
+  // Return true if the booking is taking place approximately now
+  $scope.soon = function(booking){
+    return Math.abs(booking.time - Date.now()) < TIME_BOOKING;
   };
+
+  // Return true if any of the people in the group is in the queue
+  $scope.attending = function(group){
+    for(var index in group){
+      var name = group[index];
+      if(present(name)){
+        return true;
+      }
+    }
+    return false;
+  };
+
+  // Return true if the person has a booking about now
+  $scope.hasBooking = function(name){
+    console.log("Called hasBooking");
+    for(var index in $scope.bookedUsers){
+      var booking = $scope.bookedUsers[index];
+      for(var i in booking.users){
+        var name1 = booking.users[i];
+        if(name1 === name){
+          if($scope.soon(booking)){
+            return true;
+          }
+        }
+      }
+    }
+    return false;
+  };
+
+  // Returns true if the given person is queueing at the moment, otherwise false
+  function present (name) {
+    for(var index in $scope.users){
+      var name1 = $scope.users[index].name;
+      if(name === name1){
+        return true;
+      }
+    }
+    return false;
+  }
+
+  // Returns true if the given person is queueing at the moment, otherwise false
+  function getBooking (name) {
+    for(var index in $scope.bookedUsers){
+      var booking = $scope.bookedUsers[index];
+      for(var i in booking.users){
+        var name1 = booking.users[i];
+        if(name1 === name){
+          return booking;
+        }
+      }
+    }
+    return undefined;
+  }
 
   // This function checks if a person in the normal queue matches the search-string.
   $scope.match = function (user) {
