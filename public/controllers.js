@@ -290,8 +290,8 @@ queueControllers.controller('statisticsController', ['$scope', '$http', 'WebSock
   }
 ]);
 
-queueControllers.controller('loginController', ['$scope', '$location', '$http', 'TitleService', 'WebSocketService',
-  function($scope, $location, $http, title, socket) {
+queueControllers.controller('loginController', ['$scope', '$location', '$http', 'TitleService', 'WebSocketService', '$modal',
+  function($scope, $location, $http, title, socket, $modal) {
     $scope.$on('$destroy', function (event) {
       socket.removeAllListeners();
     });
@@ -301,7 +301,7 @@ queueControllers.controller('loginController', ['$scope', '$location', '$http', 
       if(message){
         var modalInstance = $modal.open({
           templateUrl: 'serverMessage.html',
-          controller: function ($scope, $modalInstance, title, message, safeButtonText, dangerButtonText) {
+          controller: function ($scope, $modalInstance, title, message) {
             $scope.title = title;
             $scope.message = message;
           },

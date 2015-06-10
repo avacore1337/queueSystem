@@ -746,6 +746,7 @@ io.on('connection', function(socket) {
   socket.on('addServerMessage', function(req) {
     var globalMOTD = req.message;
     var sender = req.sender;
+    console.log("sender = " + sender);
 
     // teacher/assistant-validation
     if (!validate(sender, "admin", "")) {
