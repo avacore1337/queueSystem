@@ -53,7 +53,7 @@ queueControllers.controller('listController', ['$scope', '$http', '$location', '
       var queue = getQueue(data.queueName);
       queue.length--;
       for (var i in queue.queue) {
-        if (queue.queue[i].name === data.getName()) {
+        if (queue.queue[i].name === data.username) {
           queue.queue.splice(i, 1);
           if (parseInt(i, 10) + 1 === queue.position) {
             queue.position = -1;
