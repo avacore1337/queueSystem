@@ -25,14 +25,12 @@ queueControllers.controller('listController', ['$scope', '$http', '$location', '
       var queue = getQueue(resp.name);
       queue.position = -1;
       queue.queue = resp.queue;
-      console.log("Looking for " + user.getName() + " in " + queue.name);
       for (var i in queue.queue) {
         if (queue.queue[i].name === user.getName()) {
           queue.position = parseInt(i, 10) + 1;
           break;
         }
       }
-      console.log("Queue " + queue.name + " : " + queue.position);
     }
     user.updateUserData();
 
@@ -298,7 +296,7 @@ queueControllers.controller('loginController', ['$scope', '$location', '$http', 
 
     // Listen for a server-message
     socket.on('serverMessage', function(message) {
-      console.log("Recieved server-message : " + message);
+
       if(message){
         var modalInstance = $modal.open({
           templateUrl: 'serverMessage.html',

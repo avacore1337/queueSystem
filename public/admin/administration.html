@@ -72,7 +72,7 @@
 					<tbody>
 						<tr id="admin.name" ng-repeat="admin in admins">
 							<td>{{ admin.name }}</td>
-							<td>{{ admin.username }} <span class="glyphicon glyphicon-remove text-red clickable" title="Remove admin" ng-click="removeAdmin(admin.username)" id="administrationRemoveAdminBtn" ng-show="admins.length > 1"></span></td>
+							<td>{{ admin.username }} <span class="glyphicon glyphicon-remove text-red clickable" title="Remove admin" ng-click="removeAdmin(admin.username)" id="administrationRemoveAdmin{{admin.username}}Btn" ng-show="admins.length > 1"></span></td>
 							<td>{{ admin.addedBy }}</td>
 						</tr>
 					</tbody>
@@ -172,7 +172,7 @@
 						<tbody>
 							<tr id="teacher.username" ng-repeat="teacher in selectedQueue.teacher">
 								<td>{{ teacher.name }}</td>
-								<td>{{ teacher.username }} <span class="glyphicon glyphicon-remove text-red clickable" title="Remove teacher" ng-click="removeTeacher(teacher.username)" id="administrationRemoveTeacherBtn"></span></td>
+								<td>{{ teacher.username }} <span class="glyphicon glyphicon-remove text-red clickable" title="Remove teacher" ng-click="removeTeacher(teacher.username)" id="administrationRemoveTeacher{{teacher.username}}Btn"></span></td>
 								<td>{{ teacher.addedBy }}</td>
 							</tr>
 						</tbody>
@@ -215,7 +215,7 @@
 						<tbody>
 							<tr id="assistant.name" ng-repeat="assistant in selectedQueue.assistant">
 								<td>{{ assistant.name }}</td>
-								<td>{{ assistant.username }} <span class="glyphicon glyphicon-remove text-red clickable" title="Remove assistant" ng-click="removeAssistant(assistant.username)" id="administrationRemoveAssistantBtn"></span></td>
+								<td>{{ assistant.username }} <span class="glyphicon glyphicon-remove text-red clickable" title="Remove assistant" ng-click="removeAssistant(assistant.username)" id="administrationRemoveAssistant{{assistant.username}}Btn"></span></td>
 								<td>{{ assistant.addedBy }}</td>
 							</tr>
 						</tbody>

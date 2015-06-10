@@ -185,8 +185,9 @@
     });
 
     // Listen for a new MOTD.
-    socket.on('addMOTD', function (data) {
-      $scope.MOTD = data;
+    socket.on('addMOTD', function (MOTD) {
+      console.log("Backend wants to add the MOTD : " + MOTD);
+      $scope.MOTD = MOTD;
     });
 
     // Listen for locking the queue
