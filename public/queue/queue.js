@@ -497,13 +497,17 @@
     $scope.addMOTD = function(){
       console.log("Called addMOTD");
       var modalInstance = $modal.open({
-        templateUrl: 'enterMessage.html',
-        controller: function ($scope, $modalInstance, title, placeholder, buttonText) {
+        templateUrl: 'editMOTD.html',
+        controller: function ($scope, $modalInstance, title, placeholder, buttonEdit, buttonRemove) {
           $scope.title = title;
           $scope.placeholder = placeholder;
-          $scope.buttonText = buttonText;
-          $scope.ok = function () {
+          $scope.buttonEdit = buttonEdit;
+          $scope.buttonRemove = buttonRemove;
+          $scope.edit = function () {
             $modalInstance.close($scope.message);
+          };
+          $scope.remove = function () {
+            $modalInstance.close("");
           };
         },
         resolve: {
@@ -517,15 +521,18 @@
               return "";
             }
           },
-          buttonText: function () {
-            return "Add MOTD";
+          buttonEdit: function () {
+            return "Edit MOTD";
+          },
+          buttonRemove: function () {
+            return "Remove MOTD";
           }
         }
       });
 
       modalInstance.result.then(function (MOTD) {
         console.log("MOTD = " + MOTD);
-        if(MOTD){
+        if(MOTD !== undefined){
           socket.emit('addMOTD', {
             queueName:$scope.queue,
             MOTD:MOTD,
