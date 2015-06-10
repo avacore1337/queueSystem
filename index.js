@@ -288,7 +288,7 @@ io.on('connection', function(socket) {
   });
 
   // teacher/assistant emits to all teacher/assistant
-  socket.on('emitTA', function(req) {
+  socket.on('broadcastFaculty', function(req) {
     var queueName = req.queue;
     var message = req.message;
     var username = req.sender;
