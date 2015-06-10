@@ -296,6 +296,27 @@ queueControllers.controller('loginController', ['$scope', '$location', '$http', 
       socket.removeAllListeners();
     });
 
+    // Listen for a server-message
+    socket.on('serverMessage', function(message) {
+      if(message){
+        var modalInstance = $modal.open({
+          templateUrl: 'serverMessage.html',
+          controller: function ($scope, $modalInstance, title, message, safeButtonText, dangerButtonText) {
+            $scope.title = title;
+            $scope.message = message;
+          },
+          resolve: {
+            title: function () {
+              return "Server-message";
+            },
+            message: function () {
+              return message;
+            }
+          }
+        });
+      }
+  });
+
     title.title = "Log in | Stay A While";
 
     $scope.done = function() {
