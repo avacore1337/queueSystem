@@ -475,7 +475,9 @@
 
       modalInstance.result.then(function (message) {
         console.log("Message = " + message);
-        if(message !== null && message !== undefined){
+        if(message){
+          console.log("Sending message");
+          console.log("$scope.queue = " + $scope.queue);
           socket.emit('broadcastFaculty', {
             queueName:$scope.queue,
             message:message,

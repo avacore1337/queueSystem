@@ -289,12 +289,17 @@ io.on('connection', function(socket) {
 
   // teacher/assistant emits to all teacher/assistant
   socket.on('broadcastFaculty', function(req) {
-    var queueName = req.queue;
+    console.log("Recevide request to send message to faculty");
+    var queueName = req.queueName;
     var message = req.message;
     var username = req.sender;
 
+    console.log("queueName = " + queueName);
+    console.log("message = " + message);
+    console.log("username = " + username);
+
     // teacher/assistant-validation
-    if (!(validate(username, "super", "queue") || validate(username, "teacher", queueName) || validate(username, "assistant", queueName))) {
+    if (!(validate(username, "teacher", queueName) || validate(username, "assistant", queueName))) {
       console.log("validation for emitTA failed");
       //res.end();
       return;

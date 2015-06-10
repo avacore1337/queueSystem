@@ -111,6 +111,12 @@ var queueSchema = new Schema({
   assistant: {type:[adminSchema], default: []}
 });
 
+// Updates the MOTD
+queueSchema.methods.addMOTD = function (message) {
+  this.motd = message;
+  this.save();
+};
+
 // takes a user as a parameter and adds to the queue
 queueSchema.methods.addUser = function (user) {
   this.queue.push(user);
