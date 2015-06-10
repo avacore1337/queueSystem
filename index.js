@@ -733,7 +733,7 @@ io.on('connection', function(socket) {
     io.to(queueName).emit('addMOTD', {
       MOTD: MOTD
     });
-  }
+  });
 
 
   // TODO : This has been changed to only have them join a room based on their ID, no more session interaction
