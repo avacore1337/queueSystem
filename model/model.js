@@ -10,6 +10,19 @@ var Schema = mongoose.Schema;
 
 //===============================================================
 
+// Schema used for global MOTD
+var globalMOTD = new Schema({
+  globalMOTD: { type: String, default: '' },
+});
+
+// Updates the MOTD
+globalMOTD.methods.addGlobalMOTD = function (message) {
+  this.globalMOTD = message;
+  this.save();
+};
+
+//-----
+
 // Schema used for admins, teachers and teacher assistans
 var adminSchema = new Schema({
   name: String,
@@ -234,12 +247,6 @@ queueSchema.methods.addAssistantComment = function (name, sender, queue, message
   this.save();
 };
 
-// NOT IMPLEMENTED YET
-// set the "message of the day" for the queue
-queueSchema.methods.setMOTD = function () {
-  // TODO
-};
-
 //-----
 
 // Schema used for bookings
@@ -279,6 +286,7 @@ var Admin = mongoose.model("Admin", adminSchema);
 var Queue = mongoose.model("Queue", queueSchema);
 var Statistic = mongoose.model("UserStatistic", statisticSchema);
 var Booking = mongoose.model("Booking", bookingSchema);
+var GlobalMOTD = mongoose.model("GlobalMOTD", bookingSchema);
 
 //=========================================
 // Export data from this file to "index.js"
@@ -287,5 +295,6 @@ module.exports = {
   user: User,
   admin: Admin,
   queue: Queue,
-  statistic: Statistic
+  statistic: Statistic,
+  globalMOTD: GlobalMOTD
 };

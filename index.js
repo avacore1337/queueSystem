@@ -721,7 +721,6 @@ io.on('connection', function(socket) {
     });
   });
 
-
   socket.on('addMOTD', function(req) {
     var queueName = req.queueName;
     var MOTD = req.MOTD;
@@ -729,15 +728,38 @@ io.on('connection', function(socket) {
 
     // teacher/assistant-validation
     if (!(validate(sender, "teacher", queueName) || validate(sender, "assistant", queueName))) {
-      console.log("validation for flag failed");
+      console.log("validation for addMOTD failed");
       //res.end();
       return;
     }
+
+    // * save MOTD to database
+    var course = queueSystem.findQueue(queueName);
+    courseaddMOTD(MOTD);
 
     console.log('\'' + MOTD + '\' added as a new MOTD in ' + queueName + '!');
     io.to(queueName).emit('addMOTD', {
       MOTD: MOTD
     });
+  });
+
+  socket.on('addServerMessage', function(req) {
+    var globalMOTD = req.message;
+    var sender = req.sender;
+
+    // teacher/assistant-validation
+    if (!validateSuper(sender)) {
+      console.log("validation for addServerMessage failed");
+      //res.end();
+      return;
+    }
+
+    // * save globalMOTD to database
+    // get object from database
+    // edit object
+    // save object to database
+
+    console.log('\'' + globalMOTD + '\' added as a new global MOTD!');
   });
 
 
@@ -747,6 +769,10 @@ io.on('connection', function(socket) {
     socket.handshake.session.user = req;
     console.log('Socket-setUser: ' + JSON.stringify(req));
     console.log('session is: ' + JSON.stringify(socket.handshake.session.user));
+
+    io.to("user_" + req.name).emit('serverMessage', {
+      message: globalMOTD
+    });
   });
 });
 
