@@ -102,6 +102,7 @@ function getAverageQueueTime(queueName, start, end) {
   var now = Date.now();
 
 /* FIXA SÅ ATT JAG KAN LÄSA AV FOLK SOM INTE STÅR I KÖN */
+/** DIRR */
   for (var i = queue.length - 1; i >= 0; i--) {
     var user = queue[i];
     if (user.startTime >= start && user.startTime < end) {
