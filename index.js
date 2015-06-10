@@ -746,6 +746,7 @@ io.on('connection', function(socket) {
   socket.on('addServerMessage', function(req) {
     var globalMOTD = req.message;
     var sender = req.sender;
+    console.log("sender = " + sender);
 
     // teacher/assistant-validation
     if (!validateSuper(sender)) {
@@ -770,9 +771,7 @@ io.on('connection', function(socket) {
     console.log('Socket-setUser: ' + JSON.stringify(req));
     console.log('session is: ' + JSON.stringify(socket.handshake.session.user));
 
-    io.to("user_" + req.name).emit('serverMessage', {
-      message: globalMOTD
-    });
+    io.to("user_" + req.name).emit('serverMessage', "HelloWorld");
   });
 });
 
