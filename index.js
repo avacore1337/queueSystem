@@ -83,10 +83,10 @@ function doOnQueue(queueName, action) {
   io.to(queueName).emit(action);
   io.to("lobby").emit("lobby" + action, queueName);
 
-  if (action === 'hibernate') {
-    io.to("admin").emit('hibernate', queueName);
-  } else if (action === 'unhibernate') {
-    io.to("admin").emit('unhibernate', queueName);
+  if (action === 'hide') {
+    io.to("admin").emit('hide', queueName);
+  } else if (action === 'show') {
+    io.to("admin").emit('show', queueName);
   }
 }
 
@@ -450,33 +450,33 @@ io.on('connection', function(socket) {
     doOnQueue(queueName, 'unlock');
   });
 
-  socket.on('hibernate', function(req) {
+  socket.on('hide', function(req) {
     var queueName = req.queueName;
     var username = socket.handshake.session.user.name;
 
     // admin/teacher-validation
     if (!(validate(username, "super", "queue") || validate(username, "teacher", queueName))) {
       console.log("Current user " + username + " is not a teacher for that queue or an admin.");
-      //console.log("validation for hibernate failed");
+      //console.log("validation for hide failed");
       //res.end();
       return;
     }
 
-    doOnQueue(queueName, 'hibernate');
+    doOnQueue(queueName, 'hide');
   });
 
-  socket.on('unhibernate', function(req) {
+  socket.on('show', function(req) {
     var queueName = req.queue;
     var username = socket.handshake.session.user.name;
 
     // admin/teacher-validation
     if (!(validate(username, "super", "queue") || validate(username, "teacher", queueName))) {
-      console.log("validation for unhibernate failed");
+      console.log("validation for show failed");
       //res.end();
       return;
     }
 
-    doOnQueue(req.queue, 'unhibernate');
+    doOnQueue(req.queue, 'show');
   });
 
   //===============================================================
