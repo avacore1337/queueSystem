@@ -716,6 +716,26 @@ io.on('connection', function(socket) {
     });
   });
 
+
+  socket.on('addMOTD', function(req) {
+    var queueName = req.queueName;
+    var MOTD = req.MOTD;
+    var sender = req.sender;
+
+    // teacher/assistant-validation
+    if (!(validate(sender, "teacher", queueName) || validate(sender, "assistant", queueName))) {
+      console.log("validation for flag failed");
+      //res.end();
+      return;
+    }
+
+    console.log('\'' + MOTD + '\' added as a new MOTD in ' + queueName + '!');
+    io.to(queueName).emit('addMOTD', {
+      MOTD: MOTD
+    });
+  }
+
+
   // TODO : This has been changed to only have them join a room based on their ID, no more session interaction
   socket.on('setUser', function(req) {
     socket.join("user_" + req.name); // joina sitt eget rum, för privata meddelande etc
