@@ -748,7 +748,7 @@ io.on('connection', function(socket) {
     var sender = req.sender;
 
     // teacher/assistant-validation
-    if (!validateSuper(sender)) {
+    if (!validate(sender, "admin", "")) {
       console.log("validation for addServerMessage failed");
       //res.end();
       return;
@@ -770,9 +770,9 @@ io.on('connection', function(socket) {
     console.log('Socket-setUser: ' + JSON.stringify(req));
     console.log('session is: ' + JSON.stringify(socket.handshake.session.user));
 
-    io.to("user_" + req.name).emit('serverMessage', {
-      message: globalMOTD
-    });
+    var globalMOTD = "Hello world";
+
+    io.to("user_" + req.name).emit('serverMessage', globalMOTD);
   });
 });
 
