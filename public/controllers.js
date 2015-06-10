@@ -298,6 +298,7 @@ queueControllers.controller('loginController', ['$scope', '$location', '$http', 
 
     // Listen for a server-message
     socket.on('serverMessage', function(message) {
+      console.log("Message: " + message);
       if(message){
         var modalInstance = $modal.open({
           templateUrl: 'serverMessage.html',

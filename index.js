@@ -735,7 +735,7 @@ io.on('connection', function(socket) {
 
     // * save MOTD to database
     var course = queueSystem.findQueue(queueName);
-    courseaddMOTD(MOTD);
+    course.addMOTD(MOTD);
 
     console.log('\'' + MOTD + '\' added as a new MOTD in ' + queueName + '!');
     io.to(queueName).emit('addMOTD', {
@@ -772,6 +772,7 @@ io.on('connection', function(socket) {
     console.log('session is: ' + JSON.stringify(socket.handshake.session.user));
 
     var globalMOTD = "Hello world";
+    // * get object from database
 
     io.to("user_" + req.name).emit('serverMessage', globalMOTD);
   });
