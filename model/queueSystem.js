@@ -15,10 +15,12 @@ var User = database.user;
 var Admin = database.admin;
 var Queue = database.queue;
 var Statistic = database.statistic;
+var GlobalMOTD = database.globalMOTD;
 
 
 var queueList = [];
 var adminList = [];
+var globalMOTD = "FEL!";
 exports.statisticsList = [];
 
 /**
@@ -229,6 +231,14 @@ function fetchBookings (queueName, callback) {
   request({ url: url, json: true }, callback)
 }
 
+exports.setGlobalMOTD = function (message) {
+  globalMOTD = message;
+}
+
+exports.getGlobalMOTD = function () {
+  return globalMOTD;
+}
+
 /**
  * A function that spoofs data to make sure there is something to test the 
  * system with. Should be commented out in production.
@@ -244,6 +254,12 @@ function setup() {
     "progp",
     "mdi"
   ];
+
+  var globalMOTD = new GlobalMOTD({
+    globalMOTD: "Hello World!"
+  });
+
+  globalMOTD.save();
 
   // All the queues
   Admin.find(function(err, admins) {
@@ -319,8 +335,17 @@ function readIn() {
       console.log('Admin: ' + admin.name + ' loaded!');
     });
   });
+
+  // All the queues
+  GlobalMOTD.find(function(err, globals) {
+    globals.forEach(function(global) {
+      // to make sure everything loads
+      console.log('Globals: ' + global + '!');
+      globalMOTD = global.message;
+    });
+  });
 }
 
 
-setup(); // Use for seting up the test system
-//readIn(); //use this
+//setup(); // Use for seting up the test system
+readIn(); //use this

@@ -11,13 +11,13 @@ var Schema = mongoose.Schema;
 //===============================================================
 
 // Schema used for global MOTD
-var globalMOTD = new Schema({
-  globalMOTD: { type: String, default: '' },
+var globalMOTDSchema = new Schema({
+  message: { type: String, default: '' },
 });
 
 // Updates the MOTD
-globalMOTD.methods.addGlobalMOTD = function (message) {
-  this.globalMOTD = message;
+globalMOTDSchema.methods.addGlobalMOTD = function (message) {
+  this.message = message;
   this.save();
 };
 
@@ -38,6 +38,7 @@ var userSchema = new Schema({
   location: String,
   startTime: { type: Number, default: Date.now },
   messages: [String],
+  gettingHelp: { type: Boolean, default: false },
   action: { type: String, default: '' },
   comment: { type: String, default: '' }
 });
@@ -48,6 +49,8 @@ userSchema.methods.toJSON = function () {
     name: this.name,
     location: this.location,
     time: this.startTime,
+    messages: this.messages,
+    gettingHelp: this.gettingHelp,
     action: this.action,
     comment: this.comment
   };
@@ -247,6 +250,18 @@ queueSchema.methods.addAssistantComment = function (name, sender, queue, message
   this.save();
 };
 
+// set a comment from a assistant to a user (comment regarding help given by the assistant)
+queueSchema.methods.helpingQueuer = function (name, queue) {
+  this.queue.forEach(function (usr, i, queue) {
+    if (usr.name === name) {
+      var user = usr;
+      user.gettingHelp = true;
+      lodash.extend(queue[i], user);
+    }
+  });
+  this.save();
+};
+
 //-----
 
 // Schema used for bookings
@@ -286,7 +301,7 @@ var Admin = mongoose.model("Admin", adminSchema);
 var Queue = mongoose.model("Queue", queueSchema);
 var Statistic = mongoose.model("UserStatistic", statisticSchema);
 var Booking = mongoose.model("Booking", bookingSchema);
-var GlobalMOTD = mongoose.model("GlobalMOTD", bookingSchema);
+var GlobalMOTD = mongoose.model("GlobalMOTD", globalMOTDSchema);
 
 //=========================================
 // Export data from this file to "index.js"

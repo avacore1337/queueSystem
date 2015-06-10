@@ -28,6 +28,7 @@ router.get('/queue/:queue', function(req, res) {
   res.setHeader('Content-Type', 'application/json');
   var queue = queueSystem.findQueue(req.params.queue);
   console.log('queue ' + req.params.queue + ' requested');
+
   //console.log(queue);
   res.status(200);
   res.end(JSON.stringify(queue));
