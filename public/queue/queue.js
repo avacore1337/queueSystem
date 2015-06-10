@@ -74,7 +74,7 @@
                 return response.motd;
               },
               sender: function () {
-                return "Some admin";
+                return "";
               }
             }
           });
@@ -151,7 +151,7 @@
             return data.message;
           },
           sender: function () {
-            return data.sender;
+            return "- " + data.sender;
           }
         }
       });
