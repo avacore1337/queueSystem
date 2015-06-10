@@ -63,6 +63,7 @@ userSchema.methods.toJSON = function () {
 /*TEST*/
 // the average time in 'queue' of students who joined the queue 
 //  from 'start' and left before/was still in queue at 'end'
+/*TODO-DIRR*/
 function getAverageQueueTime(queue, start, end) {
 //  var queue = findQueue(queueName);
   var counter = 0;
@@ -81,6 +82,7 @@ function getAverageQueueTime(queue, start, end) {
 }
 
 // number of people who joined the queue from 'start' and left before 'end'
+/*TODO-DIRR*/
 function numbersOfPeopleLeftQueue(queue, start, end) {
 // 1. Get all statistics-object from a specific queue
 // 2. Filter out all those who was in the queue before set "start"-time

@@ -80,7 +80,9 @@ scheduleForEveryNight(function () {
 function doOnQueue(queueName, action) {
   var queue = queueSystem.findQueue(queueName);
   queue[action]();
+
   console.log('trying to ' + action + ' ' + queueName);
+
   io.to(queueName).emit(action);
   io.to("lobby").emit("lobby" + action, queueName);
 
@@ -94,6 +96,7 @@ function doOnQueue(queueName, action) {
 
 // the average time in 'queue' of students who joined the queue 
 //  from 'start' and left before/was still in queue at 'end'
+/*TODO-DIRR*/
 function getAverageQueueTime(queueName, start, end) {
   var theQueue = queueSystem.findQueue(queueName);
   var queue = queue.theQueue;
@@ -134,6 +137,7 @@ function getAverageQueueTime(queueName, start, end) {
 }
 
 // number of people who joined the queue from 'start' and left before 'end'
+/*TODO-DIRR*/
 function numbersOfPeopleLeftQueue(queueName, start, end) {
   var counter = 0;
 
@@ -175,7 +179,9 @@ io.on('connection', function(socket) {
   socket.on('join', function(req) {
     var queueName = req.queueName;
     var user = req.user;
+
     console.log('a user joined to ' + queueName);
+
     io.to(queueName).emit('join', user);
     io.to("lobby").emit('lobbyjoin', {
       queueName: queueName,
@@ -188,6 +194,7 @@ io.on('connection', function(socket) {
       location: user.location,
       comment: user.comment
     });
+
     queue.addUser(newUser);
 
     var newStatistic = new Statistic({
@@ -253,6 +260,7 @@ io.on('connection', function(socket) {
       name: name,
       helper: username
     });
+
     console.log(name + ' is getting help in ' + queueName);
   });
 
@@ -266,7 +274,8 @@ io.on('connection', function(socket) {
     io.to("user_" + name).emit('msg', {
       message: message,
       sender: sender
-    }); // 
+    });
+
     console.log('user ' + name + ' was messaged from ' + sender + ' at ' + queue + ' with: ' + message);
   });
 
@@ -288,12 +297,13 @@ io.on('connection', function(socket) {
       message: message,
       sender: username
     });
+
     console.log('emit in ' + queueName + ', msg: ' + message);
   });
 
   // teacher/assistant emits to all teacher/assistant
   socket.on('broadcastFaculty', function(req) {
-    console.log("Recevide request to send message to faculty");
+    console.log("Recevie request to send message to faculty");
     var queueName = req.queueName;
     var message = req.message;
     var username = req.sender;
@@ -315,19 +325,23 @@ io.on('connection', function(socket) {
 
     for (var i = teacherList.length - 1; i >= 0; i--) {
       var teacher = teacherList[i];
+
       io.to("user_" + teacher.name).emit('msg', {
         message: message,
         sender: username
       });
+
       console.log("emiting teacher: " + "user_" + teacher.name);
     }
 
     for (var i = assistantList.length - 1; i >= 0; i--) {
       var assistant = assistantList[i];
+
       io.to("user_" + assistant.name).emit('msg', {
         message: message,
         sender: username
       });
+
       console.log("emiting assistant: " + assistant.name);
     }
 
@@ -348,6 +362,7 @@ io.on('connection', function(socket) {
     userLeavesQueue(queue, user.name);
 
     console.log('a user left ' + queueName);
+
     io.to(queueName).emit('leave', user);
     io.to("lobby").emit('lobbyleave', {
       queueName: queueName,
@@ -368,6 +383,7 @@ io.on('connection', function(socket) {
     userLeavesQueue(queue, user.name);
 
     console.log('a user left ' + queueName);
+
     io.to(queueName).emit('leave', user);
     io.to("lobby").emit('lobbyleave', {
       queueName: queueName,
@@ -375,6 +391,7 @@ io.on('connection', function(socket) {
     });
   });
 
+  /*TODO-DIRR*/
   function userLeavesQueue(queue, userName) {
     queue.removeUser(userName);
 
@@ -417,6 +434,7 @@ io.on('connection', function(socket) {
     queue.queue = [];
 
     console.log(req.queue + ' -list purged by ' + username);
+
     io.to(queueName).emit('purge');
     io.to("lobby").emit('lobbypurge', queueName);
   });
@@ -533,6 +551,7 @@ io.on('connection', function(socket) {
   //
   socket.on('removeQueue', function(req) {
     console.log("Trying to remove Queue!");
+
     var username = socket.handshake.session.user.name;
     var queueName = req.queueName;
 
@@ -553,6 +572,7 @@ io.on('connection', function(socket) {
   //
   socket.on('addAdmin', function(req) {
     console.log("Trying to add Admin!");
+
     var username = socket.handshake.session.user.name;
     // admin-validation
     if (!validate(username, "super", "queue")) {
@@ -595,6 +615,7 @@ io.on('connection', function(socket) {
     queue.addTeacher(newTeacher);
 
     console.log(teacherName + ' is a new teacher!');
+
     io.to('admin').emit('addTeacher', {
       name: teacherName,
       username: username,
@@ -626,6 +647,7 @@ io.on('connection', function(socket) {
     queue.addAssistant(newAssistant);
 
     console.log(assistantName + ' is a new assistant!');
+
     io.to('admin').emit('addAssistant', {
       name: assistantName,
       username: username,
@@ -647,9 +669,10 @@ io.on('connection', function(socket) {
     }
 
     var username = req.username;
-
     queueSystem.removeAdmin(username);
+
     console.log(username + ' is a removed from admin!');
+
     io.to('admin').emit('removeAdmin', username);
   });
 
@@ -671,6 +694,7 @@ io.on('connection', function(socket) {
     queue.removeTeacher(username);
 
     console.log(username + ' is a removed as a teacher in ' + queueName + '!');
+
     io.to('admin').emit('removeTeacher', {
       username: username,
       queueName: queueName
@@ -695,6 +719,7 @@ io.on('connection', function(socket) {
     queue.removeAssistant(username);
 
     console.log(username + ' is a removed as a assistant in ' + queueName + '!');
+
     io.to('admin').emit('removeAssistant', {
       username: username,
       queueName: queueName
@@ -742,6 +767,7 @@ io.on('connection', function(socket) {
     course.addMOTD(MOTD);
 
     console.log('\'' + MOTD + '\' added as a new MOTD in ' + queueName + '!');
+
     io.to(queueName).emit('addMOTD', {
       MOTD: MOTD
     });
@@ -781,7 +807,8 @@ io.on('connection', function(socket) {
     console.log('session is: ' + JSON.stringify(socket.handshake.session.user));
 
     var globalMOTD = queueSystem.getGlobalMOTD();
-    console.log(globalMOTD);
+
+    console.log("Current global MOTD is: " + globalMOTD);
 
     io.to("user_" + req.name).emit('serverMessage', globalMOTD);
   });
