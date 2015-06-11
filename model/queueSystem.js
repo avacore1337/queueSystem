@@ -261,14 +261,26 @@ function setup() {
 
   globalMOTD.save();
 
-  // All the queues
-  Admin.find(function(err, admins) {
-    admins.forEach(function(admin) {
-      adminList.push(admin);
-      // to make sure everything loads
-      console.log('Admin: ' + admin.name + ' loaded!');
-    });
+  var newAdmin = new Admin({
+    name: "pernyb",
+    username: "pernyb"
   });
+  adminList.push(newAdmin);
+  newAdmin.save();
+
+  newAdmin = new Admin({
+    name: "antbac",
+    username: "antbac"
+  });
+  adminList.push(newAdmin);
+  newAdmin.save();
+
+  newAdmin = new Admin({
+    name: "rwb",
+    username: "rwb"
+  });
+  adminList.push(newAdmin);
+  newAdmin.save();
 
   // creates database-objects from the list (of queues)
   for (var i = 0; i < tmpList.length; i++) {
