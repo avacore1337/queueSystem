@@ -526,14 +526,18 @@ io.on('connection', function(socket) {
     var queueName = req.queueName;
     var start = req.start;
     var end = req.end;
+    
+    console.log("user = " + socket.handshake.session.user.name);
+    var name = socket.handshake.session.user.name;
 
+    // Creating an object to return
     var retObject = {};
-    console.log("Counting..");
-
     retObject.averageQueueTime = getAverageQueueTime(queueName, start, end);
     retObject.numbersOfPeopleLeftQueue = numbersOfPeopleLeftQueue(queueName, start, end);
     retObject.rawJSON = JSON.stringify({"name":"randomText"});
-    io.to('statistics').emit('getStatistics', retObject);
+
+    // Return all the found data
+    io.to("user_" + name).emit('getStatistics', retObject);
   });
 
   //===============================================================
@@ -808,6 +812,7 @@ io.on('connection', function(socket) {
 
   // TODO : This has been changed to only have them join a room based on their ID, no more session interaction
   socket.on('setUser', function(req) {
+    console.log("user_" + req.name);
     socket.join("user_" + req.name); // joina sitt eget rum, för privata meddelande etc
     socket.handshake.session.user = req;
     console.log('Socket-setUser: ' + JSON.stringify(req));

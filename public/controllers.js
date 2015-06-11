@@ -174,6 +174,8 @@ queueControllers.controller('statisticsController', ['$scope', '$http', 'WebSock
     title.title = "Statistics | Stay A While";
 
     socket.on('getStatistics', function(data) {
+      console.log("The server gave me some statistics =)");
+
       // rawJSON
       $scope.rawJSON = data.rawJSON;
       $scope.showJSONField = true;
