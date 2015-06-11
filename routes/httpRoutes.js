@@ -41,6 +41,11 @@ router.get('/adminList', function(req, res) {
   res.end(JSON.stringify(queueSystem.getAdminList()));
 });
 
+router.get('/serverMessage', function(req, res) {
+  res.setHeader('Content-Type', 'application/json');
+  res.end(JSON.stringify(queueSystem.getGlobalMOTD()));
+});
+
 // TODO: add a list of admin
 router.get('/userData', function(req, res) {
   res.setHeader('Content-Type', 'application/json');

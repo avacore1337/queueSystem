@@ -294,28 +294,6 @@ queueControllers.controller('loginController', ['$scope', '$location', '$http', 
       socket.removeAllListeners();
     });
 
-    // Listen for a server-message
-    socket.on('serverMessage', function(message) {
-      console.log("Received server-message : " + message);
-      if(message){
-        var modalInstance = $modal.open({
-          templateUrl: 'serverMessage.html',
-          controller: function ($scope, $modalInstance, title, message) {
-            $scope.title = title;
-            $scope.message = message;
-          },
-          resolve: {
-            title: function () {
-              return "Server-message";
-            },
-            message: function () {
-              return message;
-            }
-          }
-        });
-      }
-  });
-
     title.title = "Log in | Stay A While";
 
     $scope.done = function() {
@@ -326,6 +304,26 @@ queueControllers.controller('loginController', ['$scope', '$location', '$http', 
         withCredentials: true
       }).success(function(response) {
         console.log("with credentials success");
+        $http.get('/API/serverMessage').success(function(serverMessage){
+          if(serverMessage){
+            console.log("There is a serverMessage");
+            var modalInstance = $modal.open({
+              templateUrl: 'serverMessage.html',
+              controller: function ($scope, $modalInstance, title, message) {
+                $scope.title = title;
+                $scope.message = message;
+              },
+              resolve: {
+                title: function () {
+                  return "Server-message";
+                },
+                message: function () {
+                  return serverMessage;
+                }
+              }
+            });
+          }
+        });
         $location.path('list');
         console.log("logged in");
       });

@@ -807,6 +807,8 @@ io.on('connection', function(socket) {
     queueSystem.setGlobalMOTD(globalMOTD);
 
     console.log('\'' + globalMOTD + '\' added as a new global MOTD!');
+
+    io.to('admin').emit('newServerMessage', globalMOTD);
   });
 
 
@@ -817,12 +819,6 @@ io.on('connection', function(socket) {
     socket.handshake.session.user = req;
     console.log('Socket-setUser: ' + JSON.stringify(req));
     console.log('session is: ' + JSON.stringify(socket.handshake.session.user));
-
-    var globalMOTD = queueSystem.getGlobalMOTD();
-
-    console.log("Current global MOTD is: " + globalMOTD);
-
-    io.to("user_" + req.name).emit('serverMessage', globalMOTD);
   });
 });
 
