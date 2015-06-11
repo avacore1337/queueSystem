@@ -96,9 +96,13 @@ function doOnQueue(queueName, action) {
 
 // the average time in 'queue' of students who joined the queue 
 //  from 'start' and left before/was still in queue at 'end'
+
 /*TODO-DIRR*/
 function getAverageQueueTime(queueName, start, end) {
-  var userStatisticList = getUsersWhoStartedTheQueueBetween(queueName, start, end);
+  var userStatisticList = [];
+
+  userStatisticList = getUsersWhoStartedTheQueueBetween(queueName, start, end);
+
   console.log(userStatisticList);
 
   var counter = 0;
@@ -107,6 +111,7 @@ function getAverageQueueTime(queueName, start, end) {
 
   console.log("checking between " + new Date(start) + " and " + new Date(end));
 
+/*
   for (var i = userStatisticList.length - 1; i >= 0; i--) {
     var userStatistic = userStatisticList[i];
 
@@ -131,6 +136,9 @@ function getAverageQueueTime(queueName, start, end) {
   console.log("Average: " + totalTime / counter);
 
   return totalTime / counter;
+*/
+  
+  return 0;
 }
 
 // Needs to be callbacked to work, else it's doing the right thing
@@ -144,9 +152,9 @@ function getUsersWhoStartedTheQueueBetween(queueName, start, end) {
         console.log(new Date(statistic.startTime));
         console.log(end-statistic.startTime);
       });
-    });
 
-    return userStatisticList;
+      return userStatisticList;
+    });
 }
 
 // number of people who joined the queue from 'start' and left before 'end'

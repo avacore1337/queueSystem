@@ -302,6 +302,26 @@ statisticSchema.methods.userLeaves = function () {
   this.save();
 };
 
+statisticSchema.statics.getAverageQueueTime =  function (queueName, start, end, callbackDo) {
+  var statistic = this;
+  console.log("This");
+
+  async.parallel([
+
+  function(callback){
+    console.log("Callback");
+     statistic.find({startTime: {$gte: start, $lte: end}, queue: queueName, leftQueue: true}, function (err, results) {
+        if(err) return console.error(err);
+        callback(null, results);
+      })
+  }],
+
+  function(err, results){
+    console.log("Do the do da");
+    callbackDo(results);
+  });
+};
+
 
 //=========================================
 // The schemas that will be used in "index.js"
