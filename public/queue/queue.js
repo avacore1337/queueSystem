@@ -46,7 +46,7 @@
       .success(function(response) {
         $scope.users = response.queue;
         //$scope.bookedUsers = response.bookings;
-        $scope.bookedUsers = [{time:Date.now(), comment:"Testing", users:["antbac"], length:"15min", location:"Blue bitch 01"}];
+        $scope.bookedUsers = [{time:Date.now(), comment:"MVK redovisning", users:["antbac", "pernyb", "rwb"], length:"15min", location:"Blue bitch 01"}];
         $scope.locked = response.locked;
         for (var i = 0; i < $scope.users.length; i++) {
           $scope.users[i].optionsActivated = false;
@@ -261,7 +261,7 @@
     // Leave the queue
     $scope.leave = function(){
       var wasBooked = false;
-      if($scope.hasBooking(user.getName())){
+      if($scope.hasBooking({name:user.getName()})){
         var booking = getBooking(user.getName());
         if($scope.soon(booking)){
           wasBooked = true;
@@ -608,7 +608,8 @@
   };
 
   // Return true if any of the people in the group is in the queue
-  $scope.attending = function(group){
+  $scope.attending = function(booking){
+    var group = booking.users;
     for(var index in group){
       var name = group[index];
       if(present(name)){
@@ -618,9 +619,14 @@
     return false;
   };
 
+  // Return true if the person does not have a booking about now
+  $scope.notHasBooking = function(user){
+    return !$scope.hasBooking(user);
+  };
+
   // Return true if the person has a booking about now
-  $scope.hasBooking = function(name){
-    console.log("Called hasBooking");
+  $scope.hasBooking = function(user){
+    var name = user.name;
     for(var index in $scope.bookedUsers){
       var booking = $scope.bookedUsers[index];
       for(var i in booking.users){
