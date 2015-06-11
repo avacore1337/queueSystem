@@ -43,7 +43,9 @@ router.get('/adminList', function(req, res) {
 
 router.get('/serverMessage', function(req, res) {
   res.setHeader('Content-Type', 'application/json');
-  res.end(JSON.stringify(queueSystem.getGlobalMOTD()));
+  var ret = {};
+  ret.serverMessage = queueSystem.getGlobalMOTD();
+  res.end(JSON.stringify(ret));
 });
 
 // TODO: add a list of admin

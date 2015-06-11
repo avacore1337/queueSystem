@@ -304,8 +304,9 @@ queueControllers.controller('loginController', ['$scope', '$location', '$http', 
         withCredentials: true
       }).success(function(response) {
         console.log("with credentials success");
-        $http.get('/API/serverMessage').success(function(serverMessage){
-          if(serverMessage){
+        $http.get('/API/serverMessage').success(function(resp){
+          console.log("serverMessage = " + resp.serverMessage);
+          if(resp.serverMessage){
             console.log("There is a serverMessage");
             var modalInstance = $modal.open({
               templateUrl: 'serverMessage.html',
@@ -318,7 +319,7 @@ queueControllers.controller('loginController', ['$scope', '$location', '$http', 
                   return "Server-message";
                 },
                 message: function () {
-                  return serverMessage;
+                  return resp.serverMessage;
                 }
               }
             });

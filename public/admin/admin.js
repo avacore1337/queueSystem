@@ -45,8 +45,8 @@
       });
 
       $scope.serverMessage = "";
-      $http.get('/API/serverMessage').success(function(serverMessage){
-        $scope.serverMessage = serverMessage;
+      $http.get('/API/serverMessage').success(function(resp){
+        $scope.serverMessage = resp.serverMessage;
       });
 
     // Listen for an assistant being added to a queue.
