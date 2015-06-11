@@ -260,6 +260,11 @@
       socket.emit('hide', {
         queueName:$scope.selectedQueue.name
       });
+      socket.emit('addMOTD', {
+        queueName:$scope.selectedQueue.name,
+        MOTD:"",
+        sender: $scope.name
+      });
       console.log("Trying to hide queue " + $scope.selectedQueue.name);
     }
   }, function () {});
