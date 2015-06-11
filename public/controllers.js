@@ -173,11 +173,24 @@ queueControllers.controller('statisticsController', ['$scope', '$http', 'WebSock
     
     title.title = "Statistics | Stay A While";
 
-    $scope.rawJSON = ["milli 128379", "avera 897321"];
+    socket.on('getStatistics', function(data) {
+      // rawJSON
+      $scope.rawJSON = data.rawJSON;
+      $scope.showJSONField = true;
+
+      // averageQueueTime
+      formatQueueTime(data.averageQueueTime);
+
+      // peopleLeftQueue
+      $scope.numbersOfPeopleLeftQueue = data.numbersOfPeopleLeftQueue;
+    });
+    $scope.showJSONField = false;
+    $scope.rawJSON = [];
+    $scope.averageQueueTime = "";
+    $scope.numbersOfPeopleLeftQueue = -1;
 
     // Listen for new statistics.
-    socket.on('getAverageQueueTime', function(milliseconds) {
-      rawJSON.append("getAverageQueueTime: " + milliseconds);
+    function formatQueueTime(milliseconds) {
       var seconds = (milliseconds / 1000) % 60;
       var minutes = (milliseconds / (1000 * 60)) % 60;
       var hours = (milliseconds / (1000 * 60 * 60)) % 24;
@@ -190,16 +203,7 @@ queueControllers.controller('statisticsController', ['$scope', '$http', 'WebSock
       } else {
         $scope.averageQueueTime = "0s";
       }
-    });
-    $scope.averageQueueTime = "";
-
-    // Listen for new statistics.
-    socket.on('numbersOfPeopleLeftQueue', function(amount) {
-      rawJSON.append("numbersOfPeopleLeftQueue: " + amount);
-      $scope.numbersOfPeopleLeftQueue = amount;
-      console.log("Amount to 'numbersOfPeopleLeftQueue' : " + amount);
-    });
-    $scope.numbersOfPeopleLeftQueue = -1;
+    }
 
     // Queue selection
     $scope.queues = [];
@@ -267,18 +271,12 @@ queueControllers.controller('statisticsController', ['$scope', '$http', 'WebSock
     $scope.getStatistics = function() {
       console.log($scope.selectedQueue);
       $scope.rawJSON = [];
-      socket.emit('getAverageQueueTime', {
+      socket.emit('getStatistics', {
         queueName: $scope.selectedQueue,
         start: $scope.fromTime.getTime(),
         end: $scope.toTime.getTime()
       });
-      console.log("Requested averageQueueTime");
-      socket.emit('numbersOfPeopleLeftQueue', {
-        queueName: $scope.selectedQueue,
-        start: $scope.fromTime.getTime(),
-        end: $scope.toTime.getTime()
-      });
-      console.log("Requested numbersOfPeopleLeftQueue");
+      console.log("Requested statistics");
     };
 
     $scope.accessLevel = function() {

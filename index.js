@@ -522,31 +522,19 @@ io.on('connection', function(socket) {
 
   //===============================================================
 
-  socket.on('getAverageQueueTime', function(req) {
+  socket.on('getStatistics', function(req) {
     var queueName = req.queueName;
     var start = req.start;
     var end = req.end;
 
+    var retObject = {};
     console.log("Counting..");
 
-    var averageQueueTime = getAverageQueueTime(queueName, start, end);
-
-    io.to('statistics').emit('getAverageQueueTime', averageQueueTime);
+    retObject.averageQueueTime = getAverageQueueTime(queueName, start, end);
+    retObject.numbersOfPeopleLeftQueue = numbersOfPeopleLeftQueue(queueName, start, end);
+    retObject.rawJSON = JSON.stringify({"name":"randomText"});
+    io.to('statistics').emit('getStatistics', retObject);
   });
-
-
-  socket.on('numbersOfPeopleLeftQueue', function(req) {
-    var queueName = req.queueName;
-    var start = req.start;
-    var end = req.end;
-
-    console.log("Bounty hunting..");
-
-    var numbersOfPeopleLeft = numbersOfPeopleLeftQueue(queueName, start, end);
-
-    io.to('statistics').emit('numbersOfPeopleLeftQueue', numbersOfPeopleLeft);
-  });
-
 
   //===============================================================
 
