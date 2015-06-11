@@ -169,10 +169,10 @@ queueControllers.controller('statisticsController', ['$scope', '$http', 'WebSock
     $scope.$on('$destroy', function (event) {
       socket.removeAllListeners();
     });
-    socket.emit('listen', 'statistics');
     
     title.title = "Statistics | Stay A While";
-
+    $scope.name = user.getName();
+    
     socket.on('getStatistics', function(data) {
       console.log("The server gave me some statistics =)");
 
@@ -276,7 +276,8 @@ queueControllers.controller('statisticsController', ['$scope', '$http', 'WebSock
       socket.emit('getStatistics', {
         queueName: $scope.selectedQueue,
         start: $scope.fromTime.getTime(),
-        end: $scope.toTime.getTime()
+        end: $scope.toTime.getTime(),
+        user: $scope.name
       });
       console.log("Requested statistics");
     };

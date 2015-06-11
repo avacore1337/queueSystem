@@ -535,8 +535,9 @@ io.on('connection', function(socket) {
     var start = req.start;
     var end = req.end;
     
-    console.log("user = " + socket.handshake.session.user.name);
-    var name = socket.handshake.session.user.name;
+    var name = req.user;
+    console.log("user = " + name);
+    
 
     // Creating an object to return
     var retObject = {};
@@ -544,6 +545,7 @@ io.on('connection', function(socket) {
     retObject.numbersOfPeopleLeftQueue = numbersOfPeopleLeftQueue(queueName, start, end);
     retObject.rawJSON = JSON.stringify({"name":"randomText"});
 
+    console.log("Reurning the following statistics to " + name + ": " + JSON.stringify(retObject));
     // Return all the found data
     io.to("user_" + name).emit('getStatistics', retObject);
   });
