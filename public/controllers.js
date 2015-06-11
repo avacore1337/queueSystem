@@ -173,11 +173,26 @@ queueControllers.controller('statisticsController', ['$scope', '$http', 'WebSock
     
     title.title = "Statistics | Stay A While";
 
-    $scope.rawJSON = ["milli 128379", "avera 897321"];
+    socket.on('getStatistics', function(data) {
+      console.log("The server gave me some statistics =)");
+
+      // rawJSON
+      $scope.rawJSON = data.rawJSON;
+      $scope.showJSONField = true;
+
+      // averageQueueTime
+      formatQueueTime(data.averageQueueTime);
+
+      // peopleLeftQueue
+      $scope.numbersOfPeopleLeftQueue = data.numbersOfPeopleLeftQueue;
+    });
+    $scope.showJSONField = false;
+    $scope.rawJSON = [];
+    $scope.averageQueueTime = "";
+    $scope.numbersOfPeopleLeftQueue = -1;
 
     // Listen for new statistics.
-    socket.on('getAverageQueueTime', function(milliseconds) {
-      rawJSON.append("getAverageQueueTime: " + milliseconds);
+    function formatQueueTime(milliseconds) {
       var seconds = (milliseconds / 1000) % 60;
       var minutes = (milliseconds / (1000 * 60)) % 60;
       var hours = (milliseconds / (1000 * 60 * 60)) % 24;
@@ -190,16 +205,7 @@ queueControllers.controller('statisticsController', ['$scope', '$http', 'WebSock
       } else {
         $scope.averageQueueTime = "0s";
       }
-    });
-    $scope.averageQueueTime = "";
-
-    // Listen for new statistics.
-    socket.on('numbersOfPeopleLeftQueue', function(amount) {
-      rawJSON.append("numbersOfPeopleLeftQueue: " + amount);
-      $scope.numbersOfPeopleLeftQueue = amount;
-      console.log("Amount to 'numbersOfPeopleLeftQueue' : " + amount);
-    });
-    $scope.numbersOfPeopleLeftQueue = -1;
+    }
 
     // Queue selection
     $scope.queues = [];
@@ -267,18 +273,12 @@ queueControllers.controller('statisticsController', ['$scope', '$http', 'WebSock
     $scope.getStatistics = function() {
       console.log($scope.selectedQueue);
       $scope.rawJSON = [];
-      socket.emit('getAverageQueueTime', {
+      socket.emit('getStatistics', {
         queueName: $scope.selectedQueue,
         start: $scope.fromTime.getTime(),
         end: $scope.toTime.getTime()
       });
-      console.log("Requested averageQueueTime");
-      socket.emit('numbersOfPeopleLeftQueue', {
-        queueName: $scope.selectedQueue,
-        start: $scope.fromTime.getTime(),
-        end: $scope.toTime.getTime()
-      });
-      console.log("Requested numbersOfPeopleLeftQueue");
+      console.log("Requested statistics");
     };
 
     $scope.accessLevel = function() {
@@ -294,28 +294,6 @@ queueControllers.controller('loginController', ['$scope', '$location', '$http', 
       socket.removeAllListeners();
     });
 
-    // Listen for a server-message
-    socket.on('serverMessage', function(message) {
-      console.log("Received server-message : " + message);
-      if(message){
-        var modalInstance = $modal.open({
-          templateUrl: 'serverMessage.html',
-          controller: function ($scope, $modalInstance, title, message) {
-            $scope.title = title;
-            $scope.message = message;
-          },
-          resolve: {
-            title: function () {
-              return "Server-message";
-            },
-            message: function () {
-              return message;
-            }
-          }
-        });
-      }
-  });
-
     title.title = "Log in | Stay A While";
 
     $scope.done = function() {
@@ -326,6 +304,26 @@ queueControllers.controller('loginController', ['$scope', '$location', '$http', 
         withCredentials: true
       }).success(function(response) {
         console.log("with credentials success");
+        $http.get('/API/serverMessage').success(function(serverMessage){
+          if(serverMessage){
+            console.log("There is a serverMessage");
+            var modalInstance = $modal.open({
+              templateUrl: 'serverMessage.html',
+              controller: function ($scope, $modalInstance, title, message) {
+                $scope.title = title;
+                $scope.message = message;
+              },
+              resolve: {
+                title: function () {
+                  return "Server-message";
+                },
+                message: function () {
+                  return serverMessage;
+                }
+              }
+            });
+          }
+        });
         $location.path('list');
         console.log("logged in");
       });

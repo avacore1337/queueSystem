@@ -89,10 +89,10 @@
     <!-- Queues -->
     <div class="col-md-9 col-md-push-3">
       <!-- No booked or normal users in queue -->
-      <h4 ng-hide="users.length || bookedUsers.length">This queue is empty</h4>
+      <h4 ng-hide="(users | filter:notHasBooking).length || (bookedUsers | filter: attending | filter: soon).length">This queue is empty</h4>
 
       <!-- Users with bookings -->
-      <div ng-show="bookedUsers.length">
+      <div ng-show="(bookedUsers | filter: attending | filter: soon).length">
         <table class="table table-striped booked">
           <thead>
             <th>User</th>
@@ -104,18 +104,18 @@
           <tbody>
             <!--<tr ng-repeat="booking in bookedUsers | filter:{attending(booking) && soon(booking)}" ng-show="matchBooked(user)">-->
             <tr ng-repeat="booking in bookedUsers | filter: attending | filter: soon" ng-show="matchBooked(user)">
-              <td><p ng-repeat="name in booking.users">{{name}}</p></td>
-              <td>{{booking.location}}</td>
-              <td>{{booking.comment}}</td>
-              <td>{{booking.time}}</td>
-              <td>{{booking.length}}</td>
+              <td style="vertical-align: middle;"><p ng-repeat="name in booking.users">{{name}}</p></td>
+              <td style="vertical-align: middle;">{{booking.location}}</td>
+              <td style="vertical-align: middle;">{{booking.comment}}</td>
+              <td style="vertical-align: middle;">{{booking.time}}</td>
+              <td style="vertical-align: middle;">{{booking.length}}</td>
             </tr>
           </tbody>
         </table>
       </div>
 
       <!-- Users without bookings -->
-      <div ng-show="users.length">
+      <div ng-show="(users | filter:notHasBooking).length">
         <table class="table table-striped">
           <thead>
             <tr>

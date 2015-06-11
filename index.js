@@ -530,31 +530,23 @@ io.on('connection', function(socket) {
 
   //===============================================================
 
-  socket.on('getAverageQueueTime', function(req) {
+  socket.on('getStatistics', function(req) {
     var queueName = req.queueName;
     var start = req.start;
     var end = req.end;
+    
+    console.log("user = " + socket.handshake.session.user.name);
+    var name = socket.handshake.session.user.name;
 
-    console.log("Counting..");
+    // Creating an object to return
+    var retObject = {};
+    retObject.averageQueueTime = getAverageQueueTime(queueName, start, end);
+    retObject.numbersOfPeopleLeftQueue = numbersOfPeopleLeftQueue(queueName, start, end);
+    retObject.rawJSON = JSON.stringify({"name":"randomText"});
 
-    var averageQueueTime = getAverageQueueTime(queueName, start, end);
-
-    io.to('statistics').emit('getAverageQueueTime', averageQueueTime);
+    // Return all the found data
+    io.to("user_" + name).emit('getStatistics', retObject);
   });
-
-
-  socket.on('numbersOfPeopleLeftQueue', function(req) {
-    var queueName = req.queueName;
-    var start = req.start;
-    var end = req.end;
-
-    console.log("Bounty hunting..");
-
-    var numbersOfPeopleLeft = numbersOfPeopleLeftQueue(queueName, start, end);
-
-    io.to('statistics').emit('numbersOfPeopleLeftQueue', numbersOfPeopleLeft);
-  });
-
 
   //===============================================================
 
@@ -823,21 +815,18 @@ io.on('connection', function(socket) {
     queueSystem.setGlobalMOTD(globalMOTD);
 
     console.log('\'' + globalMOTD + '\' added as a new global MOTD!');
+
+    io.to('admin').emit('newServerMessage', globalMOTD);
   });
 
 
   // TODO : This has been changed to only have them join a room based on their ID, no more session interaction
   socket.on('setUser', function(req) {
+    console.log("user_" + req.name);
     socket.join("user_" + req.name); // joina sitt eget rum, för privata meddelande etc
     socket.handshake.session.user = req;
     console.log('Socket-setUser: ' + JSON.stringify(req));
     console.log('session is: ' + JSON.stringify(socket.handshake.session.user));
-
-    var globalMOTD = queueSystem.getGlobalMOTD();
-
-    console.log("Current global MOTD is: " + globalMOTD);
-
-    io.to("user_" + req.name).emit('serverMessage', globalMOTD);
   });
 });
 

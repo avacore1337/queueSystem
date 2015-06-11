@@ -44,6 +44,11 @@
         }
       });
 
+      $scope.serverMessage = "";
+      $http.get('/API/serverMessage').success(function(serverMessage){
+        $scope.serverMessage = serverMessage;
+      });
+
     // Listen for an assistant being added to a queue.
     socket.on('addAssistant', function (data) {
       console.log("adding assistant (from backend) queueName = " + data.queueName + ", name = " + data.name + ", username = " + data.username);
@@ -146,6 +151,12 @@
           $scope.queues.splice(i, 1);
         }
       }
+    });
+
+    // Listen for the person leaving a queue event.
+    socket.on('newServerMessage', function (message) {
+      console.log("Backend wants to change the server-message to " + message);
+      $scope.serverMessage = message;
     });
 
     function getQueue (queue) {
@@ -359,9 +370,12 @@
     console.log("Called addServerMessage");
       var modalInstance = $modal.open({
         templateUrl: 'enterMessage.html',
-        controller: function ($scope, $modalInstance, title, buttonText) {
+        controller: function ($scope, $modalInstance, title, buttonText, serverMessage) {
           $scope.title = title;
           $scope.buttonText = buttonText;
+          if(serverMessage){
+            $scope.placeholder = "Current server-message: " + serverMessage;
+          }
           $scope.ok = function () {
             $modalInstance.close($scope.message);
           };
@@ -372,6 +386,9 @@
           },
           buttonText: function () {
             return "Add message";
+          },
+          serverMessage: function () {
+            return $scope.serverMessage;
           }
         }
       });
@@ -385,6 +402,14 @@
           });
         }
       }, function () {});
+  };
+
+  $scope.removeServerMessage = function(){
+    console.log("Called removeServerMessage");
+    socket.emit('addServerMessage', {
+      sender:$scope.name,
+      message:""
+    });
   };
 
   $scope.selectQueue = function(queue){

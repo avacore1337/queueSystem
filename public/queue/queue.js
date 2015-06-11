@@ -45,8 +45,8 @@
       $http.get('/API/queue/' + $scope.queue)
       .success(function(response) {
         $scope.users = response.queue;
-        //$scope.bookedUsers = response.bookings;
-        $scope.bookedUsers = [{time:Date.now(), comment:"MVK redovisning", users:["antbac", "pernyb", "rwb"], length:"15min", location:"Blue bitch 01"}];
+        $scope.bookedUsers = response.bookings;
+        //$scope.bookedUsers = [{time:Date.now(), comment:"MVK redovisning", users:["antbac", "pernyb", "rwb"], length:"15min", location:"Blue bitch 01"}];
         $scope.locked = response.locked;
         for (var i = 0; i < $scope.users.length; i++) {
           $scope.users[i].optionsActivated = false;
@@ -633,6 +633,9 @@
         var name1 = booking.users[i];
         if(name1 === name){
           if($scope.soon(booking)){
+            if($scope.name === name){
+              title.title = $scope.queue + " | Stay A While";
+            }
             return true;
           }
         }
