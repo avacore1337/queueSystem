@@ -162,6 +162,15 @@ queueSchema.methods.removeUser = function (username) {
   this.save();
 };
 
+// takes a username as a parameter and removes the booking from the queue
+// at least according to how it was added?..
+queueSchema.methods.removeBooking = function (username) {
+  this.queue = this.queue.filter(function (user) {
+    return user.name !== username;
+  });
+  this.save();
+};
+
 // takes a user as a parameter and adds to the queue
 queueSchema.methods.addTeacher = function (teacher) {
   this.teacher.push(teacher);
@@ -288,7 +297,6 @@ var statisticSchema = new Schema({
 
 statisticSchema.index({startTime: 1});
 
-// NO IDEA
 statisticSchema.methods.userLeaves = function () {
   this.leftQueue = true;
   this.save();

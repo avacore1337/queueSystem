@@ -98,30 +98,27 @@ function doOnQueue(queueName, action) {
 //  from 'start' and left before/was still in queue at 'end'
 /*TODO-DIRR*/
 function getAverageQueueTime(queueName, start, end) {
-  var theQueue = queueSystem.findQueue(queueName);
-  var queue = queue.theQueue;
+  var userStatisticList = getUsersWhoStartedTheQueueBetween(queueName, start, end);
+  console.log(userStatisticList);
 
   var counter = 0;
   var totalTime = 0;
   var now = Date.now();
 
-/* FIXA SÅ ATT JAG KAN LÄSA AV FOLK SOM INTE STÅR I KÖN */
-/** DIRR */
-  for (var i = queue.length - 1; i >= 0; i--) {
-    var user = queue[i];
-    if (user.startTime >= start && user.startTime < end) {
-      var d = new Date(user.startTime);
-      console.log("User " + user.name + " started at " + d);
+  console.log("checking between " + new Date(start) + " and " + new Date(end));
 
-      if (user.leftQueue) {
-        totalTime += user.queueLength;
-      } else if (now > end) {
-        totalTime += end - user.startTime;
-      } else {
-        totalTime += now - user.startTime;
-      }
-      counter++;
+  for (var i = userStatisticList.length - 1; i >= 0; i--) {
+    var userStatistic = userStatisticList[i];
+
+    if (userStatistic.leftQueue) {
+      totalTime += userStatistic.queueLength;
+    } else if (now > end) {
+      totalTime += end - userStatistic.startTime;
+    } else {
+      totalTime += now - userStatistic.startTime;
     }
+
+    counter++;
   }
 
   console.log("Counted: " + counter);
@@ -136,30 +133,48 @@ function getAverageQueueTime(queueName, start, end) {
   return totalTime / counter;
 }
 
+// Needs to be callbacked to work, else it's doing the right thing
+function getUsersWhoStartedTheQueueBetween(queueName, start, end) {
+    var userStatisticList = [];
+    var counter = 0;
+
+    Statistic.find({startTime: {$gte: start, $lte: end}, queue: queueName, leftQueue: true}, function(err, statistics) {
+      statistics.forEach(function(statistic) {
+        userStatisticList.push(statistic);
+        console.log(new Date(statistic.startTime));
+        console.log(end-statistic.startTime);
+      });
+    });
+
+    return userStatisticList;
+}
+
 // number of people who joined the queue from 'start' and left before 'end'
-/*TODO-DIRR*/
 function numbersOfPeopleLeftQueue(queueName, start, end) {
-  var counter = 0;
+  var userStatisticList = getUsersWhoEnteredAndLeftQueueBetween(queueName, start, end);
+  var counter = userStatisticList.length;
 
-  for (var i = statisticsList.length - 1; i >= 0; i--) {
-    var statistic = statisticsList[i];
-
-    console.log(statistic);
-
-    if (statistic.queue === queueName && statistic.startTime >= start &&
-      statistic.startTime < end &&
-      statistic.leftQueue &&
-      statistic.startTime + statistic.queueLength < end) {
-      counter++;
-    }
-  }
-
-/**/ console.log(statisticsList.length);
+  console.log("Number of people left: " + counter);
 
   return counter;
 }
 
+// Needs to be callbacked to work, else it's doing the right thing
+function getUsersWhoEnteredAndLeftQueueBetween(queueName, start, end) {
+    var userStatisticList = [];
+    var counter = 0;
+    Statistic.find({startTime: {$gte: start, $lte: end}, queue: queueName, leftQueue: true}, function(err, statistics) {
+      statistics.forEach(function(statistic) {
+        if (statistic.startTime + statistic.queueLength < end) {
+          userStatisticList.push(statistic);
+          console.log(new Date(statistic.startTime));
+          console.log(counter++);
+        }
+      });
+    });
 
+    return userStatisticList;
+}
 
 
 io.on('connection', function(socket) {
@@ -353,13 +368,14 @@ io.on('connection', function(socket) {
   socket.on('leave', function(req) {
     var queueName = req.queueName;
     var user = req.user;
+    var booking = req.booking;
 
     console.log(JSON.stringify(user)); // check which uses is given --- need the one doing the action and the one who is "actioned"
     console.log("Validerande: " + JSON.stringify(socket.handshake.session.user));
 
     var queue = queueSystem.findQueue(queueName);
 
-    userLeavesQueue(queue, user.name);
+    userLeavesQueue(queue, user.name, booking);
 
     console.log('a user left ' + queueName);
 
@@ -392,8 +408,11 @@ io.on('connection', function(socket) {
   });
 
   /*TODO-DIRR*/
-  function userLeavesQueue(queue, userName) {
+  function userLeavesQueue(queue, userName, booking) {
     queue.removeUser(userName);
+    if (booking) {
+      queue.removeBooking(userName);
+    }
 
     for (var i = statisticsList.length - 1; i >= 0; i--) {
       var statistic = statisticsList[i];
