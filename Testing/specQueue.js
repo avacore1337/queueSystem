@@ -117,18 +117,14 @@ it('Joining a queue with a booked time slot', function(){
 
 it('The Student class will have the possibility the change their own data in the form of location commment and personal comment.', function() {
     userLogIn(name);
-    $('#listdbasBtn').click();
-    closeMOTD();
-    $('#queueLocationInputField').sendKeys(location);
-    $('#queueCommentInputField').sendKeys('comment1');
-    $('#queueJoinQueueBtn').click();
-    expect(element(by.id('queueemickosBtn')).getText()).toMatch('1 emickos Red comment1');
+    userJoinQueue('dbas');
+    expect(element(by.id('queueemickosBtn')).getText()).toMatch('1 Red');
     $('#queueCommentInputField').clear();
     $('#queueLocationInputField').clear();
     $('#queueLocationInputField').sendKeys('Yellow');
     $('#queueCommentInputField').sendKeys('comment2');
     $('#queueUpdateInformationBtn').click()
-    expect(element(by.id('queue'+name+'Btn')).getText()).toMatch('1 emickos Yellow comment2');
+    expect(element(by.id('queue'+name+'Btn')).getText()).toMatch('1 Yellow comment2');
   });
 
 it('Broadcasting in a Queue', function(){
@@ -140,34 +136,35 @@ it('The TA class is able to, by interaction, ‘Kick’ a User from the Queue', 
   userJoinQueue('dbas');
   newBrowser();
   userLogIn(ta);
-  closeMOTD();
   $('#listdbasBtn').click();
   closeMOTD();
-  browser.actions().doubleClick($('#queue'+name+'Btn')).perform();
+  $('#queueemickosBtn').click();
+  $('#queueemickosBtn').click();
+  //browser.actions().doubleClick($('#queueemickosBtn')).perform();
   $('#queueRemoveUser'+name+'Btn').click();
   expect(element(by.id('queue'+name+'Btn')).isPresent()).toBeFalsy();
   });
 
 it('TA is able to use the interaction ‘Lock’ or ‘Unlock’ with a queue', function(){  
  userLogIn(ta);
- closeMOTD();
  $('#listdbasBtn').click();
  closeMOTD();
  element(by.id('queueOptionsBtn')).click();
  $('#queueLockQueueBtn').click();
  newBrowser();
  userLogIn(name);
- expect($('#listdbasBtn').isPresent()).toBeFalsy();
+ expect($('#listdbasBtn').click()).toMatch(null);
  newBrowser();
  userLogIn(ta);
- closeMOTD();
  $('#listdbasBtn').click();
  closeMOTD();
  element(by.id('queueOptionsBtn')).click();
  $('#queueUnlockQueueBtn').click();
  newBrowser();
  userLogIn(name);
- expect($('#listdbasBtn').isPresent()).toBeTruthy();
+ $('#listdbasBtn').click()
+ closeMOTD();
+
   });
 
 it('TA is able to use the interaction ‘new MOTD’ (Message of the Day) with a queue for a session which he is given privileges.', function(){
@@ -176,7 +173,9 @@ it('TA is able to use the interaction ‘new MOTD’ (Message of the Day) with a
 
 it('The users of class Teacher have the system rights to change other users user class within the group:', function(){
  userLogIn(name);
- expect($('#indexAdminBtn').isPresent()).toBeFalsy();
+ element(by.id('listdbasBtn')).click();
+  closeMOTD();
+ expect($('#queueOptionsBtn').isDisplayed()).toBeFalsy();
  newBrowser();
  userLogIn(ta);
  $('#indexAdminBtn').click();
@@ -186,16 +185,20 @@ it('The users of class Teacher have the system rights to change other users user
  $('#administrationAddAssistantBtn').click();
  newBrowser();
  userLogIn(name);
- expect($('#indexAdminBtn').isPresent()).toBeTruthy();
+ element(by.id('listdbasBtn')).click();
+  closeMOTD();
+ expect($('#queueOptionsBtn').isDisplayed()).toBeTruthy();
  newBrowser();
  userLogIn(ta);
  $('#indexAdminBtn').click();
  $('#administrationSelectQueueDropDown').click();
  $('#administrationdbasDropDownBtn').click();
- $('#administrationRemoveAssistantBtn').click
+ $('#administrationRemoveAssistantemickosBtn').click();
  newBrowser();
  userLogIn(name);
- expect($('#indexAdminBtn').isPresent()).toBeFalsy();
+ element(by.id('listdbasBtn')).click();
+  closeMOTD();
+ expect($('#queueOptionsBtn').isDisplayed()).toBeFalsy();
 });
 
 it('The Teacher class is able to Hide or Reveal the Queue. Hiding the Queue will remove the Queue from the list of Queues for Users of the Student class', function(){
@@ -216,7 +219,7 @@ it('The Teacher class is able to Hide or Reveal the Queue. Hiding the Queue will
  $('#indexAdminBtn').click();
  $('#administrationSelectQueueDropDown').click();
  $('#administrationdbasDropDownBtn').click();
- $('##administrationShowQueueBtn').click();
+ $('#administrationShowQueueBtn').click();
  $('#administrationChangeBtn').click();
 
  newBrowser();
