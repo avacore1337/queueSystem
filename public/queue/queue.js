@@ -633,6 +633,9 @@
         var name1 = booking.users[i];
         if(name1 === name){
           if($scope.soon(booking)){
+            if($scope.name === name){
+              title.title = $scope.queue + " | Stay A While";
+            }
             return true;
           }
         }
