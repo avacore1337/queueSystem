@@ -21,6 +21,7 @@ var GlobalMOTD = database.globalMOTD;
 var queueList = [];
 var adminList = [];
 var globalMOTD = "FEL!";
+var actualMOTD;
 exports.statisticsList = [];
 
 /**
@@ -233,6 +234,8 @@ function fetchBookings (queueName, callback) {
 
 exports.setGlobalMOTD = function (message) {
   globalMOTD = message;
+  actualMOTD.message = message;
+  actualMOTD.save();
 }
 
 exports.getGlobalMOTD = function () {
@@ -255,7 +258,7 @@ function setup() {
     "mdi"
   ];
 
-  var globalMOTD = new GlobalMOTD({
+  actualMOTD = new GlobalMOTD({
     globalMOTD: "Hello World!"
   });
 
@@ -354,10 +357,11 @@ function readIn() {
       // to make sure everything loads
       console.log('Globals: ' + global + '!');
       globalMOTD = global.message;
+      actualMOTD = global;
     });
   });
 }
 
 
-setup(); // Use for seting up the test system
-//readIn(); //use this
+// setup(); // Use for seting up the test system
+readIn(); //use this

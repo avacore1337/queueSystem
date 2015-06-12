@@ -552,7 +552,7 @@ io.on('connection', function(socket) {
 
       // console.log("Reurning the following statistics to " + name + ": " + JSON.stringify(retObject));
       // Return all the found data
-      io.to("user_" + name).emit('getStatistics', retObject);
+      socket.emit('getStatistics', retObject);
     });
   });
 
