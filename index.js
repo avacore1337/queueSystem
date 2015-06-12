@@ -534,20 +534,26 @@ io.on('connection', function(socket) {
     var queueName = req.queueName;
     var start = req.start;
     var end = req.end;
+    console.log("start: " + start);
+    console.log("end: " + end);
     
     var name = req.user;
     console.log("user = " + name);
     
+    // Statistic.find({queue:queueName},function (err, stats) {
+    Statistic.find({queue:queueName, startTime: {"$gte": start, "$lt": end}},function (err, stats) {
+      if (err) return console.error(err);
+      // console.log(stats);
+      // Creating an object to return
+      var retObject = {};
+      retObject.averageQueueTime = getAverageQueueTime(queueName, start, end);
+      retObject.numbersOfPeopleLeftQueue = numbersOfPeopleLeftQueue(queueName, start, end);
+      retObject.rawJSON = JSON.stringify(stats);
 
-    // Creating an object to return
-    var retObject = {};
-    retObject.averageQueueTime = getAverageQueueTime(queueName, start, end);
-    retObject.numbersOfPeopleLeftQueue = numbersOfPeopleLeftQueue(queueName, start, end);
-    retObject.rawJSON = JSON.stringify({"name":"randomText"});
-
-    console.log("Reurning the following statistics to " + name + ": " + JSON.stringify(retObject));
-    // Return all the found data
-    io.to("user_" + name).emit('getStatistics', retObject);
+      // console.log("Reurning the following statistics to " + name + ": " + JSON.stringify(retObject));
+      // Return all the found data
+      io.to("user_" + name).emit('getStatistics', retObject);
+    });
   });
 
   //===============================================================
