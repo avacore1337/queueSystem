@@ -105,9 +105,9 @@
             <!--<tr ng-repeat="booking in bookedUsers | filter:{attending(booking) && soon(booking)}" ng-show="matchBooked(user)">-->
             <tr ng-repeat="booking in bookedUsers | filter: attending | filter: soon" ng-show="matchBooked(user)">
               <td style="vertical-align: middle;"><p ng-repeat="name in booking.users">{{name}}</p></td>
-              <td style="vertical-align: middle;">{{booking.location}}</td>
+              <td style="vertical-align: middle;"><p ng-repeat="location in getLocations(booking.users) track by $index">{{location}}</p></td>
               <td style="vertical-align: middle;">{{booking.comment}}</td>
-              <td style="vertical-align: middle;">{{booking.time}}</td>
+              <td style="vertical-align: middle;">{{booking.time | date:"H:mm"}}</td>
               <td style="vertical-align: middle;">{{booking.length}}</td>
             </tr>
           </tbody>

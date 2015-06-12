@@ -47,7 +47,6 @@
         console.log(response)
         $scope.users = response.queue;
         $scope.bookedUsers = response.bookings;
-        // console.log(Date.now());
         // $scope.bookedUsers = [{time:Date.now(), comment:"MVK redovisning", users:["antbac", "pernyb", "rwb"], length:"15min", location:"Blue 01"}];
         console.log($scope.bookedUsers);
         $scope.locked = response.locked;
@@ -671,6 +670,23 @@
     }
     return undefined;
   }
+
+      // Returns an array of the groupmembers locations, empty if noone is queueing
+    $scope.getLocations = function(group){
+      console.log("Entered getLocations");
+      var retList = [];
+      for(var i in group){
+        var name = group[i];
+        for(var j in $scope.users){
+          var name1 = $scope.users[j].name;
+          if(name === name1){
+            retList.push($scope.users[j].location);
+            break;
+          }
+        }
+      }
+      return retList;
+    };
 
   // This function checks if a person in the normal queue matches the search-string.
   $scope.match = function (user) {
