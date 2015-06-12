@@ -244,7 +244,7 @@ function setup() {
     globalMOTD: "Hello World!"
   });
 
-  globalMOTD.save();
+  actualMOTD.save();
 
   var newAdmin = new Admin({
     name: "pernyb",
@@ -346,5 +346,5 @@ function readIn() {
 }
 
 
-// setup(); // Use for seting up the test system
+//setup(); // Use for seting up the test system
 readIn(); //use this
