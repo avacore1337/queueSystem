@@ -1,4 +1,4 @@
-/* jslint node: true */
+  /* jslint node: true */
 "use strict";
 
 //===============================================================
@@ -163,11 +163,19 @@ queueSchema.methods.removeUser = function (username) {
 };
 
 // takes a username as a parameter and removes the booking from the queue
-// at least according to how it was added?..
+// not tested yet
 queueSchema.methods.removeBooking = function (username) {
-  this.queue = this.queue.filter(function (user) {
-    return user.name !== username;
-  });
+  for (var i = 0; i < this.bookings.length; i++) {
+    var remove = false;
+    for (var j = 0; j < this.bookings[i].users.length; j++) {
+      if (this.bookings[i].users[j] === username) {
+        remove = true;
+      };
+      if (remove) {
+        this.bookings.splice(i, 1);
+      };
+    };
+  };
   this.save();
 };
 
@@ -225,10 +233,16 @@ queueSchema.methods.show = function () {
 
 // empty the queue
 queueSchema.methods.purgeQueue = function () {
-  this.queue.forEach(function (usr, i, queue) {
-  });
+  // this.queue.forEach(function (usr, i, queue) {
+  // });
 
   this.queue = [];
+  this.save();
+};
+
+// empty the queue
+queueSchema.methods.purgeBookings = function () {
+  this.bookings = [];
   this.save();
 };
 

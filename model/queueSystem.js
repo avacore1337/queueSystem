@@ -178,12 +178,14 @@ function validateAssistant(username, queueName) {
 }
 
 /**
- * Sets up scheduled jobs for fetching data for the booked students
+ * updates all the bookings with the data from the bookingsystem.
  */
-function setupFetching (queue, body) {
-   for (var i = 0; i < body.length; i++) {
-      schedule.scheduleJob(new Date(body[i].start),function () {
-        fetchBookings(queue.name,function (err, response, body) {
+exports.updateAllBookings = function () {
+  exports.forQueue(function (queue) {
+    console.log("updateing: " + queue.name);
+    if (queue.bookings.length === 0) {
+      fetchBookings(queue.name,function (err, response, body) {
+        if (!err && response.statusCode === 200) {
           for (var j = 0; j < body.length; j++) {
             var users = body[j].otherUsers;
             users.push(body[j].userID);
@@ -194,35 +196,15 @@ function setupFetching (queue, body) {
               comment:body[j].comment
             });
           };
-        });
-      });
+        }
+        else{
+          console.log(err);
+        }
+      })
     };
- }
-
-/**
- * updates all the bookings with the data from the bookingsystem.
- */
-exports.updateAllBookings = function () {
-  exports.forQueue(function (queue) {
-    fetchSessions(queue.name, function (err, response, body) {
-      console.log("fetching data for: " + queue.name);
-      if (!err && response.statusCode === 200) {
-        setupFetching(queue, body);
-      }
-      else{
-        console.log(err);
-      }
-    });
   });
 }
 
-/**
- * fetches all the sessions from the bookingsystem for a queue/course
- */
-function fetchSessions (queueName, callback) { //TODO make the path return a list of UNIQUE times when there should be more data.
-  var url = 'http://127.0.0.1:8088/API/todayssessions/' + queueName; //TODO move out url to config file
-  request({ url: url, json: true }, callback)
-}
 
 /**
  * fetches all the bookings from the bookingsystem for a queue/course
@@ -340,6 +322,7 @@ function readIn() {
       // to make sure everything loads
       console.log('Queue: ' + queue.name + ' loaded!');
     });
+    exports.updateAllBookings()
   });
 
   // All the queues

@@ -66,12 +66,13 @@ app.use('/API',router);
 
 var utils = require('./utils.js');
 var scheduleForEveryNight = utils.scheduleForEveryNight;
-queueSystem.updateAllBookings();
 
 scheduleForEveryNight(function () {
   queueSystem.forQueue(function (queue) {
     queue.purgeQueue();
+    queue.purgeBookings();
   })
+  queueSystem.updateAllBookings();
 });
 //===============================================================
 // 
@@ -110,34 +111,6 @@ function getAverageQueueTime(queueName, start, end) {
   var now = Date.now();
 
   console.log("checking between " + new Date(start) + " and " + new Date(end));
-
-/*
-  for (var i = userStatisticList.length - 1; i >= 0; i--) {
-    var userStatistic = userStatisticList[i];
-
-    if (userStatistic.leftQueue) {
-      totalTime += userStatistic.queueLength;
-    } else if (now > end) {
-      totalTime += end - userStatistic.startTime;
-    } else {
-      totalTime += now - userStatistic.startTime;
-    }
-
-    counter++;
-  }
-
-  console.log("Counted: " + counter);
-  console.log("Total time: " + totalTime);
-
-  if (counter === 0) {
-    counter = 1;
-  }
-
-  console.log("Average: " + totalTime / counter);
-
-  return totalTime / counter;
-*/
-  
   return 0;
 }
 
