@@ -44,9 +44,12 @@
       $scope.locked = false;
       $http.get('/API/queue/' + $scope.queue)
       .success(function(response) {
+        console.log(response)
         $scope.users = response.queue;
         $scope.bookedUsers = response.bookings;
-        //$scope.bookedUsers = [{time:Date.now(), comment:"MVK redovisning", users:["antbac", "pernyb", "rwb"], length:"15min", location:"Blue bitch 01"}];
+        // console.log(Date.now());
+        // $scope.bookedUsers = [{time:Date.now(), comment:"MVK redovisning", users:["antbac", "pernyb", "rwb"], length:"15min", location:"Blue 01"}];
+        console.log($scope.bookedUsers);
         $scope.locked = response.locked;
         for (var i = 0; i < $scope.users.length; i++) {
           $scope.users[i].optionsActivated = false;
@@ -604,7 +607,7 @@
 
   // Return true if the booking is taking place approximately now
   $scope.soon = function(booking){
-    return Math.abs(booking.time - Date.now()) < TIME_BOOKING;
+    return booking.time - Date.now() < TIME_BOOKING;
   };
 
   // Return true if any of the people in the group is in the queue

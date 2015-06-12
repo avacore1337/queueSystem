@@ -181,13 +181,25 @@ function validateAssistant(username, queueName) {
  * updates all the bookings with the data from the bookingsystem.
  */
 exports.updateAllBookings = function () {
+  for (var index = 0; index < queueList.length; index++) {
+    queueList[index].purgeBookings();
+  };
   exports.forQueue(function (queue) {
     console.log("updateing: " + queue.name);
     if (queue.bookings.length === 0) {
       fetchBookings(queue.name,function (err, response, body) {
         if (!err && response.statusCode === 200) {
+          // console.log(response);
+          console.log("course: " + queue.name + " Got response: ")
+          console.log(body);
           for (var j = 0; j < body.length; j++) {
-            var users = body[j].otherUsers;
+            console.log("creating bookings");
+            var users = [];
+            for (var i = 0; i < body[j].otherUsers.length; i++) {
+              if(body[j].otherUsers[i] !== ""){
+                users.push(body[j].otherUsers[i]);
+              }
+            };
             users.push(body[j].userID);
             queue.addBooking({
               users:users,
@@ -241,10 +253,10 @@ function setup() {
   ];
 
   actualMOTD = new GlobalMOTD({
-    globalMOTD: "Hello World!"
+    message: "Hello World!"
   });
 
-  globalMOTD.save();
+  actualMOTD.save();
 
   var newAdmin = new Admin({
     name: "pernyb",
@@ -346,5 +358,5 @@ function readIn() {
 }
 
 
-// setup(); // Use for seting up the test system
+// setup(); // Use for setting up the test system
 readIn(); //use this

@@ -142,7 +142,7 @@ queueSchema.methods.addUser = function (user) {
 };
 
 queueSchema.methods.addBooking = function (bookingData) {
-  this.queue.push(new Booking(bookingData));
+  this.bookings.push(bookingData);
   this.save();
 };
 
