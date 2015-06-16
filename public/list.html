@@ -12,40 +12,7 @@
     </div>
 
     <div class="row">
-      <div class="well" ng-repeat="queue in queues | orderBy:'locked':false" ng-class="{'light-blue-background' : queue.position !== -1, 'white' : queue.position === -1,'clickable' : accessLevel(queue.name) > 0 || !queue.locked}" ng-click="redirect(queue)" id="list{{queue.name}}Btn" ng-hide="noMatch(queue.name) || (accessLevel(queue.name) < 2 && queue.hiding)" style="padding-left: 5%; padding-right: 5%;">
-        <div class="row">
-          <div class="col-xs-6">
-            <h4 ng-show="queue.locked && !queue.hiding" class="text-red">
-              <span class="glyphicon glyphicon-lock"></span>
-              {{queue.name}}
-            </h4>
-            <h4 ng-show="!queue.locked && !queue.hiding">
-              <a href="">{{queue.name}}</a>
-            </h4>
-            <h4 ng-show="accessLevel(queue.name) > 1 && queue.hiding" class="text-light-gray">
-              <span class="glyphicon glyphicon-eye-close"></span>
-              <a style="color: #BEBEBE;">{{queue.name}}</a>
-            </h4>
-          </div>
-
-          <div class="col-xs-6">
-            <span class="pull-right">
-              <h4 ng-show="queue.hiding" class="text-light-gray">
-                {{queue.length}}
-                <i class="glyphicon glyphicon-user"></i>
-              </h4>
-              <h4 ng-show="!queue.hiding && queue.position === -1">
-                {{queue.length}}
-                <i class="glyphicon glyphicon-user"></i>
-              </h4>
-              <h4 ng-show="!queue.hiding && queue.position !== -1">
-                {{queue.position}}/{{queue.length}}
-                <i class="glyphicon glyphicon-user"></i>
-              </h4>
-            </span>
-          </div>
-        </div>
+      <div class="well" ng-repeat="queue in queues | orderBy:'locked':false" ng-class="{'light-blue-background' : queue.position !== -1, 'white' : queue.position === -1,'clickable' : accessLevel(queue.name) > 0 || !queue.locked}" ng-click="redirect(queue)" id="list{{queue.name}}Btn" ng-hide="noMatch(queue.name) || (accessLevel(queue.name) < 2 && queue.hiding)" style="padding-left: 5%; padding-right: 5%;" ng-include="'queuePanel.html'">
       </div>
-    </div>
   </section>
 </div>
