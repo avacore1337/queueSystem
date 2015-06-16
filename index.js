@@ -65,15 +65,15 @@ var router = require('./routes/httpRoutes.js');
 app.use('/API',router);
 
 var utils = require('./utils.js');
-var scheduleForEveryNight = utils.scheduleForEveryNight;
+// var scheduleForEveryNight = utils.scheduleForEveryNight;
 
-scheduleForEveryNight(function () {
-  queueSystem.forQueue(function (queue) {
-    queue.purgeQueue();
-    queue.purgeBookings();
-  })
-  queueSystem.updateAllBookings();
-});
+// scheduleForEveryNight(function () {
+//   queueSystem.forQueue(function (queue) {
+//     queue.purgeQueue();
+//     queue.purgeBookings();
+//   })
+//   queueSystem.updateAllBookings();
+// });
 //===============================================================
 // 
 

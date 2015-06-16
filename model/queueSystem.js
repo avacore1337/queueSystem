@@ -334,7 +334,7 @@ function readIn() {
       // to make sure everything loads
       console.log('Queue: ' + queue.name + ' loaded!');
     });
-    exports.updateAllBookings()
+    // exports.updateAllBookings()
   });
 
   // All the queues
