@@ -1,76 +1,76 @@
 <div class="container">
 
   <script type="text/ng-template" id="enterMessage.html">
-    <div class="modal-header">
-      <h4>{{title}}</h4>
-    </div>
-    <div class="modal-body">
-      <div class="form-group">
-        <textarea class="form-control" rows="3" ng-model="message" placeholder="{{placeholder}}" id="queueEnterMessageTextArea"></textarea>
-      </div>
-    </div>
-    <div class="modal-footer">
-      <button class="btn btn-primary" ng-click="ok()" id="queue{{buttonText}}Btn">{{buttonText}}</button>
-    </div>
+  <div class="modal-header">
+  <h4>{{title}}</h4>
+  </div>
+  <div class="modal-body">
+  <div class="form-group">
+  <textarea class="form-control" rows="3" ng-model="message" placeholder="{{placeholder}}" id="queueEnterMessageTextArea"></textarea>
+  </div>
+  </div>
+  <div class="modal-footer">
+  <button class="btn btn-primary" ng-click="ok()" id="queue{{buttonText}}Btn">{{buttonText}}</button>
+  </div>
   </script>
 
   <script type="text/ng-template" id="editMOTD.html">
-    <div class="modal-header">
-      <h4>{{title}}</h4>
-    </div>
-    <div class="modal-body">
-      <div class="form-group">
-        <textarea class="form-control" rows="3" ng-model="message" placeholder="{{placeholder}}" id="queueEditMOTDTextArea"></textarea>
-      </div>
-    </div>
-    <div class="modal-footer">
-      <button class="btn btn-warning" ng-click="remove()" id="queue{{buttonRemove}}Btn">{{buttonRemove}}</button>
-      <button class="btn btn-primary" ng-click="edit()" id="queue{{buttonEdit}}Btn">{{buttonEdit}}</button>
-    </div>
+  <div class="modal-header">
+  <h4>{{title}}</h4>
+  </div>
+  <div class="modal-body">
+  <div class="form-group">
+  <textarea class="form-control" rows="3" ng-model="message" placeholder="{{placeholder}}" id="queueEditMOTDTextArea"></textarea>
+  </div>
+  </div>
+  <div class="modal-footer">
+  <button class="btn btn-warning" ng-click="remove()" id="queue{{buttonRemove}}Btn">{{buttonRemove}}</button>
+  <button class="btn btn-primary" ng-click="edit()" id="queue{{buttonEdit}}Btn">{{buttonEdit}}</button>
+  </div>
   </script>
 
   <script type="text/ng-template" id="receiveMessage.html">
-    <div class="modal-header">
-      <h4>{{title}}</h4>
-    </div>
-    <div class="modal-body">
-      <div class="form-group">
-        <p>{{message}}</p>
-      </div>
-    </div>
-    <div class="modal-footer">
-      <i class="text-light-gray">{{sender}}</>
-    </div>
+  <div class="modal-header">
+  <h4>{{title}}</h4>
+  </div>
+  <div class="modal-body">
+  <div class="form-group">
+  <p>{{message}}</p>
+  </div>
+  </div>
+  <div class="modal-footer">
+  <i class="text-light-gray">{{sender}}</>
+  </div>
   </script>
 
   <script type="text/ng-template" id="purgeQueue.html">
-    <div class="modal-header">
-      <h4>Purge queue</h4>
-    </div>
-    <div class="modal-body">
-      <div class="form-group">
-        <p>Are you sure you want to remove everyone in the queue?</p>
-      </div>
-    </div>
-    <div class="modal-footer">
-      <button class="btn btn-success" ng-click="doNotPurge()" id="queueDoNotPurgeBtn">No, leave them alone.</button>
-      <button class="btn btn-danger" ng-click="purge()" id="queueDoPurgeBtn">Yes, kick them all out.</button>
-    </div>
+  <div class="modal-header">
+  <h4>Purge queue</h4>
+  </div>
+  <div class="modal-body">
+  <div class="form-group">
+  <p>Are you sure you want to remove everyone in the queue?</p>
+  </div>
+  </div>
+  <div class="modal-footer">
+  <button class="btn btn-success" ng-click="doNotPurge()" id="queueDoNotPurgeBtn">No, leave them alone.</button>
+  <button class="btn btn-danger" ng-click="purge()" id="queueDoPurgeBtn">Yes, kick them all out.</button>
+  </div>
   </script>
 
   <script type="text/ng-template" id="readMessages.html">
-    <div class="modal-header">
-      <h4>Messages</h4>
-    </div>
-    <div class="modal-body">
-      <div class="form-group">
-        <ul>
-          <li ng-repeat="message in messages">
-            {{message}}
-          </li>
-        </ul>
-      </div>
-    </div>
+  <div class="modal-header">
+  <h4>Messages</h4>
+  </div>
+  <div class="modal-body">
+  <div class="form-group">
+  <ul>
+  <li ng-repeat="message in messages">
+  {{message}}
+  </li>
+  </ul>
+  </div>
+  </div>
   </script>
 
   <div class="row">
@@ -93,89 +93,12 @@
 
       <!-- Users with bookings -->
       <div ng-show="(bookedUsers | filter: attending | filter: soon).length">
-        <table class="table table-striped booked">
-          <thead>
-            <th>User</th>
-            <th>Location</th>
-            <th>Comment</th>
-            <th>Time</th>
-            <th>Length</th>
-          </thead>
-          <tbody>
-            <!--<tr ng-repeat="booking in bookedUsers | filter:{attending(booking) && soon(booking)}" ng-show="matchBooked(user)">-->
-            <tr ng-repeat="booking in bookedUsers | filter: attending | filter: soon" ng-show="matchBooked(user)">
-              <td style="vertical-align: middle;"><p ng-repeat="name in booking.users">{{name}}</p></td>
-              <td style="vertical-align: middle;"><p ng-repeat="location in getLocations(booking.users) track by $index">{{location}}</p></td>
-              <td style="vertical-align: middle;">{{booking.comment}}</td>
-              <td style="vertical-align: middle;">{{booking.time | date:"H:mm"}}</td>
-              <td style="vertical-align: middle;">{{booking.length}}</td>
-            </tr>
-          </tbody>
-        </table>
+        <booked-users></booked-users>
       </div>
 
       <!-- Users without bookings -->
       <div ng-show="(users | filter:notHasBooking).length">
-        <table class="table table-striped">
-          <thead>
-            <tr>
-              <th class="hidden-xs">#</th>
-              <th ng-show="accessLevel">User</th>
-              <th>Location</th>
-              <th>Comment</th>
-              <th>Time</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr ng-repeat-start="user in users | filter:notHasBooking track by $index" ng-class="{'pointer' : accessLevel > 0, 'pulse' : user.gettingHelp, 'light-blue-background' : user.name === name}" ng-click="changeVisibility(user.name)"  id="queue{{user.name}}Btn" ng-show="match(user)">
-              <td class="hidden-xs">{{ $index + 1 }}</td>
-              <td ng-show="accessLevel">{{ user.name }}</td>
-              <td>{{ user.location }}</td>
-              <td>{{ user.comment }}</td>
-              <td><span data-livestamp="{{user.time}}"></span></td>
-            </tr>
-            <tr></tr> <!-- Hack-solution -->
-            <tr ng-repeat-end class="text-center" ng-show="accessLevel && user.optionsActivated" ng-dblclick="changeVisibilityDbl(user.name)">
-              <td colspan="100%;">
-                <div title="remove user" class="col-xs-2">
-                  <button class="red clickable frame center-content expand" ng-click="kick(user.name)" id="queueRemoveUser{{user.name}}Btn">
-                    <span class="glyphicon glyphicon-remove"></span>
-                  </button>
-                </div>
-                <div title="send message" class="col-xs-2">
-                  <button class="green clickable frame center-content expand" ng-click="messageUser(user.name)" id="queueSendMessage{{user.name}}Btn">
-                    <span class="glyphicon glyphicon-envelope"></span>
-                  </button>
-                </div>
-                <div title="help" class="col-xs-2">
-                  <button class="green clickable frame center-content expand" ng-click="helpUser(user.name)" id="queueHelp{{user.name}}Btn">
-                    <span class="glyphicon glyphicon-check"></span>
-                  </button>
-                </div>
-                <div title="bad location" class="col-xs-2">
-                  <button class="green clickable frame center-content expand" ng-click="badLocation(user.name)" id="queueBadLocation{{user.name}}Btn">
-                    <span class="glyphicon glyphicon-question-sign"></span>
-                  </button>
-                </div>
-                <div title="add comment" class="col-xs-2">
-                  <button class="green clickable frame center-content expand" ng-click="flag(user.name)" id="queueAddComment{{user.name}}Btn">
-                    <span class="glyphicon glyphicon-tag"></span>
-                  </button>
-                </div>
-                <div ng-show="user.messages.length" title="read comment" class="col-xs-2">
-                  <button class="green clickable frame center-content expand" ng-click="readMessages(user.name)" id="queueReadComment{{user.name}}Btn">
-                    <span class="glyphicon glyphicon-search"></span>
-                  </button>
-                </div>
-                <div ng-hide="user.messages.length" title="read comment" class="col-xs-2">
-                  <button class="frame center-content expand" id="queueCanNotReadComment{{user.name}}Btn" disabled>
-                    <span class="glyphicon glyphicon-search"></span>
-                  </button>
-                </div>
-              </td>
-            </tr>
-          </tbody>
-        </table>
+        <standard-users></standard-users>
       </div>
     </div>
 

@@ -705,5 +705,17 @@
     var regEx = new RegExp($scope.search.toLowerCase());
     return (regEx.test(user.name.toLowerCase()) || regEx.test(user.location.toLowerCase()) ||  regEx.test(user.comment.toLowerCase()) ||  regEx.test(user.time.toLowerCase()));
   };
-  }]);
+  }])
+.directive('bookedUsers', function(){
+  return {
+    restrict: 'E',
+    templateUrl: 'queue/bookedUsers.html'
+  }
+})
+.directive('standardUsers', function(){
+  return {
+    restrict: 'E',
+    templateUrl: 'queue/standardUsers.html'
+  }
+});
 })();
