@@ -150,5 +150,98 @@
         $http.get('/API/' + path).success(callback);
       }
     };
-  });;
+  })
+
+  .factory('UserListService', ['HttpService', 'WebSocketService', '$modal',
+    function(http, socket, $modal) {
+    
+    var userList = [];
+
+    // Listen for the person joining a queue event.
+    socket.on('join', function (data) {
+      console.log("joined: " +data );
+      userList.push({name:data.name, location:data.location, comment:data.comment, time:data.time/1000});
+    });
+
+    // Listen for the person leaving a queue event.
+    socket.on('leave', function (data) {
+      for(var index in userList) {
+        if(userList[index].name === data.name) {
+          userList.splice(i, 1);
+          break;
+        }
+      }
+    });
+
+    // Listen for the person updateing a queue event.
+    socket.on('purge', function () {
+      userList = [];
+    });
+
+    // Listen for a user chageing their information
+    socket.on('update', function (data) {
+      for(var index in userList) {
+        if(userList[i].name === data.name) {
+          userList[i].comment = data.comment;
+          userList[i].location = data.location;
+          break;
+        }
+      }
+    });
+
+    // Listen for a user getting flagged
+    socket.on('flag', function (data) {
+      for(var index in userList) {
+        if(userList[i].name === data.name) {
+          $scope.users[i].messages.push(data.message);
+          break;
+        }
+      }
+    });
+
+    // Listen for a person getting help.
+    socket.on('help', function (data) {
+      for(var index in userList) {
+        if(userList[i].name === data.name) {
+          $scope.users[i].gettingHelp = true;
+          break;
+        }
+      }
+    });
+
+    // Listen for a badLocation warning
+    socket.on('badLocation', function (data) {
+      var modalInstance = $modal.open({
+        templateUrl: 'receiveMessage.html',
+        controller: function ($scope, $modalInstance, title, message, sender) {
+          $scope.title = title;
+          $scope.message = message;
+          $scope.sender = sender;
+        },
+        resolve: {
+          title: function () {
+            return "Unclear location";
+          },
+          message: function () {
+            return "The teaching assistant in '" + data.queueName + "' could not locate you. The teaching assistant won't try to find you again until you have updated your information.";
+          },
+          sender: function () {
+            return "- " + data.sender;
+          }
+        }
+      });
+    });
+
+    return {
+      updateUsers: function(queueName) {
+        http.get('queue/' + queueName, function(response) {
+          userList = response.queue;
+        });
+      },
+      getUsers: function () {
+        return userList;
+      }
+    };
+  }]);
+
 })();
