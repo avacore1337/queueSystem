@@ -139,5 +139,16 @@
     return {
       title: "Stay A While"
     };
-  });
+  })
+
+  .factory('HttpService', function($http) {
+    return {
+      post: function(path, data, callback){
+        $http.post('/API/' + path, data, {withCredentials: true}).success(callback);
+      },
+      get: function(path, callback){
+        $http.get('/API/' + path).success(callback);
+      }
+    };
+  });;
 })();

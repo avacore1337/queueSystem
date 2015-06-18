@@ -15,8 +15,8 @@
     }])
 
 
-  .controller('queueController', ['$scope', '$http', '$routeParams', '$location', '$modal', 'WebSocketService', 'UserService', 'TitleService',
-    function ($scope, $http, $routeParams, $location, $modal, socket, user, title) {
+  .controller('queueController', ['$scope', 'HttpService', '$routeParams', '$location', '$modal', 'WebSocketService', 'UserService', 'TitleService',
+    function ($scope, http, $routeParams, $location, $modal, socket, user, title) {
       var TIME_BOOKING = 1800000; // 30min in milliseconds
 
       $scope.queue = $routeParams.queue;
@@ -37,8 +37,7 @@
       $scope.accessLevel = user.accessLevelFor($scope.queue);
 
       $scope.locked = false;
-      $http.get('/API/queue/' + $scope.queue)
-      .success(function(response) {
+      http.get('queue/' + $scope.queue, function(response) {
         console.log(response);
         $scope.users = response.queue;
         $scope.bookedUsers = response.bookings;

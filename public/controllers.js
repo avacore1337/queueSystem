@@ -1,7 +1,7 @@
 var queueControllers = angular.module('queueControllers', []);
 
-queueControllers.controller('listController', ['$scope', '$http', '$location', 'WebSocketService', 'UserService', 'TitleService',
-  function($scope, $http, $location, socket, user, title) {
+queueControllers.controller('listController', ['$scope', 'HttpService', '$location', 'WebSocketService', 'UserService', 'TitleService',
+  function($scope, http, $location, socket, user, title) {
     $scope.$on('$destroy', function (event) {
       socket.removeAllListeners();
       socket.emit('stopListening', 'lobby');
@@ -10,16 +10,14 @@ queueControllers.controller('listController', ['$scope', '$http', '$location', '
 
     title.title = "Stay A While";
     $scope.queues = [];
-    $http.get('/API/queueList')
-      .success(function(response) {
-        $scope.queues = response.sort(function(a, b) {
-          return a.name.localeCompare(b.name);
-        });
-        for (var index in $scope.queues) {
-          $http.get('/API/queue/' + $scope.queues[index].name)
-            .success(apiGetQueue);
-        }
+    http.get('queueList', function(response) {
+      $scope.queues = response.sort(function(a, b) {
+        return a.name.localeCompare(b.name);
       });
+      for (var index in $scope.queues) {
+        http.get('queue/' + $scope.queues[index].name, apiGetQueue);
+      }
+    });
 
     function apiGetQueue(resp) {
       var queue = getQueue(resp.name);
@@ -132,12 +130,12 @@ queueControllers.controller('listController', ['$scope', '$http', '$location', '
   }
 ]);
 
-queueControllers.controller('aboutController', ['$scope', 'TitleService', '$http',
-  function($scope, title, $http) {
+queueControllers.controller('aboutController', ['$scope', 'TitleService', 'HttpService',
+  function($scope, title, http) {
     title.title = "About | Stay A While";
     console.log('entered about.html');
     $scope.contributors = {StayAWhile:[], QWait:[]};
-    $http.get('/aboutData.json').success(function(data) {
+    http.get('/aboutData.json', function(data) {
       console.log("Aboutdata: ");
       console.log(data);
       $scope.contributors = data;
@@ -145,8 +143,8 @@ queueControllers.controller('aboutController', ['$scope', 'TitleService', '$http
   }
 ]);
 
-queueControllers.controller('helpController', ['$scope', '$http', 'TitleService', 'UserService',
-  function($scope, $http, title, user) {
+queueControllers.controller('helpController', ['$scope', 'TitleService', 'UserService',
+  function($scope, title, user) {
     title.title = "Help | Stay A While";
     console.log('entered help.html');
     $scope.accessLevel = user.accessLevel();
@@ -154,8 +152,8 @@ queueControllers.controller('helpController', ['$scope', '$http', 'TitleService'
   }
 ]);
 
-queueControllers.controller('statisticsController', ['$scope', '$http', 'WebSocketService', 'TitleService', 'UserService',
-  function($scope, $http, socket, title, user) {
+queueControllers.controller('statisticsController', ['$scope', 'HttpService', 'WebSocketService', 'TitleService', 'UserService',
+  function($scope, http, socket, title, user) {
     $scope.$on('$destroy', function (event) {
       socket.removeAllListeners();
     });
@@ -199,7 +197,7 @@ queueControllers.controller('statisticsController', ['$scope', '$http', 'WebSock
 
     // Queue selection
     $scope.queues = [];
-    $http.get('/API/queueList').success(function(response) {
+    http.get('queueList', function(response) {
       var temp = response.sort(function(a, b) {return a.name.localeCompare(b.name);});
       for (var index in temp) {
         if (user.isAdmin() || user.isTeacher(temp[index].name)) {
@@ -279,8 +277,8 @@ queueControllers.controller('statisticsController', ['$scope', '$http', 'WebSock
   }
 ]);
 
-queueControllers.controller('loginController', ['$scope', '$location', '$http', 'TitleService', 'WebSocketService', '$modal',
-  function($scope, $location, $http, title, socket, $modal) {
+queueControllers.controller('loginController', ['$scope', '$location', 'HttpService', 'TitleService', 'WebSocketService', '$modal',
+  function($scope, $location, http, title, socket, $modal) {
     $scope.$on('$destroy', function (event) {
       socket.removeAllListeners();
     });
@@ -289,14 +287,8 @@ queueControllers.controller('loginController', ['$scope', '$location', '$http', 
 
     $scope.done = function() {
       console.log("Reached done()");
-      $http.post('/API/setUser', {
-        name: $scope.name
-      }, {
-        withCredentials: true
-      }).success(function(response) {
-        console.log("with credentials success");
-        $http.get('/API/serverMessage').success(function(resp){
-          console.log("serverMessage = " + resp.serverMessage);
+      http.post('setUser', {name: $scope.name}, function(response) {
+        http.get('serverMessage', function(resp){
           if(resp.serverMessage){
             console.log("There is a serverMessage");
             var modalInstance = $modal.open({
@@ -317,11 +309,7 @@ queueControllers.controller('loginController', ['$scope', '$location', '$http', 
           }
         });
         $location.path('list');
-        console.log("logged in");
       });
-      console.log("I set the user with http");
-      // TODO : This should be removed later on
-      // TODO : Robert look here
       socket.emit('setUser', {
         name: $scope.name,
         admin: $scope.type === 'admin'
@@ -332,8 +320,8 @@ queueControllers.controller('loginController', ['$scope', '$location', '$http', 
   }
 ]);
 
-queueControllers.controller('navigationController', ['$scope', '$location', 'UserService', '$http',
-  function($scope, $location, user, $http) {
+queueControllers.controller('navigationController', ['$scope', '$location', 'UserService', 'HttpService',
+  function($scope, $location, user, http) {
     $scope.location = $location.path();
     $scope.name = user.getName();
 
@@ -353,15 +341,13 @@ queueControllers.controller('navigationController', ['$scope', '$location', 'Use
 
     // Loggin out
     $scope.logOut = function() {
-      $http.post('/API/setUser', {
+      http.post('setUser', {
         name: "",
         admin: false,
         teacher: [],
         assistant: []
-      }, {
-        withCredentials: true
-      }).success(function(response) {
-        user.setName("");
+      }, function(response) {
+        user.clearName();
         $scope.name = "";
         console.log("logged out");
         $location.path('list');

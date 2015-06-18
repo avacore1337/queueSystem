@@ -14,8 +14,8 @@
     }])
 
 
-  .controller('adminController', ['$scope', '$location', '$http', '$modal', 'WebSocketService', 'UserService', 'TitleService',
-    function ($scope, $location, $http, $modal, socket, user, title) {
+  .controller('adminController', ['$scope', '$location', 'HttpService', '$modal', 'WebSocketService', 'UserService', 'TitleService',
+    function ($scope, $location, http, $modal, socket, user, title) {
       $scope.$on('$destroy', function (event) {
         socket.removeAllListeners();
         socket.emit('stopListening', 'admin');
@@ -28,15 +28,15 @@
       $scope.selectedQueue = undefined;
       $scope.dropdown = undefined;
       $scope.admins = [];
-      $http.get('/API/adminList').success(function(response){
+      http.get('adminList', function(response){
         $scope.admins = response;
       });
 
       $scope.queues = [];
-      $http.get('/API/queueList').success(function(response){
+      http.get('queueList', function(response){
         for (var i in response) {
           if(user.isAdmin() || user.isTeacher(response[i].name)){
-            $http.get('/API/queue/' + response[i].name).success(function(resp){ 
+            http.get('queue/' + response[i].name, function(resp){ 
               $scope.queues.push(resp);
               $scope.queues = $scope.queues.sort(function(a, b) {return a.name.localeCompare(b.name);});
             });
@@ -45,7 +45,7 @@
       });
 
       $scope.serverMessage = "";
-      $http.get('/API/serverMessage').success(function(resp){
+      http.get('serverMessage', function(resp){
         $scope.serverMessage = resp.serverMessage;
       });
 
