@@ -218,7 +218,7 @@ io.on('connection', function(socket) {
       return;
     }
 
-    io.to(queueName).emit('badLocation', {name: name, sender: username});
+    io.to("user_" + name).emit('badLocation', {name: name, sender: username, queueName: queueName});
     console.log("Bad location at " + queueName + " for " + name);
   });
 

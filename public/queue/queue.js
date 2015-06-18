@@ -112,7 +112,7 @@
       });
 
       // Listen for the person updateing a queue event.
-      socket.on('purge', function socketPurge() {
+      socket.on('purge', function () {
         $scope.users = [];
         $scope.enqueued = false;
       });
@@ -199,31 +199,25 @@
 
       // Listen for a badLocation warning
       socket.on('badLocation', function (data) {
-        console.log("badLocation detected !!!");
-        console.log("Sender : " + data.sender);
-        if($scope.name === data.name){
-          var modalInstance = $modal.open({
-            templateUrl: 'receiveMessage.html',
-            controller: function ($scope, $modalInstance, title, message, sender) {
-              $scope.title = title;
-              $scope.message = message;
-              $scope.sender = sender;
+        var modalInstance = $modal.open({
+          templateUrl: 'receiveMessage.html',
+          controller: function ($scope, $modalInstance, title, message, sender) {
+            $scope.title = title;
+            $scope.message = message;
+            $scope.sender = sender;
+          },
+          resolve: {
+            title: function () {
+              return "Unclear location";
             },
-            resolve: {
-              title: function () {
-                return "Unclear location";
-              },
-              message: function () {
-                return "You have to enter a more descriptive location.";
-              },
-              sender: function () {
-                return data.sender;
-              }
+            message: function () {
+              return "The teaching assistant in '" + data.queueName + "' could not locate you. The teaching assistant won't try to find you again until you have updated your information.";
+            },
+            sender: function () {
+              return "- " + data.sender;
             }
-          });
-        }else{
-          console.log("No worries, it wasn't you.");
-        }
+          }
+        });
       });
 
       $scope.addUser = function(){
@@ -490,7 +484,7 @@
             break;
           }
         }
-      }
+      };
 
       // This function should direct the user to the wanted page
       $scope.redirect = function(address){
