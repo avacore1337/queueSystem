@@ -314,6 +314,27 @@
         console.log("Called unlock");
       };
 
+      // This function generates new users
+      $scope.generateUsers = function(){
+        var amount = Math.round(Math.random() * 100);
+        for(var i = 0; i < amount; i++){
+          socket.emit('join', {
+            queueName:$scope.queue,
+            user:{name:makeid(11), location:"Green", comment:"lab1", time:Date.now()}
+          });
+        }
+      };
+
+      function makeid(length){
+        var text = "";
+        var possible = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
+
+        for( var i=0; i < length; i++ )
+            text += possible.charAt(Math.floor(Math.random() * possible.length));
+
+        return text;
+      }
+
       // Function to send a message to every user in the queue
       $scope.broadcast = function(){
         console.log("Called broadcast");
