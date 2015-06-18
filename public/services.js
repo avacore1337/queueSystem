@@ -23,15 +23,23 @@
 
     updateUserData();
 
+    function isAssistant(queueName) {
+      return $.inArray(queueName, assistant) !== -1;
+    }
+
+    function isTeacher(queueName) {
+      return $.inArray(queueName, teacher) !== -1;
+    }
+
     return {
       updateUserData: updateUserData,
 
-      setName: function(name) {
-        username = name;
-      },
-
       getName: function() {
         return username;
+      },
+
+      setName: function(name) {
+        username = name;
       },
 
       isAdmin: function() {
@@ -42,17 +50,13 @@
         admin = bool;
       },
 
-      isTeacher: function(course) {
-        return $.inArray(course, teacher) !== -1;
-      },
+      isTeacher: isTeacher,
 
       setTeacher: function(list) {
         teacher = list;
       },
 
-      isAssistant: function(course) {
-        return $.inArray(course, assistant) !== -1;
-      },
+      isAssistant: isAssistant,
 
       setAssistant: function(list) {
         assistant = list;
@@ -71,6 +75,20 @@
         }
         if (admin) {
           ret = 3;
+        }
+        return ret;
+      },
+
+      accessLevelFor: function(queueName) {
+        var ret = 0;
+        if (!username) {
+          return -1;
+        }
+        if (isAssistant(queueName)) {
+          ret = 1;
+        }
+        if (isTeacher(queueName)) {
+          ret = 2;
         }
         return ret;
       },

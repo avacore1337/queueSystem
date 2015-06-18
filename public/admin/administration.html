@@ -1,32 +1,32 @@
 <div class="container">
 
 	<script type="text/ng-template" id="enterMessage.html">
-    	<div class="modal-header">
-      		<h4>{{title}}</h4>
-    	</div>
-    	<div class="modal-body">
-      		<div class="form-group">
-        		<textarea class="form-control" rows="3" ng-model="message" placeholder="{{placeholder}}" id="administrationEnterMessageTextArea"></textarea>
-      		</div>
-    	</div>
-    	<div class="modal-footer">
-      		<button class="btn btn-primary" ng-click="ok()" id="administration{{buttonText}}Btn">{{buttonText}}</button>
-    	</div>
-  	</script>
+	<div class="modal-header">
+	<h4>{{title}}</h4>
+	</div>
+	<div class="modal-body">
+	<div class="form-group">
+	<textarea class="form-control" rows="3" ng-model="message" placeholder="{{placeholder}}" id="administrationEnterMessageTextArea"></textarea>
+	</div>
+	</div>
+	<div class="modal-footer">
+	<button class="btn btn-primary" ng-click="ok()" id="administration{{buttonText}}Btn">{{buttonText}}</button>
+	</div>
+	</script>
 
 	<script type="text/ng-template" id="warning.html">
-		<div class="modal-header">
-			<h4>{{title}}</h4>
-		</div>
-		<div class="modal-body">
-			<div class="form-group">
-				<p>{{message}}</p>
-			</div>
-		</div>
-		<div class="modal-footer">
-			<button class="btn btn-success" ng-click="doNotDelete()" id="administrationNoChangeBtn">{{safeButtonText}}</button>
-			<button class="btn btn-danger" ng-click="delete()" id="administrationChangeBtn">{{dangerButtonText}}</button>
-		</div>
+	<div class="modal-header">
+	<h4>{{title}}</h4>
+	</div>
+	<div class="modal-body">
+	<div class="form-group">
+	<p>{{message}}</p>
+	</div>
+	</div>
+	<div class="modal-footer">
+	<button class="btn btn-success" ng-click="doNotDelete()" id="administrationNoChangeBtn">{{safeButtonText}}</button>
+	<button class="btn btn-danger" ng-click="delete()" id="administrationChangeBtn">{{dangerButtonText}}</button>
+	</div>
 	</script>
 
 	<div ng-show="accessLevel() < 2">
@@ -36,197 +36,13 @@
 		<h1>Administration</h1>
 		<p>Please be careful on this page. Here, you have the power to change everything.</p>
 	</div>
-	<div ng-show="accessLevel() > 2">
-		<button ng-hide="serverMessage" class="btn btn-primary" style="margin-bottom: 2%;" ng-click="addServerMessage()" id="administrationAddServerMessageBtn">Add server-message</button>
-		<button ng-show="serverMessage" class="btn btn-success" style="margin-bottom: 2%;" ng-click="addServerMessage()" id="administrationEditServerMessageBtn">Edit server-message</button>
-		<button ng-show="serverMessage" class="btn btn-danger" style="margin-bottom: 2%;" ng-click="removeServerMessage()" id="administrationRemoveServerMessageBtn">Remove server-message</button>
-		<h1>Administrators of Stay A While&nbsp;<a href="/#/help#administrator">?</a></h1>
-		<h5>New administrators might have to log out and in again in order to get all of their new privileges.</h5>
-	</div>
-	<br>
 
 	<div class="row" ng-show="accessLevel() > 2">
-		<div class="col-md-6">
-			<!-- Add admins -->
-			<p>Insert the new administrators username</p>
-			<form ng-submit="addAdmin()">
-				<div class="input-group col-md-8">
-					<input type="text" class="form-control" ng-model="newAdmin" placeholder="Add administrator" onfocus="this.placeholder = ''" onblur="this.placeholder = 'Add admin'" id="administrationAdminInputField">
-					<span class="input-group-addon blue clickable text-white" style="border: 0px;" id="administrationAddAdminBtn" type="submit" ng-click="addAdmin()">
-						<span class="glyphicon glyphicon-plus"></span>
-						Add
-					</span>
-				</div>
-			</form>
-			<!-- Remove admins -->
-			<br>
-			Administrators
-			<br>
-			<div ng-show="admins.length">
-				<table class="table table-striped">
-					<thead>
-						<tr>
-							<th>Name</th>
-							<th>Username</th>
-							<th>Added by</th>
-						</tr>
-					</thead>
-					<tbody>
-						<tr id="admin.name" ng-repeat="admin in admins">
-							<td>{{ admin.name }}</td>
-							<td>{{ admin.username }} <span class="glyphicon glyphicon-remove text-red clickable" title="Remove admin" ng-click="removeAdmin(admin.username)" id="administrationRemoveAdmin{{admin.username}}Btn" ng-show="admins.length > 1"></span></td>
-							<td>{{ admin.addedBy }}</td>
-						</tr>
-					</tbody>
-				</table>
-			</div>
-			<div ng-hide="admins.length">
-				(No admins, you are totally screwed now ... ;) )
-			</div>
-		</div>
-		<!-- Adding queues -->
-		<div class="col-md-6">
-			<p>Insert the name of the new queue</p>
-			<form ng-submit="addQueue()">
-				<div class="input-group col-md-8">
-					<input type="text" class="form-control" ng-model="newQueue" placeholder="Add queue" onfocus="this.placeholder = ''" onblur="this.placeholder = 'Add queue'" id="administrationQueueInputField">
-					<span class="input-group-addon blue clickable text-white" style="border: 0px;" id="administrationAddQueueBtn" type="submit" ng-click="addQueue()">
-						<span class="glyphicon glyphicon-plus"></span>
-						Add
-					</span>
-				</div>
-			</form>
-			<table class="table table-striped">
-				<thead>
-					<tr>
-						<th><h3>Queues</h3></th>
-					</tr>
-				</thead>
-				<tbody>
-					<tr ng-repeat="queue in queues">
-						<td ng-class="{'text-light-gray' : queue.hiding}">{{queue.name}}</td>
-					</tr>
-				</tbody>
-			</table>
-		</div>
+		<admin-options></admin-options>
 	</div>
 
 	<br>
 	<div ng-show="accessLevel() > 1">
-		<h1>Edit queue</h1>
-		<h5>Choose queue to administrate</h5>
-
-		<!-- Dropdown of queues -->
-		<div class="row">
-			<div class="col-md-12">
-				<div class="dropdown">
-					<button class="btn btn-default dropdown-toggle col-xs-12 col-md-3" type="button" data-toggle="dropdown" id="administrationSelectQueueDropDown">
-						<div class="col-xs-11 text-left" id="dropdown">Select Queue</div> <span class="caret"></span>
-					</button>
-					<ul class="dropdown-menu">
-						<li ng-repeat="queue in queues"><a href="" ng-click="selectQueue(queue)" id="administration{{queue.name}}DropDownBtn">{{queue.name}}</a></li>
-					</ul>
-				</div>
-			</div>
-		</div>
-		<br>
-		<!-- Dropdown ends here -->
-
-		<div class="row" ng-show="selectedQueue !== undefined">
-			<div class="col-md-12">
-				<button class="btn btn-danger" ng-click="removeQueue()" id="administrationRemoveQueueBtn">Remove queue</button>
-				<button class="btn btn-warning" ng-click="hideQueue()" ng-show="!selectedQueue.hiding" id="administrationHideQueueBtn">Hide queue</button>
-				<button class="btn btn-success" ng-click="showQueue()" ng-show="selectedQueue.hiding" id="administrationShowQueueBtn">Reveal queue</button>
-			</div>
-		</div>
-
-		<div class="row col-md-12">
-			<!-- Adding teachers -->
-			<div class="row col-md-6">
-				<h3>Teachers at Stay A While&nbsp;<a href="/#/help#teacher">?</a></h3>
-				<h5>New teachers might have to log out and in again in order to get all of their new privileges.</h5>
-				<!-- Real input -->
-				<p>Insert the new teachers username</p>
-				<form ng-submit="addTeacher()" ng-show="selectedQueue">
-					<div class="input-group col-md-8">
-						<input type="text" class="form-control" ng-model="newTeacher" placeholder="Add teacher" onfocus="this.placeholder = ''" onblur="this.placeholder = 'Add teacher'" id="administrationAddTeacherInputField">
-						<span class="input-group-addon blue clickable text-white" style="border: 0px;" id="administrationAddTeacherBtn" type="submit" ng-click="addTeacher()">
-							<span class="glyphicon glyphicon-plus"></span>
-							Add
-						</span>
-					</div>
-				</form>
-				<!-- Fake input -->
-				<div class="input-group col-md-9" ng-hide="selectedQueue">
-					<input type="text" class="form-control" id="administrationAddTeacherNoQueueInputField" disabled>
-					<span class="input-group-addon text-white" style="border: 0px; background-color: rgb(200, 200, 200);" id="administrationAddTeacherNoQueueBtn"><span class="glyphicon glyphicon-plus"></span>Add</span>
-				</div>
-				<div class="buffer"></div>
-				<div class="col-md-10" ng-show="selectedQueue.teacher.length" style="padding-left: 0px;">
-					<table class="table table-striped">
-						<thead>
-							<tr>
-								<th>Name</th>
-								<th>Username</th>
-								<th>Added by</th>
-							</tr>
-						</thead>
-						<tbody>
-							<tr id="teacher.username" ng-repeat="teacher in selectedQueue.teacher">
-								<td>{{ teacher.name }}</td>
-								<td>{{ teacher.username }} <span class="glyphicon glyphicon-remove text-red clickable" title="Remove teacher" ng-click="removeTeacher(teacher.username)" id="administrationRemoveTeacher{{teacher.username}}Btn"></span></td>
-								<td>{{ teacher.addedBy }}</td>
-							</tr>
-						</tbody>
-					</table>
-				</div>
-				<div ng-hide="selectedQueue.teacher.length">
-					(No teachers)
-				</div>
-			</div>
-			<!-- Adding teaching assistants -->
-			<div class="row col-md-6 left-divider">
-				<h3>Assistants at Stay A While&nbsp;<a href="/#/help#assistant">?</a></h3>
-				<h5>New assistants might have to log out and in again in order to get all of their new privileges.</h5>
-				<!-- Real input -->
-				<p>Insert the new assistants username</p>
-				<form ng-submit="addAssistant()" ng-show="selectedQueue">
-					<div class="input-group col-md-8">
-						<input type="text" class="form-control" ng-model="newAssistant" placeholder="Add assistant" onfocus="this.placeholder = ''" onblur="this.placeholder = 'Add assistant'" id="administrationAddAssistantInputField">
-						<span class="input-group-addon blue clickable text-white" style="border: 0px;" id="administrationAddAssistantBtn" type="submit" ng-click="addAssistant()">
-							<span class="glyphicon glyphicon-plus"></span>
-							Add
-						</span>
-					</div>
-				</form>
-				<!-- Fake input -->
-				<div class="input-group col-md-9" ng-hide="selectedQueue">
-					<input type="text" class="form-control" id="administrationAddAssistantNoQueueInputField" disabled>
-					<span class="input-group-addon text-white" style="border: 0px; background-color: rgb(200, 200, 200);" id="administrationAddAssistantNoQueueBtn"><span class="glyphicon glyphicon-plus"></span>Add</span>
-				</div>
-				<div class="buffer"></div>
-				<div class="col-md-10" ng-show="selectedQueue.assistant.length" style="padding-left: 0px;">
-					<table class="table table-striped">
-						<thead>
-							<tr>
-								<th>Name</th>
-								<th>Username</th>
-								<th>Added by</th>
-							</tr>
-						</thead>
-						<tbody>
-							<tr id="assistant.name" ng-repeat="assistant in selectedQueue.assistant">
-								<td>{{ assistant.name }}</td>
-								<td>{{ assistant.username }} <span class="glyphicon glyphicon-remove text-red clickable" title="Remove assistant" ng-click="removeAssistant(assistant.username)" id="administrationRemoveAssistant{{assistant.username}}Btn"></span></td>
-								<td>{{ assistant.addedBy }}</td>
-							</tr>
-						</tbody>
-					</table>
-				</div>
-				<div ng-hide="selectedQueue.assistant.length">
-					(No assistants)
-				</div>
-			</div>
-		</div>
+		<teacher-options></teacher-options>
 	</div>
 </div>

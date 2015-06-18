@@ -116,20 +116,10 @@ queueControllers.controller('listController', ['$scope', '$http', '$location', '
     };
 
     $scope.accessLevel = function(queueName) {
-      var ret = 0;
-      if (user.getName() === "") {
-        return ret;
-      }
-      if (user.isAssistant(queueName)) {
-        ret = 1;
-      }
-      if (user.isTeacher(queueName)) {
-        ret = 2;
-      }
       if (user.isAdmin()) {
-        ret = 3;
+        return 3;
       }
-      return ret;
+      return user.accessLevelFor(queueName);
     };
 
     $scope.noMatch = function(queueName) {

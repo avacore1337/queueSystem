@@ -428,5 +428,17 @@
   };
 
 
-  }]);
+  }])
+.directive('adminOptions', function () {
+  return {
+    restrict: 'E',
+    templateUrl: 'admin/adminOptions.html'
+  };
+})
+.directive('teacherOptions', function () {
+  return {
+    restrict: 'E',
+    templateUrl: 'admin/teacherOptions.html'
+  };
+});
 })();
