@@ -33,18 +33,12 @@
       $scope.bookedUsers = [];
       $scope.enqueued = false;
 
-      $scope.accessLevel = 0;
-      if(user.isAssistant($scope.queue)){
-        $scope.accessLevel = 1;
-      }
-      if(user.isTeacher($scope.queue)){
-        $scope.accessLevel = 2;
-      }
+      $scope.accessLevel = user.accessLevelFor($scope.queue);
 
       $scope.locked = false;
       $http.get('/API/queue/' + $scope.queue)
       .success(function(response) {
-        console.log(response)
+        console.log(response);
         $scope.users = response.queue;
         $scope.bookedUsers = response.bookings;
         // $scope.bookedUsers = [{time:Date.now(), comment:"MVK redovisning", users:["antbac", "pernyb", "rwb"], length:"15min", location:"Blue 01"}];
