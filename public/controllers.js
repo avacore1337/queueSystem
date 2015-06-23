@@ -230,11 +230,13 @@ queueControllers.controller('statisticsController', ['$scope', 'HttpService', 'W
     };
 
     // Time
+    $scope.toTime = new Date();
+    $scope.toTime.setMinutes(0);
+    $scope.toTime.setSeconds(0);
     $scope.fromTime = new Date();
-    $scope.fromTime.setHours(0);
+    $scope.fromTime.setHours($scope.toTime.getHours()-2);
     $scope.fromTime.setMinutes(0);
     $scope.fromTime.setSeconds(0);
-    $scope.toTime = new Date();
 
     $scope.hstep = 1;
     $scope.mstep = 1;

@@ -426,7 +426,7 @@ io.on('connection', function(socket) {
 
     var queue = queueSystem.findQueue(queueName);
 
-    for (var i = queue.queue.length - 1; i >= 0; i--) {
+    for (var i = queue.queue.length - 1; i >= 0; i--) { // TODO : While length > 0
       userLeavesQueue(queue, queue.queue[i].name);
     }
 

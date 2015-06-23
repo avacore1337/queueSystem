@@ -310,6 +310,7 @@
       // This function generates new users
       $scope.generateUsers = function(){
         var amount = Math.round(Math.random() * 100);
+        //console.log("Trying to generate " + amount + " users.");
         for(var i = 0; i < amount; i++){
           socket.emit('join', {
             queueName:$scope.queue,
