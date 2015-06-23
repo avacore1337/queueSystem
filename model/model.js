@@ -123,6 +123,7 @@ var queueSchema = new Schema({
   locked: { type: Boolean, default: false },
   hiding: { type: Boolean, default: false },
   motd: { type: String, default: "You can do it!" },
+  info: { type: String, default: "Lorem Ipsum !!" },
   queue: {type:[userSchema], default: []},
   bookings: {type:[bookingSchema], default: []},
   teacher: {type:[adminSchema], default: []},
@@ -170,12 +171,12 @@ queueSchema.methods.removeBooking = function (username) {
     for (var j = 0; j < this.bookings[i].users.length; j++) {
       if (this.bookings[i].users[j] === username) {
         remove = true;
-      };
+      }
       if (remove) {
         this.bookings.splice(i, 1);
-      };
-    };
-  };
+      }
+    }
+  }
   this.save();
 };
 
@@ -327,7 +328,7 @@ statisticSchema.statics.getAverageQueueTime =  function (queueName, start, end, 
      statistic.find({startTime: {$gte: start, $lte: end}, queue: queueName, leftQueue: true}, function (err, results) {
         if(err) return console.error(err);
         callback(null, results);
-      })
+      });
   }],
 
   function(err, results){

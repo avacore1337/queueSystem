@@ -20,6 +20,7 @@
       var TIME_BOOKING = 1800000; // 30min in milliseconds
 
       $scope.queue = $routeParams.queue;
+      $scope.info = "";
 
       $scope.$on('$destroy', function (event) {
         socket.removeAllListeners();
@@ -41,6 +42,7 @@
         console.log(response);
         $scope.users = response.queue;
         $scope.bookedUsers = response.bookings;
+        $scope.info = response.info;
       // $scope.bookedUsers = [{time:Date.now(), comment:"MVK redovisning", users:["antbac", "pernyb", "rwb"], length:"15min", location:"Blue 01"}];
       console.log($scope.bookedUsers);
       $scope.locked = response.locked;
