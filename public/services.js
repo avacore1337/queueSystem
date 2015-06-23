@@ -242,6 +242,65 @@
         return userList;
       }
     };
-  }]);
+  }])
+
+  .factory('ModalService', ['$modal',
+    function($modal) {
+
+      return {
+        setModal: function (args) {
+            var modalInstance = $modal.open({
+            templateUrl: 'modals/setModal.html',
+            controller: function ($scope, $modalInstance, title, placeholder, buttons) {
+              $scope.title = title;
+              $scope.placeholder = placeholder;
+              $scope.buttons = buttons;
+              $scope.clicked = function (index) {
+                console.log("Clicked " + buttons[index].text + " and the message is : " + $scope.message);
+                $modalInstance.close({index: index, message: $scope.message});
+              };
+            },
+            resolve: {
+              title: function () {
+                return args.title;
+              },
+              placeholder: function () {
+                return args.placeholder;
+              },
+              buttons: function () {
+                return args.buttons;
+              }
+            }
+          });
+
+          modalInstance.result.then(function (output) {
+            console.log("Received message is : " + output.message);
+            args.buttons[output.index].callback(output.message);
+          }, function () {});
+        },
+        getModal: function (args) {
+          var modalInstance = $modal.open({
+            templateUrl: 'modals/getModal.html',
+            controller: function ($scope, $modalInstance, title, message, sender) {
+              $scope.title = title;
+              $scope.message = message;
+              $scope.sender = sender;
+            },
+            resolve: {
+              title: function () {
+                return args.title;
+              },
+              message: function () {
+                return args.message;
+              },
+              sender: function () {
+                return args.sender;
+              }
+            }
+          });
+        }
+      };
+    }
+  ]);
 
 })();

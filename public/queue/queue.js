@@ -15,8 +15,8 @@
     }])
 
 
-  .controller('queueController', ['$scope', 'HttpService', '$routeParams', '$location', '$modal', 'WebSocketService', 'UserService', 'TitleService',
-    function ($scope, http, $routeParams, $location, $modal, socket, user, title) {
+  .controller('queueController', ['$scope', 'HttpService', '$routeParams', '$location', '$modal', 'WebSocketService', 'UserService', 'TitleService', 'ModalService',
+    function ($scope, http, $routeParams, $location, $modal, socket, user, title, modals) {
       var TIME_BOOKING = 1800000; // 30min in milliseconds
 
       $scope.queue = $routeParams.queue;
@@ -43,41 +43,23 @@
         $scope.users = response.queue;
         $scope.bookedUsers = response.bookings;
         $scope.info = response.info;
-      // $scope.bookedUsers = [{time:Date.now(), comment:"MVK redovisning", users:["antbac", "pernyb", "rwb"], length:"15min", location:"Blue 01"}];
-      console.log($scope.bookedUsers);
-      $scope.locked = response.locked;
-      for (var i = 0; i < $scope.users.length; i++) {
-        $scope.users[i].optionsActivated = false;
-        $scope.users[i].time = $scope.users[i].time/1000;
-        if($scope.users[i].name === $scope.name){
-          $scope.enqueued = true;
-          title.title = "["  + (i+1) + "] " + $scope.queue + " | Stay A while";
-          $scope.location = $scope.users[i].location;
-          $scope.comment = $scope.users[i].comment;
-        }
-      }
-      if(response.motd){
-        $scope.MOTD = response.motd;
-        var modalInstance = $modal.open({
-          templateUrl: 'receiveMessage.html',
-          controller: function ($scope, $modalInstance, title, message, sender) {
-            $scope.title = title;
-            $scope.message = message;
-            $scope.sender = sender;
-          },
-          resolve: {
-            title: function () {
-              return "Message of the day";
-            },
-            message: function () {
-              return response.motd;
-            },
-            sender: function () {
-              return "";
-            }
+        // $scope.bookedUsers = [{time:Date.now(), comment:"MVK redovisning", users:["antbac", "pernyb", "rwb"], length:"15min", location:"Blue 01"}];
+        console.log($scope.bookedUsers);
+        $scope.locked = response.locked;
+        for (var i = 0; i < $scope.users.length; i++) {
+          $scope.users[i].optionsActivated = false;
+          $scope.users[i].time = $scope.users[i].time/1000;
+          if($scope.users[i].name === $scope.name){
+            $scope.enqueued = true;
+            title.title = "["  + (i+1) + "] " + $scope.queue + " | Stay A while";
+            $scope.location = $scope.users[i].location;
+            $scope.comment = $scope.users[i].comment;
           }
-        });
-      }
+        }
+        if(response.motd){
+          $scope.MOTD = response.motd;
+          modals.getModal({title: "Message of the day", message: response.motd, sender: ""});
+        }
       });
 
       // Listen for the person joining a queue event.
@@ -135,25 +117,7 @@
       // Listen for a message.
       socket.on('msg', function (data) {
         console.log("Received message : " + data);
-        var modalInstance = $modal.open({
-          templateUrl: 'receiveMessage.html',
-          controller: function ($scope, $modalInstance, title, message, sender) {
-            $scope.title = title;
-            $scope.message = message;
-            $scope.sender = sender;
-          },
-          resolve: {
-            title: function () {
-              return "Message";
-            },
-            message: function () {
-              return data.message;
-            },
-            sender: function () {
-              return "- " + data.sender;
-            }
-          }
-        });
+        modals.getModal({title: "Message", message: data.message, sender: "- " + data.sender});
       });
 
       // Listen for a user getting flagged
@@ -207,24 +171,10 @@
 
       // Listen for a badLocation warning
       socket.on('badLocation', function (data) {
-        var modalInstance = $modal.open({
-          templateUrl: 'receiveMessage.html',
-          controller: function ($scope, $modalInstance, title, message, sender) {
-            $scope.title = title;
-            $scope.message = message;
-            $scope.sender = sender;
-          },
-          resolve: {
-            title: function () {
-              return "Unclear location";
-            },
-            message: function () {
-              return "The teaching assistant in '" + data.queueName + "' could not locate you. The teaching assistant won't try to find you again until you have updated your information.";
-            },
-            sender: function () {
-              return "- " + data.sender;
-            }
-          }
+        modals.getModal({
+          title: "Unclear location",
+          message: "The teaching assistant in '" + data.queueName + "' could not locate you. The teaching assistant won't try to find you again until you have updated your information.",
+          sender: "- " + data.sender
         });
       });
 
@@ -276,26 +226,19 @@
       // This function should remove every person in the queue
       $scope.purge = function(){
         console.log("Called purge");
-        var modalInstance = $modal.open({
-          templateUrl: 'purgeQueue.html',
-          controller: function ($scope, $modalInstance) {
-            $scope.purge = function () {
-              $modalInstance.close("purge");
-            };
-            $scope.doNotPurge = function () {
-              $modalInstance.close("");
-            };
-          },
-          resolve: {}
+        modals.setModal({
+          title: "Are you sure you want to remove everyone in the queue?",
+          placeholder: "",
+          buttons: [
+            {type: "danger", text: "Yes, kick them all out.", callback: function () {
+              console.log("Purging the queue");
+              socket.emit('purge', {
+                queueName:$scope.queue
+              });
+            }},
+            {type: "success", text: "No, leave them alone.", callback: function () {}}
+          ]
         });
-
-        modalInstance.result.then(function (message) {
-          if(message === "purge"){
-            socket.emit('purge', {
-              queueName:$scope.queue
-            });
-          }
-        }, function () {});
       };
 
       // This function should lock the queue, preventing anyone from queueing
@@ -340,167 +283,91 @@
       // Function to send a message to every user in the queue
       $scope.broadcast = function(){
         console.log("Called broadcast");
-        var modalInstance = $modal.open({
-          templateUrl: 'enterMessage.html',
-          controller: function ($scope, $modalInstance, title, buttonText) {
-            $scope.title = title;
-            $scope.buttonText = buttonText;
-            $scope.ok = function () {
-              $modalInstance.close($scope.message);
-            };
-          },
-          resolve: {
-            title: function () {
-              return "Enter a message to broadcast";
-            },
-            buttonText: function () {
-              return "Broadcast";
+        modals.setModal({
+          title: "Enter a message to broadcast",
+          placeholder: "",
+          buttons: [{type: "primary", text: "Broadcast", callback: function (message) {
+            console.log("Sending message");
+            if(message){
+              console.log("Message is = " + message);
+              socket.emit('broadcast', {
+                queueName:$scope.queue,
+                message:message,
+                sender: $scope.name
+              });
             }
-          }
+          }}]
         });
-
-        modalInstance.result.then(function (message) {
-          console.log("Message = " + message);
-          if(message !== null && message !== undefined){
-            socket.emit('broadcast', {
-              queueName:$scope.queue,
-              message:message,
-              sender: $scope.name
-            });
-          }
-        }, function () {});
       };
 
       // Function to send a message to every TA handeling the queue
       $scope.broadcastTA = function(){
         console.log("Called broadcast");
-        var modalInstance = $modal.open({
-          templateUrl: 'enterMessage.html',
-          controller: function ($scope, $modalInstance, title, buttonText) {
-            $scope.title = title;
-            $scope.buttonText = buttonText;
-            $scope.ok = function () {
-              $modalInstance.close($scope.message);
-            };
-          },
-          resolve: {
-            title: function () {
-              return "Enter a message to broadcast to TAs";
-            },
-            buttonText: function () {
-              return "Broadcast";
+        modals.setModal({
+          title: "Enter a message to broadcast to TAs",
+          placeholder: "",
+          buttons: [{type: "primary", text: "Broadcast", callback: function (message) {
+            if(message){
+              console.log("Sending message");
+              console.log("$scope.queue = " + $scope.queue);
+              socket.emit('broadcastFaculty', {
+                queueName:$scope.queue,
+                message:message,
+                sender: $scope.name
+              });
             }
-          }
+          }}]
         });
-
-        modalInstance.result.then(function (message) {
-          console.log("Message = " + message);
-          if(message){
-            console.log("Sending message");
-            console.log("$scope.queue = " + $scope.queue);
-            socket.emit('broadcastFaculty', {
-              queueName:$scope.queue,
-              message:message,
-              sender: $scope.name
-            });
-          }
-        }, function () {});
       };
 
       // Function to add am essage of the day
       $scope.setMOTD = function(){
         console.log("Called setMOTD");
-        var modalInstance = $modal.open({
-          templateUrl: 'setMOTD.html',
-          controller: function ($scope, $modalInstance, title, placeholder, buttonSet, buttonRemove) {
-            $scope.title = title;
-            $scope.placeholder = placeholder;
-            $scope.buttonSet = buttonSet;
-            $scope.buttonRemove = buttonRemove;
-            $scope.set = function () {
-              console.log("You clicked the setButton");
-              $modalInstance.close($scope.message);
-            };
-            $scope.remove = function () {
-              $modalInstance.close("");
-            };
-          },
-          resolve: {
-            title: function () {
-              return "Enter a new message of the day";
-            },
-            placeholder: function () {
-              console.log("Creating placeholder, MOTD = " + $scope.MOTD);
-              if($scope.MOTD){
-                return "Current MOTD: " + $scope.MOTD;
-              }else{
-                return "";
-              }
-            },
-            buttonSet: function () {
-              return "Set MOTD";
-            },
-            buttonRemove: function () {
-              return "Remove MOTD";
-            }
-          }
-        });
-
-        modalInstance.result.then(function (MOTD) {
-          console.log("MOTD = " + MOTD);
-          if(MOTD !== undefined){
+        modals.setModal({
+          title: "Enter a new message of the day",
+          placeholder: $scope.MOTD ? "Current MOTD: " + $scope.MOTD : "",
+          buttons: [{type: "warning", text: "Remove MOTD", callback: function () {
             socket.emit('setMOTD', {
-              queueName:$scope.queue,
-              MOTD:MOTD,
+              queueName: $scope.queue,
+              MOTD: "",
               sender: $scope.name
             });
-          }
-        }, function () {});
+          }},
+          {type: "primary", text: "Set MOTD", callback: function (message) {
+            if(message){
+              socket.emit('setMOTD', {
+                queueName: $scope.queue,
+                MOTD: message,
+                sender: $scope.name
+              });
+            }
+          }}]
+        });
       };
 
       // Function to add am essage of the day
       $scope.setInfo = function(){
         console.log("Called setInfo");
-        var modalInstance = $modal.open({
-          templateUrl: 'setMOTD.html',
-          controller: function ($scope, $modalInstance, title, placeholder, buttonSet, buttonRemove) {
-            $scope.title = title;
-            $scope.placeholder = placeholder;
-            $scope.buttonSet = buttonSet;
-            $scope.buttonRemove = buttonRemove;
-            $scope.set = function () {
-              console.log("You clicked the setButton");
-              $modalInstance.close($scope.message);
-            };
-            $scope.remove = function () {
-              $modalInstance.close("");
-            };
-          },
-          resolve: {
-            title: function () {
-              return "Enter new queue info";
-            },
-            placeholder: function () {
-              return "";
-            },
-            buttonSet: function () {
-              return "Set info";
-            },
-            buttonRemove: function () {
-              return "Remove info";
-            }
-          }
-        });
-
-        modalInstance.result.then(function (message) {
-          if(message !== undefined){
+        modals.setModal({
+          title: "Enter new queue info",
+          placeholder: "",
+          buttons: [{type: "warning", text: "Remove info", callback: function () {
             socket.emit('setInfo', {
-              queueName:$scope.queue,
-              info:message,
+              queueName: $scope.queue,
+              info: "",
               sender: $scope.name
             });
-          }
-        }, function () {});
+          }},
+          {type: "primary", text: "Set info", callback: function (message) {
+            if(message){
+              socket.emit('setInfo', {
+                queueName: $scope.queue,
+                info: message,
+                sender: $scope.name
+              });
+            }
+          }}]
+        });
       };
 
       // When an admin wants to see the admin options
@@ -651,7 +518,7 @@
         var regEx = new RegExp($scope.search.toLowerCase());
         return (regEx.test(user.name.toLowerCase()) || regEx.test(user.location.toLowerCase()) ||  regEx.test(user.comment.toLowerCase()) ||  regEx.test(user.time.toLowerCase()));
       };
-}])
+  }])
 .directive('bookedUsers', function(){
   return {
     restrict: 'E',

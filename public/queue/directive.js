@@ -8,8 +8,8 @@ userDirective.directive('standardUsers', function(){
 	};
 })
 
-.controller('userController', ['$scope', 'WebSocketService', '$modal',
-	function($scope, socket, $modal){
+.controller('userController', ['$scope', 'WebSocketService', '$modal', 'ModalService',
+	function($scope, socket, $modal, modals){
 		$scope.kick = function(name){
 			socket.emit('kick', {
 				queueName:$scope.queue,
@@ -20,37 +20,21 @@ userDirective.directive('standardUsers', function(){
 
 		$scope.messageUser = function (name) {
 			console.log("Entered messageUser");
-			var modalInstance = $modal.open({
-				templateUrl: 'enterMessage.html',
-				controller: function ($scope, $modalInstance, title, buttonText) {
-					$scope.title = title;
-					$scope.buttonText = buttonText;
-					$scope.ok = function () {
-						$modalInstance.close($scope.message);
-					};
-				},
-				resolve: {
-					title: function () {
-						return "Enter a message to " + name;
-					},
-					buttonText: function () {
-						return "Send";
+			modals.setModal({
+				title: "Enter a message to " + name,
+				placeholder: "",
+				buttons: [{type: "primary", text: "Send", callback: function (message) {
+					if(message){
+						console.log("Sending message now");
+						socket.emit('messageUser', {
+							queueName:$scope.queue,
+							sender:$scope.name,
+							name:name,
+							message:message
+						});
 					}
-				}
+				}}]
 			});
-
-			modalInstance.result.then(function (message) {
-				console.log("Message = " + message);
-				if(message){
-					console.log("Sending message now");
-					socket.emit('messageUser', {
-						queueName:$scope.queue,
-						sender:$scope.name,
-						name:name,
-						message:message
-					});
-				}
-			}, function () {});
 		};
 
 		// Mark the user as being helped
@@ -75,42 +59,27 @@ userDirective.directive('standardUsers', function(){
 		// Function to add a message about that user
 		$scope.flag = function(name){
 			console.log("Entered flag");
-			var modalInstance = $modal.open({
-				templateUrl: 'enterMessage.html',
-				controller: function ($scope, $modalInstance, title, buttonText) {
-					$scope.title = title;
-					$scope.buttonText = buttonText;
-					$scope.ok = function () {
-						$modalInstance.close($scope.message);
-					};
-				},
-				resolve: {
-					title: function () {
-						return "Enter a comment about " + name;
-					},
-					buttonText: function () {
-						return "Add comment";
+			modals.setModal({
+				title: "Enter a comment about " + name,
+				placeholder: "",
+				buttons: [{type: "primary", text: "Add comment", callback: function (message) {
+					if(message){
+						socket.emit('flag', {
+							queueName:$scope.queue,
+							sender:$scope.name,
+							name:name,
+							message:message
+						});
 					}
-				}
+				}}]
 			});
-
-			modalInstance.result.then(function (message) {
-				console.log("Message = " + message);
-				if(message !== null && message !== undefined){
-					socket.emit('flag', {
-						queueName:$scope.queue,
-						sender:$scope.name,
-						name:name,
-						message:message
-					});
-				}
-			}, function () {});
 		};
 
 		// Function to read comments about a user
 		$scope.readMessages = function(name){
 			console.log("Called readMessages");
-			for(var index in $scope.users){
+			console.log("(This function is disabled until a new modal has been added.)");
+			/*for(var index in $scope.users){
 				if($scope.users[index].name === name){
 					var modalInstance = $modal.open({
 						templateUrl: 'readMessages.html',
@@ -125,6 +94,7 @@ userDirective.directive('standardUsers', function(){
 					});
 					break;
 				}
-			}
+			}*/
+
 		};
 }]);
