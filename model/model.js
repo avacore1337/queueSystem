@@ -136,6 +136,12 @@ queueSchema.methods.addMOTD = function (message) {
   this.save();
 };
 
+// Updates the Info
+queueSchema.methods.setInfo = function (message) {
+  this.info = message;
+  this.save();
+};
+
 // takes a user as a parameter and adds to the queue
 queueSchema.methods.addUser = function (user) {
   this.queue.push(user);

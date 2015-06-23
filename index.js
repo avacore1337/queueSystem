@@ -750,7 +750,7 @@ io.on('connection', function(socket) {
     });
   });
 
-  socket.on('addMOTD', function(req) {
+  socket.on('setMOTD', function(req) {
     var queueName = req.queueName;
     var MOTD = req.MOTD;
     var sender = req.sender;
@@ -768,8 +768,31 @@ io.on('connection', function(socket) {
 
     console.log('\'' + MOTD + '\' added as a new MOTD in ' + queueName + '!');
 
-    io.to(queueName).emit('addMOTD', {
+    io.to(queueName).emit('setMOTD', {
       MOTD: MOTD
+    });
+  });
+
+  socket.on('setInfo', function(req) {
+    var queueName = req.queueName;
+    var info = req.info;
+    var sender = req.sender;
+
+    // teacher/assistant-validation
+    if (!(validate(sender, "teacher", queueName) || validate(sender, "assistant", queueName))) {
+      console.log("validation for addMOTD failed");
+      //res.end();
+      return;
+    }
+
+    // find the course and save the MOTD to the course in the database
+    var course = queueSystem.findQueue(queueName);
+    course.setInfo(info); // TODO : does not exist
+
+    console.log('\'' + info + '\' added as a new info in ' + queueName + '!');
+
+    io.to(queueName).emit('setInfo', {
+      info: info
     });
   });
 

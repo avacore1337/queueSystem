@@ -184,9 +184,15 @@
       });
 
       // Listen for a new MOTD.
-      socket.on('addMOTD', function (MOTD) {
+      socket.on('setMOTD', function (MOTD) {
         console.log("Backend wants to add the MOTD : " + JSON.stringify(MOTD));
         $scope.MOTD = MOTD.MOTD;
+      });
+
+      // Listen for new queue-info.
+      socket.on('setInfo', function (Info) {
+        console.log("Backend wants to change the queue-info to : " + JSON.stringify(Info));
+        $scope.info = Info.info;
       });
 
       // Listen for locking the queue
@@ -402,8 +408,8 @@
       };
 
       // Function to add am essage of the day
-      $scope.addMOTD = function(){
-        console.log("Called addMOTD");
+      $scope.setMOTD = function(){
+        console.log("Called setMOTD");
         var modalInstance = $modal.open({
           templateUrl: 'setMOTD.html',
           controller: function ($scope, $modalInstance, title, placeholder, buttonSet, buttonRemove) {
@@ -412,6 +418,7 @@
             $scope.buttonSet = buttonSet;
             $scope.buttonRemove = buttonRemove;
             $scope.set = function () {
+              console.log("You clicked the setButton");
               $modalInstance.close($scope.message);
             };
             $scope.remove = function () {
@@ -442,9 +449,54 @@
         modalInstance.result.then(function (MOTD) {
           console.log("MOTD = " + MOTD);
           if(MOTD !== undefined){
-            socket.emit('addMOTD', {
+            socket.emit('setMOTD', {
               queueName:$scope.queue,
               MOTD:MOTD,
+              sender: $scope.name
+            });
+          }
+        }, function () {});
+      };
+
+      // Function to add am essage of the day
+      $scope.setInfo = function(){
+        console.log("Called setInfo");
+        var modalInstance = $modal.open({
+          templateUrl: 'setMOTD.html',
+          controller: function ($scope, $modalInstance, title, placeholder, buttonSet, buttonRemove) {
+            $scope.title = title;
+            $scope.placeholder = placeholder;
+            $scope.buttonSet = buttonSet;
+            $scope.buttonRemove = buttonRemove;
+            $scope.set = function () {
+              console.log("You clicked the setButton");
+              $modalInstance.close($scope.message);
+            };
+            $scope.remove = function () {
+              $modalInstance.close("");
+            };
+          },
+          resolve: {
+            title: function () {
+              return "Enter new queue info";
+            },
+            placeholder: function () {
+              return "";
+            },
+            buttonSet: function () {
+              return "Set info";
+            },
+            buttonRemove: function () {
+              return "Remove info";
+            }
+          }
+        });
+
+        modalInstance.result.then(function (message) {
+          if(message !== undefined){
+            socket.emit('setInfo', {
+              queueName:$scope.queue,
+              info:message,
               sender: $scope.name
             });
           }
