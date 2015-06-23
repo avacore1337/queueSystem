@@ -405,13 +405,13 @@
       $scope.addMOTD = function(){
         console.log("Called addMOTD");
         var modalInstance = $modal.open({
-          templateUrl: 'editMOTD.html',
-          controller: function ($scope, $modalInstance, title, placeholder, buttonEdit, buttonRemove) {
+          templateUrl: 'setMOTD.html',
+          controller: function ($scope, $modalInstance, title, placeholder, buttonSet, buttonRemove) {
             $scope.title = title;
             $scope.placeholder = placeholder;
-            $scope.buttonEdit = buttonEdit;
+            $scope.buttonSet = buttonSet;
             $scope.buttonRemove = buttonRemove;
-            $scope.edit = function () {
+            $scope.set = function () {
               $modalInstance.close($scope.message);
             };
             $scope.remove = function () {
@@ -430,8 +430,8 @@
                 return "";
               }
             },
-            buttonEdit: function () {
-              return "Edit MOTD";
+            buttonSet: function () {
+              return "Set MOTD";
             },
             buttonRemove: function () {
               return "Remove MOTD";

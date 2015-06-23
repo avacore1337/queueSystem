@@ -14,7 +14,7 @@
   </div>
   </script>
 
-  <script type="text/ng-template" id="editMOTD.html">
+  <script type="text/ng-template" id="setMOTD.html">
   <div class="modal-header">
   <h4>{{title}}</h4>
   </div>
@@ -25,7 +25,7 @@
   </div>
   <div class="modal-footer">
   <button class="btn btn-warning" ng-click="remove()" id="queue{{buttonRemove}}Btn">{{buttonRemove}}</button>
-  <button class="btn btn-primary" ng-click="edit()" id="queue{{buttonEdit}}Btn">{{buttonEdit}}</button>
+  <button class="btn btn-primary" ng-click="set()" id="queue{{buttonSet}}Btn">{{buttonSet}}</button>
   </div>
   </script>
 
@@ -164,7 +164,7 @@
             <li>
               <button class="blue clickable center-content frame expand" ng-show="accessLevel" ng-click="addMOTD()" id="queueAddMOTDBtn">
                 <span class="glyphicon glyphicon-plus"></span>&nbsp;
-                edit MOTD
+                Set MOTD
               </button>
             </li>
             <li>
