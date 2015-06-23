@@ -226,9 +226,9 @@
       // This function should remove every person in the queue
       $scope.purge = function(){
         console.log("Called purge");
-        modals.setModal({
+        modals.confirmModal({
           title: "Are you sure you want to remove everyone in the queue?",
-          placeholder: "",
+          text: "",
           buttons: [
             {type: "danger", text: "Yes, kick them all out.", callback: function () {
               console.log("Purging the queue");

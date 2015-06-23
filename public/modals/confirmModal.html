@@ -1,0 +1,11 @@
+<div class="modal-header">
+  <h4>{{title}}</h4>
+</div>
+<div class="modal-body">
+  <div class="form-group">
+    <p>{{message}}</p>
+  </div>
+</div>
+<div class="modal-footer">
+  <button ng-repeat="button in buttons track by $index" class="btn btn-{{button.type}}" ng-click="clicked($index)" id="modal{{button.text}}Btn">{{button.text}}</button>
+</div>

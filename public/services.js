@@ -298,6 +298,53 @@
               }
             }
           });
+        },
+        listModal: function (args) {
+          var modalInstance = $modal.open({
+            templateUrl: 'modals/listModal.html',
+            controller: function ($scope, $modalInstance, title, messages) {
+              $scope.title = title;
+              $scope.messages = messages;
+            },
+            resolve: {
+              title: function () {
+                return args.title;
+              },
+              messages: function () {
+                return args.messages;
+              }
+            }
+          });
+        },
+        confirmModal: function (args) {
+            var modalInstance = $modal.open({
+            templateUrl: 'modals/confirmModal.html',
+            controller: function ($scope, $modalInstance, title, text, buttons) {
+              $scope.title = title;
+              $scope.text = text;
+              $scope.buttons = buttons;
+              $scope.clicked = function (index) {
+                console.log("Clicked " + buttons[index].text + " and the message is : " + $scope.message);
+                $modalInstance.close({index: index, message: $scope.message});
+              };
+            },
+            resolve: {
+              title: function () {
+                return args.title;
+              },
+              text: function () {
+                return args.text;
+              },
+              buttons: function () {
+                return args.buttons;
+              }
+            }
+          });
+
+          modalInstance.result.then(function (output) {
+            console.log("Received message is : " + output.message);
+            args.buttons[output.index].callback(output.message);
+          }, function () {});
         }
       };
     }

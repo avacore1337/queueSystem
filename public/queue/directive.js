@@ -76,25 +76,8 @@ userDirective.directive('standardUsers', function(){
 		};
 
 		// Function to read comments about a user
-		$scope.readMessages = function(name){
+		$scope.readMessages = function(messages){
 			console.log("Called readMessages");
-			console.log("(This function is disabled until a new modal has been added.)");
-			/*for(var index in $scope.users){
-				if($scope.users[index].name === name){
-					var modalInstance = $modal.open({
-						templateUrl: 'readMessages.html',
-						controller: function ($scope, $modalInstance, messages) {
-							$scope.messages = messages;
-						},
-						resolve: {
-							messages: function () {
-								return $scope.users[index].messages;
-							}
-						}
-					});
-					break;
-				}
-			}*/
-
+			modals.listModal({title: "Commets", messages: messages});
 		};
 }]);
