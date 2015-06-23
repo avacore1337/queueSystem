@@ -251,13 +251,16 @@
         setModal: function (args) {
             var modalInstance = $modal.open({
             templateUrl: 'modals/setModal.html',
-            controller: function ($scope, $modalInstance, title, placeholder, buttons) {
+            controller: function ($scope, $modalInstance, title, placeholder, setButton, removeButton) {
               $scope.title = title;
               $scope.placeholder = placeholder;
-              $scope.buttons = buttons;
-              $scope.clicked = function (index) {
-                console.log("Clicked " + buttons[index].text + " and the message is : " + $scope.message);
-                $modalInstance.close({index: index, message: $scope.message});
+              $scope.setButton = setButton;
+              $scope.removeButton = removeButton;
+              $scope.set = function () {
+                $modalInstance.close({set: true, message: $scope.message});
+              };
+              $scope.remove = function () {
+                $modalInstance.close({set: false, message: ""});
               };
             },
             resolve: {
@@ -267,15 +270,49 @@
               placeholder: function () {
                 return args.placeholder;
               },
-              buttons: function () {
-                return args.buttons;
+              setButton: function () {
+                return args.setButton;
+              },
+              removeButton: function () {
+                return args.removeButton;
               }
             }
           });
 
           modalInstance.result.then(function (output) {
-            console.log("Received message is : " + output.message);
-            args.buttons[output.index].callback(output.message);
+            if(output.set){
+              args.setButton.callback(output.message);
+            }else{
+              args.removeButton.callback(output.message);
+            }
+          }, function () {});
+        },
+        submitModal: function (args) {
+            var modalInstance = $modal.open({
+            templateUrl: 'modals/submitModal.html',
+            controller: function ($scope, $modalInstance, title, placeholder, buttonText) {
+              $scope.title = title;
+              $scope.placeholder = placeholder;
+              $scope.buttonText = buttonText;
+              $scope.submit = function () {
+                $modalInstance.close($scope.message);
+              };
+            },
+            resolve: {
+              title: function () {
+                return args.title;
+              },
+              placeholder: function () {
+                return args.placeholder;
+              },
+              buttonText: function () {
+                return args.buttonText;
+              }
+            }
+          });
+
+          modalInstance.result.then(function (message) {
+            args.callback(message);
           }, function () {});
         },
         getModal: function (args) {
@@ -319,13 +356,16 @@
         confirmModal: function (args) {
             var modalInstance = $modal.open({
             templateUrl: 'modals/confirmModal.html',
-            controller: function ($scope, $modalInstance, title, text, buttons) {
+            controller: function ($scope, $modalInstance, title, text, confirmButton, declineButton) {
               $scope.title = title;
               $scope.text = text;
-              $scope.buttons = buttons;
-              $scope.clicked = function (index) {
-                console.log("Clicked " + buttons[index].text + " and the message is : " + $scope.message);
-                $modalInstance.close({index: index, message: $scope.message});
+              $scope.confirmButton = confirmButton;
+              $scope.declineButton = declineButton;
+              $scope.confirm = function () {
+                $modalInstance.close(true);
+              };
+              $scope.decline = function () {
+                $modalInstance.close(false);
               };
             },
             resolve: {
@@ -335,15 +375,21 @@
               text: function () {
                 return args.text;
               },
-              buttons: function () {
-                return args.buttons;
+              confirmButton: function () {
+                return args.confirmButton;
+              },
+              declineButton: function () {
+                return args.declineButton;
               }
             }
           });
 
-          modalInstance.result.then(function (output) {
-            console.log("Received message is : " + output.message);
-            args.buttons[output.index].callback(output.message);
+          modalInstance.result.then(function (confirmation) {
+            if(confirmation){
+              args.confirmButton.callback();
+            }else{
+              args.declineButton.callback();
+            }
           }, function () {});
         }
       };

@@ -1,6 +1,4 @@
-<button ng-hide="serverMessage" class="btn btn-primary" style="margin-bottom: 2%;" ng-click="addServerMessage()" id="administrationAddServerMessageBtn">Add server-message</button>
-<button ng-show="serverMessage" class="btn btn-success" style="margin-bottom: 2%;" ng-click="addServerMessage()" id="administrationEditServerMessageBtn">Edit server-message</button>
-<button ng-show="serverMessage" class="btn btn-danger" style="margin-bottom: 2%;" ng-click="removeServerMessage()" id="administrationRemoveServerMessageBtn">Remove server-message</button>
+<button ng-show="serverMessage !== undefined" class="btn btn-primary" style="margin-bottom: 2%;" ng-click="setServerMessage()" id="administrationAddServerMessageBtn">Set server-message</button>
 <h1>Administrators of Stay A While&nbsp;<a href="/#/help#administrator">?</a></h1>
 <h5>New administrators might have to log out and in again in order to get all of their new privileges.</h5>
 <br>

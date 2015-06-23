@@ -229,15 +229,19 @@
         modals.confirmModal({
           title: "Are you sure you want to remove everyone in the queue?",
           text: "",
-          buttons: [
-            {type: "danger", text: "Yes, kick them all out.", callback: function () {
+          confirmButton: {
+            text: "Yes, kick them all out.",
+            callback: function () {
               console.log("Purging the queue");
               socket.emit('purge', {
                 queueName:$scope.queue
               });
-            }},
-            {type: "success", text: "No, leave them alone.", callback: function () {}}
-          ]
+            }
+          },
+          declineButton: {
+            text: "No, leave them alone.",
+            callback: function () {}
+          }
         });
       };
 
@@ -283,30 +287,33 @@
       // Function to send a message to every user in the queue
       $scope.broadcast = function(){
         console.log("Called broadcast");
-        modals.setModal({
+        modals.submitModal({
           title: "Enter a message to broadcast",
           placeholder: "",
-          buttons: [{type: "primary", text: "Broadcast", callback: function (message) {
+          buttonText: "Broadcast",
+          callback: function (message) {
             console.log("Sending message");
             if(message){
               console.log("Message is = " + message);
               socket.emit('broadcast', {
-                queueName:$scope.queue,
-                message:message,
+                queueName: $scope.queue,
+                message: message,
                 sender: $scope.name
               });
             }
-          }}]
+          }
         });
       };
 
       // Function to send a message to every TA handeling the queue
       $scope.broadcastTA = function(){
         console.log("Called broadcast");
-        modals.setModal({
+        modals.submitModal({
           title: "Enter a message to broadcast to TAs",
           placeholder: "",
-          buttons: [{type: "primary", text: "Broadcast", callback: function (message) {
+          buttonText: "Broadcast",
+          callback: function (message) {
+            console.log("Sending message");
             if(message){
               console.log("Sending message");
               console.log("$scope.queue = " + $scope.queue);
@@ -316,7 +323,7 @@
                 sender: $scope.name
               });
             }
-          }}]
+          }
         });
       };
 
@@ -326,14 +333,14 @@
         modals.setModal({
           title: "Enter a new message of the day",
           placeholder: $scope.MOTD ? "Current MOTD: " + $scope.MOTD : "",
-          buttons: [{type: "warning", text: "Remove MOTD", callback: function () {
+          removeButton: {text: "Remove MOTD", callback: function () {
             socket.emit('setMOTD', {
               queueName: $scope.queue,
               MOTD: "",
               sender: $scope.name
             });
           }},
-          {type: "primary", text: "Set MOTD", callback: function (message) {
+          setButton: {text: "Set MOTD", callback: function (message) {
             if(message){
               socket.emit('setMOTD', {
                 queueName: $scope.queue,
@@ -341,7 +348,7 @@
                 sender: $scope.name
               });
             }
-          }}]
+          }}
         });
       };
 
@@ -351,14 +358,14 @@
         modals.setModal({
           title: "Enter new queue info",
           placeholder: "",
-          buttons: [{type: "warning", text: "Remove info", callback: function () {
+          removeButton: {text: "Remove info", callback: function () {
             socket.emit('setInfo', {
               queueName: $scope.queue,
               info: "",
               sender: $scope.name
             });
           }},
-          {type: "primary", text: "Set info", callback: function (message) {
+          setButton: {text: "Set info", callback: function (message) {
             if(message){
               socket.emit('setInfo', {
                 queueName: $scope.queue,
@@ -366,7 +373,7 @@
                 sender: $scope.name
               });
             }
-          }}]
+          }}
         });
       };
 

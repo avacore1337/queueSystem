@@ -8,5 +8,6 @@
   </div>
 </div>
 <div class="modal-footer">
-	<button ng-repeat="button in buttons track by $index" class="btn btn-{{button.type}}" ng-click="clicked($index)" id="modal{{button.text}}Btn">{{button.text}}</button>
+	<button class="btn btn-warning" ng-click="remove()" id="modal{{removeButton.text}}Btn">{{removeButton.text}}</button>
+	<button class="btn btn-primary" ng-click="set()" id="modal{{setButton.text}}Btn">{{setButton.text}}</button>
 </div>

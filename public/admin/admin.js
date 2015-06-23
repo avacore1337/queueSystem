@@ -14,8 +14,8 @@
     }])
 
 
-  .controller('adminController', ['$scope', '$location', 'HttpService', '$modal', 'WebSocketService', 'UserService', 'TitleService',
-    function ($scope, $location, http, $modal, socket, user, title) {
+  .controller('adminController', ['$scope', '$location', 'HttpService', '$modal', 'WebSocketService', 'UserService', 'TitleService', 'ModalService',
+    function ($scope, $location, http, $modal, socket, user, title, modals) {
       $scope.$on('$destroy', function (event) {
         socket.removeAllListeners();
         socket.emit('stopListening', 'admin');
@@ -32,6 +32,11 @@
         $scope.admins = response;
       });
 
+      $scope.serverMessage = "";
+      http.get('serverMessage', function(resp){
+        $scope.serverMessage = resp.serverMessage;
+      });
+
       $scope.queues = [];
       http.get('queueList', function(response){
         for (var i in response) {
@@ -42,11 +47,6 @@
             });
           }
         }
-      });
-
-      $scope.serverMessage = "";
-      http.get('serverMessage', function(resp){
-        $scope.serverMessage = resp.serverMessage;
       });
 
     // Listen for an assistant being added to a queue.
@@ -178,138 +178,57 @@
 
     $scope.removeQueue = function(){
       console.log("Called removeQueue");
-      var modalInstance = $modal.open({
-        templateUrl: 'warning.html',
-        controller: function ($scope, $modalInstance, title, message, safeButtonText, dangerButtonText) {
-          $scope.title = title;
-          $scope.message = message;
-          $scope.safeButtonText = safeButtonText;
-          $scope.dangerButtonText = dangerButtonText;
-          $scope.delete = function () {
-            $modalInstance.close("delete");
-          };
-          $scope.doNotDelete = function () {
-            $modalInstance.close("");
-          };
-        },
-        resolve: {
-          title: function () {
-            return "Delete queue";
-          },
-          message: function () {
-            return "Are you sure that you wish to remove " + $scope.selectedQueue.name + " permanently?";
-          },
-          safeButtonText: function () {
-            return "No, I made a mistake.";
-          },
-          dangerButtonText: function () {
-            return "Yes, I never want to see it again.";
-          }
-        }
-      });
-
-      modalInstance.result.then(function (message) {
-        if(message === "delete"){
+      modals.confirmModal({
+        title: "Delete queue",
+        text: "Are you sure that you wish to remove " + $scope.selectedQueue.name + " permanently?",
+        confirmButton: {text: "Yes, I never want to see it again.", callback: function () {
           socket.emit('removeQueue', {
             queueName:$scope.selectedQueue.name
           });
           console.log("Trying to delete queue " + $scope.selectedQueue.name);
           document.getElementById('dropdown').innerHTML = "Select Queue";
           $scope.selectedQueue = undefined;
-        }
-      }, function () {});
+        }},
+        declineButton: {text: "No, I made a mistake.", callback: function () {}}
+      });
     };
 
     $scope.hideQueue = function(){
       console.log("Called hideQueue");
-      var modalInstance = $modal.open({
-        templateUrl: 'warning.html',
-        controller: function ($scope, $modalInstance, title, message, safeButtonText, dangerButtonText) {
-          $scope.title = title;
-          $scope.message = message;
-          $scope.safeButtonText = safeButtonText;
-          $scope.dangerButtonText = dangerButtonText;
-          $scope.delete = function () {
-            $modalInstance.close("hide");
-          };
-          $scope.doNotDelete = function () {
-            $modalInstance.close("");
-          };
-        },
-        resolve: {
-          title: function () {
-            return "Hide queue";
-          },
-          message: function () {
-            return "Are you sure that you wish to hide " + $scope.selectedQueue.name + "? This means that only teachers and admins can enter and see the queue.";
-          },
-          safeButtonText: function () {
-            return "No, keep it visible.";
-          },
-          dangerButtonText: function () {
-            return "Yes, and conceal it well.";
-          }
-        }
+      modals.confirmModal({
+        title: "Hide queue",
+        text: "Are you sure that you wish to hide " + $scope.selectedQueue.name + "? This means that only teachers and admins can enter and see the queue.",
+        confirmButton: {text: "Yes, and conceal it well.", callback: function () {
+          socket.emit('purge', {
+            queueName:$scope.selectedQueue.name
+          });
+          socket.emit('hide', {
+            queueName:$scope.selectedQueue.name
+          });
+          socket.emit('addMOTD', {
+            queueName:$scope.selectedQueue.name,
+            MOTD:"",
+            sender: $scope.name
+          });
+          console.log("Trying to hide queue " + $scope.selectedQueue.name);
+        }},
+        declineButton: {text: "No, keep it visible.", callback: function () {}}
       });
-
-  modalInstance.result.then(function (message) {
-    if(message === "hide"){
-      socket.emit('purge', {
-        queueName:$scope.selectedQueue.name
-      });
-      socket.emit('hide', {
-        queueName:$scope.selectedQueue.name
-      });
-      socket.emit('addMOTD', {
-        queueName:$scope.selectedQueue.name,
-        MOTD:"",
-        sender: $scope.name
-      });
-      console.log("Trying to hide queue " + $scope.selectedQueue.name);
-    }
-  }, function () {});
-  };
+    };
 
   $scope.showQueue = function(){
     console.log("Called showQueue");
-    var modalInstance = $modal.open({
-      templateUrl: 'warning.html',
-      controller: function ($scope, $modalInstance, title, message, safeButtonText, dangerButtonText) {
-        $scope.title = title;
-        $scope.message = message;
-        $scope.safeButtonText = safeButtonText;
-        $scope.dangerButtonText = dangerButtonText;
-        $scope.delete = function () {
-          $modalInstance.close("show");
-        };
-        $scope.doNotDelete = function () {
-          $modalInstance.close("");
-        };
-      },
-      resolve: {
-        title: function () {
-          return "Reveal queue";
-        },
-        message: function () {
-          return "Are you sure that you wish to reveal " + $scope.selectedQueue.name + "? This means that anyone can see and enter the queue.";
-        },
-        safeButtonText: function () {
-          return "No, keep it from prying eyes.";
-        },
-        dangerButtonText: function () {
-          return "Yes, show yourself!";
-        }
-      }
-    });
-
-    modalInstance.result.then(function (message) {
-      if(message === "show"){
+    modals.confirmModal({
+      title: "Show queue",
+      text: "Are you sure that you wish to show " + $scope.selectedQueue.name + "? This means that anyone can see and enter the queue.",
+      confirmButton: {text: "Yes, show yourself!", callback: function () {
         socket.emit('show', {
           queue:$scope.selectedQueue.name
         });
         console.log("Trying to show queue " + $scope.selectedQueue.name);
-      }
-    }, function () {});
+      }},
+      declineButton: {text: "No, keep it from prying eyes.", callback: function () {}}
+    });
   };
 
   $scope.addAdmin = function(){
@@ -371,49 +290,31 @@
     console.log("Removing assistant " + name  + " in the queue " + $scope.selectedQueue.name);
   };
 
-  $scope.addServerMessage = function(){
-    console.log("Called addServerMessage");
-      var modalInstance = $modal.open({
-        templateUrl: 'enterMessage.html',
-        controller: function ($scope, $modalInstance, title, buttonText, serverMessage) {
-          $scope.title = title;
-          $scope.buttonText = buttonText;
-          if(serverMessage){
-            $scope.placeholder = "Current server-message: " + serverMessage;
-          }
-          $scope.ok = function () {
-            $modalInstance.close($scope.message);
-          };
-        },
-        resolve: {
-          title: function () {
-            return "Enter a message to show users upon loggin in";
-          },
-          buttonText: function () {
-            return "Add message";
-          },
-          serverMessage: function () {
-            return $scope.serverMessage;
+  $scope.setServerMessage = function(){
+    console.log("Called setServerMessage");
+    modals.setModal({
+      title: "Enter a message to show users upon loggin in",
+      placeholder: $scope.serverMessage ? "Current server-message: " + $scope.serverMessage : "",
+      setButton: {
+        text: "Set message",
+        callback: function (message) {
+          if(message){  
+            socket.emit('addServerMessage', {
+              sender: $scope.name,
+              message: message
+            });
           }
         }
-      });
-
-      modalInstance.result.then(function (message) {
-        console.log("Message = " + message);
-        if(message){
+      },
+      removeButton: {
+        text: "Remove message",
+        callback: function (message) {
           socket.emit('addServerMessage', {
-            sender:$scope.name,
-            message:message
+            sender: $scope.name,
+            message: ""
           });
         }
-      }, function () {});
-  };
-
-  $scope.removeServerMessage = function(){
-    console.log("Called removeServerMessage");
-    socket.emit('addServerMessage', {
-      sender:$scope.name,
-      message:""
+      }
     });
   };
 

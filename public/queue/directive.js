@@ -20,20 +20,21 @@ userDirective.directive('standardUsers', function(){
 
 		$scope.messageUser = function (name) {
 			console.log("Entered messageUser");
-			modals.setModal({
+			modals.submitModal({
 				title: "Enter a message to " + name,
 				placeholder: "",
-				buttons: [{type: "primary", text: "Send", callback: function (message) {
+				buttonText: "Send",
+				callback: function (message) {
 					if(message){
 						console.log("Sending message now");
 						socket.emit('messageUser', {
-							queueName:$scope.queue,
-							sender:$scope.name,
-							name:name,
-							message:message
+							queueName: $scope.queue,
+							sender: $scope.name,
+							name: name,
+							message: message
 						});
 					}
-				}}]
+				}
 			});
 		};
 
@@ -62,16 +63,30 @@ userDirective.directive('standardUsers', function(){
 			modals.setModal({
 				title: "Enter a comment about " + name,
 				placeholder: "",
-				buttons: [{type: "primary", text: "Add comment", callback: function (message) {
-					if(message){
-						socket.emit('flag', {
-							queueName:$scope.queue,
-							sender:$scope.name,
-							name:name,
-							message:message
-						});
+				setButton: {
+					text: "Add comment",
+					callback: function (message) {
+						if(message){
+							socket.emit('flag', {
+								queueName:$scope.queue,
+								sender:$scope.name,
+								name:name,
+								message:message
+							});
+						}
 					}
-				}}]
+				},
+				removeButton: {
+					text: "Delete comments",
+					callback: function (message) {
+						//socket.emit('removeFlags', {
+						//	queueName:$scope.queue,
+						//	sender:$scope.name,
+						//	name:name,
+						//	message:message
+						//});
+					}
+				},
 			});
 		};
 

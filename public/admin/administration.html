@@ -1,38 +1,8 @@
 <div class="container">
-
-	<script type="text/ng-template" id="enterMessage.html">
-	<div class="modal-header">
-	<h4>{{title}}</h4>
-	</div>
-	<div class="modal-body">
-	<div class="form-group">
-	<textarea class="form-control" rows="3" ng-model="message" placeholder="{{placeholder}}" id="administrationEnterMessageTextArea"></textarea>
-	</div>
-	</div>
-	<div class="modal-footer">
-	<button class="btn btn-primary" ng-click="ok()" id="administration{{buttonText}}Btn">{{buttonText}}</button>
-	</div>
-	</script>
-
-	<script type="text/ng-template" id="warning.html">
-	<div class="modal-header">
-	<h4>{{title}}</h4>
-	</div>
-	<div class="modal-body">
-	<div class="form-group">
-	<p>{{message}}</p>
-	</div>
-	</div>
-	<div class="modal-footer">
-	<button class="btn btn-success" ng-click="doNotDelete()" id="administrationNoChangeBtn">{{safeButtonText}}</button>
-	<button class="btn btn-danger" ng-click="delete()" id="administrationChangeBtn">{{dangerButtonText}}</button>
-	</div>
-	</script>
-
-	<div ng-show="accessLevel() < 2">
+	<div ng-show="accessLevel() < 2" class="row">
 		<h5>There is nothing for you to see here.</h5>
 	</div>
-	<div ng-show="accessLevel() > 1">
+	<div ng-show="accessLevel() > 1" class="row">
 		<h1>Administration</h1>
 		<p>Please be careful on this page. Here, you have the power to change everything.</p>
 	</div>
