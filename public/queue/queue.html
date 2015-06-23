@@ -74,11 +74,15 @@
   </script>
 
   <div class="row">
-    <div class="col-md-offset-1 col-md-3">
+    <div class="col-md-offset-1">
       <h2 class="text-red" ng-show="locked"><span class="glyphicon glyphicon-lock"></span>{{queue}}</h2>
       <h2 ng-show="!locked">{{queue}}</h2>
     </div>
   </div>
+
+  <p class="col-md-7" style="padding-left: 0;">
+    Lorem ipsum dolor sit amet, consectetur adipiscing elit. Vivamus malesuada porta mauris, in feugiat urna auctor a. Maecenas nibh sem, aliquet sit amet ornare sit amet, mattis vulputate arcu. Fusce a congue est. Praesent auctor enim id urna egestas condimentum. Nam varius ante libero, non auctor lectus condimentum sed. Pellentesque.
+  </p>
 
   <div class="col-xs-12 col-md-3 pull-right" style="padding: 0; margin-bottom: 1%;" ng-show="bookedUsers.length || users.length">
     <input type="text" class="search" ng-model="search" placeholder="Search" style="height: 3em; margin-bottom: 2%; width: 100%; padding-left: 1em;">
