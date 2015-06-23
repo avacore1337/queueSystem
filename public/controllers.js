@@ -135,7 +135,7 @@ queueControllers.controller('aboutController', ['$scope', 'TitleService', 'HttpS
     title.title = "About | Stay A While";
     console.log('entered about.html');
     $scope.contributors = {StayAWhile:[], QWait:[]};
-    http.get('/aboutData.json', function(data) {
+    http.get('../aboutData.json', function(data) {
       console.log("Aboutdata: ");
       console.log(data);
       $scope.contributors = data;
