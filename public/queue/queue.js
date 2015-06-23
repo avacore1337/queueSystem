@@ -183,8 +183,8 @@
 
       // Listen for a new MOTD.
       socket.on('addMOTD', function (MOTD) {
-        console.log("Backend wants to add the MOTD : " + MOTD);
-        $scope.MOTD = MOTD;
+        console.log("Backend wants to add the MOTD : " + JSON.stringify(MOTD));
+        $scope.MOTD = MOTD.MOTD;
       });
 
       // Listen for locking the queue
@@ -420,6 +420,7 @@
               return "Enter a new message of the day";
             },
             placeholder: function () {
+              console.log("Creating placeholder, MOTD = " + $scope.MOTD);
               if($scope.MOTD){
                 return "Current MOTD: " + $scope.MOTD;
               }else{
