@@ -62,6 +62,28 @@
         }
       });
 
+      $scope.$watch(function() {
+        return $scope.comment;
+      }, function(newValue, oldValue) {
+        if($scope.location && $scope.enqueued){
+          socket.emit('update', {
+            queueName: $scope.queue,
+            user:{name: $scope.name, location: $scope.location, comment: $scope.comment}
+          });
+        }
+      });
+
+      $scope.$watch(function() {
+        return $scope.location;
+      }, function(newValue, oldValue) {
+        if($scope.location && $scope.enqueued){
+          socket.emit('update', {
+            queueName: $scope.queue,
+            user:{name: $scope.name, location: $scope.location, comment: $scope.comment}
+          });
+        }
+      });
+
       // Listen for the person joining a queue event.
       socket.on('join', function (data) {
         console.log("joining");
@@ -191,18 +213,6 @@
             });
             console.log("Called addUser");
           }
-        }
-      };
-
-      $scope.updateUser = function(){
-        if($scope.location === ""){
-          alert("You must enter a location.");
-        }else{
-          socket.emit('update', {
-            queueName:$scope.queue,
-            user:{name:$scope.name, location:$scope.location, comment:$scope.comment}
-          });
-          console.log("Called updateUser");
         }
       };
 

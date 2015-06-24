@@ -43,7 +43,7 @@
           <i class="text-white" ng-hide="location">&nbsp;&nbsp;Required</i>
         </div>
         <h5>Comment</h5>
-        <input type="text" ng-model="comment" placeholder="Laboration 1" onfocus="this.placeholder = ''" onblur="this.placeholder = 'Laboration 1'" class="col-xs-12" style="height: 3em; margin-bottom: 7%;" id="queueCommentInputField">
+        <input type="text" ng-model="comment" ng-model-options="{debounce: 5000}" placeholder="Laboration 1" onfocus="this.placeholder = ''" onblur="this.placeholder = 'Laboration 1'" class="col-xs-12" style="height: 3em; margin-bottom: 7%;" id="queueCommentInputField">
         <button class="green clickable frame center-content expand" ng-show="!enqueued && location" ng-click="addUser()" id="queueJoinQueueBtn">
           <span class="glyphicon glyphicon-plus"></span>
           Join queue
@@ -55,14 +55,6 @@
         <button class="red clickable center-content frame expand" ng-show="enqueued" ng-click="leave()" id="queueLeaveQueueBtn">
           <span class="glyphicon glyphicon-remove"></span>
           Leave queue
-        </button>
-        <button class="green clickable center-content frame expand" ng-show="enqueued && location" ng-click="updateUser()" id="queueUpdateInformationBtn">
-          <span class="glyphicon glyphicon-pencil"></span>
-          Update information
-        </button>
-        <button class="green clickable frame center-content expand" ng-show="enqueued && !location" popover="You must enter your location again"  popover-trigger="focus" popover-placement="bottom" id="queuePromptLocationUpdateBtn">
-          <span class="glyphicon glyphicon-pencil"></span>
-          Update information
         </button>
         <div class="buffer" ng-show="accessLevel"></div>
         <!-- Admin-options -->
