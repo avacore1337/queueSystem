@@ -164,6 +164,9 @@ io.on('connection', function(socket) {
   socket.on('listen', function(req) {
     console.log('a user added to ' + req);
     socket.join(req);
+    if(socket.handshake.session.user.name){ // TODO : Temporary fix
+      socket.join('user_' + socket.handshake.session.user.name);
+    }
   });
 
   socket.on('stopListening', function(req) {
