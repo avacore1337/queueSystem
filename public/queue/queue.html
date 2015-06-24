@@ -39,11 +39,11 @@
       <div ng-show="name">
         <h5>Location</h5>
         <div style="background-color: #F04124; padding-bottom: 2%; margin-bottom: 7%;">
-          <input type="text" ng-model="location" placeholder="Red 01" onfocus="this.placeholder = ''" onblur="this.placeholder = 'Red 01'" class="col-xs-12" style="height: 3em; margin-bottom: 2%;" id="queueLocationInputField">
+          <input type="text" ng-model="location" ng-model-options="{debounce: 1000}" placeholder="Red 01" onfocus="this.placeholder = ''" onblur="this.placeholder = 'Red 01'" class="col-xs-12" style="height: 3em; margin-bottom: 2%;" id="queueLocationInputField">
           <i class="text-white" ng-hide="location">&nbsp;&nbsp;Required</i>
         </div>
         <h5>Comment</h5>
-        <input type="text" ng-model="comment" ng-model-options="{debounce: 5000}" placeholder="Laboration 1" onfocus="this.placeholder = ''" onblur="this.placeholder = 'Laboration 1'" class="col-xs-12" style="height: 3em; margin-bottom: 7%;" id="queueCommentInputField">
+        <input type="text" ng-model="comment" ng-model-options="{debounce: 1000}" placeholder="Laboration 1" onfocus="this.placeholder = ''" onblur="this.placeholder = 'Laboration 1'" class="col-xs-12" style="height: 3em; margin-bottom: 7%;" id="queueCommentInputField">
         <button class="green clickable frame center-content expand" ng-show="!enqueued && location" ng-click="addUser()" id="queueJoinQueueBtn">
           <span class="glyphicon glyphicon-plus"></span>
           Join queue
