@@ -262,6 +262,19 @@
         console.log("Called unlock");
       };
 
+      // This function allows the user to schedule labs (times when the queue will be unlocked)
+      $scope.schedule = function(){
+        modals.scheduleModal({
+          title: "Schedule labs",
+          remove: function () {
+            socket.emit('removeSchedules', {queueName: $scope.queue});
+          },
+          add: function (schedule) {
+            socket.emit('addSchedule', {queueName: $scope.queue, schedule: schedule});
+          }
+        });
+      };
+
       // This function generates new users
       $scope.generateUsers = function(){
         var amount = Math.round(Math.random() * 100);

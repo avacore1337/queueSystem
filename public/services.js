@@ -244,8 +244,8 @@
     };
   }])
 
-  .factory('ModalService', ['$modal',
-    function($modal) {
+  .factory('ModalService', ['$modal', '$timeout',
+    function($modal, $timeout) {
 
       return {
         setModal: function (args) {
@@ -389,6 +389,63 @@
               args.confirmButton.callback();
             }else{
               args.declineButton.callback();
+            }
+          }, function () {});
+        },
+        scheduleModal: function (args) {
+            var modalInstance = $modal.open({
+            templateUrl: 'modals/scheduleModal.html',
+            controller: function ($scope, $modalInstance, title) {
+              $scope.title = title;
+
+              // Length of the lab
+              $scope.length = new Date();
+              $scope.length.setHours(2);
+              $scope.length.setMinutes(0);
+              $scope.length.setSeconds(0);
+              
+              // When the lab starts
+              $scope.from = new Date();
+              $scope.from.setHours(0);
+              $scope.from.setMinutes(0);
+              $scope.from.setSeconds(0);
+
+              // The steps the timepickers will use
+              $scope.hstep = 1;
+              $scope.mstep = 1;
+              
+              $scope.open = function() {
+                $timeout(function() {
+                  $scope.opened = true;
+                });
+              };
+
+              $scope.remove = function () {
+                $modalInstance.close({confirmation: false, schedule:{}});
+              };
+              $scope.add = function () {
+                var temp = new Date($scope.from);
+                temp.setHours($scope.from.getHours() + $scope.length.getHours());
+                temp.setMinutes($scope.from.getMinutes() + $scope.length.getMinutes());
+                temp.setSeconds(0);
+                console.log("from = " + $scope.from);
+                console.log("to = " + temp);
+                console.log("length = " + $scope.length.getHours() + ":" + $scope.length.getMinutes());
+                $modalInstance.close({confirmation: true, schedule:[{start: $scope.from, end: temp}]});
+              };
+            },
+            resolve: {
+              title: function () {
+                return args.title;
+              }
+            }
+          });
+
+          modalInstance.result.then(function (output) {
+            if(output.confirmation){
+              args.add(output.schedule);
+            }else{
+              args.remove();
             }
           }, function () {});
         }

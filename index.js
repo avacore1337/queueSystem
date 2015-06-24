@@ -164,6 +164,7 @@ io.on('connection', function(socket) {
   socket.on('listen', function(req) {
     console.log('a user added to ' + req);
     socket.join(req);
+    console.log("Current user = " + JSON.stringify(socket.handshake.session.user.name));
     if(socket.handshake.session.user.name){ // TODO : Temporary fix
       socket.join('user_' + socket.handshake.session.user.name);
     }
@@ -440,6 +441,36 @@ io.on('connection', function(socket) {
 
     io.to(queueName).emit('purge');
     io.to("lobby").emit('lobbypurge', queueName);
+  });
+
+  // trying to schedule a lab session
+  socket.on('addSchedule', function(req) {
+    var queueName = req.queueName;
+    var username = socket.handshake.session.user.name;
+
+    // admin/teacher-validation
+    if (!(validate(username, "super", "queue") || validate(username, "teacher", queueName) || validate(username, "assistant", queueName))) {
+      console.log("validation for lock failed");
+      //res.end();
+      return;
+    }
+
+    console.log("Validation successful. Would have scheduled: " + JSON.stringify(req.schedule));
+  });
+
+  // trying to clear all schedules for a given queue
+  socket.on('removeSchedules', function(req) {
+    var queueName = req.queueName;
+    var username = socket.handshake.session.user.name;
+
+    // admin/teacher-validation
+    if (!(validate(username, "super", "queue") || validate(username, "teacher", queueName) || validate(username, "assistant", queueName))) {
+      console.log("validation for lock failed");
+      //res.end();
+      return;
+    }
+
+    console.log("Validation successful. Would have cleared the schedule for : " + queueName);
   });
 
   //===============================================================
