@@ -52,6 +52,19 @@
           <span class="glyphicon glyphicon-plus"></span>
           Join queue
         </button>
+        
+        <br><br>
+        <span class="col-xs-6">
+          <label for="help">Help&nbsp;&nbsp;</label>
+          <input type="radio" name="type" id="help" value="help">
+        </span>
+        <span>
+          <label for="present">Present&nbsp;&nbsp;</label>
+          <input type="radio" name="type" id="present" value="present">
+        </span>
+
+        <br>
+
         <button class="red clickable center-content frame expand" ng-show="enqueued" ng-click="leave()" id="queueLeaveQueueBtn">
           <span class="glyphicon glyphicon-remove"></span>
           Leave queue
