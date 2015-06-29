@@ -68,7 +68,7 @@
         if($scope.location && $scope.enqueued){
           socket.emit('update', {
             queueName: $scope.queue,
-            user:{name: $scope.name, location: $scope.location, comment: $scope.comment}
+            user:{location: $scope.location, comment: $scope.comment}
           });
         }
       });
@@ -79,7 +79,7 @@
         if($scope.location && $scope.enqueued){
           socket.emit('update', {
             queueName: $scope.queue,
-            user:{name: $scope.name, location: $scope.location, comment: $scope.comment}
+            user:{location: $scope.location, comment: $scope.comment}
           });
         }
       });
@@ -209,7 +209,7 @@
             socket.emit('join',
             {
               queueName:$scope.queue,
-              user:{name:$scope.name, location:$scope.location, comment:$scope.comment, time:Date.now()}
+              user:{location:$scope.location, comment:$scope.comment, time:Date.now()}
             });
             console.log("Called addUser");
           }
@@ -227,7 +227,6 @@
         }
         socket.emit('leave', {
           queueName:$scope.queue,
-          user:{name:user.getName()},
           booking: wasBooked
         });
         console.log("Called leave");

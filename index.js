@@ -179,6 +179,7 @@ io.on('connection', function(socket) {
   socket.on('join', function(req) {
     var queueName = req.queueName;
     var user = req.user;
+    user.name = socket.handshake.session.user.name;
 
     console.log('a user joined to ' + queueName);
 
@@ -230,6 +231,7 @@ io.on('connection', function(socket) {
   socket.on('update', function(req) {
     var queueName = req.queueName;
     var user = req.user;
+    user.name = socket.handshake.session.user.name;
 
     console.log(JSON.stringify(user)); // check which uses is given --- need the one doing the action and the one who is "actioned"
 
@@ -352,10 +354,10 @@ io.on('connection', function(socket) {
   // user leaves queue
   socket.on('leave', function(req) {
     var queueName = req.queueName;
-    var user = req.user;
+    var user = {name: socket.handshake.session.user.name};
     var booking = req.booking;
 
-    console.log(JSON.stringify(user)); // check which uses is given --- need the one doing the action and the one who is "actioned"
+    console.log(user.name); // check which uses is given --- need the one doing the action and the one who is "actioned"
     console.log("Validerande: " + JSON.stringify(socket.handshake.session.user));
 
     var queue = queueSystem.findQueue(queueName);
