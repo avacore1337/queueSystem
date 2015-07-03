@@ -12,7 +12,7 @@
     <tr ng-repeat-start="user in users | filter:notHasBooking track by $index" ng-class="{'pointer' : accessLevel > 0, 'pulse' : user.gettingHelp, 'light-blue-background' : user.name === name}" ng-click="changeVisibility(user.name)"  id="queue{{user.name}}Btn" ng-show="match(user)">
       <td class="hidden-xs">{{ $index + 1 }}</td>
       <td ng-show="accessLevel">{{ user.name }}</td>
-      <td>{{ user.location }}</td>
+      <td><span class="pull-left">{{ user.location }}</span><span class="pull-right">{{ user.type }}</span></td>
       <td>{{ user.comment }}</td>
       <td><span data-livestamp="{{user.time}}"></span></td>
     </tr>

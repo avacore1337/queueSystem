@@ -54,6 +54,7 @@
             title.title = "["  + (i+1) + "] " + $scope.queue + " | Stay A while";
             $scope.location = $scope.users[i].location;
             $scope.comment = $scope.users[i].comment;
+            $scope.type = $scope.users[i].type;
           }
         }
         if(response.motd){
@@ -65,10 +66,10 @@
       $scope.$watch(function() {
         return $scope.comment;
       }, function(newValue, oldValue) {
-        if($scope.location && $scope.enqueued){
+        if($scope.location && $scope.enqueued && $scope.type){
           socket.emit('update', {
             queueName: $scope.queue,
-            user:{location: $scope.location, comment: $scope.comment}
+            user:{location: $scope.location, comment: $scope.comment, type: $scope.type}
           });
         }
       });
@@ -76,10 +77,22 @@
       $scope.$watch(function() {
         return $scope.location;
       }, function(newValue, oldValue) {
-        if($scope.location && $scope.enqueued){
+        if($scope.location && $scope.enqueued && $scope.type){
           socket.emit('update', {
             queueName: $scope.queue,
-            user:{location: $scope.location, comment: $scope.comment}
+            user:{location: $scope.location, comment: $scope.comment, type: $scope.type}
+          });
+        }
+      });
+
+      $scope.$watch(function() {
+        return $scope.type;
+      }, function(newValue, oldValue) {
+        console.log("$scope.type changed value to " + newValue);
+        if($scope.location && $scope.enqueued && $scope.type){
+          socket.emit('update', {
+            queueName: $scope.queue,
+            user:{location: $scope.location, comment: $scope.comment, type: $scope.type}
           });
         }
       });
@@ -91,7 +104,7 @@
           $scope.enqueued = true;
           title.title = "["  + ($scope.users.length+1) + "] " + $scope.queue + " | Stay A while";
         }
-        $scope.users.push({name:data.name, location:data.location, comment:data.comment, time:data.time/1000});
+        $scope.users.push({name: data.name, location: data.location, comment: data.comment, type: $scope.type, time: data.time/1000});
       });
 
       // Listen for the person leaving a queue event.
@@ -99,6 +112,7 @@
         if(data.name === $scope.name){
           $scope.enqueued = false;
           $scope.comment = '';
+          $scope.type = '';
           title.title = $scope.queue + " | Stay A while";
         }
         for(var i = $scope.users.length - 1; i >= 0; i--) {
@@ -130,10 +144,10 @@
           if($scope.users[i].name === data.name) {
             $scope.users[i].comment = data.comment;
             $scope.users[i].location = data.location;
+            $scope.users[i].type = data.type;
             break;
           }
         }
-        console.log($scope.users);
       });
 
       // Listen for a message.
@@ -209,7 +223,7 @@
             socket.emit('join',
             {
               queueName:$scope.queue,
-              user:{location:$scope.location, comment:$scope.comment, time:Date.now()}
+              user:{location: $scope.location, comment: $scope.comment, type: $scope.type, time:Date.now()}
             });
             console.log("Called addUser");
           }
@@ -283,28 +297,6 @@
           }
         });
       };
-
-      // This function generates new users
-      $scope.generateUsers = function(){
-        var amount = Math.round(Math.random() * 100);
-        //console.log("Trying to generate " + amount + " users.");
-        for(var i = 0; i < amount; i++){
-          socket.emit('join', {
-            queueName:$scope.queue,
-            user:{name:makeid(11), location:"Green", comment:"lab1", time:Date.now()}
-          });
-        }
-      };
-
-      function makeid(length){
-        var text = "";
-        var possible = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
-
-        for( var i=0; i < length; i++ )
-            text += possible.charAt(Math.floor(Math.random() * possible.length));
-
-        return text;
-      }
 
       // Function to send a message to every user in the queue
       $scope.broadcast = function(){
@@ -536,7 +528,7 @@
           return true;
         }
         var regEx = new RegExp($scope.search.toLowerCase());
-        return regEx.test(user.location.toLowerCase()) || regEx.test(user.comment.toLowerCase());
+        return regEx.test(user.location.toLowerCase()) || regEx.test(user.comment.toLowerCase()) || regEx.test(user.type.toLowerCase());
       };
 
       // This function checks if a person in the booked queue matches the search-string.

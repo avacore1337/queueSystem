@@ -183,14 +183,14 @@ function validateAssistant(username, queueName) {
 exports.updateAllBookings = function () {
   for (var index = 0; index < queueList.length; index++) {
     queueList[index].purgeBookings();
-  };
+  }
   exports.forQueue(function (queue) {
     console.log("updateing: " + queue.name);
     if (queue.bookings.length === 0) {
       fetchBookings(queue.name,function (err, response, body) {
         if (!err && response.statusCode === 200) {
           // console.log(response);
-          console.log("course: " + queue.name + " Got response: ")
+          console.log("course: " + queue.name + " Got response: ");
           console.log(body);
           for (var j = 0; j < body.length; j++) {
             console.log("creating bookings");
@@ -199,7 +199,7 @@ exports.updateAllBookings = function () {
               if(body[j].otherUsers[i] !== ""){
                 users.push(body[j].otherUsers[i]);
               }
-            };
+            }
             users.push(body[j].userID);
             queue.addBooking({
               users:users,
@@ -207,15 +207,15 @@ exports.updateAllBookings = function () {
               length:15,
               comment:body[j].comment
             });
-          };
+          }
         }
         else{
           console.log(err);
         }
-      })
-    };
+      });
+    }
   });
-}
+};
 
 
 /**
@@ -223,18 +223,18 @@ exports.updateAllBookings = function () {
  */
 function fetchBookings (queueName, callback) {
   var url = 'http://127.0.0.1:8088/API/todaysbookings/' + queueName; //TODO move out url to config file
-  request({ url: url, json: true }, callback)
+  request({ url: url, json: true }, callback);
 }
 
 exports.setGlobalMOTD = function (message) {
   globalMOTD = message;
   actualMOTD.message = message;
   actualMOTD.save();
-}
+};
 
 exports.getGlobalMOTD = function () {
   return globalMOTD;
-}
+};
 
 /**
  * A function that spoofs data to make sure there is something to test the 
@@ -299,6 +299,7 @@ function setup() {
         name: Math.random().toString(36).substring(7),
         location: 'Green',
         comment: 'lab1',
+        type: "H",
         startTime: randomTime
       });
       newQueue.addUser(newUser);

@@ -40,7 +40,8 @@ var userSchema = new Schema({
   messages: [String],
   gettingHelp: { type: Boolean, default: false },
   action: { type: String, default: '' },
-  comment: { type: String, default: '' }
+  comment: { type: String, default: '' },
+  type: String
 });
 
 // creates a JSON-object from the schema
@@ -52,7 +53,8 @@ userSchema.methods.toJSON = function () {
     messages: this.messages,
     gettingHelp: this.gettingHelp,
     action: this.action,
-    comment: this.comment
+    comment: this.comment,
+    type: this.type
   };
 };
 

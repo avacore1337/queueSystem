@@ -193,7 +193,8 @@ io.on('connection', function(socket) {
     var newUser = new User({
       name: user.name,
       location: user.location,
-      comment: user.comment
+      comment: user.comment,
+      type: user.type
     });
 
     queue.addUser(newUser);

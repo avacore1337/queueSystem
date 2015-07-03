@@ -44,26 +44,26 @@
         </div>
         <h5>Comment</h5>
         <input type="text" ng-model="comment" ng-model-options="{debounce: 1000}" placeholder="Laboration 1" onfocus="this.placeholder = ''" onblur="this.placeholder = 'Laboration 1'" class="col-xs-12" style="height: 3em; margin-bottom: 7%;" id="queueCommentInputField">
-        <button class="green clickable frame center-content expand" ng-show="!enqueued && location" ng-click="addUser()" id="queueJoinQueueBtn">
-          <span class="glyphicon glyphicon-plus"></span>
-          Join queue
-        </button>
-        <button class="green clickable frame center-content expand" ng-show="!enqueued && !location" popover="In order to queue, you must enter your location"  popover-trigger="focus" popover-placement="bottom" id="queuePromptLocationJoinBtn">
-          <span class="glyphicon glyphicon-plus"></span>
-          Join queue
-        </button>
         
         <br><br>
         <span class="col-xs-6">
           <label for="help">Help&nbsp;&nbsp;</label>
-          <input type="radio" name="type" id="help" value="help">
+          <input type="radio" ng-model="type" id="help" value="H">
         </span>
         <span>
           <label for="present">Present&nbsp;&nbsp;</label>
-          <input type="radio" name="type" id="present" value="present">
+          <input type="radio" ng-model="type" id="present" value="P">
         </span>
-        <br>
+        <br><br>
 
+        <button class="green clickable frame center-content expand" ng-show="!enqueued && location && type" ng-click="addUser()" id="queueJoinQueueBtn">
+          <span class="glyphicon glyphicon-plus"></span>
+          Join queue
+        </button>
+        <button class="green clickable frame center-content expand" ng-hide="enqueued || (location && type)" popover="In order to queue, you must enter your location and if you need help or would rather present."  popover-trigger="focus" popover-placement="bottom" id="queuePromptLocationJoinBtn">
+          <span class="glyphicon glyphicon-plus"></span>
+          Join queue
+        </button>
         <button class="red clickable center-content frame expand" ng-show="enqueued" ng-click="leave()" id="queueLeaveQueueBtn">
           <span class="glyphicon glyphicon-remove"></span>
           Leave queue
@@ -126,12 +126,6 @@
               <button class="blue clickable center-content frame expand" ng-show="accessLevel" ng-click="schedule()" id="queueScheduleBtn">
                 <span class="glyphicon glyphicon-calendar"></span>
                 Set scheduled labs
-              </button>
-            </li>
-            <li>
-              <button class="blue clickable center-content frame expand" ng-show="accessLevel" ng-click="generateUsers()" id="queueGenerateUsersBtn">
-                <span class="glyphicon glyphicon-user"></span>
-                Generate Users
               </button>
             </li>
           </ul>
