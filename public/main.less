@@ -4,8 +4,12 @@
 @green-hover: #2BCF49;
 @red: #F54F36;
 @red-hover: #D6432D;
+@yellow: #F0D73A;
+@yellow-hover: #D6BF2B;
 @light-gray: #BEBEBE;
 @white-hover: #E2E2E2;
+@orange-odd: #D96518;
+@orange-even: #F07422;
 
 .html, body
 {
@@ -25,6 +29,15 @@ button.red
 button.red.clickable:hover
 {
   background-color: @red-hover;
+  cursor: pointer;
+}
+button.yellow
+{
+  background-color: @yellow;
+}
+button.yellow.clickable:hover
+{
+  background-color: @yellow-hover;
   cursor: pointer;
 }
 button.green
@@ -76,6 +89,24 @@ span.text-red
 span.text-red.clickable:hover
 {
   color: @red-hover;
+  cursor: pointer;
+}
+span.text-yellow
+{
+  color: @yellow;
+}
+span.text-yellow.clickable:hover
+{
+  color: @yellow-hover;
+  cursor: pointer;
+}
+span.text-blue
+{
+  color: @blue;
+}
+span.text-blue.clickable:hover
+{
+  color: @blue-hover;
   cursor: pointer;
 }
 .buffer
@@ -181,9 +212,13 @@ table.table-striped > tbody > tr.light-blue-background > td
 {
  background-color: #C5E7FF;
 }
-table.table-striped > tbody > tr.light-blue-background > td
+table.table-striped > tbody > tr:nth-child(odd).orange-background > td
 {
- background-color: #C5E7FF;
+ background-color: @orange-odd;
+}
+table.table-striped > tbody > tr:nth-child(even).orange-background > td
+{
+ background-color: @orange-even;
 }
 .panel
 {

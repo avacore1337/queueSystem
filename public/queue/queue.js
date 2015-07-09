@@ -150,6 +150,17 @@
         }
       });
 
+      // Listen for a user being marked for completion
+      socket.on('completion', function (data) {
+        console.log(data);
+        for(var i = $scope.users.length - 1; i >= 0; i--) {
+          if($scope.users[i].name === data.name) {
+            $scope.users[i].completion = true;
+            break;
+          }
+        }
+      });
+
       // Listen for a message.
       socket.on('msg', function (data) {
         console.log("Received message : " + data);

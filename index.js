@@ -787,6 +787,28 @@ io.on('connection', function(socket) {
     });
   });
 
+  socket.on('completion', function(req) {
+    var queueName = req.queueName;
+    var username = req.username;
+    var assistant = socket.handshake.session.user.name;
+
+    // teacher/assistant-validation
+    if (!(validate(assistant, "teacher", queueName) || validate(assistant, "assistant", queueName))) {
+      console.log("validation for addMOTD failed");
+      //res.end();
+      return;
+    }
+
+    // find the course and save the MOTD to the course in the database
+    var course = queueSystem.findQueue(queueName);
+    course.setCompletion(username, assistant, queueName);
+
+    console.log('completion');
+    io.to(queueName).emit('completion', {
+      name: username
+    });
+  });
+
   socket.on('setMOTD', function(req) {
     var queueName = req.queueName;
     var MOTD = req.MOTD;

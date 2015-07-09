@@ -41,7 +41,8 @@ var userSchema = new Schema({
   gettingHelp: { type: Boolean, default: false },
   action: { type: String, default: '' },
   comment: { type: String, default: '' },
-  type: String
+  type: String,
+  completion: Boolean
 });
 
 // creates a JSON-object from the schema
@@ -54,7 +55,8 @@ userSchema.methods.toJSON = function () {
     gettingHelp: this.gettingHelp,
     action: this.action,
     comment: this.comment,
-    type: this.type
+    type: this.type,
+    completion: this.completion
   };
 };
 
@@ -278,6 +280,18 @@ queueSchema.methods.addAssistantComment = function (name, sender, queue, message
     if (usr.name === name) {
       var user = usr;
       user.messages.push(message);
+      lodash.extend(queue[i], user);
+    }
+  });
+  this.save();
+};
+
+// set the completion tag of a user to true
+queueSchema.methods.setCompletion = function (name, sender, queue) {
+  this.queue.forEach(function (usr, i, queue) {
+    if (usr.name === name) {
+      var user = usr;
+      user.completion = true;
       lodash.extend(queue[i], user);
     }
   });

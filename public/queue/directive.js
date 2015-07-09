@@ -95,4 +95,10 @@ userDirective.directive('standardUsers', function(){
 			console.log("Called readMessages");
 			modals.listModal({title: "Commets", messages: messages});
 		};
+
+		// Function to mark someone for completion
+		$scope.completion = function(username){
+			console.log("Called completion");
+			socket.emit('completion', {username: username, queueName: $scope.queue});
+		};
 }]);
