@@ -300,6 +300,7 @@ function setup() {
         location: 'Green',
         comment: 'lab1',
         type: "H",
+        completion: false,
         startTime: randomTime
       });
       newQueue.addUser(newUser);
