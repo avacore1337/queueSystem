@@ -30,6 +30,13 @@ var adminSchema = new Schema({
   addedBy: { type: String, default: '' }
 });
 
+// Schema used for completions
+var completionSchema = new Schema({
+  name: String,
+  assistant: String,
+  task: String
+});
+
 //-----
 
 // Schema used for users in the queues
@@ -42,7 +49,7 @@ var userSchema = new Schema({
   action: { type: String, default: '' },
   comment: { type: String, default: '' },
   type: String,
-  completion: Boolean
+  completion: { type: Boolean, default: false }
 });
 
 // creates a JSON-object from the schema
@@ -131,12 +138,19 @@ var queueSchema = new Schema({
   queue: {type:[userSchema], default: []},
   bookings: {type:[bookingSchema], default: []},
   teacher: {type:[adminSchema], default: []},
-  assistant: {type:[adminSchema], default: []}
+  assistant: {type:[adminSchema], default: []},
+  completions: {type:[completionSchema], default: []}
 });
 
 // Updates the MOTD
 queueSchema.methods.addMOTD = function (message) {
   this.motd = message;
+  this.save();
+};
+
+// Updates the MOTD
+queueSchema.methods.addCompletion = function (completion) {
+  this.completions.push(completion);
   this.save();
 };
 
@@ -369,6 +383,7 @@ var Queue = mongoose.model("Queue", queueSchema);
 var Statistic = mongoose.model("UserStatistic", statisticSchema);
 var Booking = mongoose.model("Booking", bookingSchema);
 var GlobalMOTD = mongoose.model("GlobalMOTD", globalMOTDSchema);
+var Completion = mongoose.model("Completion", completionSchema);
 
 //=========================================
 // Export data from this file to "index.js"
@@ -378,5 +393,6 @@ module.exports = {
   admin: Admin,
   queue: Queue,
   statistic: Statistic,
-  globalMOTD: GlobalMOTD
+  globalMOTD: GlobalMOTD,
+  completion: Completion
 };
