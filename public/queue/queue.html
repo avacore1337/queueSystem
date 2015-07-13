@@ -45,16 +45,18 @@
         <h5>Comment</h5>
         <input type="text" ng-model="comment" ng-model-options="{debounce: 1000}" placeholder="Laboration 1" onfocus="this.placeholder = ''" onblur="this.placeholder = 'Laboration 1'" class="col-xs-12" style="height: 3em; margin-bottom: 7%;" id="queueCommentInputField">
         
-        <br><br>
-        <span class="col-xs-6">
-          <label for="help">Help&nbsp;&nbsp;</label>
-          <input type="radio" ng-model="type" id="help" value="H">
-        </span>
-        <span>
-          <label for="present">Present&nbsp;&nbsp;</label>
-          <input type="radio" ng-model="type" id="present" value="P">
-        </span>
-        <br><br>
+        <div ng-hide="enqueued">
+          <br><br>
+          <span class="col-xs-6">
+            <label for="help">Help&nbsp;&nbsp;</label>
+            <input type="radio" ng-model="type" id="help" value="H">
+          </span>
+          <span>
+            <label for="present">Present&nbsp;&nbsp;</label>
+            <input type="radio" ng-model="type" id="present" value="P">
+          </span>
+          <br><br>
+        </div>
 
         <button class="green clickable frame center-content expand" ng-show="!enqueued && location && type" ng-click="addUser()" id="queueJoinQueueBtn">
           <span class="glyphicon glyphicon-plus"></span>
