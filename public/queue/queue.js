@@ -116,6 +116,7 @@
           $scope.enqueued = false;
           $scope.comment = '';
           $scope.type = 'H';
+          $scope.gettingHelp = false;
           title.title = $scope.queue + " | Stay A while";
         }
         for(var i = $scope.users.length - 1; i >= 0; i--) {
