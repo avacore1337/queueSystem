@@ -1,4 +1,4 @@
-  /* jslint node: true */
+/* jslint node: true */
 "use strict";
 
 //===============================================================
@@ -8,125 +8,18 @@ var lodash = require('lodash');
 var mongoose = require('mongoose');
 var Schema = mongoose.Schema;
 
-//===============================================================
-
-// Schema used for global MOTD
-var globalMOTDSchema = new Schema({
-  message: { type: String, default: '' },
-});
-
-// Updates the MOTD
-globalMOTDSchema.methods.addGlobalMOTD = function (message) {
-  this.message = message;
-  this.save();
-};
-
-//-----
-
-// Schema used for admins, teachers and teacher assistans
-var adminSchema = new Schema({
-  name: String,
-  username: String,
-  addedBy: { type: String, default: '' }
-});
-
-// Schema used for completions
-var completionSchema = new Schema({
-  name: String,
-  assistant: String,
-  task: String
-});
-
-//-----
-
-// Schema used for users in the queues
-var userSchema = new Schema({
-  name: String,
-  location: String,
-  startTime: { type: Number, default: Date.now },
-  messages: [String],
-  gettingHelp: { type: Boolean, default: false },
-  action: { type: String, default: '' },
-  comment: { type: String, default: '' },
-  type: String,
-  completion: { type: Boolean, default: false }
-});
-
-// creates a JSON-object from the schema
-userSchema.methods.toJSON = function () {
-  return {
-    name: this.name,
-    location: this.location,
-    time: this.startTime,
-    messages: this.messages,
-    gettingHelp: this.gettingHelp,
-    action: this.action,
-    comment: this.comment,
-    type: this.type,
-    completion: this.completion
-  };
-};
-
-//-----
-
-
-//---------------------------------------------------------------------------------------
-/*TEST*/
-// the average time in 'queue' of students who joined the queue 
-//  from 'start' and left before/was still in queue at 'end'
-/*TODO-DIRR*/
-function getAverageQueueTime(queue, start, end) {
-//  var queue = findQueue(queueName);
-  var counter = 0;
-
-  queue.forEach(function (usr, i, queue) {
-    if (usr.startTime >= start && usr.startTime < end) {
-      var d = new Date(usr.startTime);
-      console.log("User " + usr.name + " started at " + d);
-
-      counter++;
-    }
-  });
-
-  console.log("Counted: " + counter);
-  return counter;
-}
-
-// number of people who joined the queue from 'start' and left before 'end'
-/*TODO-DIRR*/
-function numbersOfPeopleLeftQueue(queue, start, end) {
-// 1. Get all statistics-object from a specific queue
-// 2. Filter out all those who was in the queue before set "start"-time
-// 3. Filter out all those who entered the queue after set "end"-time
-// 4. Retrieve those who has a 'queueLength+startTime <= end' 
-
-/*
-    var statisticSchema = new Schema({
-      name: String,
-      queue: String,
-      time: { type: Number, default: Date.now },
-      action: String,
-      leftQueue: { type: Boolean, default: false },
-      queueLength: { type: Number, default: 0},
-*/
-
-//  var queue = findQueue(queueName);
-  var counter = 0;
-
-  queue.forEach(function (usr, i, queue) {
-    if (usr.startTime >= start && usr.startTime < end) {
-      var d = new Date(usr.startTime);
-      console.log("User " + usr.name + " started at " + d);
-
-      counter++;
-    }
-  });
-
-  console.log("Counted: " + counter);
-  return counter;
-}
-
-//---------------------------------------------------------------------------------------
+var User = require('./user.js');
+var userSchema = User.schema; 
+var Booking = require('./booking.js');
+var bookingSchema = Booking.schema;
+var Statistic = require('./statistic.js');
+var statisticSchema = Statistic.schema;
+var Admin = require('./admin.js');
+var adminSchema = Admin.schema;
+var GlobalMOTD = require('./globalMOTD.js');
+var globalMOTDSchema = GlobalMOTD.schema;
+var Completion = require('./completion.js');
+var completionSchema = Completion.schema;
 
 // Schema used for queues
 var queueSchema = new Schema({
@@ -348,69 +241,7 @@ queueSchema.methods.stopHelpingQueuer = function (name, queue) {
   this.save();
 };
 
-//-----
-
-// Schema used for bookings
-var bookingSchema = new Schema({
-  users: [String],
-  time: { type: Number, default: 0},
-  length: { type: Number, default: 0},
-  comment: String,
-});
-
-//-----
-
-// Schema used for statistics 
-var statisticSchema = new Schema({
-  name: String,
-  queue: String,
-  startTime: { type: Number, default: Date.now },
-  action: String,
-  leftQueue: { type: Boolean, default: false },
-  queueLength: { type: Number, default: 0},
-});
-
-statisticSchema.index({startTime: 1});
-
-statisticSchema.methods.userLeaves = function () {
-  this.leftQueue = true;
-  this.save();
-};
-
-statisticSchema.statics.getAverageQueueTime =  function (queueName, start, end, callbackDo) {
-  var statistic = this;
-  console.log("This");
-
-  async.parallel([
-
-  function(callback){
-    console.log("Callback");
-     statistic.find({startTime: {$gte: start, $lte: end}, queue: queueName, leftQueue: true}, function (err, results) {
-        if(err) return console.error(err);
-        callback(null, results);
-      });
-  }],
-
-  function(err, results){
-    console.log("Do the do da");
-    callbackDo(results);
-  });
-};
-
-
-//=========================================
-// The schemas that will be used in "index.js"
-
-var User = mongoose.model("User", userSchema);
-var Admin = mongoose.model("Admin", adminSchema);
 var Queue = mongoose.model("Queue", queueSchema);
-var Statistic = mongoose.model("UserStatistic", statisticSchema);
-var Booking = mongoose.model("Booking", bookingSchema);
-var GlobalMOTD = mongoose.model("GlobalMOTD", globalMOTDSchema);
-var Completion = mongoose.model("Completion", completionSchema);
-
-//=========================================
-// Export data from this file to "index.js"
 
 module.exports = {
   user: User,
