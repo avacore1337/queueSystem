@@ -300,6 +300,18 @@ queueSchema.methods.addAssistantComment = function (name, sender, queue, message
   this.save();
 };
 
+// Remove comments about a user
+queueSchema.methods.removeAssistantComments = function (name, sender, queue) {
+  this.queue.forEach(function (usr, i, queue) {
+    if (usr.name === name) {
+      var user = usr;
+      user.messages = [];
+      lodash.extend(queue[i], user);
+    }
+  });
+  this.save();
+};
+
 // set the completion tag of a user to true
 queueSchema.methods.setCompletion = function (name, sender, queue) {
   this.queue.forEach(function (usr, i, queue) {

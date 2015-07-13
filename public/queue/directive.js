@@ -78,10 +78,9 @@ userDirective.directive('standardUsers', function(){
 					callback: function (message) {
 						if(message){
 							socket.emit('flag', {
-								queueName:$scope.queue,
-								sender:$scope.name,
-								name:name,
-								message:message
+								queueName: $scope.queue,
+								name: name,
+								message: message
 							});
 						}
 					}
@@ -89,12 +88,10 @@ userDirective.directive('standardUsers', function(){
 				removeButton: {
 					text: "Delete comments",
 					callback: function (message) {
-						//socket.emit('removeFlags', {
-						//	queueName:$scope.queue,
-						//	sender:$scope.name,
-						//	name:name,
-						//	message:message
-						//});
+						socket.emit('removeFlags', {
+							queueName: $scope.queue,
+							name: name
+						});
 					}
 				},
 			});

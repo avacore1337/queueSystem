@@ -183,6 +183,17 @@
         }
       });
 
+      // Listen for a user getting their flags removed
+      socket.on('removeFlags', function (data) {
+        console.log("Removing flags for user " + data.name);
+        for(var i = $scope.users.length - 1; i >= 0; i--) {
+          if($scope.users[i].name === data.name) {
+            $scope.users[i].messages = [];
+            break;
+          }
+        }
+      });
+
       // Listen for a person getting help.
       socket.on('help', function (data) {
         for(var i = 0; i < $scope.users.length; i++){

@@ -774,7 +774,6 @@ io.on('connection', function(socket) {
       return;
     }
 
-    var username = req.username;
     var queue = queueSystem.findQueue(queueName);
 
     queue.removeAssistant(username);
@@ -787,11 +786,11 @@ io.on('connection', function(socket) {
     });
   });
 
-  //
+  // Add a comment about a user
   socket.on('flag', function(req) {
     var username = req.name;
     var queueName = req.queueName;
-    var sender = req.sender;
+    var sender = socket.handshake.session.user.name;
     var message = req.message;
 
     // teacher/assistant-validation
@@ -808,6 +807,28 @@ io.on('connection', function(socket) {
     io.to(queueName).emit('flag', {
       name: username,
       message: message
+    });
+  });
+
+  // Remove all comments about a user
+  socket.on('removeFlags', function(req) {
+    var username = req.name;
+    var queueName = req.queueName;
+    var sender = socket.handshake.session.user.name;
+
+    // teacher/assistant-validation
+    if (!(validate(sender, "teacher", queueName) || validate(sender, "assistant", queueName))) {
+      console.log("validation for flag failed");
+      //res.end();
+      return;
+    }
+
+    var course = queueSystem.findQueue(queueName);
+    course.removeAssistantComments(username, sender, queueName);
+
+    console.log('removed flags');
+    io.to(queueName).emit('removeFlags', {
+      name: username
     });
   });
 
