@@ -164,9 +164,14 @@ io.on('connection', function(socket) {
   socket.on('listen', function(req) {
     console.log('a user added to ' + req);
     socket.join(req);
-    console.log("Current user = " + JSON.stringify(socket.handshake.session.user.name)); // TODO : Crasches if trying to enter a room without being loged in
-    if(socket.handshake.session.user.name){ // TODO : Temporary fix
-      socket.join('user_' + socket.handshake.session.user.name);
+    try {
+      console.log("Current user = " + JSON.stringify(socket.handshake.session.user.name));
+      if(socket.handshake.session.user.name){ // TODO : Temporary fix
+        socket.join('user_' + socket.handshake.session.user.name);
+      }
+    }
+    catch(err) {
+      console.log("User is not logged in.");
     }
   });
 
