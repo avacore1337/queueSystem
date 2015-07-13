@@ -48,6 +48,16 @@ userDirective.directive('standardUsers', function(){
 			console.log("Called helpUser");
 		};
 
+		// Mark the user as no longer being helped
+		$scope.stopHelpUser = function(name){
+			socket.emit('stopHelp', {
+				queueName:$scope.queue,
+				name:name,
+				helper:$scope.name
+			});
+			console.log("Called stopHelpUser");
+		};
+
 		// Function to send a message to a user
 		$scope.badLocation = function(name){
 			socket.emit('badLocation', {

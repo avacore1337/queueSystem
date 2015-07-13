@@ -194,6 +194,17 @@
         }
       });
 
+      // Listen for a person no longer getting help.
+      socket.on('stopHelp', function (data) {
+        for(var i = 0; i < $scope.users.length; i++){
+          if($scope.users[i].name === data.name){
+            $scope.users[i].gettingHelp = false;
+            $scope.users[i].helper = data.helper;
+            break;
+          }
+        }
+      });
+
       // Listen for a new MOTD.
       socket.on('setMOTD', function (MOTD) {
         console.log("Backend wants to add the MOTD : " + JSON.stringify(MOTD));

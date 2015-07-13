@@ -24,8 +24,13 @@
             <span class="glyphicon glyphicon-envelope"></span>
           </button>
         </div>
-        <div title="help" class="col-xs-2">
+        <div title="help" class="col-xs-2" ng-hide="user.gettingHelp">
           <button class="green clickable frame center-content expand" ng-click="helpUser(user.name)" id="queueHelp{{user.name}}Btn">
+            <span class="glyphicon glyphicon-check"></span>
+          </button>
+        </div>
+        <div title="stop helping" class="col-xs-2" ng-show="user.gettingHelp">
+          <button class="yellow clickable frame center-content expand" ng-click="stopHelpUser(user.name)" id="queueStopHelp{{user.name}}Btn">
             <span class="glyphicon glyphicon-check"></span>
           </button>
         </div>

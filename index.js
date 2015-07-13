@@ -267,6 +267,30 @@ io.on('connection', function(socket) {
     console.log(name + ' is getting help in ' + queueName);
   });
 
+  // admin stops helping a user (marked in the queue)
+  socket.on('stopHelp', function(req) {
+    var queueName = req.queueName;
+    var name = req.name;
+    var username = req.helper;
+
+    // teacher/assistant-validation
+    if (!(validate(username, "teacher", queueName) || validate(username, "assistant", queueName))) {
+      console.log("validation for help failed");
+      //res.end();
+      return;
+    }
+
+    var course = queueSystem.findQueue(queueName);
+    course.stopHelpingQueuer(name, queueName);
+
+    io.to(queueName).emit('stopHelp', {
+      name: name,
+      helper: username
+    });
+
+    console.log(name + ' is no longer getting help in ' + queueName);
+  });
+
   // teacher/assistant messages a user
   socket.on('messageUser', function(req) {
     var queue = req.queueName;

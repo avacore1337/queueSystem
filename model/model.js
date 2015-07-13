@@ -312,12 +312,24 @@ queueSchema.methods.setCompletion = function (name, sender, queue) {
   this.save();
 };
 
-// set a comment from a assistant to a user (comment regarding help given by the assistant)
+// set a user as getting help
 queueSchema.methods.helpingQueuer = function (name, queue) {
   this.queue.forEach(function (usr, i, queue) {
     if (usr.name === name) {
       var user = usr;
       user.gettingHelp = true;
+      lodash.extend(queue[i], user);
+    }
+  });
+  this.save();
+};
+
+// set a user as no longer getting help
+queueSchema.methods.stopHelpingQueuer = function (name, queue) {
+  this.queue.forEach(function (usr, i, queue) {
+    if (usr.name === name) {
+      var user = usr;
+      user.gettingHelp = false;
       lodash.extend(queue[i], user);
     }
   });
