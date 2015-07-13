@@ -35,6 +35,7 @@
       $scope.bookedUsers = [];
       $scope.enqueued = false;
       $scope.gettingHelp = false;
+      $scope.type = 'H';
 
       $scope.accessLevel = user.accessLevelFor($scope.queue);
 
@@ -68,7 +69,7 @@
       $scope.$watch(function() {
         return $scope.comment;
       }, function(newValue, oldValue) {
-        if($scope.location && $scope.enqueued && $scope.type){
+        if($scope.location && $scope.enqueued){
           socket.emit('update', {
             queueName: $scope.queue,
             user:{location: $scope.location, comment: $scope.comment, type: $scope.type}
@@ -79,7 +80,7 @@
       $scope.$watch(function() {
         return $scope.location;
       }, function(newValue, oldValue) {
-        if($scope.location && $scope.enqueued && $scope.type){
+        if($scope.location && $scope.enqueued){
           socket.emit('update', {
             queueName: $scope.queue,
             user:{location: $scope.location, comment: $scope.comment, type: $scope.type}
@@ -91,7 +92,7 @@
         return $scope.type;
       }, function(newValue, oldValue) {
         console.log("$scope.type changed value to " + newValue);
-        if($scope.location && $scope.enqueued && $scope.type){
+        if($scope.location && $scope.enqueued){
           socket.emit('update', {
             queueName: $scope.queue,
             user:{location: $scope.location, comment: $scope.comment, type: $scope.type}
@@ -114,7 +115,7 @@
         if(data.name === $scope.name){
           $scope.enqueued = false;
           $scope.comment = '';
-          $scope.type = '';
+          $scope.type = 'H';
           title.title = $scope.queue + " | Stay A while";
         }
         for(var i = $scope.users.length - 1; i >= 0; i--) {
