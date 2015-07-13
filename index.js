@@ -164,9 +164,14 @@ io.on('connection', function(socket) {
   socket.on('listen', function(req) {
     console.log('a user added to ' + req);
     socket.join(req);
-    console.log("Current user = " + JSON.stringify(socket.handshake.session.user.name));
-    if(socket.handshake.session.user.name){ // TODO : Temporary fix
-      socket.join('user_' + socket.handshake.session.user.name);
+    try {
+      console.log("Current user = " + JSON.stringify(socket.handshake.session.user.name));
+      if(socket.handshake.session.user.name){ // TODO : Temporary fix
+        socket.join('user_' + socket.handshake.session.user.name);
+      }
+    }
+    catch(err) {
+      console.log("User is not logged in.");
     }
   });
 
@@ -246,7 +251,7 @@ io.on('connection', function(socket) {
   // admin helps a user (marked in the queue)
   socket.on('help', function(req) {
     var queueName = req.queueName;
-    var name = req.name;
+    var user = req.user;
     var username = req.helper;
 
     // teacher/assistant-validation
@@ -257,14 +262,18 @@ io.on('connection', function(socket) {
     }
 
     var course = queueSystem.findQueue(queueName);
-    course.helpingQueuer(name, queueName);
+    course.helpingQueuer(user.name, queueName);
+
+    if(user.type === 'P' && user.completion){
+      // TODO : Remove their completion
+    }
 
     io.to(queueName).emit('help', {
-      name: name,
+      name: user.name,
       helper: username
     });
 
-    console.log(name + ' is getting help in ' + queueName);
+    console.log(user.name + ' is getting help in ' + queueName);
   });
 
   // admin stops helping a user (marked in the queue)
@@ -289,6 +298,21 @@ io.on('connection', function(socket) {
     });
 
     console.log(name + ' is no longer getting help in ' + queueName);
+  });
+
+  // a user marks themself as getting help
+  socket.on('receivingHelp', function(req) {
+    var queueName = req.queueName;
+    var name = socket.handshake.session.user.name;
+
+    var course = queueSystem.findQueue(queueName);
+    course.helpingQueuer(name, queueName);
+
+    io.to(queueName).emit('help', {
+      name: name
+    });
+
+    console.log(name + ' is getting help in ' + queueName);
   });
 
   // teacher/assistant messages a user
@@ -391,7 +415,9 @@ io.on('connection', function(socket) {
 
     console.log('a user left ' + queueName);
 
-    io.to(queueName).emit('leave', user);
+    io.to(queueName).emit('leave', {
+      user: user
+    });
     io.to("lobby").emit('lobbyleave', {
       queueName: queueName,
       username: user.name
@@ -851,6 +877,13 @@ io.on('connection', function(socket) {
     console.log('completion');
     io.to(queueName).emit('completion', {
       name: username
+    });
+    io.to(queueName).emit('leave', {
+      name: username
+    });
+    io.to("lobby").emit('lobbyleave', {
+      queueName: queueName,
+      username: username
     });
   });
 

@@ -34,6 +34,7 @@
       $scope.users = [];
       $scope.bookedUsers = [];
       $scope.enqueued = false;
+      $scope.gettingHelp = false;
 
       $scope.accessLevel = user.accessLevelFor($scope.queue);
 
@@ -51,6 +52,7 @@
           $scope.users[i].time = $scope.users[i].time/1000;
           if($scope.users[i].name === $scope.name){
             $scope.enqueued = true;
+            $scope.gettingHelp = $scope.users[i].gettingHelp;
             title.title = "["  + (i+1) + "] " + $scope.queue + " | Stay A while";
             $scope.location = $scope.users[i].location;
             $scope.comment = $scope.users[i].comment;
@@ -197,9 +199,14 @@
       // Listen for a person getting help.
       socket.on('help', function (data) {
         for(var i = 0; i < $scope.users.length; i++){
+          if($scope.users[i].name === $scope.name){
+            $scope.gettingHelp = true;
+          }
           if($scope.users[i].name === data.name){
             $scope.users[i].gettingHelp = true;
-            $scope.users[i].helper = data.helper;
+            if(data.helper){
+              $scope.users[i].helper = data.helper;
+            }
             break;
           }
         }
@@ -208,6 +215,9 @@
       // Listen for a person no longer getting help.
       socket.on('stopHelp', function (data) {
         for(var i = 0; i < $scope.users.length; i++){
+          if($scope.users[i].name === $scope.name){
+            $scope.gettingHelp = false;
+          }
           if($scope.users[i].name === data.name){
             $scope.users[i].gettingHelp = false;
             $scope.users[i].helper = data.helper;
@@ -263,6 +273,14 @@
         }
       };
 
+      $scope.receivingHelp = function(){
+        socket.emit('receivingHelp',
+        {
+          queueName: $scope.queue
+        });
+        console.log("Called receivingHelp");
+      };
+
       // Leave the queue
       $scope.leave = function(){
         var wasBooked = false;
@@ -273,7 +291,7 @@
           }
         }
         socket.emit('leave', {
-          queueName:$scope.queue,
+          queueName: $scope.queue,
           booking: wasBooked
         });
         console.log("Called leave");
