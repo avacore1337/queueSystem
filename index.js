@@ -164,7 +164,7 @@ io.on('connection', function(socket) {
   socket.on('listen', function(req) {
     console.log('a user added to ' + req);
     socket.join(req);
-    console.log("Current user = " + JSON.stringify(socket.handshake.session.user.name));
+    console.log("Current user = " + JSON.stringify(socket.handshake.session.user.name)); // TODO : Crasches if trying to enter a room without being loged in
     if(socket.handshake.session.user.name){ // TODO : Temporary fix
       socket.join('user_' + socket.handshake.session.user.name);
     }
@@ -289,6 +289,21 @@ io.on('connection', function(socket) {
     });
 
     console.log(name + ' is no longer getting help in ' + queueName);
+  });
+
+  // a user marks themself as getting help
+  socket.on('receivingHelp', function(req) {
+    var queueName = req.queueName;
+    var name = socket.handshake.session.user.name;
+
+    var course = queueSystem.findQueue(queueName);
+    course.helpingQueuer(name, queueName);
+
+    io.to(queueName).emit('help', {
+      name: name
+    });
+
+    console.log(name + ' is getting help in ' + queueName);
   });
 
   // teacher/assistant messages a user
