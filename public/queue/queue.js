@@ -204,11 +204,11 @@
 
       // Listen for a person getting help.
       socket.on('help', function (data) {
+        if(data.name === $scope.name){
+          $scope.gettingHelp = true;
+        }
         for(var i = 0; i < $scope.users.length; i++){
           if($scope.users[i].name === data.name){
-            if($scope.users[i].name === $scope.name){
-              $scope.gettingHelp = true;
-            }
             $scope.users[i].gettingHelp = true;
             if(data.helper){
               $scope.users[i].helper = data.helper;
@@ -220,11 +220,11 @@
 
       // Listen for a person no longer getting help.
       socket.on('stopHelp', function (data) {
+        if(data.name === $scope.name){
+          $scope.gettingHelp = false;
+        }
         for(var i = 0; i < $scope.users.length; i++){
           if($scope.users[i].name === data.name){
-            if($scope.users[i].name === $scope.name){
-              $scope.gettingHelp = false;
-            }
             $scope.users[i].gettingHelp = false;
             $scope.users[i].helper = data.helper;
             break;
