@@ -411,7 +411,9 @@ io.on('connection', function(socket) {
 
     console.log('a user left ' + queueName);
 
-    io.to(queueName).emit('leave', user);
+    io.to(queueName).emit('leave', {
+      user: user
+    });
     io.to("lobby").emit('lobbyleave', {
       queueName: queueName,
       username: user.name
@@ -871,6 +873,13 @@ io.on('connection', function(socket) {
     console.log('completion');
     io.to(queueName).emit('completion', {
       name: username
+    });
+    io.to(queueName).emit('leave', {
+      name: username
+    });
+    io.to("lobby").emit('lobbyleave', {
+      queueName: queueName,
+      username: username
     });
   });
 

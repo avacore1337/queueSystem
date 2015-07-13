@@ -291,7 +291,7 @@
           }
         }
         socket.emit('leave', {
-          queueName:$scope.queue,
+          queueName: $scope.queue,
           booking: wasBooked
         });
         console.log("Called leave");
