@@ -251,7 +251,7 @@ io.on('connection', function(socket) {
   // admin helps a user (marked in the queue)
   socket.on('help', function(req) {
     var queueName = req.queueName;
-    var name = req.name;
+    var user = req.user;
     var username = req.helper;
 
     // teacher/assistant-validation
@@ -262,14 +262,18 @@ io.on('connection', function(socket) {
     }
 
     var course = queueSystem.findQueue(queueName);
-    course.helpingQueuer(name, queueName);
+    course.helpingQueuer(user.name, queueName);
+
+    if(user.type === 'P' && user.completion){
+      // TODO : Remove their completion
+    }
 
     io.to(queueName).emit('help', {
-      name: name,
+      name: user.name,
       helper: username
     });
 
-    console.log(name + ' is getting help in ' + queueName);
+    console.log(user.name + ' is getting help in ' + queueName);
   });
 
   // admin stops helping a user (marked in the queue)

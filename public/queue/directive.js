@@ -39,11 +39,11 @@ userDirective.directive('standardUsers', function(){
 		};
 
 		// Mark the user as being helped
-		$scope.helpUser = function(name){
+		$scope.helpUser = function(user){
 			socket.emit('help', {
-				queueName:$scope.queue,
-				name:name,
-				helper:$scope.name
+				queueName: $scope.queue,
+				user: user,
+				helper: $scope.name
 			});
 			console.log("Called helpUser");
 		};
