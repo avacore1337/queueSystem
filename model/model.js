@@ -148,7 +148,7 @@ queueSchema.methods.addMOTD = function (message) {
   this.save();
 };
 
-// Updates the MOTD
+// Adds a new completion
 queueSchema.methods.addCompletion = function (completion) {
   this.completions.push(completion);
   this.save();
