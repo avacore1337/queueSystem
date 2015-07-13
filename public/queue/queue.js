@@ -139,6 +139,10 @@
       socket.on('purge', function () {
         $scope.users = [];
         $scope.enqueued = false;
+        $scope.comment = '';
+        $scope.type = 'H';
+        $scope.gettingHelp = false;
+        title.title = $scope.queue + " | Stay A while";
       });
 
       // Listen for a user chageing their information
@@ -201,10 +205,10 @@
       // Listen for a person getting help.
       socket.on('help', function (data) {
         for(var i = 0; i < $scope.users.length; i++){
-          if($scope.users[i].name === $scope.name){
-            $scope.gettingHelp = true;
-          }
           if($scope.users[i].name === data.name){
+            if($scope.users[i].name === $scope.name){
+              $scope.gettingHelp = true;
+            }
             $scope.users[i].gettingHelp = true;
             if(data.helper){
               $scope.users[i].helper = data.helper;
@@ -217,10 +221,10 @@
       // Listen for a person no longer getting help.
       socket.on('stopHelp', function (data) {
         for(var i = 0; i < $scope.users.length; i++){
-          if($scope.users[i].name === $scope.name){
-            $scope.gettingHelp = false;
-          }
           if($scope.users[i].name === data.name){
+            if($scope.users[i].name === $scope.name){
+              $scope.gettingHelp = false;
+            }
             $scope.users[i].gettingHelp = false;
             $scope.users[i].helper = data.helper;
             break;
