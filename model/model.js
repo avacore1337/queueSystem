@@ -221,6 +221,7 @@ queueSchema.methods.updateUser = function (name, user) {
 
 // set a comment from a assistant to a user (comment regarding help given by the assistant)
 queueSchema.methods.addAssistantComment = function (name, sender, queue, message) {
+  this.messages.push({name: name, message: message});
   this.queue.forEach(function (usr, i, queue) {
     if (usr.name === name) {
       var user = usr;
@@ -233,6 +234,9 @@ queueSchema.methods.addAssistantComment = function (name, sender, queue, message
 
 // Remove comments about a user
 queueSchema.methods.removeAssistantComments = function (name, sender, queue) {
+  this.messages = this.messages.filter(function (message) {
+    return message.name !== name;
+  });
   this.queue.forEach(function (usr, i, queue) {
     if (usr.name === name) {
       var user = usr;
