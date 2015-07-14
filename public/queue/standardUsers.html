@@ -11,7 +11,7 @@
   <tbody>
     <tr ng-repeat-start="user in users | filter:notHasBooking track by $index" ng-class="{'pointer' : accessLevel > 0, 'pulse' : user.gettingHelp, 'light-blue-background' : user.name === name, 'orange-background' : user.completion && user.type === 'P'}" ng-click="changeVisibility(user.name)"  id="queue{{user.name}}Btn" ng-show="match(user)">
       <td class="hidden-xs">{{ $index + 1 }}</td>
-      <td ng-show="accessLevel">{{ user.name }} <span class="glyphicon glyphicon-remove text-red clickable" title="remove user" ng-click="kick(user.name)" id="queueRemoveUser{{user.name}}Btn" ng-show="accessLevel && user.optionsActivated"></span></td>
+      <td ng-show="accessLevel">{{ user.name }} <span class="glyphicon glyphicon-remove text-red clickable" title="remove user" ng-click="kick(user)" id="queueRemoveUser{{user.name}}Btn" ng-show="accessLevel && user.optionsActivated"></span></td>
       <td><span class="pull-left">{{ user.location }} <span class="glyphicon glyphicon-question-sign text-blue clickable" title="bad location" ng-click="badLocation(user.name)" id="queueBadLocation{{user.name}}Btn" ng-show="accessLevel && user.optionsActivated"></span></span><span class="pull-right">{{ user.type }}</span></td>
       <td>{{ user.comment }}</td>
       <td><span data-livestamp="{{user.time}}"></span></td>
@@ -19,7 +19,7 @@
     <tr></tr> <!-- Hack-solution -->
     <tr ng-repeat-end class="text-center" ng-show="accessLevel && user.optionsActivated" ng-dblclick="changeVisibilityDbl(user.name)">
       <td colspan="100%;">
-        <div title="send message" class="col-xs-2 col-xs-offset-1">
+        <div title="send message" class="col-xs-2">
           <button class="green clickable frame center-content expand" ng-click="messageUser(user.name)" id="queueSendMessage{{user.name}}Btn">
             <span class="glyphicon glyphicon-envelope"></span>
           </button>

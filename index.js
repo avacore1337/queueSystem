@@ -449,7 +449,7 @@ io.on('connection', function(socket) {
     userLeavesQueue(queue, user.name);
     if(user.type === 'P'){
       if(user.completion){
-        queue.removeCompletion(name);
+        queue.removeCompletion(user.name);
       }
     }
 
