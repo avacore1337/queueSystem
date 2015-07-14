@@ -85,6 +85,17 @@ queueSchema.methods.removeCompletion = function (username) {
   this.save();
 };
 
+// Returns true if the given user is in the queue, otherwise false
+queueSchema.methods.inQueue = function (username) {
+  var ret = false;
+    this.queue.forEach(function (user, i, queue) {
+    if (user.name === username) {
+      ret = true;
+    }
+  });
+  return ret;
+};
+
 // Updates the Info
 queueSchema.methods.setInfo = function (message) {
   this.info = message;

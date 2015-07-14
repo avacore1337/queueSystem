@@ -186,9 +186,14 @@ io.on('connection', function(socket) {
     var user = req.user;
     user.name = socket.handshake.session.user.name;
 
+    var queue = queueSystem.findQueue(queueName);
+
+    if(queue.inQueue(user.name)){
+      return;
+    }
+
     console.log('A user joined to ' + queueName);
 
-    var queue = queueSystem.findQueue(queueName);
     var newUser = new User({
       name: user.name,
       location: user.location,
