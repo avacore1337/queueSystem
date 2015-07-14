@@ -410,24 +410,29 @@ io.on('connection', function(socket) {
   // user leaves queue
   socket.on('leave', function(req) {
     var queueName = req.queueName;
-    var user = {name: socket.handshake.session.user.name};
+    var name = socket.handshake.session.user.name;
     var booking = req.booking;
 
-    console.log(user.name); // check which uses is given --- need the one doing the action and the one who is "actioned"
+    console.log(name); // check which uses is given --- need the one doing the action and the one who is "actioned"
     console.log("Validerande: " + JSON.stringify(socket.handshake.session.user));
 
     var queue = queueSystem.findQueue(queueName);
 
-    userLeavesQueue(queue, user.name, booking);
+    userLeavesQueue(queue, name, booking);
+    if(req.type === 'P'){
+      if(queue.hasCompletion(name)){
+        queue.removeCompletion(name); // TODO : This function does not exist
+      }
+    }
 
     console.log('a user left ' + queueName);
 
     io.to(queueName).emit('leave', {
-      name: user.name
+      name: name
     });
     io.to("lobby").emit('lobbyleave', {
       queueName: queueName,
-      username: user.name
+      username: name
     });
   });
 
@@ -442,6 +447,11 @@ io.on('connection', function(socket) {
     var queue = queueSystem.findQueue(queueName);
 
     userLeavesQueue(queue, user.name);
+    if(user.type === 'P'){
+      if(user.completion){
+        queue.removeCompletion(name);
+      }
+    }
 
     console.log('a user left ' + queueName);
 

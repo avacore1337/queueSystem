@@ -10,10 +10,10 @@ userDirective.directive('standardUsers', function(){
 
 .controller('userController', ['$scope', 'WebSocketService', '$modal', 'ModalService',
 	function($scope, socket, $modal, modals){
-		$scope.kick = function(name){
+		$scope.kick = function(user){
 			socket.emit('kick', {
 				queueName:$scope.queue,
-				user:{name:name}
+				user: user
 			});
 			console.log("Called kick");
 		};
@@ -111,16 +111,14 @@ userDirective.directive('standardUsers', function(){
 				placeholder: "",
 				buttonText: "Submit",
 				callback: function (message) {
-					if(message){
-						console.log("Applying completion now");
-						socket.emit('completion', {
-							queueName: $scope.queue,
-							completion: {
-								name: name,
-								task: message
-							}
-						});
-					}
+					console.log("Applying completion now");
+					socket.emit('completion', {
+						queueName: $scope.queue,
+						completion: {
+							name: name,
+							task: message
+						}
+					});
 				}
 			});
 		};

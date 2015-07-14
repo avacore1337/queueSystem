@@ -71,7 +71,17 @@ queueSchema.methods.getMessagesFor = function (username) {
 // Adds a new completion
 queueSchema.methods.addCompletion = function (completion) {
   this.completions.push({name: completion.name, assistant: completion.assistant});
-  this.messages.push({name: completion.name, message: completion.task});
+  if(completion.task){
+    this.messages.push({name: completion.name, message: completion.task});
+  }
+  this.save();
+};
+
+// Removes the completion for the given user
+queueSchema.methods.removeCompletion = function (username) {
+  this.completions = this.completions.filter(function (completion) {
+    return completion.name !== username;
+  });
   this.save();
 };
 
