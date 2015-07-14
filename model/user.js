@@ -33,6 +33,15 @@ userSchema.methods.toJSON = function () {
   };
 };
 
+// Adds a comment about the user
+userSchema.methods.addMesssage = function (message) {
+  this.messages.push(message);
+};
+
+// Removes all the messages about the user
+userSchema.methods.removeMesssages = function () {
+  this.messages = [];
+};
 
 var User = mongoose.model("User", userSchema);
 module.exports = User;

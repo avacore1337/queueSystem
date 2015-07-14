@@ -7,8 +7,7 @@ var Schema = mongoose.Schema;
 // Schema used for completions
 var completionSchema = new Schema({
   name: String,
-  assistant: String,
-  task: String
+  assistant: String
 });
 
 var Completion = mongoose.model("Completion", completionSchema);

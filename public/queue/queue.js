@@ -112,6 +112,7 @@
 
       // Listen for the person leaving a queue event.
       socket.on('leave', function (data) {
+        console.log("Backend wants the following to leave the queue: " + JSON.stringify(data));
         if(data.name === $scope.name){
           $scope.enqueued = false;
           $scope.comment = '';
@@ -153,17 +154,6 @@
             $scope.users[i].comment = data.comment;
             $scope.users[i].location = data.location;
             $scope.users[i].type = data.type;
-            break;
-          }
-        }
-      });
-
-      // Listen for a user being marked for completion
-      socket.on('completion', function (data) {
-        console.log(data);
-        for(var i = $scope.users.length - 1; i >= 0; i--) {
-          if($scope.users[i].name === data.name) {
-            $scope.users[i].completion = true;
             break;
           }
         }

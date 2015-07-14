@@ -9,7 +9,7 @@ var mongoose = require('mongoose');
 var Schema = mongoose.Schema;
 
 var User = require('./user.js');
-var userSchema = User.schema; 
+var userSchema = User.schema;
 var Booking = require('./booking.js');
 var bookingSchema = Booking.schema;
 var Statistic = require('./statistic.js');
@@ -20,6 +20,8 @@ var GlobalMOTD = require('./globalMOTD.js');
 var globalMOTDSchema = GlobalMOTD.schema;
 var Completion = require('./completion.js');
 var completionSchema = Completion.schema;
+var Message = require('./message.js');
+var messageSchema = Message.schema;
 
 // Schema used for queues
 var queueSchema = new Schema({
@@ -32,7 +34,8 @@ var queueSchema = new Schema({
   bookings: {type:[bookingSchema], default: []},
   teacher: {type:[adminSchema], default: []},
   assistant: {type:[adminSchema], default: []},
-  completions: {type:[completionSchema], default: []}
+  completions: {type:[completionSchema], default: []},
+  messages: {type:[messageSchema], default: []}
 });
 
 // Updates the MOTD
@@ -43,7 +46,8 @@ queueSchema.methods.addMOTD = function (message) {
 
 // Adds a new completion
 queueSchema.methods.addCompletion = function (completion) {
-  this.completions.push(completion);
+  this.completions.push({name: completion.name, assistant: completion.assistant});
+  this.messages.push({name: completion.name, message: completion.task});
   this.save();
 };
 

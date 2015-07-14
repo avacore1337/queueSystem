@@ -104,8 +104,24 @@ userDirective.directive('standardUsers', function(){
 		};
 
 		// Function to mark someone for completion
-		$scope.completion = function(username){
+		$scope.completion = function(name){
 			console.log("Called completion");
-			socket.emit('completion', {username: username, queueName: $scope.queue});
+			modals.submitModal({
+				title: "Enter a task for " + name + " to complete",
+				placeholder: "",
+				buttonText: "Submit",
+				callback: function (message) {
+					if(message){
+						console.log("Applying completion now");
+						socket.emit('completion', {
+							queueName: $scope.queue,
+							completion: {
+								name: name,
+								task: message
+							}
+						});
+					}
+				}
+			});
 		};
 }]);

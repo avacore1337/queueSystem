@@ -264,10 +264,6 @@ io.on('connection', function(socket) {
     var course = queueSystem.findQueue(queueName);
     course.helpingQueuer(user.name, queueName);
 
-    if(user.type === 'P' && user.completion){
-      // TODO : Remove their completion
-    }
-
     io.to(queueName).emit('help', {
       name: user.name,
       helper: username
@@ -860,7 +856,6 @@ io.on('connection', function(socket) {
 
   socket.on('completion', function(req) {
     var queueName = req.queueName;
-    var username = req.username;
     var assistant = socket.handshake.session.user.name;
 
     // teacher/assistant-validation
@@ -870,20 +865,20 @@ io.on('connection', function(socket) {
       return;
     }
 
+    var completion = req.completion;
+    completion.assistant = assistant;
+
     // find the course and save the MOTD to the course in the database
     var course = queueSystem.findQueue(queueName);
-    course.setCompletion(username, assistant, queueName);
+    course.addCompletion(completion);
 
-    console.log('completion');
-    io.to(queueName).emit('completion', {
-      name: username
-    });
+    console.log('completion set for user : ' + completion.name);
     io.to(queueName).emit('leave', {
-      name: username
+      name: completion.name
     });
     io.to("lobby").emit('lobbyleave', {
       queueName: queueName,
-      username: username
+      username: completion.name
     });
   });
 
