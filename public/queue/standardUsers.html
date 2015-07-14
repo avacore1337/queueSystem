@@ -11,16 +11,25 @@
   <tbody>
     <tr ng-repeat-start="user in users | filter:notHasBooking track by $index" ng-class="{'pointer' : accessLevel > 0, 'pulse' : user.gettingHelp, 'light-blue-background' : user.name === name, 'orange-background' : user.completion && user.type === 'P'}" ng-click="changeVisibility(user.name)"  id="queue{{user.name}}Btn" ng-show="match(user)">
       <td class="hidden-xs">{{ $index + 1 }}</td>
-      <td ng-show="accessLevel">{{ user.name }} <span class="glyphicon glyphicon-remove text-red clickable" title="remove user" ng-click="kick(user)" id="queueRemoveUser{{user.name}}Btn" ng-show="accessLevel && user.optionsActivated"></span></td>
-      <td><span class="pull-left">{{ user.location }} <span class="glyphicon glyphicon-question-sign text-blue clickable" title="bad location" ng-click="badLocation(user.name)" id="queueBadLocation{{user.name}}Btn" ng-show="accessLevel && user.optionsActivated"></span></span><span class="pull-right">{{ user.type }}</span></td>
+      <td ng-show="accessLevel">{{ user.name }}</td>
+      <td><span class="pull-left">{{ user.location }}</span><span class="pull-right">{{ user.type }}</span></td>
       <td>{{ user.comment }}</td>
-      <td><span data-livestamp="{{user.time}}"></span></td>
+      <td>
+        <span class="pull-left" data-livestamp="{{user.time}}"></span>
+        <span class="pull-right glyphicon glyphicon-search text-blue clickable" title="read messages" ng-show="accessLevel && user.optionsActivated && user.messages.length" ng-click="readMessages(user.messages)" id="queueReadComment{{user.name}}Btn"></span>
+        <span class="pull-right glyphicon glyphicon-search text-light-gray" title="read messages" ng-show="accessLevel && user.optionsActivated && !user.messages.length" id="queueCanNotReadComment{{user.name}}Btn"></span>
+      </td>
     </tr>
     <tr></tr> <!-- Hack-solution -->
     <tr ng-repeat-end class="text-center" ng-show="accessLevel && user.optionsActivated" ng-dblclick="changeVisibilityDbl(user.name)">
       <td colspan="100%;">
+        <div title="kick user" class="col-xs-2">
+          <button class="red clickable frame center-content expand" ng-click="kick(user)" id="queueRemoveUser{{user.name}}Btn">
+            <span class="glyphicon glyphicon-remove"></span>
+          </button>
+        </div>
         <div title="send message" class="col-xs-2">
-          <button class="green clickable frame center-content expand" ng-click="messageUser(user.name)" id="queueSendMessage{{user.name}}Btn">
+          <button class="blue clickable frame center-content expand" ng-click="messageUser(user.name)" id="queueSendMessage{{user.name}}Btn">
             <span class="glyphicon glyphicon-envelope"></span>
           </button>
         </div>
@@ -34,24 +43,19 @@
             <span class="glyphicon glyphicon-check"></span>
           </button>
         </div>
+        <div title="bad location" class="col-xs-2">
+          <button class="yellow clickable frame center-content expand" ng-click="badLocation(user.name)" id="queueBadLocation{{user.name}}Btn">
+            <span class="glyphicon glyphicon-question-sign"></span>
+          </button>
+        </div>
         <div title="completion" class="col-xs-2">
           <button class="yellow clickable frame center-content expand" ng-click="completion(user.name)" id="queueCompletion{{user.name}}Btn">
             <span class="glyphicon glyphicon-bookmark"></span>
           </button>
         </div>
         <div title="add comment" class="col-xs-2">
-          <button class="green clickable frame center-content expand" ng-click="flag(user.name)" id="queueAddComment{{user.name}}Btn">
+          <button class="yellow clickable frame center-content expand" ng-click="flag(user.name)" id="queueAddComment{{user.name}}Btn">
             <span class="glyphicon glyphicon-tag"></span>
-          </button>
-        </div>
-        <div ng-show="user.messages.length" title="read comment" class="col-xs-2">
-          <button class="green clickable frame center-content expand" ng-click="readMessages(user.messages)" id="queueReadComment{{user.name}}Btn">
-            <span class="glyphicon glyphicon-search"></span>
-          </button>
-        </div>
-        <div ng-hide="user.messages.length" title="read comment" class="col-xs-2">
-          <button class="frame center-content expand" id="queueCanNotReadComment{{user.name}}Btn" disabled>
-            <span class="glyphicon glyphicon-search"></span>
           </button>
         </div>
       </td>
