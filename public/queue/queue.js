@@ -36,6 +36,8 @@
       $scope.enqueued = false;
       $scope.gettingHelp = false;
       $scope.type = 'H';
+      $scope.location = user.getLocation();
+      $scope.fixedLocation = $scope.location !== "";
 
       $scope.accessLevel = user.accessLevelFor($scope.queue);
 
@@ -55,7 +57,9 @@
             $scope.enqueued = true;
             $scope.gettingHelp = $scope.users[i].gettingHelp;
             title.title = "["  + (i+1) + "] " + $scope.queue + " | Stay A while";
-            $scope.location = $scope.users[i].location;
+            if(!$scope.fixedLocation){
+              $scope.location = $scope.users[i].location;
+            }
             $scope.comment = $scope.users[i].comment;
             $scope.type = $scope.users[i].type;
           }
@@ -479,14 +483,6 @@
             break;
           }
         }
-      };
-
-      // This function should direct the user to the wanted page
-      $scope.redirect = function(address){
-        $location.hash("");
-        $location.path('/' + address);
-        $scope.location = $location.path();
-        console.log("location = " + $scope.location);
       };
 
       // Return true if the booking is taking place approximately now

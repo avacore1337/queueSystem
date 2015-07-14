@@ -12,12 +12,15 @@
 
     var username = "";
 
+    var location = "";
+
     function updateUserData() {
       $http.get('/API/userData').success(function(response) {
         username = response.name;
         admin = response.admin;
         teacher = response.teacher;
         assistant = response.assistant;
+        location = response.location;
       });
     }
 
@@ -60,6 +63,10 @@
 
       setAssistant: function(list) {
         assistant = list;
+      },
+
+      getLocation: function() {
+        return location;
       },
 
       accessLevel: function() {
