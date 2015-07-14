@@ -186,13 +186,7 @@ io.on('connection', function(socket) {
     var user = req.user;
     user.name = socket.handshake.session.user.name;
 
-    console.log('a user joined to ' + queueName);
-
-    io.to(queueName).emit('join', user);
-    io.to("lobby").emit('lobbyjoin', {
-      queueName: queueName,
-      username: user.name
-    });
+    console.log('A user joined to ' + queueName);
 
     var queue = queueSystem.findQueue(queueName);
     var newUser = new User({
@@ -202,6 +196,16 @@ io.on('connection', function(socket) {
       type: user.type
     });
 
+    // Set the variable 'completion' to true if they have a completion and want to present
+    if(newUser.type === 'P'){
+      if(queue.hasCompletion(newUser.name)){
+        newUser.completion = true;
+      }
+    }
+
+    // Append the messages added about this user
+    newUser.messages = queue.getMessagesFor(newUser.name);
+
     queue.addUser(newUser);
 
     var newStatistic = new Statistic({
@@ -209,6 +213,13 @@ io.on('connection', function(socket) {
       queue: queueName,
       startTime: newUser.startTime,
       action: ''
+    });
+
+    console.log("User : " + JSON.stringify(newUser) + " wants to join the queue.");
+    io.to(queueName).emit('join', newUser);
+    io.to("lobby").emit('lobbyjoin', {
+      queueName: queueName,
+      username: newUser.name
     });
 
     statisticsList.push(newStatistic);
@@ -751,12 +762,12 @@ io.on('connection', function(socket) {
       return;
     }
 
-    var username = req.username;
-    queueSystem.removeAdmin(username);
+    var admin = req.username;
+    queueSystem.removeAdmin(admin);
 
-    console.log(username + ' is a removed from admin!');
+    console.log(admin + ' is a removed from admin!');
 
-    io.to('admin').emit('removeAdmin', username);
+    io.to('admin').emit('removeAdmin', admin);
   });
 
   //
@@ -771,15 +782,15 @@ io.on('connection', function(socket) {
       return;
     }
 
-    var username = req.username;
+    var teacher = req.username;
     var queue = queueSystem.findQueue(queueName);
 
-    queue.removeTeacher(username);
+    queue.removeTeacher(teacher);
 
-    console.log(username + ' is a removed as a teacher in ' + queueName + '!');
+    console.log(teacher + ' is a removed as a teacher in ' + queueName + '!');
 
     io.to('admin').emit('removeTeacher', {
-      username: username,
+      username: teacher,
       queueName: queueName
     });
   });
@@ -868,9 +879,12 @@ io.on('connection', function(socket) {
     var completion = req.completion;
     completion.assistant = assistant;
 
-    // find the course and save the MOTD to the course in the database
-    var course = queueSystem.findQueue(queueName);
-    course.addCompletion(completion);
+    console.log("Added the following completion: " + JSON.stringify(completion));
+
+    var queue = queueSystem.findQueue(queueName);
+    queue.addCompletion(completion);
+
+    userLeavesQueue(queue, completion.name, false); // TODO : should take a variable 'booking' instead of hardcoding 'false'
 
     console.log('completion set for user : ' + completion.name);
     io.to(queueName).emit('leave', {

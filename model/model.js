@@ -44,6 +44,30 @@ queueSchema.methods.addMOTD = function (message) {
   this.save();
 };
 
+// Returns true if the given user has a completion, otherwise false
+queueSchema.methods.hasCompletion = function (username) {
+  var ret = false;
+  this.completions.forEach(function (completion, i, completions) {
+    console.log("Current completion : " + JSON.stringify(completion));
+    if (completion.name === username) {
+      ret = true;
+    }
+  });
+  return ret;
+};
+
+// Returns true if the given user has a completion, otherwise false
+queueSchema.methods.getMessagesFor = function (username) {
+  var retList = [];
+  this.messages.forEach(function (message, i, messages) {
+    if (message.name === username) {
+      console.log("Found a message for user '" + username + "', it is : " + JSON.stringify(message));
+      retList.push(message.message);
+    }
+  });
+  return retList;
+};
+
 // Adds a new completion
 queueSchema.methods.addCompletion = function (completion) {
   this.completions.push({name: completion.name, assistant: completion.assistant});
@@ -203,18 +227,6 @@ queueSchema.methods.removeAssistantComments = function (name, sender, queue) {
     if (usr.name === name) {
       var user = usr;
       user.messages = [];
-      lodash.extend(queue[i], user);
-    }
-  });
-  this.save();
-};
-
-// set the completion tag of a user to true
-queueSchema.methods.setCompletion = function (name, sender, queue) {
-  this.queue.forEach(function (usr, i, queue) {
-    if (usr.name === name) {
-      var user = usr;
-      user.completion = true;
       lodash.extend(queue[i], user);
     }
   });

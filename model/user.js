@@ -15,7 +15,7 @@ var userSchema = new Schema({
   action: { type: String, default: '' },
   comment: { type: String, default: '' },
   type: String,
-  completion: Boolean
+  completion: { type: Boolean, default: false }
 });
 
 // creates a JSON-object from the schema

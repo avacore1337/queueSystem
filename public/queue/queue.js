@@ -107,7 +107,8 @@
           $scope.enqueued = true;
           title.title = "["  + ($scope.users.length+1) + "] " + $scope.queue + " | Stay A while";
         }
-        $scope.users.push({name: data.name, location: data.location, comment: data.comment, type: $scope.type, time: data.time/1000});
+        data.time = data.time/1000;
+        $scope.users.push(data);
       });
 
       // Listen for the person leaving a queue event.
