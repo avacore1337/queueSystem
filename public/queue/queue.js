@@ -485,6 +485,12 @@
         }
       };
 
+      // This function should direct the user to the wanted page
+      $scope.redirect = function(address){
+        $location.hash("");
+        $location.path('/' + address);
+      };
+
       // Return true if the booking is taking place approximately now
       $scope.soon = function(booking){
         return booking.time - Date.now() < TIME_BOOKING;
