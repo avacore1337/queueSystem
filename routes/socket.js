@@ -13,87 +13,25 @@ var Queue = database.queue;
 var Statistic = database.statistic;
 var GlobalMOTD = database.globalMOTD;
 
-function doOnQueue(queueName, action) {
-  var queue = queueSystem.findQueue(queueName);
-  queue[action]();
-
-  console.log('trying to ' + action + ' ' + queueName);
-
-  io.to(queueName).emit(action);
-  io.to("lobby").emit("lobby" + action, queueName);
-
-  if (action === 'hide') {
-    io.to("admin").emit('hide', queueName);
-  } else if (action === 'show') {
-    io.to("admin").emit('show', queueName);
-  }
-}
-
-
-// the average time in 'queue' of students who joined the queue 
-//  from 'start' and left before/was still in queue at 'end'
-
-/*TODO-DIRR*/
-function getAverageQueueTime(queueName, start, end) {
-  var userStatisticList = [];
-
-  userStatisticList = getUsersWhoStartedTheQueueBetween(queueName, start, end);
-
-  console.log(userStatisticList);
-
-  var counter = 0;
-  var totalTime = 0;
-  var now = Date.now();
-
-  console.log("checking between " + new Date(start) + " and " + new Date(end));
-  return 0;
-}
-
-// Needs to be callbacked to work, else it's doing the right thing
-function getUsersWhoStartedTheQueueBetween(queueName, start, end) {
-    var userStatisticList = [];
-    var counter = 0;
-
-    Statistic.find({startTime: {$gte: start, $lte: end}, queue: queueName, leftQueue: true}, function(err, statistics) {
-      statistics.forEach(function(statistic) {
-        userStatisticList.push(statistic);
-        console.log(new Date(statistic.startTime));
-        console.log(end-statistic.startTime);
-      });
-
-      return userStatisticList;
-    });
-}
-
-// number of people who joined the queue from 'start' and left before 'end'
-function numbersOfPeopleLeftQueue(queueName, start, end) {
-  var userStatisticList = getUsersWhoEnteredAndLeftQueueBetween(queueName, start, end);
-  var counter = userStatisticList.length;
-
-  console.log("Number of people left: " + counter);
-
-  return counter;
-}
-
-// Needs to be callbacked to work, else it's doing the right thing
-function getUsersWhoEnteredAndLeftQueueBetween(queueName, start, end) {
-    var userStatisticList = [];
-    var counter = 0;
-    Statistic.find({startTime: {$gte: start, $lte: end}, queue: queueName, leftQueue: true}, function(err, statistics) {
-      statistics.forEach(function(statistic) {
-        if (statistic.startTime + statistic.queueLength < end) {
-          userStatisticList.push(statistic);
-          console.log(new Date(statistic.startTime));
-          console.log(counter++);
-        }
-      });
-    });
-
-    return userStatisticList;
-}
-
 
 module.exports = function (socket, io) {
+  
+  function doOnQueue(queueName, action) {
+    var queue = queueSystem.findQueue(queueName);
+    queue[action]();
+
+    console.log('trying to ' + action + ' ' + queueName);
+
+    io.to(queueName).emit(action);
+    io.to("lobby").emit("lobby" + action, queueName);
+
+    if (action === 'hide') {
+      io.to("admin").emit('hide', queueName);
+    } else if (action === 'show') {
+      io.to("admin").emit('show', queueName);
+    }
+  }
+  
   console.log("connected");
   // Setup the ready route, join room and emit to room.
   socket.on('listen', function(req) {
@@ -148,12 +86,13 @@ module.exports = function (socket, io) {
 
     queue.addUser(newUser);
 
-    var newStatistic = new Statistic({
-      name: newUser.name,
-      queue: queueName,
-      startTime: newUser.startTime,
-      action: ''
-    });
+    // var newStatistic = new Statistic({
+    //   name: newUser.name,
+    //   queue: queueName,
+    //   startTime: newUser.startTime,
+    //   action: ''
+    // });
+    // newStatistic.save();
 
     console.log("User : " + JSON.stringify(newUser) + " wants to join the queue.");
     io.to(queueName).emit('join', newUser);
@@ -162,8 +101,6 @@ module.exports = function (socket, io) {
       username: newUser.name
     });
 
-    statisticsList.push(newStatistic);
-    newStatistic.save();
   });
 
   // user tries to join a queue with a "bad location"
@@ -519,29 +456,9 @@ module.exports = function (socket, io) {
   //===============================================================
 
   socket.on('getStatistics', function(req) {
-    var queueName = req.queueName;
-    var start = req.start;
-    var end = req.end;
     console.log("start: " + start);
     console.log("end: " + end);
-    
-    var name = req.user;
-    console.log("user = " + name);
-    
-    // Statistic.find({queue:queueName},function (err, stats) {
-    Statistic.find({queue:queueName, startTime: {"$gte": start, "$lt": end}},function (err, stats) {
-      if (err) return console.error(err);
-      // console.log(stats);
-      // Creating an object to return
-      var retObject = {};
-      retObject.averageQueueTime = getAverageQueueTime(queueName, start, end);
-      retObject.numbersOfPeopleLeftQueue = numbersOfPeopleLeftQueue(queueName, start, end);
-      retObject.rawJSON = JSON.stringify(stats);
-
-      // console.log("Reurning the following statistics to " + name + ": " + JSON.stringify(retObject));
-      // Return all the found data
-      socket.emit('getStatistics', retObject);
-    });
+    console.log("statistics not yet implemented ");
   });
 
   //===============================================================
