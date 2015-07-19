@@ -284,11 +284,4 @@ queueSchema.methods.stopHelpingQueuer = function (name, queue) {
 
 var Queue = mongoose.model("Queue", queueSchema);
 
-module.exports = {
-  user: User,
-  admin: Admin,
-  queue: Queue,
-  statistic: Statistic,
-  globalMOTD: GlobalMOTD,
-  completion: Completion
-};
+module.exports = Queue

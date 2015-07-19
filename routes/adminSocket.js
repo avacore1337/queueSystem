@@ -1,18 +1,12 @@
 /* jslint node: true */
 "use strict";
 
-
 var queueSystem = require('../model/queueSystem.js');
 var validate = queueSystem.validate;
 
-
-var database = require("../model/model.js"); // databas stuff
-var Admin = database.admin;
-
-
+var Admin = require("../model/admin.js"); // databas stuff
 
 module.exports = function (socket, io) {
-
 
   socket.on('addServerMessage', function(req) {
     var message = req.message;

@@ -8,10 +8,9 @@
 
 var schedule = require('node-schedule');
 var request = require('request');
-var database = require("./model.js"); // databas stuff
 var http = require('http');
 
-var Queue = database.queue;
+var Queue = require("./model.js"); // databas stuff
 var User = require("./user.js");
 var Admin = require("./admin.js");
 var Statistic = require("./statistic.js");

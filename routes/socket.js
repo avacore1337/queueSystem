@@ -4,7 +4,6 @@
 var queueSystem = require('../model/queueSystem.js');
 var validate = queueSystem.validate;
 
-var database = require("../model/model.js"); // databas stuff
 var User = require("../model/user.js");
 var Statistic = require("../model/statistic.js");
 
