@@ -73,6 +73,19 @@ exports.forQueue = function (fn) {
 };
 
 /**
+ * Wrapper for the array For each for the queueList array.
+ * @param {function} fn - The function to be called for every element in the list.
+ */
+exports.userLeavesQueue = function (queue, userName, booking) {
+    queue.removeUser(userName);
+    if (booking) {
+      queue.removeBooking(userName);
+    }
+  }
+
+
+
+/**
  * Adds a superadmin to the system.
  * @param {String} name - The name of the user.
  * @param {String} username - The username of the user.

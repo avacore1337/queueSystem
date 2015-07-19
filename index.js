@@ -39,12 +39,15 @@ db.once('open', function callback() {
 var router = require('./routes/httpRoutes.js');
 app.use('/API',router);
 var socketRoutes = require('./routes/socket.js');
-var adminSocketRoutes = require('./routes/adminSocket.js');
+var adminRoutes = require('./routes/admin.js');
+var assistantsRoutes = require('./routes/assistant.js');
 
 io.on('connection', function(socket) {
   socketRoutes(socket,io);
-  adminSocketRoutes(socket,io);
+  adminRoutes(socket,io);
+  assistantsRoutes(socket,io);
 });
+
 var utils = require('./utils.js');
 // var scheduleForEveryNight = utils.scheduleForEveryNight;
 
