@@ -8,7 +8,6 @@ var validate = queueSystem.validate;
 
 var database = require("../model/model.js"); // databas stuff
 var Admin = database.admin;
-var GlobalMOTD = database.globalMOTD;
 
 
 
@@ -16,7 +15,7 @@ module.exports = function (socket, io) {
 
 
   socket.on('addServerMessage', function(req) {
-    var globalMOTD = req.message;
+    var message = req.message;
     var sender = req.sender;
     console.log("sender = " + sender);
 
@@ -27,19 +26,11 @@ module.exports = function (socket, io) {
       return;
     }
 
-    // * save globalMOTD to database
-    GlobalMOTD.find(function(err, globals) {
-      globals.forEach(function(global) {
-        // to make sure everything loads
-        global.addGlobalMOTD(globalMOTD);
-      });
-    });
+    queueSystem.setGlobalMOTD(message);
 
-    queueSystem.setGlobalMOTD(globalMOTD);
+    console.log('\'' + message + '\' added as a new global MOTD!');
 
-    console.log('\'' + globalMOTD + '\' added as a new global MOTD!');
-
-    io.to('admin').emit('newServerMessage', globalMOTD);
+    io.to('admin').emit('newServerMessage', message);
   });
 
 

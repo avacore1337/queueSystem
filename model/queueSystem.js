@@ -20,8 +20,7 @@ var GlobalMOTD = database.globalMOTD;
 
 var queueList = [];
 var adminList = [];
-var globalMOTD = "FEL!";
-var actualMOTD;
+var globalMOTD;
 exports.statisticsList = [];
 
 /**
@@ -227,13 +226,12 @@ function fetchBookings (queueName, callback) {
 }
 
 exports.setGlobalMOTD = function (message) {
-  globalMOTD = message;
-  actualMOTD.message = message;
-  actualMOTD.save();
+  globalMOTD.message = message;
+  globalMOTD.save();
 };
 
 exports.getGlobalMOTD = function () {
-  return globalMOTD;
+  return globalMOTD.message;
 };
 
 /**
@@ -252,11 +250,11 @@ function setup() {
     "mdi"
   ];
 
-  actualMOTD = new GlobalMOTD({
+  globalMOTD = new GlobalMOTD({
     message: "Hello World!"
   });
 
-  actualMOTD.save();
+  globalMOTD.save();
 
   var newAdmin = new Admin({
     name: "pernyb",
@@ -353,8 +351,7 @@ function readIn() {
     globals.forEach(function(global) {
       // to make sure everything loads
       console.log('Globals: ' + global + '!');
-      globalMOTD = global.message;
-      actualMOTD = global;
+      globalMOTD = global;
     });
   });
 }
