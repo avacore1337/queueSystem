@@ -11,11 +11,11 @@ var request = require('request');
 var database = require("./model.js"); // databas stuff
 var http = require('http');
 
-var User = database.user;
-var Admin = database.admin;
 var Queue = database.queue;
-var Statistic = database.statistic;
-var GlobalMOTD = database.globalMOTD;
+var User = require("./user.js");
+var Admin = require("./admin.js");
+var Statistic = require("./statistic.js");
+var GlobalMOTD = require("./globalMOTD.js");
 
 
 var queueList = [];

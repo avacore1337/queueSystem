@@ -1,17 +1,12 @@
 /* jslint node: true */
 "use strict";
 
-
 var queueSystem = require('../model/queueSystem.js');
-var statisticsList = queueSystem.statisticsList;
 var validate = queueSystem.validate;
 
-
 var database = require("../model/model.js"); // databas stuff
-var User = database.user;
-var Queue = database.queue;
-var Statistic = database.statistic;
-var GlobalMOTD = database.globalMOTD;
+var User = require("../model/user.js");
+var Statistic = require("../model/statistic.js");
 
 
 module.exports = function (socket, io) {
@@ -31,7 +26,7 @@ module.exports = function (socket, io) {
       io.to("admin").emit('show', queueName);
     }
   }
-  
+
   console.log("connected");
   // Setup the ready route, join room and emit to room.
   socket.on('listen', function(req) {
@@ -344,16 +339,6 @@ module.exports = function (socket, io) {
     queue.removeUser(userName);
     if (booking) {
       queue.removeBooking(userName);
-    }
-
-    for (var i = statisticsList.length - 1; i >= 0; i--) {
-      var statistic = statisticsList[i];
-      if (statistic.name === userName && !statistic.leftQueue) {
-        var queueLength = Date.now() - statistic.startTime;
-        statistic.userLeaves(queueLength);
-
-        statisticsList.splice(i, 1, statistic);
-      }
     }
   }
 
