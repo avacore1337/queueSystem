@@ -596,7 +596,8 @@
         result = location.match(pattern)[0];
       }catch(err) {
         result = null;
-      } 
+      }
+      console.log("result = " + result);
       switch(result) {
         case "blue":
           return "blue";

@@ -103,34 +103,45 @@ function assistantForQueues(username) {
 router.post('/setUser', function(req, res) {
   req.session.user = req.body;
 
-  //var ip = "130.237.223.13";
-  var ip = "130.237.227.30";
-  console.log("IP = " + ip);
-  dns.reverse(ip, function(err, hostnames){
+  //var ip = "130.237.227.30";
+  //console.log("IP = " + ip);
+
+  var newAddress = req.connection.remoteAddress;
+  if(req.connection.remoteAddress.indexOf("::ffff:") > -1){
+    newAddress = req.connection.remoteAddress.substring(7);
+  }
+
+  console.log("ip = '" + newAddress + "'");
+
+  dns.reverse(newAddress, function(err, hostnames){
+    console.log(err);
+
     var hostname = hostnames[0];
     var location = "";
+    req.session.user.location = "";
     if(!err){
       console.log("Hostname = " + hostname);
-      var pattern = /(.kth.se)/g;
-      var result = hostname.match(pattern);
-      if(result){
-        location = hostname.split(".")[0].replace("-", " ").toLowerCase();
-        console.log("Location = " + location);
-        
-        // Test if they are at a recognized school computer
-        // Recognized computers are:
-        // E-house floor 4 : Blue, Red, Orange, Yellow, Green, Brown
-        // E-house floor 5 : Grey, Karmosin, White, Magenta, Violett, Turkos
-        // D-house floor 5 : Spel, Sport, Musik, Konst, Mat
-        pattern = /(blue|red|orange|yellow|green|brown|grey|karmosin|white|magenta|violett|turkos|spel|sport|musik|konst|mat)/g;
-        result = location.match(pattern);
-        console.log("Result = " + result);
+      if(hostname){
+        var pattern = /(.kth.se)/g;
+        var result = hostname.match(pattern);
         if(result){
-          if(result == "mat"){ // Do not add a third equal sign. (Result does not appear to be a string)
-            location = location.replace("mat", "mat ");
+          location = hostname.split(".")[0].replace("-", " ").toLowerCase();
+          console.log("Location = " + location);
+          
+          // Test if they are at a recognized school computer
+          // Recognized computers are:
+          // E-house floor 4 : Blue, Red, Orange, Yellow, Green, Brown
+          // E-house floor 5 : Grey, Karmosin, White, Magenta, Violett, Turkos
+          // D-house floor 5 : Spel, Sport, Musik, Konst, Mat
+          pattern = /(blue|red|orange|yellow|green|brown|grey|karmosin|white|magenta|violett|turkos|spel|sport|musik|konst|mat)/g;
+          result = location.match(pattern);
+          console.log("Result = " + result);
+          if(result){
+            if(result == "mat"){ // Do not add a third equal sign. (Result does not appear to be a string)
+              location = location.replace("mat", "mat ");
+            }
+            req.session.user.location = location;
           }
-          //req.session.user.location = location;
-          req.session.user.location = "";
         }
       }
     }
