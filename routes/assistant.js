@@ -189,6 +189,7 @@ module.exports = function (socket, io) {
     console.log("Validerande: " + JSON.stringify(socket.handshake.session.user));
 
     var queue = queueSystem.findQueue(queueName);
+    queueSystem.addAction(req.user.name, "kicked", queueName);
 
     queueSystem.userLeavesQueue(queue, user.name);
     if(user.type === 'P'){
@@ -226,6 +227,7 @@ module.exports = function (socket, io) {
     }
 
     var queue = queueSystem.findQueue(queueName);
+    queueSystem.addAction(username, "purged", queueName);
 
     for (var i = queue.queue.length - 1; i >= 0; i--) { // TODO : While length > 0
       queueSystem.userLeavesQueue(queue, queue.queue[i].name);
@@ -286,6 +288,7 @@ module.exports = function (socket, io) {
     }
 
     doOnQueue(queueName, 'lock');
+    queueSystem.addAction(username, "locked", queueName);
   });
 
   // admin unlocks a queue
@@ -301,6 +304,7 @@ module.exports = function (socket, io) {
     }
 
     doOnQueue(queueName, 'unlock');
+    queueSystem.addAction(username, "unlocked", queueName);
   });
 
 
@@ -368,6 +372,7 @@ module.exports = function (socket, io) {
 
     var queue = queueSystem.findQueue(queueName);
     queue.addCompletion(completion);
+    queueSystem.addAction(req.name, "completion", queueName);
 
     queueSystem.userLeavesQueue(queue, completion.name, false); // TODO : should take a variable 'booking' instead of hardcoding 'false'
 

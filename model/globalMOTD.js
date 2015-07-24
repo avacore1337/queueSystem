@@ -6,7 +6,7 @@ var Schema = mongoose.Schema;
 
 // Schema used for global MOTD
 var globalMOTDSchema = new Schema({
-  message: { type: String, default: '' },
+  message: { type: String, default: '' }
 });
 
 // Updates the MOTD
