@@ -14,6 +14,8 @@
 
     var location = "";
 
+    var loggedIn = false;
+
     function updateUserData() {
       $http.get('/API/userData').success(function(response) {
         username = response.name;
@@ -21,6 +23,10 @@
         teacher = response.teacher;
         assistant = response.assistant;
         location = response.location;
+        loggedIn = false;
+        if(username){
+          loggedIn = true;
+        }
       });
     }
 
@@ -98,6 +104,10 @@
           ret = 2;
         }
         return ret;
+      },
+
+      isLoggedIn: function() {
+        return loggedIn;
       },
 
       clearName: function() {

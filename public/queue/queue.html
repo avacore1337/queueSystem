@@ -36,7 +36,7 @@
     <!-- Buttons and inputs -->
     <div class="col-md-3 col-md-pull-9">
       <!-- Logged in -->
-      <div ng-show="name">
+      <div ng-show="loggedIn">
         <h5>Location</h5>
         <div style="background-color: #F04124; padding-bottom: 2%; margin-bottom: 7%;" ng-hide="fixedLocation">
           <input type="text" ng-model="location" ng-model-options="{debounce: 1000}" placeholder="Red 01" onfocus="this.placeholder = ''" onblur="this.placeholder = 'Red 01'" class="col-xs-12" style="height: 3em; margin-bottom: 2%;" id="queueLocationInputField">
@@ -141,7 +141,7 @@
         </div>
       </div>
       <!-- Not logged in -->
-      <div ng-hide="name">
+      <div ng-hide="loggedIn">
         <h3>In order to queue you must be logged in</h3>
         <button class="blue clickable center-content expand text-white" style="border: 0;" ng-click="redirect('login')" id="queueNotLoggedInLogInBtn">
           Log in

@@ -19,6 +19,8 @@
     function ($scope, http, $routeParams, $location, $modal, socket, user, title, modals) {
       var TIME_BOOKING = 1800000; // 30min in milliseconds
 
+      $scope.loggedIn = user.isLoggedIn();
+
       $scope.queue = $routeParams.queue;
       $scope.info = "";
 
@@ -594,7 +596,7 @@
         result = location.match(pattern)[0];
       }catch(err) {
         result = null;
-      }
+      } 
       switch(result) {
         case "blue":
           return "blue";
