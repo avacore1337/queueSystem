@@ -8,20 +8,18 @@
 
 var schedule = require('node-schedule');
 var request = require('request');
-var database = require("./model.js"); // databas stuff
 var http = require('http');
 
-var User = database.user;
-var Admin = database.admin;
-var Queue = database.queue;
-var Statistic = database.statistic;
-var GlobalMOTD = database.globalMOTD;
+var Queue = require("./model.js"); // databas stuff
+var User = require("./user.js");
+var Admin = require("./admin.js");
+var Statistic = require("./statistic.js");
+var GlobalMOTD = require("./globalMOTD.js");
 
 
 var queueList = [];
 var adminList = [];
-var globalMOTD = "FEL!";
-var actualMOTD;
+var globalMOTD;
 exports.statisticsList = [];
 
 /**
@@ -73,6 +71,19 @@ exports.findQueue = function(name) {
 exports.forQueue = function (fn) {
   queueList.forEach(fn);
 };
+
+/**
+ * Wrapper for the array For each for the queueList array.
+ * @param {function} fn - The function to be called for every element in the list.
+ */
+exports.userLeavesQueue = function (queue, userName, booking) {
+    queue.removeUser(userName);
+    if (booking) {
+      queue.removeBooking(userName);
+    }
+  }
+
+
 
 /**
  * Adds a superadmin to the system.
@@ -227,13 +238,12 @@ function fetchBookings (queueName, callback) {
 }
 
 exports.setGlobalMOTD = function (message) {
-  globalMOTD = message;
-  actualMOTD.message = message;
-  actualMOTD.save();
+  globalMOTD.message = message;
+  globalMOTD.save();
 };
 
 exports.getGlobalMOTD = function () {
-  return globalMOTD;
+  return globalMOTD.message;
 };
 
 /**
@@ -252,11 +262,11 @@ function setup() {
     "mdi"
   ];
 
-  actualMOTD = new GlobalMOTD({
+  globalMOTD = new GlobalMOTD({
     message: "Hello World!"
   });
 
-  actualMOTD.save();
+  globalMOTD.save();
 
   var newAdmin = new Admin({
     name: "pernyb",
@@ -353,8 +363,7 @@ function readIn() {
     globals.forEach(function(global) {
       // to make sure everything loads
       console.log('Globals: ' + global + '!');
-      globalMOTD = global.message;
-      actualMOTD = global;
+      globalMOTD = global;
     });
   });
 }

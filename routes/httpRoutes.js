@@ -3,7 +3,6 @@ var dns = require('dns');
 var router = express.Router();
 var queueSystem = require('../model/queueSystem.js');
 
-var statisticsList = queueSystem.statisticsList;
 var validate = queueSystem.validate;
 // returnerar alla kurser som finns (lista av strängar)
 router.get('/queueList', function(req, res) {
