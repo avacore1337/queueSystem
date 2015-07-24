@@ -51,6 +51,7 @@
         console.log($scope.bookedUsers);
         $scope.locked = response.locked;
         for (var i = 0; i < $scope.users.length; i++) {
+          $scope.users[i].color = $scope.colorLocation($scope.users[i].location);
           $scope.users[i].optionsActivated = false;
           $scope.users[i].time = $scope.users[i].time/1000;
           if($scope.users[i].name === $scope.name){
@@ -92,18 +93,6 @@
         }
       });
 
-      $scope.$watch(function() {
-        return $scope.type;
-      }, function(newValue, oldValue) {
-        console.log("$scope.type changed value to " + newValue);
-        if($scope.location && $scope.enqueued){
-          socket.emit('update', {
-            queueName: $scope.queue,
-            user:{location: $scope.location, comment: $scope.comment, type: $scope.type}
-          });
-        }
-      });
-
       // Listen for the person joining a queue event.
       socket.on('join', function (data) {
         console.log("joining");
@@ -112,6 +101,7 @@
           title.title = "["  + ($scope.users.length+1) + "] " + $scope.queue + " | Stay A while";
         }
         data.time = data.time/1000;
+        data.color = $scope.colorLocation(data.location);
         $scope.users.push(data);
       });
 
@@ -159,6 +149,7 @@
             $scope.users[i].comment = data.comment;
             $scope.users[i].location = data.location;
             $scope.users[i].type = data.type;
+            $scope.users[i].color = $scope.colorLocation($scope.users[i].location);
             break;
           }
         }
@@ -592,6 +583,85 @@
         var regEx = new RegExp($scope.search.toLowerCase());
         return (regEx.test(user.name.toLowerCase()) || regEx.test(user.location.toLowerCase()) ||  regEx.test(user.comment.toLowerCase()) ||  regEx.test(user.time.toLowerCase()));
       };
+
+      // Gives the color for the square besides a users location
+    $scope.colorLocation = function (location) {
+      location = location.toLowerCase();
+      pattern = /(blue|blå|red|röd|orange|yellow|gul|green|grön|brown|brun|grey|gray|grå|karmosin|white|vit|magenta|violett|turkos|turquoise|game|play|spel|sport|music|musik|art|konst|food|mat)/g;
+      
+      var result = "";
+      try {
+        result = location.match(pattern)[0];
+      }catch(err) {
+        result = null;
+      }
+      switch(result) {
+        case "blue":
+          return "blue";
+        case "blå":
+          return "blue";
+        case "red":
+          return "red";
+        case "röd":
+          return "red";
+        case "orange":
+          return "#FF7F00";
+        case "yellow":
+          return "yellow";
+        case "gul":
+          return "yellow";
+        case "green":
+          return "green";
+        case "grön":
+          return "green";
+        case "brown":
+          return "brown";
+        case "brun":
+          return "brown";
+        case "grey":
+          return "grey";
+        case "gray":
+          return "grey";
+        case "grå":
+          return "grey";
+        case "karmosin":
+          return "#D91536";
+        case "white":
+          return "white";
+        case "vit":
+          return "white";
+        case "magenta":
+          return "magenta";
+        case "violett":
+          return "#AC00E6";
+        case "turquoise":
+          return "turquoise";
+        case "turkos":
+          return "turquoise";
+        case "game":
+          return "#E6ADAD";
+        case "play":
+          return "#E6ADAD";
+        case "spel":
+          return "#E6ADAD";
+        case "sport":
+          return "#ADADE6";
+        case "music":
+          return "#ADE7AD";
+        case "musik":
+          return "#ADE7AD";
+        case "art":
+          return "#E8E7AF";
+        case "konst":
+          return "#E8E7AF";
+        case "food":
+          return "#E8C9AF";
+        case "mat":
+          return "#E8C9AF";
+        default:
+          return "transparent";
+      }
+    };
   }])
 .directive('bookedUsers', function(){
   return {

@@ -11,7 +11,12 @@
   <tbody>
     <tr ng-repeat-start="user in users | filter:notHasBooking track by $index" ng-class="{'pointer' : accessLevel > 0, 'pulse' : user.gettingHelp, 'light-blue-background' : user.name === name, 'orange-background' : user.completion && user.type === 'P'}" ng-click="changeVisibility(user.name)"  id="queue{{user.name}}Btn" ng-show="match(user)">
       <td class="hidden-xs">{{ $index + 1 }}</td>
-      <td ng-show="accessLevel">{{ user.name }}</td>
+      <td ng-show="accessLevel">
+        <span class="pull-left">{{ user.name }}</span>
+        <span class="pull-right hidden-xs">
+          <i class="fi-stop" style="font-size: 1em; color: {{user.color}};"></i>
+        </span>
+      </td>
       <td><span class="pull-left">{{ user.location }}</span><span class="pull-right">{{ user.type }}</span></td>
       <td>{{ user.comment }}</td>
       <td>

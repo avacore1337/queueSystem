@@ -130,7 +130,8 @@ router.post('/setUser', function(req, res) {
           if(result == "mat"){ // Do not add a third equal sign. (Result does not appear to be a string)
             location = location.replace("mat", "mat ");
           }
-          req.session.user.location = location;
+          //req.session.user.location = location;
+          req.session.user.location = "";
         }
       }
     }
