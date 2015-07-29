@@ -8,16 +8,14 @@ var lodash = require('lodash');
 var mongoose = require('mongoose');
 var Schema = mongoose.Schema;
 
+var Statistic = require('./statistic.js');
+
 var User = require('./user.js');
 var userSchema = User.schema;
 var Booking = require('./booking.js');
 var bookingSchema = Booking.schema;
-var Statistic = require('./statistic.js');
-var statisticSchema = Statistic.schema;
 var Admin = require('./admin.js');
 var adminSchema = Admin.schema;
-var GlobalMOTD = require('./globalMOTD.js');
-var globalMOTDSchema = GlobalMOTD.schema;
 var Completion = require('./completion.js');
 var completionSchema = Completion.schema;
 var Message = require('./message.js');
@@ -119,6 +117,14 @@ queueSchema.methods.forAssistant = function (fn) {
 
 queueSchema.methods.forTeacher = function (fn) {
   this.teacher.forEach(fn);
+};
+
+queueSchema.methods.getUser = function (username) {
+  for (var i = 0; i < this.queue.length; i++) {
+    if(this.queue[i].name === username){
+      return this.queue[i];
+    }
+  };
 };
 
 // takes a username as a parameter and removes the user form the queue

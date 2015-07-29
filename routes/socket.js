@@ -63,13 +63,15 @@ module.exports = function (socket, io) {
 
     queue.addUser(newUser);
 
-    // var newStatistic = new Statistic({
-    //   name: newUser.name,
-    //   queue: queueName,
-    //   startTime: newUser.startTime,
-    //   action: ''
-    // });
-    // newStatistic.save();
+    
+    var stat = new Statistic({
+      name: user.name,
+      queue: queue.name,
+      action: user.type,
+      leftQueue: false,
+      queueLength: queue.queue.length,
+    });
+    stat.save();
 
     console.log("User : " + JSON.stringify(newUser) + " wants to join the queue.");
     io.to(queueName).emit('join', newUser);
@@ -122,6 +124,17 @@ module.exports = function (socket, io) {
 
     var queue = queueSystem.findQueue(queueName);
 
+    var user = queue.getUser(name);
+    var stat = new Statistic({
+      name: name,
+      queue: queue.name,
+      action: user.type,
+      leftQueue: true,
+      queueLength: queue.queue.length,
+    });
+    stat.save();
+  
+
     queueSystem.userLeavesQueue(queue, name, booking);
     if(req.type === 'P'){
       if(queue.hasCompletion(name)){
@@ -143,9 +156,18 @@ module.exports = function (socket, io) {
   //===============================================================
 
   socket.on('getStatistics', function(req) {
+    console.log(req);
+    var start = req.start;
+    var end = req.end;
+    var queueName = req.queueName;
     console.log("start: " + start);
     console.log("end: " + end);
-    console.log("statistics not yet implemented ");
+    Statistic.getStatistics(queueName, start, end, function (err, statData){
+      console.log(statData);
+      // socket.emit("statistics/get:[" + JSON.stringify(statData) + "]");
+      console.log("finished");
+    });
+
   });
 
   //===============================================================
