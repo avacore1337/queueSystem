@@ -56,7 +56,6 @@ module.exports = function (socket, io) {
     var queueName = req.queueName;
 
     var newQueue = queueSystem.addQueue(queueName);
-    queueSystem.addAction(username, "created", queueName);
 
     io.to('admin').emit('addQueue', newQueue);
   });
@@ -75,7 +74,6 @@ module.exports = function (socket, io) {
     }
 
     queueSystem.removeQueue(queueName);
-    queueSystem.addAction(username, "deleted", queueName);
 
     console.log(queueName + ' is getting removed from queues');
 
@@ -92,9 +90,8 @@ module.exports = function (socket, io) {
       //res.end();
       return;
     }
-    username = req.username;
-    queueSystem.addAdmin(username, username);
-    queueSystem.addAction(username, "promoted to admin");
+    var username = req.username;
+    queueSystem.addAdmin(username,username);
 
     console.log(username + ' is a new admin!');
     io.to('admin').emit('addAdmin', {
@@ -115,7 +112,7 @@ module.exports = function (socket, io) {
       return;
     }
 
-    username = req.username;
+    var username = req.username;
     var teacherName = username;
     var queue = queueSystem.findQueue(queueName);
 
@@ -125,7 +122,6 @@ module.exports = function (socket, io) {
     });
 
     queue.addTeacher(newTeacher);
-    queueSystem.addAction(newTeacher.name, "promoted to teacher", queueName);
 
     console.log(teacherName + ' is a new teacher!');
 
@@ -147,7 +143,7 @@ module.exports = function (socket, io) {
       return;
     }
 
-    username = req.username;
+    var username = req.username;
     var assistantName = username;
     var queue = queueSystem.findQueue(queueName);
 
@@ -157,7 +153,6 @@ module.exports = function (socket, io) {
     });
 
     queue.addAssistant(newAssistant);
-    queueSystem.addAction(newAssistant.name, "promoted to assistant", queueName);
 
     console.log(assistantName + ' is a new assistant!');
 
@@ -183,7 +178,6 @@ module.exports = function (socket, io) {
 
     var admin = req.username;
     queueSystem.removeAdmin(admin);
-    queueSystem.addAction(admin, "removed as admin");
 
     console.log(admin + ' is a removed from admin!');
 
@@ -206,7 +200,6 @@ module.exports = function (socket, io) {
     var queue = queueSystem.findQueue(queueName);
 
     queue.removeTeacher(teacher);
-    queueSystem.addAction(teacher, "removed as teacher", queueName);
 
     console.log(teacher + ' is a removed as a teacher in ' + queueName + '!');
 
@@ -232,7 +225,6 @@ module.exports = function (socket, io) {
     var queue = queueSystem.findQueue(queueName);
 
     queue.removeAssistant(assistant);
-    queueSystem.addAction(assistant, "removed as assistant", queueName);
 
     console.log(assistant + ' is removed as a assistant in ' + queueName + '!');
 
@@ -255,7 +247,6 @@ module.exports = function (socket, io) {
     }
 
     doOnQueue(queueName, 'hide');
-    queueSystem.addAction(username, "hid", queueName);
   });
 
   socket.on('show', function(req) {
@@ -270,7 +261,6 @@ module.exports = function (socket, io) {
     }
 
     doOnQueue(req.queue, 'show');
-    queueSystem.addAction(username, "showed", queueName);
   });
 
 };

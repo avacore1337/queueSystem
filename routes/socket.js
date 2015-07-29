@@ -18,7 +18,6 @@ module.exports = function (socket, io) {
       console.log("Current user = " + JSON.stringify(socket.handshake.session.user.name));
       if(socket.handshake.session.user.name){ // TODO : Temporary fix
         socket.join('user_' + socket.handshake.session.user.name);
-        queueSystem.addAction(socket.handshake.session.user.name, "attended", req);
       }
     }
     catch(err) {
@@ -38,7 +37,6 @@ module.exports = function (socket, io) {
     user.name = socket.handshake.session.user.name;
 
     var queue = queueSystem.findQueue(queueName);
-    queueSystem.addAction(user.name, "join", queueName);
 
     if(queue.inQueue(user.name)){
       return;
@@ -104,7 +102,6 @@ module.exports = function (socket, io) {
 
     var course = queueSystem.findQueue(queueName);
     course.helpingQueuer(name, queueName);
-    queueSystem.addAction(name, "getting help", queueName);
 
     io.to(queueName).emit('help', {
       name: name
@@ -124,7 +121,6 @@ module.exports = function (socket, io) {
     console.log("Validerande: " + JSON.stringify(socket.handshake.session.user));
 
     var queue = queueSystem.findQueue(queueName);
-    queueSystem.addAction(name, "left queue", queueName);
 
     queueSystem.userLeavesQueue(queue, name, booking);
     if(req.type === 'P'){
@@ -147,69 +143,9 @@ module.exports = function (socket, io) {
   //===============================================================
 
   socket.on('getStatistics', function(req) {
-    var name = socket.handshake.session.user.name;
-    if (!(validate(name, "teacher", req.queueName) || validate(name, "admin", req.queueName))) {
-      return;
-    }
-
-    queueSystem.getActions(req.start, req.end, req.queueName, function (list) {
-      var index = 0; // To get rid of warnings
-      var i = 0; // To get rid of warnings
-      // TODO : Return the following
-      // 1) Time for leaving, time for joining, date and course for each queueing instance.
-      
-      // 2) Whether Students who booked a time in advance attended their time slot.
-
-      // 3) Which Students booked a time slot together. 
-
-      // 4) Average queuing time for a student in a course during a requested interval.
-      // TODO-BUG : There is no way to find a user who joined before the given time-period and left after it.
-      var totalTime = 0;
-      var currentQueue = [];
-      var people = 0;
-      for(index in list){
-        if(list[index].action === "join"){
-          currentQueue.push({user: list[index].user, time: list[index].time});
-          people++;
-        }else if(list[index].action === "left" || list[index].action === "kicked"){
-          i = currentQueue.indexOf(list[index].user);
-          if(i < 0){
-            totalTime += (list[index].time - req.start);
-            people++;
-          }else{
-            totalTime += (list[index].time - currentQueue[i]);
-            currentQueue.splice(i, 1);
-          }
-        }
-      }
-      for(index in currentQueue){
-        totalTime += (req.end - currentQueue[index].time);
-      }
-      var averageTime = totalTime / people;
-
-      // 5) Which TA:s attended each session.
-      var attendingAssistants = [];
-      for(index in list){
-        if(list[index].action === "attended"){
-          console.log("Is this attending person assistant or teacher? " + list[index].user);
-          if (validate(list[index].user, "teacher", req.queueName) || validate(list[index].user, "assistant", req.queueName)) {
-            if(attendingAssistants.indexOf(list[index].user) < 0) {
-              attendingAssistants.push(list[index].user);
-            }
-          }
-        }
-      }
-      // 6) Number of people joined, left and still in queue for a course during a requested interval.
-
-      // 7) Raw JSON so that the teacher may check for anything
-      var rawJSON = JSON.stringify(list);
-
-      io.to("user_" + socket.handshake.session.user.name).emit('getStatistics', {
-        averageTime: averageTime,
-        attendingAssistants: attendingAssistants,
-        rawJSON: rawJSON
-      });
-    });
+    console.log("start: " + start);
+    console.log("end: " + end);
+    console.log("statistics not yet implemented ");
   });
 
   //===============================================================

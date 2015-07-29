@@ -156,10 +156,7 @@ queueControllers.controller('statisticsController', ['$scope', 'HttpService', 'W
   function($scope, http, socket, title, user) {
     $scope.$on('$destroy', function (event) {
       socket.removeAllListeners();
-      console.log("Leaving statistics");
-      socket.emit('stopListening', 'statistics');
     });
-    socket.emit('listen', 'statistics');
     
     title.title = "Statistics | Stay A While";
     $scope.name = user.getName();
@@ -172,15 +169,15 @@ queueControllers.controller('statisticsController', ['$scope', 'HttpService', 'W
       $scope.showJSONField = true;
 
       // averageQueueTime
-      formatQueueTime(data.averageTime);
+      formatQueueTime(data.averageQueueTime);
 
       // peopleLeftQueue
-      $scope.attendingAssistants = data.attendingAssistants;
+      $scope.numbersOfPeopleLeftQueue = data.numbersOfPeopleLeftQueue;
     });
     $scope.showJSONField = false;
     $scope.rawJSON = [];
     $scope.averageQueueTime = "";
-    $scope.attendingAssistants = [];
+    $scope.numbersOfPeopleLeftQueue = -1;
 
     // Listen for new statistics.
     function formatQueueTime(milliseconds) {

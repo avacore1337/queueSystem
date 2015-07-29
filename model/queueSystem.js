@@ -15,7 +15,7 @@ var User = require("./user.js");
 var Admin = require("./admin.js");
 var Statistic = require("./statistic.js");
 var GlobalMOTD = require("./globalMOTD.js");
-var Action = require("./action.js");
+
 
 var queueList = [];
 var adminList = [];
@@ -77,11 +77,13 @@ exports.forQueue = function (fn) {
  * @param {function} fn - The function to be called for every element in the list.
  */
 exports.userLeavesQueue = function (queue, userName, booking) {
-  queue.removeUser(userName);
-  if (booking) {
-    queue.removeBooking(userName);
+    queue.removeUser(userName);
+    if (booking) {
+      queue.removeBooking(userName);
+    }
   }
-};
+
+
 
 /**
  * Adds a superadmin to the system.
@@ -185,43 +187,6 @@ function validateAssistant(username, queueName) {
   });
   return valid;
 }
-
-/**
- * Creates an action for the given user, action and potentionally queue.
- * @param {String} user - The name of the user.
- * @param {String} action - The name of the action.
- * @param {String} queueName - The name of the queue. (optional parameter)
- */
-exports.addAction = function (user, action, queueName) {
-  if(!queueName){
-    queueName = undefined;
-  }
-  var newAction = new Action({
-    user: user,
-    action: action,
-    queue: queueName
-  });
-  newAction.save();
-};
-
-/**
- * Returns the actions relevant for the given time-intervall and queue.
- * @param {Integer} start - The time in milliseconds from where to start looking for actions.
- * @param {Integer} end - The time in milliseconds where to stop looking for actions.
- * @param {String} queueName - The name of the queue.
- * @param {Function} callback - What the program should do with the found list.
- */
-exports.getActions = function (start, end, queueName, callback) {
-  Action.find(function(err, actions) {
-    var actionList = [];
-    actions.forEach(function(action) {
-      if(action.queue === queueName && action.time >= start && action.time <= end){
-        actionList.push(action);
-      }
-    });
-    callback(actionList);
-  });
-};
 
 /**
  * updates all the bookings with the data from the bookingsystem.
