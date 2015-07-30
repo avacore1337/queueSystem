@@ -61,9 +61,6 @@ module.exports = function (socket, io) {
     // Append the messages added about this user
     newUser.messages = queue.getMessagesFor(newUser.name);
 
-    queue.addUser(newUser);
-
-    
     var stat = new Statistic({
       name: user.name,
       queue: queue.name,
@@ -72,6 +69,8 @@ module.exports = function (socket, io) {
       queueLength: queue.queue.length,
     });
     stat.save();
+    
+    queue.addUser(newUser);
 
     console.log("User : " + JSON.stringify(newUser) + " wants to join the queue.");
     io.to(queueName).emit('join', newUser);
@@ -130,7 +129,7 @@ module.exports = function (socket, io) {
       queue: queue.name,
       action: user.type,
       leftQueue: true,
-      queueLength: queue.queue.length,
+      queueLength: queue.queue.length - 1,
     });
     stat.save();
   

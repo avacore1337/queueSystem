@@ -190,6 +190,16 @@ module.exports = function (socket, io) {
 
     var queue = queueSystem.findQueue(queueName);
 
+    var name = user.name;
+    var stat = new Statistic({
+      name: name,
+      queue: queue.name,
+      action: user.type,
+      leftQueue: true,
+      queueLength: queue.queue.length - 1,
+    });
+    stat.save();
+
     queueSystem.userLeavesQueue(queue, user.name);
     if(user.type === 'P'){
       if(user.completion){
@@ -197,7 +207,7 @@ module.exports = function (socket, io) {
       }
     }
 
-    console.log('a user left ' + queueName);
+    console.log('a user was kicked from ' + queueName);
 
     io.to(queueName).emit('leave', user);
     io.to("lobby").emit('lobbyleave', {
