@@ -7,10 +7,10 @@
     <div class="row">
       <!-- Dropdown of queues -->
       
-      <div class="col-md-12">
+      <div class="col-md-2">
         <h4>Queue</h4>
         <div class="dropdown">
-          <button class="btn btn-default dropdown-toggle col-xs-12 col-md-5" type="button" data-toggle="dropdown" id="statisticsSelectQueueDropDown">
+          <button class="btn btn-default dropdown-toggle col-xs-12 col-md-12" type="button" data-toggle="dropdown" id="statisticsSelectQueueDropDown">
             <div class="col-xs-11 text-left" id="dropdown">Select Queue</div> <span class="caret"></span>
           </button>
           <ul class="dropdown-menu">
@@ -52,33 +52,39 @@
       <div class="col-xs-12">
         <button class="btn btn-primary pull-right" ng-show="selectedQueue" ng-click="getStatistics()" id="statisticsGetStatisticsBtn">Get statistics</button>
         <button class="btn btn-primary pull-right" ng-hide="selectedQueue" popover="You must choose a queue first."  popover-trigger="focus" popover-placement="top" id="statisticsPromptQueueBtn">Get statistics</button>
+        <button class="btn btn-primary pull-right" ng-show="selectedQueue" ng-click="getJSONStatistics()" id="statisticsGetJSONStatisticsBtn">Get raw data</button>
+        <button class="btn btn-primary pull-right" ng-hide="selectedQueue" popover="You must choose a queue first."  popover-trigger="focus" popover-placement="top" id="statisticsPromptQueueBtn">Get raw data</button>
       </div>
     </div>
 
     <hr>
     <!-- Statistics goes here -->
-    <div class="row" ng-show="averageQueueTime || numbersOfPeopleLeftQueue !== -1">
+    <div class="row" ng-show="showData || showJSONField">
       <div class="col-xs-12">
-        <table class="table table-striped">
+        <table class="table table-striped" ng-show="showData">
           <thead>
             <th>Description</th>
             <th>Statistics</th>
           </thead>
           <tbody>
-            <tr ng-show="averageQueueTime">
-              <td >Average queue time</td>
-              <td>{{averageQueueTime}}</td>
+            <tr>
+              <td >Amount of people helped</td>
+              <td>{{peopleHelped}}</td>
             </tr>
-            <tr ng-show="numbersOfPeopleLeftQueue !== -1">
-              <td>Amount of people who left the queue</td>
-              <td>{{numbersOfPeopleLeftQueue}}</td>
+            <tr>
+              <td >Amount of presentations</td>
+              <td>{{peoplePresented}}</td>
+            </tr>
+            <tr>
+              <td>Amount of people left in the queue</td>
+              <td>{{leftInQueue}}</td>
             </tr>
           </tbody>
         </table>
 
         <!-- Raw JSON data -->
         <div ng-show="showJSONField">
-          <textarea class="col-xs-12" id="rawJSONTextArea" ng-model="rawJSON"></textarea>
+          <textarea class="col-xs-12" id="rawJSONTextArea" ng-model="rawJSON" rows="10"></textarea>
         </div>
       </div>
     </div>

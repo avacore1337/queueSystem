@@ -23,23 +23,25 @@
     title.title = "Statistics | Stay A While";
     $scope.name = user.getName();
     
-    socket.on('getStatistics', function(data) {
-      console.log("The server gave me some statistics =)");
-
-      // rawJSON
-      $scope.rawJSON = data.rawJSON;
+    socket.on('JSONStatistics', function(data) {
+      console.log("The server gave me some raw statistics =)");
+      console.log(data);
+      $scope.rawJSON = JSON.stringify(data);
       $scope.showJSONField = true;
-
-      // averageQueueTime
-      formatQueueTime(data.averageQueueTime);
-
-      // peopleLeftQueue
-      $scope.numbersOfPeopleLeftQueue = data.numbersOfPeopleLeftQueue;
     });
+
+    socket.on('statistics', function(data) {
+      // averageQueueTime
+      // formatQueueTime(data.averageQueueTime);
+      $scope.showData = true;
+      $scope.peopleHelped = data.peopleHelped; 
+      $scope.peoplePresented = data.peoplePresented; 
+      $scope.leftInQueue = data.leftInQueue;
+    });
+
     $scope.showJSONField = false;
+    $scope.showData = false;
     $scope.rawJSON = [];
-    $scope.averageQueueTime = "";
-    $scope.numbersOfPeopleLeftQueue = -1;
 
     // Listen for new statistics.
     function formatQueueTime(milliseconds) {
@@ -123,9 +125,17 @@
 
     // Statistics
     $scope.getStatistics = function() {
-      console.log($scope.selectedQueue);
-      $scope.rawJSON = [];
       socket.emit('getStatistics', {
+        queueName: $scope.selectedQueue,
+        start: $scope.fromTime.getTime(),
+        end: $scope.toTime.getTime(),
+        user: $scope.name
+      });
+      console.log("Requested statistics");
+    };
+
+    $scope.getJSONStatistics = function() {
+      socket.emit('getJSONStatistics', {
         queueName: $scope.selectedQueue,
         start: $scope.fromTime.getTime(),
         end: $scope.toTime.getTime(),

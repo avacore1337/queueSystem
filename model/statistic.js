@@ -73,7 +73,7 @@ statisticSchema.statics.getStatistics =  function (queue, start, end, callbackDo
         callback(null,entries[0].queueLength);
       }
       else{
-        callback(null,0);
+        callback(err,0);
       }
     });
   }],
@@ -82,7 +82,13 @@ statisticSchema.statics.getStatistics =  function (queue, start, end, callbackDo
     console.log("res data",results)
     callbackDo(null, {peopleHelped: results[0], peoplePresented: results[1], leftInQueue: (results[2] - results[3] + results[4])});
   });
+}
 
+statisticSchema.statics.getJSONStatistics =  function (queue, start, end, callback){
+  Statistic.find({ queue: queue }).
+  where('time').gte(start).lt(end).
+  select({name: 1, queue: 1, queueLength: 1, action: 1, leftQueue: 1, time: 1}).
+  exec(callback);
 }
 
 var Statistic = mongoose.model("UserStatistic", statisticSchema);

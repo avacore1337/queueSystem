@@ -129,7 +129,7 @@ module.exports = function (socket, io) {
       queue: queue.name,
       action: user.type,
       leftQueue: true,
-      queueLength: queue.queue.length - 1,
+      queueLength: queue.queue.length,
     });
     stat.save();
   
@@ -155,7 +155,6 @@ module.exports = function (socket, io) {
   //===============================================================
 
   socket.on('getStatistics', function(req) {
-    console.log(req);
     var start = req.start;
     var end = req.end;
     var queueName = req.queueName;
@@ -163,10 +162,22 @@ module.exports = function (socket, io) {
     console.log("end: " + end);
     Statistic.getStatistics(queueName, start, end, function (err, statData){
       console.log(statData);
-      // socket.emit("statistics/get:[" + JSON.stringify(statData) + "]");
+      socket.emit("statistics",statData);
       console.log("finished");
     });
+  });
 
+  socket.on('getJSONStatistics', function(req) {
+    var start = req.start;
+    var end = req.end;
+    var queueName = req.queueName;
+    console.log("start: " + start);
+    console.log("end: " + end);
+    Statistic.getJSONStatistics(queueName, start, end, function (err, statData){
+      console.log(statData);
+      socket.emit("JSONStatistics",statData);
+      console.log("finished");
+    });
   });
 
   //===============================================================
