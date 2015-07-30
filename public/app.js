@@ -4,7 +4,8 @@
   'queueControllers',
   'ui.bootstrap',
   'queue.queue',
-  'admin.admin'
+  'admin.admin',
+  'statistics.statistics'
   ]);
   
   app.config(['$routeProvider',
@@ -25,10 +26,6 @@
       when('/login', {
         templateUrl: 'login.html',
         controller: 'loginController'
-      }).
-      when('/statistics', {
-        templateUrl: 'statistics.html',
-        controller: 'statisticsController'
       }).
       otherwise({
         redirectTo: '/list'
