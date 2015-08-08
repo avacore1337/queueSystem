@@ -76,6 +76,7 @@
       $scope.$watch(function() {
         return $scope.comment;
       }, function(newValue, oldValue) {
+        console.log("Updating comment");
         if($scope.location && $scope.enqueued){
           socket.emit('update', {
             queueName: $scope.queue,

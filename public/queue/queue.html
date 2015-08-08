@@ -44,7 +44,7 @@
           <i class="text-white" ng-hide="location">&nbsp;&nbsp;Required</i>
         </div>
         <div ng-show="fixedLocation">
-          <input type="text" ng-model="location" ng-model-options="{debounce: 1000}" placeholder="Red 01" onfocus="this.placeholder = ''" onblur="this.placeholder = 'Red 01'" class="col-xs-12" style="height: 3em; margin-bottom: 2%;" id="queueLocationInputField" disabled>
+          <input type="text" ng-model="location" ng-model-options="{debounce: 4000}" placeholder="Red 01" onfocus="this.placeholder = ''" onblur="this.placeholder = 'Red 01'" class="col-xs-12" style="height: 3em; margin-bottom: 2%;" id="queueLocationInputField" disabled>
         </div>
         <h5>Comment</h5>
         <input type="text" ng-model="comment" ng-model-options="{debounce: 1000}" placeholder="Laboration 1" onfocus="this.placeholder = ''" onblur="this.placeholder = 'Laboration 1'" class="col-xs-12" style="height: 3em; margin-bottom: 7%;" id="queueCommentInputField">

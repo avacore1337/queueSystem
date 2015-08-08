@@ -102,18 +102,16 @@ function assistantForQueues(username) {
 
 router.post('/setUser', function(req, res) {
   req.session.user = req.body;
+  req.session.user.location = "";
 
   var ip = req.connection.remoteAddress;
-  getLocation(ip, function (err, hostname) {
+  getLocation(ip, function (hostname) {
     console.log("hostname = " + hostname);
-    req.session.user.location = "";
-    if(err || !hostname){
-      return;
-    }
     var pattern = /(.kth.se)/g;
     var result = hostname.match(pattern);
     if(result){
       var location = hostname.split(".")[0].replace("-", " ").toLowerCase();
+      console.log("local location-variable = " + location);
       
       // Test if they are at a recognized school computer
       // Recognized computers are:
@@ -123,25 +121,35 @@ router.post('/setUser', function(req, res) {
       pattern = /(blue|red|orange|yellow|green|brown|grey|karmosin|white|magenta|violett|turkos|spel|sport|musik|konst|mat)/g;
       result = location.match(pattern);
       if(result){
+        console.log("local location-variable = " + location);
         if(result == "mat"){ // Do not add a third equal sign. (Result does not appear to be a string)
           location = location.replace("mat", "mat ");
         }
         req.session.user.location = location;
       }
     }
+    console.log("Is this happening before ?");
+    res.writeHead(200);
+    res.end();
   });
-  res.writeHead(200);
-  res.end();
 });
 
 function getLocation(ip, callback) {
-  if(ip.indexOf("::ffff:") > -1){
-    ip = ip.substring(7);
-  }
+  try{
+    if(ip.indexOf("::ffff:") > -1){
+      ip = ip.substring(7);
+    }
 
-  dns.reverse(ip, function(err, hostnames){
-    callback(err, hostnames[0]);
-  });
+    dns.reverse(ip, function(err, hostnames){
+      if(err || !hostnames || !hostnames[0]){
+        callback("");
+      }else{
+        callback(hostnames[0]);
+      }
+    });
+  }catch(err){
+    callback("");
+  }
 }
 
 module.exports=router;
