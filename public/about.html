@@ -27,10 +27,12 @@
 					<div class="col-md-8">
 						<h4>{{contributor.name}}</h4>
 						<a ng-if="contributor.github" href="https://github.com/{{contributor.github}}">
-							<img src="/images/github.svg" height="14" width="14"> {{contributor.github}}
+							<i class="fi-social-github" style="font-size: 1em; color: #000000;"></i> {{contributor.github}}
+							<br>
 						</a>
-						<a ng-if="contributor.facebook" href="https://www.facebook.com/{{contributor.facebook}}">
-							<img src="/images/facebook.svg" height="14" width="14"> {{contributor.facebook}}
+						<a ng-if="contributor.linkedIn" href="https://www.linkedin.com/profile/view?id={{contributor.linkedIn}}">
+							<i class="fi-social-linkedin" style="font-size: 1em; color: #0077B5;"></i> {{contributor.name}}
+							<!--<img src="/images/facebook.svg" height="14" width="14"> {{contributor.facebook}}-->
 						</a>
 					</div>
 				</div>
