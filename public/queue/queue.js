@@ -75,7 +75,13 @@
       });
 
       $scope.$watch(function() {
-        return $scope.comment;
+        return $scope.name;
+      }, function(newValue, oldValue) {
+        $scope.loggedIn = user.isLoggedIn();
+      });
+
+      $scope.$watch(function() {
+        return $scope.location;
       }, function(newValue, oldValue) {
         if($scope.location && $scope.enqueued){
           socket.emit('update', {
@@ -86,7 +92,7 @@
       });
 
       $scope.$watch(function() {
-        return $scope.location;
+        return $scope.comment;
       }, function(newValue, oldValue) {
         if($scope.location && $scope.enqueued){
           socket.emit('update', {
