@@ -29,8 +29,9 @@ module.exports = function (socket, io) {
   //  - do nothing in backend?
   socket.on('badLocation', function(req) {
     var username = socket.handshake.session.user.name;
-    var name = req.name;
+    var user = req.user;
     var queueName = req.queueName;
+    user.badLocation = true;
 
     // teacher/assistant-validation
     if (!(validate(username, "teacher", queueName) || validate(username, "assistant", queueName))) {
@@ -39,8 +40,13 @@ module.exports = function (socket, io) {
       return;
     }
 
-    io.to("user_" + name).emit('badLocation', {name: name, sender: username, queueName: queueName});
-    console.log("Bad location at " + queueName + " for " + name);
+    io.to("user_" + user.name).emit('badLocation', {name: user.name, sender: username, queueName: queueName});
+    io.to(queueName).emit('update', user);
+
+    var course = queueSystem.findQueue(queueName);
+    course.updateUser(user);
+
+    console.log("Bad location at " + queueName + " for " + user.name);
   });
 
 

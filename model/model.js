@@ -225,11 +225,10 @@ queueSchema.methods.forUser = function (fn) {
   this.save();
 };
 
-// update a user (parameter "name" decides which user)
 // parameter "user" is the replacing user
-queueSchema.methods.updateUser = function (name, user) {
+queueSchema.methods.updateUser = function (user) {
   this.queue.forEach(function (usr, i, queue) {
-    if (usr.name === name) {
+    if (usr.name === user.name) {
       lodash.extend(queue[i], user);
     }
   });

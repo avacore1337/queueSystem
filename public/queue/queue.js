@@ -148,14 +148,12 @@
       });
 
       // Listen for a user chageing their information
-      socket.on('update', function (data) {
-        console.log(data);
-        for(var i = $scope.users.length - 1; i >= 0; i--) {
-          if($scope.users[i].name === data.name) {
-            $scope.users[i].comment = data.comment;
-            $scope.users[i].location = data.location;
-            $scope.users[i].type = data.type;
-            $scope.users[i].color = $scope.colorLocation($scope.users[i].location);
+      socket.on('update', function (user) {
+        console.log(user);
+        for(var index in $scope.users) {
+          if($scope.users[index].name === user.name) {
+            $scope.users[index] = user;
+            $scope.users[index].color = $scope.colorLocation($scope.users[index].location);
             break;
           }
         }

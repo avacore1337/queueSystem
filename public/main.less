@@ -10,6 +10,8 @@
 @white-hover: #E2E2E2;
 @orange-odd: #D96518;
 @orange-even: #F07422;
+@red-odd: #F01111;
+@red-even: #F82222;
 
 .html, body
 {
@@ -234,6 +236,14 @@ table.table-striped > tbody > tr:nth-child(odd).orange-background > td
 table.table-striped > tbody > tr:nth-child(even).orange-background > td
 {
  background-color: @orange-even;
+}
+table.table-striped > tbody > tr:nth-child(odd).red-background > td
+{
+ background-color: @red-odd;
+}
+table.table-striped > tbody > tr:nth-child(even).red-background > td
+{
+ background-color: @red-even;
 }
 .panel
 {

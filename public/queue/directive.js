@@ -59,10 +59,10 @@ userDirective.directive('standardUsers', function(){
 		};
 
 		// Function to send a message to a user
-		$scope.badLocation = function(name){
+		$scope.badLocation = function(user){
 			socket.emit('badLocation', {
-				queueName:$scope.queue,
-				name:name
+				queueName: $scope.queue,
+				user: user
 			});
 			console.log("Called badLocation");
 		};

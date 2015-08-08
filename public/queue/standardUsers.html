@@ -9,7 +9,7 @@
     </tr>
   </thead>
   <tbody>
-    <tr ng-repeat-start="user in users | filter:notHasBooking track by $index" ng-class="{'pointer' : accessLevel > 0, 'pulse' : user.gettingHelp, 'light-blue-background' : user.name === name, 'orange-background' : user.completion && user.type === 'P'}" ng-click="changeVisibility(user.name)"  id="queue{{user.name}}Btn" ng-show="match(user)">
+    <tr ng-repeat-start="user in users | filter:notHasBooking track by $index" ng-class="{'pointer' : accessLevel > 0, 'pulse' : user.gettingHelp, 'light-blue-background' : user.name === name, 'orange-background' : user.completion && user.type === 'P', 'red-background' : user.badLocation}" ng-click="changeVisibility(user.name)"  id="queue{{user.name}}Btn" ng-show="match(user)">
       <td class="hidden-xs">{{ $index + 1 }}</td>
       <td ng-show="accessLevel">
         <span class="pull-left">{{ user.name }}</span>
@@ -49,7 +49,7 @@
           </button>
         </div>
         <div title="bad location" class="col-xs-2">
-          <button class="yellow clickable frame center-content expand" ng-click="badLocation(user.name)" id="queueBadLocation{{user.name}}Btn">
+          <button class="yellow clickable frame center-content expand" ng-click="badLocation(user)" id="queueBadLocation{{user.name}}Btn">
             <span class="glyphicon glyphicon-question-sign"></span>
           </button>
         </div>

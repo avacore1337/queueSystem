@@ -15,7 +15,8 @@ var userSchema = new Schema({
   action: { type: String, default: '' },
   comment: { type: String, default: '' },
   type: String,
-  completion: { type: Boolean, default: false }
+  completion: { type: Boolean, default: false },
+  badLocation: { type: Boolean, default: false }
 });
 
 // creates a JSON-object from the schema
@@ -29,7 +30,8 @@ userSchema.methods.toJSON = function () {
     action: this.action,
     comment: this.comment,
     type: this.type,
-    completion: this.completion
+    completion: this.completion,
+    badLocation: this.badLocation
   };
 };
 

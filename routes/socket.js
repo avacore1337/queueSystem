@@ -86,6 +86,7 @@ module.exports = function (socket, io) {
     var queueName = req.queueName;
     var user = req.user;
     user.name = socket.handshake.session.user.name;
+    user.badLocation = false;
 
     console.log(JSON.stringify(user)); // check which uses is given --- need the one doing the action and the one who is "actioned"
 
@@ -93,7 +94,7 @@ module.exports = function (socket, io) {
     io.to(queueName).emit('update', user);
 
     var course = queueSystem.findQueue(queueName);
-    course.updateUser(user.name, user);
+    course.updateUser(user);
   });
 
   // a user marks themself as getting help
