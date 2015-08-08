@@ -40,6 +40,7 @@
       $scope.type = 'H';
       $scope.location = user.getLocation();
       $scope.fixedLocation = $scope.location !== "";
+      $scope.completionText = "";
 
       $scope.accessLevel = user.accessLevelFor($scope.queue);
 
@@ -76,7 +77,6 @@
       $scope.$watch(function() {
         return $scope.comment;
       }, function(newValue, oldValue) {
-        console.log("Updating comment");
         if($scope.location && $scope.enqueued){
           socket.emit('update', {
             queueName: $scope.queue,
@@ -112,6 +112,9 @@
       socket.on('leave', function (data) {
         console.log("Backend wants the following to leave the queue: " + JSON.stringify(data));
         if(data.name === $scope.name){
+          if($scope.type === 'P'){
+            $scope.completionText = "";
+          }
           $scope.enqueued = false;
           $scope.comment = '';
           $scope.type = 'H';
@@ -219,6 +222,12 @@
             break;
           }
         }
+      });
+
+      // Listen for a message about receiving a completion-text
+      socket.on('completion', function (data) {
+        console.log("data.message = " + data.message);
+        $scope.completionText = data.message;
       });
 
       // Listen for a new MOTD.

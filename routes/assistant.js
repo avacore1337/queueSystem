@@ -389,6 +389,11 @@ module.exports = function (socket, io) {
       queueName: queueName,
       username: completion.name
     });
+    if(completion.task){
+      io.to("user_" + completion.name).emit('completion', {
+        message: completion.task
+      });
+    }
   });
 
   socket.on('setMOTD', function(req) {
