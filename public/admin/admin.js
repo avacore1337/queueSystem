@@ -199,16 +199,8 @@
         title: "Hide queue",
         text: "Are you sure that you wish to hide " + $scope.selectedQueue.name + "? This means that only teachers and admins can enter and see the queue.",
         confirmButton: {text: "Yes, and conceal it well.", callback: function () {
-          socket.emit('purge', {
-            queueName:$scope.selectedQueue.name
-          });
           socket.emit('hide', {
-            queueName:$scope.selectedQueue.name
-          });
-          socket.emit('addMOTD', {
-            queueName:$scope.selectedQueue.name,
-            MOTD:"",
-            sender: $scope.name
+            queueName: $scope.selectedQueue.name
           });
           console.log("Trying to hide queue " + $scope.selectedQueue.name);
         }},
@@ -298,9 +290,8 @@
       setButton: {
         text: "Set message",
         callback: function (message) {
-          if(message){  
+          if(message){
             socket.emit('addServerMessage', {
-              sender: $scope.name,
               message: message
             });
           }
@@ -310,7 +301,6 @@
         text: "Remove message",
         callback: function (message) {
           socket.emit('addServerMessage', {
-            sender: $scope.name,
             message: ""
           });
         }

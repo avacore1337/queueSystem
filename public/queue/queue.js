@@ -372,8 +372,7 @@
               console.log("Message is = " + message);
               socket.emit('broadcast', {
                 queueName: $scope.queue,
-                message: message,
-                sender: $scope.name
+                message: message
               });
             }
           }
@@ -394,8 +393,7 @@
               console.log("$scope.queue = " + $scope.queue);
               socket.emit('broadcastFaculty', {
                 queueName:$scope.queue,
-                message:message,
-                sender: $scope.name
+                message:message
               });
             }
           }
@@ -411,16 +409,14 @@
           removeButton: {text: "Remove MOTD", callback: function () {
             socket.emit('setMOTD', {
               queueName: $scope.queue,
-              MOTD: "",
-              sender: $scope.name
+              MOTD: ""
             });
           }},
           setButton: {text: "Set MOTD", callback: function (message) {
             if(message){
               socket.emit('setMOTD', {
                 queueName: $scope.queue,
-                MOTD: message,
-                sender: $scope.name
+                MOTD: message
               });
             }
           }}
@@ -436,16 +432,14 @@
           removeButton: {text: "Remove info", callback: function () {
             socket.emit('setInfo', {
               queueName: $scope.queue,
-              info: "",
-              sender: $scope.name
+              info: ""
             });
           }},
           setButton: {text: "Set info", callback: function (message) {
             if(message){
               socket.emit('setInfo', {
                 queueName: $scope.queue,
-                info: message,
-                sender: $scope.name
+                info: message
               });
             }
           }}

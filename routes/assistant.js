@@ -57,7 +57,7 @@ module.exports = function (socket, io) {
 
     // teacher/assistant-validation
     if (!(validate(username, "teacher", queueName) || validate(username, "assistant", queueName))) {
-      console.log("validation for help failed");
+      console.log("validation for stopHelp failed");
       //res.end();
       return;
     }
@@ -76,36 +76,42 @@ module.exports = function (socket, io) {
 
   // teacher/assistant messages a user
   socket.on('messageUser', function (req) {
-    var queue = req.queueName;
+    var queueName = req.queueName;
     var name = req.name;
     var message = req.message;
-    var sender = req.sender;
+    var sender = socket.handshake.session.user.name;
+
+    // teacher/assistant-validation
+    if (!(validate(sender, "teacher", queueName) || validate(sender, "assistant", queueName))) {
+      console.log("validation for messageUser failed");
+      //res.end();
+      return;
+    }
 
     io.to("user_" + name).emit('msg', {
       message: message,
       sender: sender
     });
 
-    console.log('user ' + name + ' was messaged from ' + sender + ' at ' + queue + ' with: ' + message);
+    console.log('user ' + name + ' was messaged from ' + sender + ' at ' + queueName + ' with: ' + message);
   });
 
   // teacher/assistant emits to all users (teacher/assistant included)
   socket.on('broadcast', function (req) {
     var queueName = req.queueName;
     var message = req.message;
-    var username = req.sender;
+    var sender = socket.handshake.session.user.name;
 
     // teacher/assistant-validation
-    console.log("validation is :" + validate(username, "assistant", queueName));
-    if (!(validate(username, "assistant", queueName))) {
-      console.log("validation for emit failed");
+    if (!(validate(sender, "teacher", queueName) || validate(sender, "assistant", queueName))) {
+      console.log("validation for broadcast failed");
       //res.end();
       return;
     }
 
     io.to(queueName).emit('msg', {
       message: message,
-      sender: username
+      sender: sender
     });
 
     console.log('emit in ' + queueName + ', msg: ' + message);
@@ -116,15 +122,15 @@ module.exports = function (socket, io) {
     console.log("Recevie request to send message to faculty");
     var queueName = req.queueName;
     var message = req.message;
-    var username = req.sender;
+    var sender = socket.handshake.session.user.name;
 
     console.log("queueName = " + queueName);
     console.log("message = " + message);
-    console.log("username = " + username);
+    console.log("sender = " + sender);
 
     // teacher/assistant-validation
-    if (!(validate(username, "teacher", queueName) || validate(username, "assistant", queueName))) {
-      console.log("validation for emitTA failed");
+    if (!(validate(sender, "teacher", queueName) || validate(sender, "assistant", queueName))) {
+      console.log("validation for broadcast failed");
       //res.end();
       return;
     }
@@ -138,18 +144,18 @@ module.exports = function (socket, io) {
 
       io.to("user_" + teacher.name).emit('msg', {
         message: message,
-        sender: username
+        sender: sender
       });
 
       console.log("emiting teacher: " + "user_" + teacher.name);
     }
 
-    for (var i = assistantList.length - 1; i >= 0; i--) {
-      var assistant = assistantList[i];
+    for (var index = assistantList.length - 1; i >= 0; i--) {
+      var assistant = assistantList[index];
 
       io.to("user_" + assistant.name).emit('msg', {
         message: message,
-        sender: username
+        sender: sender
       });
 
       console.log("emiting assistant: " + assistant.name);
@@ -163,25 +169,25 @@ module.exports = function (socket, io) {
   // admin helps a user (marked in the queue)
   socket.on('help', function (req) {
     var queueName = req.queueName;
-    var user = req.user;
-    var username = req.helper;
+    var username = req.username;
+    var helper = socket.handshake.session.user.name;
 
     // teacher/assistant-validation
-    if (!(validate(username, "teacher", queueName) || validate(username, "assistant", queueName))) {
+    if (!(validate(helper, "teacher", queueName) || validate(helper, "assistant", queueName))) {
       console.log("validation for help failed");
       //res.end();
       return;
     }
 
     var course = queueSystem.findQueue(queueName);
-    course.helpingQueuer(user.name, queueName);
+    course.helpingQueuer(username, queueName);
 
     io.to(queueName).emit('help', {
-      name: user.name,
-      helper: username
+      name: username,
+      helper: helper
     });
 
-    console.log(user.name + ' is getting help in ' + queueName);
+    console.log(username + ' is getting help in ' + queueName);
   });
 
 
@@ -189,15 +195,19 @@ module.exports = function (socket, io) {
   socket.on('kick', function (req) {
     var queueName = req.queueName;
     var user = req.user;
-
-    console.log(JSON.stringify(user)); // check which uses is given --- need the one doing the action and the one who is "actioned"
-    console.log("Validerande: " + JSON.stringify(socket.handshake.session.user));
+    var assistant = socket.handshake.session.user.name;
+    
+    // teacher/assistant-validation
+    if (!(validate(assistant, "teacher", queueName) || validate(assistant, "assistant", queueName))) {
+      console.log("validation for kick failed");
+      //res.end();
+      return;
+    }
 
     var queue = queueSystem.findQueue(queueName);
 
-    var name = user.name;
     var stat = new Statistic({
-      name: name,
+      name: user.name,
       queue: queue.name,
       help: user.help,
       leftQueue: true,
@@ -222,19 +232,13 @@ module.exports = function (socket, io) {
   });
 
 
-  // admin purges a queue
+  // assistant/teacher purges a queue
   socket.on('purge', function (req) {
-    console.log("called purge:");
-    console.log(socket.handshake.session.user);
-
     var queueName = req.queueName;
-    var username = socket.handshake.session.user.name;
-    // socket.handshake.session.user = "troll";
+    var assistant = socket.handshake.session.user.name;
 
-    console.log(validate(username, "teacher", queueName));
-
-    // admin/teacher/assistant-validation
-    if (!(validate(username, "super", "queue") || validate(username, "teacher", queueName) || validate(username, "assistant", queueName))) {
+    // teacher/assistant-validation
+    if (!(validate(assistant, "teacher", queueName) || validate(assistant, "assistant", queueName))) {
       console.log("validation for purge failed");
       //res.end();
       return;
@@ -249,7 +253,7 @@ module.exports = function (socket, io) {
     queue.purgeQueue();
     queue.queue = [];
 
-    console.log(req.queue + ' -list purged by ' + username);
+    console.log(req.queue + ' -list purged by ' + assistant);
 
     io.to(queueName).emit('purge');
     io.to("lobby").emit('lobbypurge', queueName);
@@ -261,7 +265,7 @@ module.exports = function (socket, io) {
     var username = socket.handshake.session.user.name;
 
     // admin/teacher-validation
-    if (!(validate(username, "super", "queue") || validate(username, "teacher", queueName) || validate(username, "assistant", queueName))) {
+    if (!(validate(username, "teacher", queueName) || validate(username, "assistant", queueName))) {
       console.log("validation for lock failed");
       //res.end();
       return;
@@ -276,7 +280,7 @@ module.exports = function (socket, io) {
     var username = socket.handshake.session.user.name;
 
     // admin/teacher-validation
-    if (!(validate(username, "super", "queue") || validate(username, "teacher", queueName) || validate(username, "assistant", queueName))) {
+    if (!(validate(username, "teacher", queueName) || validate(username, "assistant", queueName))) {
       console.log("validation for lock failed");
       //res.end();
       return;
@@ -294,7 +298,7 @@ module.exports = function (socket, io) {
     var username = socket.handshake.session.user.name;
 
     // admin/teacher-validation
-    if (!(validate(username, "super", "queue") || validate(username, "teacher", queueName) || validate(username, "assistant", queueName))) {
+    if (!(validate(username, "teacher", queueName) || validate(username, "assistant", queueName))) {
       console.log("validation for lock failed");
       //res.end();
       return;
@@ -309,7 +313,7 @@ module.exports = function (socket, io) {
     var username = socket.handshake.session.user.name;
 
     // admin/teacher-validation
-    if (!(validate(username, "super", "queue") || validate(username, "teacher", queueName) || validate(username, "assistant", queueName))) {
+    if (!(validate(username, "teacher", queueName) || validate(username, "assistant", queueName))) {
       console.log("validation for unlock failed");
       //res.end();
       return;
@@ -404,7 +408,7 @@ module.exports = function (socket, io) {
   socket.on('setMOTD', function (req) {
     var queueName = req.queueName;
     var MOTD = req.MOTD;
-    var sender = req.sender;
+    var sender = socket.handshake.session.user.name;
 
     // teacher/assistant-validation
     if (!(validate(sender, "teacher", queueName) || validate(sender, "assistant", queueName))) {
@@ -427,7 +431,7 @@ module.exports = function (socket, io) {
   socket.on('setInfo', function (req) {
     var queueName = req.queueName;
     var info = req.info;
-    var sender = req.sender;
+    var sender = socket.handshake.session.user.name;
 
     // teacher/assistant-validation
     if (!(validate(sender, "teacher", queueName) || validate(sender, "assistant", queueName))) {
@@ -438,7 +442,7 @@ module.exports = function (socket, io) {
 
     // find the course and save the MOTD to the course in the database
     var course = queueSystem.findQueue(queueName);
-    course.setInfo(info); // TODO : does not exist
+    course.setInfo(info);
 
     console.log('\'' + info + '\' added as a new info in ' + queueName + '!');
 

@@ -29,7 +29,6 @@ userDirective.directive('standardUsers', function(){
 						console.log("Sending message now");
 						socket.emit('messageUser', {
 							queueName: $scope.queue,
-							sender: $scope.name,
 							name: name,
 							message: message
 						});
@@ -42,8 +41,7 @@ userDirective.directive('standardUsers', function(){
 		$scope.helpUser = function(user){
 			socket.emit('help', {
 				queueName: $scope.queue,
-				user: user,
-				helper: $scope.name
+				username: user.name
 			});
 			console.log("Called helpUser");
 		};
@@ -52,8 +50,7 @@ userDirective.directive('standardUsers', function(){
 		$scope.stopHelpUser = function(name){
 			socket.emit('stopHelp', {
 				queueName:$scope.queue,
-				name:name,
-				helper:$scope.name
+				name:name
 			});
 			console.log("Called stopHelpUser");
 		};

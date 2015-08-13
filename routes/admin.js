@@ -27,7 +27,7 @@ module.exports = function (socket, io) {
 
   socket.on('addServerMessage', function (req) {
     var message = req.message;
-    var sender = req.sender;
+    var sender = socket.handshake.session.user.name;
     console.log("sender = " + sender);
 
     // teacher/assistant-validation
@@ -226,10 +226,17 @@ module.exports = function (socket, io) {
     // admin/teacher-validation
     if (!(validate(username, "super", "queue") || validate(username, "teacher", queueName))) {
       console.log("Current user " + username + " is not a teacher for that queue or an admin.");
-      //console.log("validation for hide failed");
-      //res.end();
       return;
     }
+
+    var queue = queueSystem.findQueue(queueName);
+    for (var i = queue.queue.length - 1; i >= 0; i--) { // TODO : While length > 0
+      queueSystem.userLeavesQueue(queue, queue.queue[i].name);
+    }
+    queue.purgeQueue();
+    queue.queue = [];
+    queue.addMOTD("");
+    queue.setInfo("");
 
     doOnQueue(queueName, 'hide');
   });
