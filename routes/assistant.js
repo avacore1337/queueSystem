@@ -375,7 +375,7 @@ module.exports = function (socket, io) {
 
     // teacher/assistant-validation
     if (!(validate(assistant, "teacher", queueName) || validate(assistant, "assistant", queueName))) {
-      console.log("validation for addMOTD failed");
+      console.log("validation for completion failed");
       //res.end();
       return;
     }

@@ -47,17 +47,21 @@
           <input type="text" ng-model="location" ng-model-options="{debounce: 4000}" placeholder="Red 01" onfocus="this.placeholder = ''" onblur="this.placeholder = 'Red 01'" class="col-xs-12" style="height: 3em; margin-bottom: 2%;" id="queueLocationInputField" disabled>
         </div>
         <h5>Comment</h5>
-        <input type="text" ng-model="comment" ng-model-options="{debounce: 1000}" placeholder="Laboration 1" onfocus="this.placeholder = ''" onblur="this.placeholder = 'Laboration 1'" class="col-xs-12" style="height: 3em; margin-bottom: 7%;" id="queueCommentInputField">
+        <div style="background-color: #F04124; padding-bottom: 2%; margin-bottom: 7%;">
+          <input type="text" ng-show="enqueued" ng-model="comment" ng-model-options="{debounce: 1000}" placeholder="Laboration 1" onfocus="this.placeholder = ''" onblur="this.placeholder = 'Laboration 1'" class="col-xs-12" style="height: 3em; margin-bottom: 2%;" id="queueCommentInputField">
+          <input type="text" ng-hide="enqueued" ng-model="comment" placeholder="Laboration 1" onfocus="this.placeholder = ''" onblur="this.placeholder = 'Laboration 1'" class="col-xs-12" style="height: 3em; margin-bottom: 2%;" id="queueCommentInputField">
+          <i class="text-white" ng-hide="comment || enqueued">&nbsp;&nbsp;Required</i>
+        </div>
         
         <div ng-hide="enqueued">
-          <br><br>
+          <br ng-show="comment"><br ng-show="comment">
           <span class="col-xs-6">
             <label for="help">Help&nbsp;&nbsp;</label>
-            <input type="radio" ng-model="help" id="help" value=true>
+            <input type="radio" ng-model="help" id="help" ng-value=true>
           </span>
           <span>
             <label for="present">Present&nbsp;&nbsp;</label>
-            <input type="radio" ng-model="help" id="present" value=false>
+            <input type="radio" ng-model="help" id="present" ng-value=false>
           </span>
           <br><br>
         </div>
