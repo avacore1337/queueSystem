@@ -9,7 +9,7 @@
     </tr>
   </thead>
   <tbody>
-    <tr ng-repeat-start="user in users | filter:notHasBooking track by $index" ng-class="{'pointer' : accessLevel > 0, 'pulse' : user.gettingHelp, 'light-blue-background' : user.name === name, 'orange-background' : user.completion && user.type === 'P', 'red-background' : user.badLocation}" ng-click="changeVisibility(user.name)"  id="queue{{user.name}}Btn" ng-show="match(user)">
+    <tr ng-repeat-start="user in users | filter:notHasBooking track by $index" ng-class="{'pointer' : accessLevel > 0, 'pulse' : user.gettingHelp, 'light-blue-background' : user.name === name, 'orange-background' : user.completion && !user.help, 'red-background' : user.badLocation}" ng-click="changeVisibility(user.name)"  id="queue{{user.name}}Btn" ng-show="match(user)">
       <td class="hidden-xs">{{ $index + 1 }}</td>
       <td ng-show="accessLevel">
         <span class="pull-left">{{ user.name }}</span>
@@ -17,7 +17,7 @@
           <i class="fi-stop" style="font-size: 1em; color: {{user.color}};"></i>
         </span>
       </td>
-      <td><span class="pull-left">{{ user.location }}</span><span class="pull-right">{{ user.type }}</span></td>
+      <td><span class="pull-left">{{ user.location }}</span><span class="pull-right">{{ user.help }}</span></td>
       <td>{{ user.comment }}</td>
       <td>
         <span class="pull-left" data-livestamp="{{user.time}}"></span>

@@ -53,20 +53,20 @@
           <br><br>
           <span class="col-xs-6">
             <label for="help">Help&nbsp;&nbsp;</label>
-            <input type="radio" ng-model="type" id="help" value="H">
+            <input type="radio" ng-model="help" id="help" value=true>
           </span>
           <span>
             <label for="present">Present&nbsp;&nbsp;</label>
-            <input type="radio" ng-model="type" id="present" value="P">
+            <input type="radio" ng-model="help" id="present" value=false>
           </span>
           <br><br>
         </div>
 
-        <button class="green clickable frame center-content expand" ng-show="!enqueued && location && type" ng-click="addUser()" id="queueJoinQueueBtn">
+        <button class="green clickable frame center-content expand" ng-show="!enqueued && location && comment" ng-click="addUser()" id="queueJoinQueueBtn">
           <span class="glyphicon glyphicon-plus"></span>
           Join queue
         </button>
-        <button class="green clickable frame center-content expand" ng-hide="enqueued || location" popover="In order to queue, you must enter your location."  popover-trigger="focus" popover-placement="bottom" id="queuePromptLocationJoinBtn">
+        <button class="green clickable frame center-content expand" ng-hide="enqueued || location && comment" popover="In order to queue, you must enter your location and state the subject in the comment."  popover-trigger="focus" popover-placement="bottom" id="queuePromptLocationJoinBtn">
           <span class="glyphicon glyphicon-plus"></span>
           Join queue
         </button>
