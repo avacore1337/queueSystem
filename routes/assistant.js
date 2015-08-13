@@ -199,14 +199,14 @@ module.exports = function (socket, io) {
     var stat = new Statistic({
       name: name,
       queue: queue.name,
-      action: user.type,
+      help: user.help,
       leftQueue: true,
       queueLength: queue.queue.length - 1,
     });
     stat.save();
 
     queueSystem.userLeavesQueue(queue, user.name);
-    if (user.type === 'P') {
+    if (!user.help) {
       if (user.completion) {
         queue.removeCompletion(user.name);
       }

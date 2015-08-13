@@ -309,7 +309,7 @@ function setup() {
         name: Math.random().toString(36).substring(7),
         location: 'Green',
         comment: 'lab1',
-        type: "H",
+        help: true,
         completion: false,
         startTime: randomTime
       });

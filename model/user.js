@@ -12,9 +12,8 @@ var userSchema = new Schema({
   startTime: { type: Number, default: Date.now },
   messages: [String],
   gettingHelp: { type: Boolean, default: false },
-  action: { type: String, default: '' },
+  help: Boolean,
   comment: { type: String, default: '' },
-  type: String,
   completion: { type: Boolean, default: false },
   badLocation: { type: Boolean, default: false }
 });
@@ -27,9 +26,8 @@ userSchema.methods.toJSON = function () {
     time: this.startTime,
     messages: this.messages,
     gettingHelp: this.gettingHelp,
-    action: this.action,
+    help: this.help,
     comment: this.comment,
-    type: this.type,
     completion: this.completion,
     badLocation: this.badLocation
   };

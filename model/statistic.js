@@ -10,7 +10,7 @@ var statisticSchema = new Schema({
   name: String,
   queue: String,
   time: { type: Number, default: Date.now },
-  action: String,
+  help: String,
   leftQueue: { type: Boolean, default: false },
   queueLength: { type: Number, default: 0},
 });
@@ -24,7 +24,7 @@ statisticSchema.statics.getStatistics =  function (queue, start, end, callbackDo
     Statistic.count({
       queue: queue, 
       leftQueue: true, 
-      action:"H", 
+      help:true, 
       time: {"$gte": start, "$lt": end}},
       function (err, amount) {
         if (err) return console.error(err);
@@ -37,7 +37,7 @@ statisticSchema.statics.getStatistics =  function (queue, start, end, callbackDo
     Statistic.count({
       queue: queue, 
       leftQueue: true, 
-      action:"P", 
+      help:false, 
       time: {"$gte": start, "$lt": end}},
       function (err, amount) {
         if (err) return console.error(err);
@@ -87,7 +87,7 @@ statisticSchema.statics.getStatistics =  function (queue, start, end, callbackDo
 statisticSchema.statics.getJSONStatistics =  function (queue, start, end, callback){
   Statistic.find({ queue: queue }).
   where('time').gte(start).lt(end).
-  select({name: 1, queue: 1, queueLength: 1, action: 1, leftQueue: 1, time: 1}).
+  select({name: 1, queue: 1, queueLength: 1, help: 1, leftQueue: 1, time: 1}).
   exec(callback);
 }
 

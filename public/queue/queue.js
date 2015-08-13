@@ -37,7 +37,7 @@
       $scope.bookedUsers = [];
       $scope.enqueued = false;
       $scope.gettingHelp = false;
-      $scope.type = 'H';
+      $scope.help = true;
       $scope.location = user.getLocation();
       $scope.fixedLocation = $scope.location !== "";
       $scope.completionText = "";
@@ -65,7 +65,7 @@
               $scope.location = $scope.users[i].location;
             }
             $scope.comment = $scope.users[i].comment;
-            $scope.type = $scope.users[i].type;
+            $scope.help = $scope.users[i].help;
           }
         }
         if(response.motd){
@@ -86,7 +86,7 @@
         if($scope.location && $scope.enqueued){
           socket.emit('update', {
             queueName: $scope.queue,
-            user:{location: $scope.location, comment: $scope.comment, type: $scope.type}
+            user:{location: $scope.location, comment: $scope.comment, help: $scope.help}
           });
         }
       });
@@ -97,7 +97,7 @@
         if($scope.location && $scope.enqueued){
           socket.emit('update', {
             queueName: $scope.queue,
-            user:{location: $scope.location, comment: $scope.comment, type: $scope.type}
+            user:{location: $scope.location, comment: $scope.comment, help: $scope.help}
           });
         }
       });
@@ -118,12 +118,12 @@
       socket.on('leave', function (data) {
         console.log("Backend wants the following to leave the queue: " + JSON.stringify(data));
         if(data.name === $scope.name){
-          if($scope.type === 'P'){
+          if(!$scope.help){
             $scope.completionText = "";
           }
           $scope.enqueued = false;
           $scope.comment = '';
-          $scope.type = 'H';
+          $scope.help = true;
           $scope.gettingHelp = false;
           title.title = $scope.queue + " | Stay A while";
         }
@@ -148,7 +148,7 @@
         $scope.users = [];
         $scope.enqueued = false;
         $scope.comment = '';
-        $scope.type = 'H';
+        $scope.help = true;
         $scope.gettingHelp = false;
         title.title = $scope.queue + " | Stay A while";
       });
@@ -274,7 +274,7 @@
             socket.emit('join',
             {
               queueName:$scope.queue,
-              user:{location: $scope.location, comment: $scope.comment, type: $scope.type, time:Date.now()}
+              user:{location: $scope.location, comment: $scope.comment, help: $scope.help, time:Date.now()}
             });
             console.log("Called addUser");
           }
@@ -300,7 +300,7 @@
         }
         socket.emit('leave', {
           queueName: $scope.queue,
-          type: $scope.type,
+          help: $scope.help,
           booking: wasBooked
         });
         console.log("Called leave");
@@ -588,7 +588,7 @@
           return true;
         }
         var regEx = new RegExp($scope.search.toLowerCase());
-        return regEx.test(user.location.toLowerCase()) || regEx.test(user.comment.toLowerCase()) || regEx.test(user.type.toLowerCase());
+        return regEx.test(user.location.toLowerCase()) || regEx.test(user.comment.toLowerCase());
       };
 
       // This function checks if a person in the booked queue matches the search-string.

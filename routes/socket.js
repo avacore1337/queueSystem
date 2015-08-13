@@ -47,11 +47,11 @@ module.exports = function (socket, io) {
       name: user.name,
       location: user.location,
       comment: user.comment,
-      type: user.type
+      help: user.help
     });
 
     // Set the variable 'completion' to true if they have a completion and want to present
-    if (newUser.type === 'P') {
+    if (!newUser.help) {
       if (queue.hasCompletion(newUser.name)) {
         newUser.completion = true;
       }
@@ -63,7 +63,7 @@ module.exports = function (socket, io) {
     var stat = new Statistic({
       name: user.name,
       queue: queue.name,
-      action: user.type,
+      help: user.help,
       leftQueue: false,
       queueLength: queue.queue.length,
     });
@@ -126,14 +126,14 @@ module.exports = function (socket, io) {
     var stat = new Statistic({
       name: name,
       queue: queue.name,
-      action: user.type,
+      help: user.help,
       leftQueue: true,
       queueLength: queue.queue.length,
     });
     stat.save();
 
     queueSystem.userLeavesQueue(queue, name, booking);
-    if (req.type === 'P') {
+    if (!req.help) {
       if (queue.hasCompletion(name)) {
         queue.removeCompletion(name); // TODO : This function does not exist
       }
