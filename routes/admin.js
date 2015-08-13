@@ -40,6 +40,9 @@ module.exports = function (socket, io) {
     queueSystem.setGlobalMOTD(message);
     console.log('\'' + message + '\' added as a new global MOTD!');
     io.to('admin').emit('newServerMessage', message);
+    if(message){
+      io.emit('serverMessage', message);
+    }
   });
 
   socket.on('addQueue', function (req) {

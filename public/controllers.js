@@ -152,8 +152,8 @@ queueControllers.controller('helpController', ['$scope', 'TitleService', 'UserSe
   }
 ]);
 
-queueControllers.controller('loginController', ['$scope', '$location', 'HttpService', 'TitleService', 'WebSocketService', '$modal',
-  function($scope, $location, http, title, socket, $modal) {
+queueControllers.controller('loginController', ['$scope', '$location', 'HttpService', 'TitleService', 'WebSocketService', 'ModalService',
+  function($scope, $location, http, title, socket, modals) {
     $scope.$on('$destroy', function (event) {
       socket.removeAllListeners();
     });
@@ -166,21 +166,7 @@ queueControllers.controller('loginController', ['$scope', '$location', 'HttpServ
         http.get('serverMessage', function(resp){
           if(resp.serverMessage){
             console.log("There is a serverMessage");
-            var modalInstance = $modal.open({
-              templateUrl: 'serverMessage.html',
-              controller: function ($scope, $modalInstance, title, message) {
-                $scope.title = title;
-                $scope.message = message;
-              },
-              resolve: {
-                title: function () {
-                  return "Server-message";
-                },
-                message: function () {
-                  return resp.serverMessage;
-                }
-              }
-            });
+            modals.getModal({title: "Server message", message: resp.serverMessage, sender: ""});
           }
         });
         $location.path('list');
@@ -195,8 +181,8 @@ queueControllers.controller('loginController', ['$scope', '$location', 'HttpServ
   }
 ]);
 
-queueControllers.controller('navigationController', ['$scope', '$location', 'UserService', 'HttpService',
-  function($scope, $location, user, http) {
+queueControllers.controller('navigationController', ['$scope', '$location', 'UserService', 'HttpService', 'ModalService', 'WebSocketService',
+  function($scope, $location, user, http, modals, socket) {
     $scope.location = $location.path();
     $scope.name = user.getName();
 
@@ -212,6 +198,11 @@ queueControllers.controller('navigationController', ['$scope', '$location', 'Use
     }, function(newValue, oldValue) {
       $scope.name = newValue;
       console.log("Detected update to user.getName() (oldValue = " + oldValue + ", newValue = " + newValue + ")");
+    });
+
+    // Listen for the server setting a new server-message
+    socket.on('serverMessage', function(message) {
+      modals.getModal({title: "Server message", message: message, sender: ""});
     });
 
     // Loggin out
