@@ -1,8 +1,6 @@
 /* jslint node: true */
 "use strict";
 
-
-
 var schedule = require('node-schedule');
 
 exports.scheduleForEveryNight = function (callback) {

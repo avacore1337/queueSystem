@@ -11,34 +11,33 @@ module.exports = function (socket, io) {
 
   console.log("connected");
   // Setup the ready route, join room and emit to room.
-  socket.on('listen', function(req) {
+  socket.on('listen', function (req) {
     console.log('a user added to ' + req);
     socket.join(req);
     try {
       console.log("Current user = " + JSON.stringify(socket.handshake.session.user.name));
-      if(socket.handshake.session.user.name){ // TODO : Temporary fix
+      if (socket.handshake.session.user.name) { // TODO : Temporary fix
         socket.join('user_' + socket.handshake.session.user.name);
       }
-    }
-    catch(err) {
+    } catch (err) {
       console.log("User is not logged in.");
     }
   });
 
-  socket.on('stopListening', function(req) {
+  socket.on('stopListening', function (req) {
     console.log('a user left ' + req);
     socket.leave(req);
   });
 
   // user joins queue
-  socket.on('join', function(req) {
+  socket.on('join', function (req) {
     var queueName = req.queueName;
     var user = req.user;
     user.name = socket.handshake.session.user.name;
 
     var queue = queueSystem.findQueue(queueName);
 
-    if(queue.inQueue(user.name)){
+    if (queue.inQueue(user.name)) {
       return;
     }
 
@@ -52,8 +51,8 @@ module.exports = function (socket, io) {
     });
 
     // Set the variable 'completion' to true if they have a completion and want to present
-    if(newUser.type === 'P'){
-      if(queue.hasCompletion(newUser.name)){
+    if (newUser.type === 'P') {
+      if (queue.hasCompletion(newUser.name)) {
         newUser.completion = true;
       }
     }
@@ -82,7 +81,7 @@ module.exports = function (socket, io) {
   });
 
   // user gets updated
-  socket.on('update', function(req) {
+  socket.on('update', function (req) {
     var queueName = req.queueName;
     var user = req.user;
     user.name = socket.handshake.session.user.name;
@@ -98,7 +97,7 @@ module.exports = function (socket, io) {
   });
 
   // a user marks themself as getting help
-  socket.on('receivingHelp', function(req) {
+  socket.on('receivingHelp', function (req) {
     var queueName = req.queueName;
     var name = socket.handshake.session.user.name;
 
@@ -112,9 +111,8 @@ module.exports = function (socket, io) {
     console.log(name + ' is getting help in ' + queueName);
   });
 
-
   // user leaves queue
-  socket.on('leave', function(req) {
+  socket.on('leave', function (req) {
     var queueName = req.queueName;
     var name = socket.handshake.session.user.name;
     var booking = req.booking;
@@ -133,11 +131,10 @@ module.exports = function (socket, io) {
       queueLength: queue.queue.length,
     });
     stat.save();
-  
 
     queueSystem.userLeavesQueue(queue, name, booking);
-    if(req.type === 'P'){
-      if(queue.hasCompletion(name)){
+    if (req.type === 'P') {
+      if (queue.hasCompletion(name)) {
         queue.removeCompletion(name); // TODO : This function does not exist
       }
     }
@@ -153,39 +150,34 @@ module.exports = function (socket, io) {
     });
   });
 
-  //===============================================================
-
-  socket.on('getStatistics', function(req) {
+  socket.on('getStatistics', function (req) {
     var start = req.start;
     var end = req.end;
     var queueName = req.queueName;
     console.log("start: " + start);
     console.log("end: " + end);
-    Statistic.getStatistics(queueName, start, end, function (err, statData){
+    Statistic.getStatistics(queueName, start, end, function (err, statData) {
       console.log(statData);
-      socket.emit("statistics",statData);
+      socket.emit("statistics", statData);
       console.log("finished");
     });
   });
 
-  socket.on('getJSONStatistics', function(req) {
+  socket.on('getJSONStatistics', function (req) {
     var start = req.start;
     var end = req.end;
     var queueName = req.queueName;
     console.log("start: " + start);
     console.log("end: " + end);
-    Statistic.getJSONStatistics(queueName, start, end, function (err, statData){
+    Statistic.getJSONStatistics(queueName, start, end, function (err, statData) {
       console.log(statData);
-      socket.emit("JSONStatistics",statData);
+      socket.emit("JSONStatistics", statData);
       console.log("finished");
     });
   });
-
-  //===============================================================
-
 
   // TODO : This has been changed to only have them join a room based on their ID, no more session interaction
-  socket.on('setUser', function(req) {
+  socket.on('setUser', function (req) {
     console.log("user_" + req.name);
     socket.join("user_" + req.name); // joina sitt eget rum, för privata meddelande etc
     socket.handshake.session.user = req;
