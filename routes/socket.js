@@ -90,10 +90,10 @@ module.exports = function (socket, io) {
     console.log(JSON.stringify(user)); // check which uses is given --- need the one doing the action and the one who is "actioned"
 
     console.log('a was updated in ' + queueName);
-    io.to(queueName).emit('update', user);
 
     var course = queueSystem.findQueue(queueName);
     course.updateUser(user);
+    io.to(queueName).emit('update', course.getUser(user.name));
   });
 
   // a user marks themself as getting help
@@ -133,7 +133,7 @@ module.exports = function (socket, io) {
     stat.save();
 
     queueSystem.userLeavesQueue(queue, name, booking);
-    if (!req.help) {
+    if (!user.help) {
       if (queue.hasCompletion(name)) {
         queue.removeCompletion(name); // TODO : This function does not exist
       }

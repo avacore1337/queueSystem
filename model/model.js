@@ -229,7 +229,9 @@ queueSchema.methods.forUser = function (fn) {
 queueSchema.methods.updateUser = function (user) {
   this.queue.forEach(function (usr, i, queue) {
     if (usr.name === user.name) {
-      lodash.extend(queue[i], user);
+      queue[i].comment = user.comment;
+      queue[i].location = user.location;
+      queue[i].badLocation = false;
     }
   });
   this.save();

@@ -155,6 +155,7 @@
 
       // Listen for a user chageing their information
       socket.on('update', function (user) {
+        user.time = user.time/1000;
         console.log(user);
         for(var index in $scope.users) {
           if($scope.users[index].name === user.name) {
