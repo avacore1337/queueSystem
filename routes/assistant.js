@@ -43,8 +43,8 @@ module.exports = function (socket, io) {
     io.to("user_" + user.name).emit('badLocation', {name: user.name, sender: username, queueName: queueName});
     io.to(queueName).emit('update', user);
 
-    var course = queueSystem.findQueue(queueName);
-    course.updateUser(user);
+    var queue = queueSystem.findQueue(queueName);
+    queue.updateUser(user);
 
     console.log("Bad location at " + queueName + " for " + user.name);
   });
@@ -52,8 +52,7 @@ module.exports = function (socket, io) {
   // admin stops helping a user (marked in the queue)
   socket.on('stopHelp', function (req) {
     var queueName = req.queueName;
-    var name = req.name;
-    var username = req.helper;
+    var username = socket.handshake.session.user.name;
 
     // teacher/assistant-validation
     if (!(validate(username, "teacher", queueName) || validate(username, "assistant", queueName))) {
@@ -62,8 +61,9 @@ module.exports = function (socket, io) {
       return;
     }
 
-    var course = queueSystem.findQueue(queueName);
-    course.stopHelpingQueuer(name, queueName);
+    var name = req.name;
+    var queue = queueSystem.findQueue(queueName);
+    queue.stopHelpingQueuer(name, queueName);
 
     io.to(queueName).emit('stopHelp', {
       name: name,
@@ -179,8 +179,8 @@ module.exports = function (socket, io) {
       return;
     }
 
-    var course = queueSystem.findQueue(queueName);
-    course.helpingQueuer(username, queueName);
+    var queue = queueSystem.findQueue(queueName);
+    queue.helpingQueuer(username, queueName);
 
     io.to(queueName).emit('help', {
       name: username,
@@ -337,8 +337,8 @@ module.exports = function (socket, io) {
       return;
     }
 
-    var course = queueSystem.findQueue(queueName);
-    course.addAssistantComment(username, sender, queueName, message);
+    var queue = queueSystem.findQueue(queueName);
+    queue.addAssistantComment(username, sender, queueName, message);
 
     console.log('flagged');
     io.to(queueName).emit('flag', {
@@ -360,8 +360,8 @@ module.exports = function (socket, io) {
       return;
     }
 
-    var course = queueSystem.findQueue(queueName);
-    course.removeAssistantComments(username, sender, queueName);
+    var queue = queueSystem.findQueue(queueName);
+    queue.removeAssistantComments(username, sender, queueName);
 
     console.log('removed flags');
     io.to(queueName).emit('removeFlags', {
@@ -417,9 +417,9 @@ module.exports = function (socket, io) {
       return;
     }
 
-    // find the course and save the MOTD to the course in the database
-    var course = queueSystem.findQueue(queueName);
-    course.addMOTD(MOTD);
+    // find the queue and save the MOTD to the queue in the database
+    var queue = queueSystem.findQueue(queueName);
+    queue.addMOTD(MOTD);
 
     console.log('\'' + MOTD + '\' added as a new MOTD in ' + queueName + '!');
 
@@ -440,9 +440,9 @@ module.exports = function (socket, io) {
       return;
     }
 
-    // find the course and save the MOTD to the course in the database
-    var course = queueSystem.findQueue(queueName);
-    course.setInfo(info);
+    // find the queue and save the MOTD to the queue in the database
+    var queue = queueSystem.findQueue(queueName);
+    queue.setInfo(info);
 
     console.log('\'' + info + '\' added as a new info in ' + queueName + '!');
 
