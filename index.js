@@ -22,7 +22,7 @@ var session = expressSession({
     resave: true,
     saveUninitialized: true,
     store: new MongoStore({mongooseConnection: mongoose.connection})
-  })
+  });
 app.use(session);
 
 
@@ -37,15 +37,15 @@ db.once('open', function callback() {
 });
 
 var router = require('./routes/httpRoutes.js');
-app.use('/API',router);
+app.use('/API', router);
 var socketRoutes = require('./routes/socket.js');
 var adminRoutes = require('./routes/admin.js');
 var assistantsRoutes = require('./routes/assistant.js');
 
-io.on('connection', function(socket) {
-  socketRoutes(socket,io);
-  adminRoutes(socket,io);
-  assistantsRoutes(socket,io);
+io.on('connection', function (socket) {
+  socketRoutes(socket, io);
+  adminRoutes(socket, io);
+  assistantsRoutes(socket, io);
 });
 
 var utils = require('./utils.js');
@@ -58,9 +58,7 @@ var utils = require('./utils.js');
 //   })
 //   queueSystem.updateAllBookings();
 // });
-//===============================================================
-// 
 
-httpServer.listen(port, function() {
+httpServer.listen(port, function () {
   console.log("server listening on port", port);
 });

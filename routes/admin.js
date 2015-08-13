@@ -8,7 +8,7 @@ var Admin = require("../model/admin.js"); // databas stuff
 
 module.exports = function (socket, io) {
 
-  // TODO duplicated
+  // TODO remove duplicated
   function doOnQueue(queueName, action) {
     var queue = queueSystem.findQueue(queueName);
     queue[action]();
@@ -25,7 +25,7 @@ module.exports = function (socket, io) {
     }
   }
 
-  socket.on('addServerMessage', function(req) {
+  socket.on('addServerMessage', function (req) {
     var message = req.message;
     var sender = req.sender;
     console.log("sender = " + sender);
@@ -38,13 +38,11 @@ module.exports = function (socket, io) {
     }
 
     queueSystem.setGlobalMOTD(message);
-
     console.log('\'' + message + '\' added as a new global MOTD!');
-
     io.to('admin').emit('newServerMessage', message);
   });
 
-  socket.on('addQueue', function(req) {
+  socket.on('addQueue', function (req) {
     console.log("Trying to add Queue!");
     var username = socket.handshake.session.user.name;
     // admin-validation
@@ -53,14 +51,13 @@ module.exports = function (socket, io) {
       //res.end();
       return;
     }
+
     var queueName = req.queueName;
-
     var newQueue = queueSystem.addQueue(queueName);
-
     io.to('admin').emit('addQueue', newQueue);
   });
 
-  socket.on('removeQueue', function(req) {
+  socket.on('removeQueue', function (req) {
     console.log("Trying to remove Queue!");
 
     var username = socket.handshake.session.user.name;
@@ -80,18 +77,18 @@ module.exports = function (socket, io) {
     io.to('admin').emit('removeQueue', queueName);
   });
 
-  socket.on('addAdmin', function(req) {
+  socket.on('addAdmin', function (req) {
     console.log("Trying to add Admin!");
 
-    var username = socket.handshake.session.user.name;
+    var name = socket.handshake.session.user.name;
     // admin-validation
-    if (!validate(username, "super", "queue")) {
+    if (!validate(name, "super", "queue")) {
       console.log("validation for addAdmin failed");
       //res.end();
       return;
     }
     var username = req.username;
-    queueSystem.addAdmin(username,username);
+    queueSystem.addAdmin(username, username); //TODO should contain real name not username twice
 
     console.log(username + ' is a new admin!');
     io.to('admin').emit('addAdmin', {
@@ -101,12 +98,12 @@ module.exports = function (socket, io) {
     });
   });
 
-  socket.on('addTeacher', function(req) {
-    var username = socket.handshake.session.user.name;
+  socket.on('addTeacher', function (req) {
     var queueName = req.queueName;
 
+    var name = socket.handshake.session.user.name;
     // admin/teacher-validation
-    if (!(validate(username, "super", "queue") || validate(username, "teacher", queueName))) {
+    if (!(validate(name, "super", "queue") || validate(name, "teacher", queueName))) {
       console.log("validation for addTeacher failed");
       //res.end();
       return;
@@ -120,9 +117,7 @@ module.exports = function (socket, io) {
       name: teacherName,
       username: username
     });
-
     queue.addTeacher(newTeacher);
-
     console.log(teacherName + ' is a new teacher!');
 
     io.to('admin').emit('addTeacher', {
@@ -132,12 +127,12 @@ module.exports = function (socket, io) {
     });
   });
 
-  socket.on('addAssistant', function(req) {
-    var username = socket.handshake.session.user.name;
+  socket.on('addAssistant', function (req) {
     var queueName = req.queueName;
 
+    var name = socket.handshake.session.user.name;
     // admin/teacher-validation
-    if (!(validate(username, "super", "queue") || validate(username, "teacher", queueName))) {
+    if (!(validate(name, "super", "queue") || validate(name, "teacher", queueName))) {
       console.log("validation for addAssistant failed");
       //res.end();
       return;
@@ -146,12 +141,10 @@ module.exports = function (socket, io) {
     var username = req.username;
     var assistantName = username;
     var queue = queueSystem.findQueue(queueName);
-
     var newAssistant = new Admin({
       name: assistantName,
       username: username
     });
-
     queue.addAssistant(newAssistant);
 
     console.log(assistantName + ' is a new assistant!');
@@ -164,7 +157,7 @@ module.exports = function (socket, io) {
   });
 
   //
-  socket.on('removeAdmin', function(req) {
+  socket.on('removeAdmin', function (req) {
     console.log("Trying to remove Admin!");
 
     var username = socket.handshake.session.user.name;
@@ -178,14 +171,12 @@ module.exports = function (socket, io) {
 
     var admin = req.username;
     queueSystem.removeAdmin(admin);
-
     console.log(admin + ' is a removed from admin!');
-
     io.to('admin').emit('removeAdmin', admin);
   });
 
   //
-  socket.on('removeTeacher', function(req) {
+  socket.on('removeTeacher', function (req) {
     var username = socket.handshake.session.user.name;
     var queueName = req.queueName;
 
@@ -198,11 +189,8 @@ module.exports = function (socket, io) {
 
     var teacher = req.username;
     var queue = queueSystem.findQueue(queueName);
-
     queue.removeTeacher(teacher);
-
     console.log(teacher + ' is a removed as a teacher in ' + queueName + '!');
-
     io.to('admin').emit('removeTeacher', {
       username: teacher,
       queueName: queueName
@@ -210,7 +198,7 @@ module.exports = function (socket, io) {
   });
 
   //
-  socket.on('removeAssistant', function(req) {
+  socket.on('removeAssistant', function (req) {
     var username = socket.handshake.session.user.name;
     var queueName = req.queueName;
 
@@ -223,18 +211,15 @@ module.exports = function (socket, io) {
 
     var assistant = req.username;
     var queue = queueSystem.findQueue(queueName);
-
     queue.removeAssistant(assistant);
-
     console.log(assistant + ' is removed as a assistant in ' + queueName + '!');
-
     io.to('admin').emit('removeAssistant', {
       username: assistant,
       queueName: queueName
     });
   });
 
-  socket.on('hide', function(req) {
+  socket.on('hide', function (req) {
     var queueName = req.queueName;
     var username = socket.handshake.session.user.name;
 
@@ -249,7 +234,7 @@ module.exports = function (socket, io) {
     doOnQueue(queueName, 'hide');
   });
 
-  socket.on('show', function(req) {
+  socket.on('show', function (req) {
     var queueName = req.queue;
     var username = socket.handshake.session.user.name;
 
