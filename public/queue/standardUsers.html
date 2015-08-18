@@ -9,7 +9,7 @@
     </tr>
   </thead>
   <tbody>
-    <tr ng-repeat-start="user in users | filter:notHasBooking track by $index" ng-class="{'pointer' : accessLevel > 0, 'pulse' : user.gettingHelp, 'light-blue-background' : user.name === name, 'orange-background' : user.completion && !user.help, 'red-background' : user.badLocation}" ng-click="changeVisibility(user.name)"  id="queue{{user.name}}Btn" ng-show="match(user)">
+    <tr ng-repeat-start="user in users | filter:notHasBooking track by $index" ng-class="{'pointer' : accessLevel > 0, 'pulse' : user.gettingHelp, 'light-blue-background' : user.name === name, 'yellow-background' : user.completion && !user.help, 'red-background' : user.badLocation}" ng-click="changeVisibility(user.name)"  id="queue{{user.name}}Btn" ng-show="match(user)">
       <td class="hidden-xs">{{ $index + 1 }}</td>
       <td ng-show="accessLevel">
         <span class="pull-left">{{ user.name }}</span>
@@ -34,7 +34,7 @@
           </button>
         </div>
         <div title="send message" class="col-xs-2">
-          <button class="blue clickable frame center-content expand" ng-click="messageUser(user.name)" id="queueSendMessage{{user.name}}Btn">
+          <button class="yellow clickable frame center-content expand" ng-click="messageUser(user.name)" id="queueSendMessage{{user.name}}Btn">
             <span class="glyphicon glyphicon-envelope"></span>
           </button>
         </div>

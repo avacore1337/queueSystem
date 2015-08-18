@@ -66,15 +66,15 @@
           <br><br>
         </div>
 
-        <button class="green clickable frame center-content expand" ng-show="!enqueued && location && comment" ng-click="addUser()" id="queueJoinQueueBtn">
+        <button class="blue clickable frame center-content expand" ng-show="!enqueued && location && comment" ng-click="addUser()" id="queueJoinQueueBtn">
           <span class="glyphicon glyphicon-plus"></span>
           Join queue
         </button>
-        <button class="green clickable frame center-content expand" ng-hide="enqueued || location && comment" popover="In order to queue, you must enter your location and state the subject in the comment."  popover-trigger="focus" popover-placement="bottom" id="queuePromptLocationJoinBtn">
+        <button class="blue clickable frame center-content expand" ng-hide="enqueued || location && comment" popover="In order to queue, you must enter your location and state the subject in the comment."  popover-trigger="focus" popover-placement="bottom" id="queuePromptLocationJoinBtn">
           <span class="glyphicon glyphicon-plus"></span>
           Join queue
         </button>
-        <button class="green clickable center-content frame expand" ng-show="enqueued && !gettingHelp" ng-click="receivingHelp()" id="queueReceivingHelpBtn">
+        <button class="blue clickable center-content frame expand" ng-show="enqueued && !gettingHelp" ng-click="receivingHelp()" id="queueReceivingHelpBtn">
           <span class="glyphicon glyphicon-check"></span>
           Receiving help
         </button>
@@ -95,25 +95,25 @@
           </button>
           <ul class="dropdown-menu col-xs-12" role="menu" style="padding: 5%;">
             <li>
-              <button class="blue clickable center-content frame expand" ng-show="accessLevel" ng-click="broadcast()" id="queueBroadcastBtn">
+              <button class="yellow clickable center-content frame expand" ng-show="accessLevel" ng-click="broadcast()" id="queueBroadcastBtn">
                 <span class="glyphicon glyphicon-bullhorn"></span>
                 Broadcast
               </button>
             </li>
             <li>
-              <button class="blue clickable center-content frame expand" ng-show="accessLevel" ng-click="broadcastTA()" id="queueBroadcastToTasBtn">
+              <button class="yellow clickable center-content frame expand" ng-show="accessLevel" ng-click="broadcastTA()" id="queueBroadcastToTasBtn">
                 <span class="glyphicon glyphicon-bullhorn"></span>&nbsp;
                 Broadcast faculty
               </button>
             </li>
             <li>
-              <button class="blue clickable center-content frame expand" ng-show="accessLevel" ng-click="setMOTD()" id="queueSetMOTDBtn">
+              <button class="yellow clickable center-content frame expand" ng-show="accessLevel" ng-click="setMOTD()" id="queueSetMOTDBtn">
                 <span class="glyphicon glyphicon-plus"></span>&nbsp;
                 Set MOTD
               </button>
             </li>
             <li>
-              <button class="blue clickable center-content frame expand" ng-show="accessLevel" ng-click="setInfo()" id="queueSetInfoBtn">
+              <button class="yellow clickable center-content frame expand" ng-show="accessLevel" ng-click="setInfo()" id="queueSetInfoBtn">
                 <span class="glyphicon glyphicon-plus"></span>&nbsp;
                 Set queue info
               </button>
@@ -131,17 +131,19 @@
               </button>
             </li>
             <li>
-              <button class="green clickable center-content frame expand" ng-show="accessLevel && locked" ng-click="unlock()" id="queueUnlockQueueBtn">
+              <button class="blue clickable center-content frame expand" ng-show="accessLevel && locked" ng-click="unlock()" id="queueUnlockQueueBtn">
                 <span class="glyphicon glyphicon-lock"></span>
                 Unlock queue
               </button>
             </li>
+<!--
             <li>
-              <button class="blue clickable center-content frame expand" ng-show="accessLevel" ng-click="schedule()" id="queueScheduleBtn">
+              <button class="yellow clickable center-content frame expand" ng-show="accessLevel" ng-click="schedule()" id="queueScheduleBtn">
                 <span class="glyphicon glyphicon-calendar"></span>
                 Set scheduled labs
               </button>
             </li>
+-->
           </ul>
         </div>
       </div>
