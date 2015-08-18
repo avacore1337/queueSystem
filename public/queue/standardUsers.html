@@ -20,7 +20,7 @@
       <td><span class="pull-left">{{ user.location }}</span><span class="pull-right" ng-hide="user.help">Present</span><span class="pull-right" ng-show="user.help">Help</span></td>
       <td>{{ user.comment }}</td>
       <td>
-        <span class="pull-left" data-livestamp="{{user.time}}"></span>
+        <span class="pull-left" data-livestamp="{{user.time/1000}}"></span>
         <span class="pull-right glyphicon glyphicon-search text-blue clickable" title="read messages" ng-show="accessLevel && user.optionsActivated && user.messages.length" ng-click="readMessages(user.messages)" id="queueReadComment{{user.name}}Btn"></span>
         <span class="pull-right glyphicon glyphicon-search text-light-gray" title="read messages" ng-show="accessLevel && user.optionsActivated && !user.messages.length" id="queueCanNotReadComment{{user.name}}Btn"></span>
       </td>

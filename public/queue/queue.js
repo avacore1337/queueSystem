@@ -56,7 +56,6 @@
         for (var i = 0; i < $scope.users.length; i++) {
           $scope.users[i].color = $scope.colorLocation($scope.users[i].location);
           $scope.users[i].optionsActivated = false;
-          $scope.users[i].time = $scope.users[i].time/1000;
           if($scope.users[i].name === $scope.name){
             $scope.enqueued = true;
             $scope.gettingHelp = $scope.users[i].gettingHelp;
@@ -109,7 +108,6 @@
           $scope.enqueued = true;
           title.title = "["  + ($scope.users.length+1) + "] " + $scope.queue + " | Stay A while";
         }
-        data.time = data.time/1000;
         data.color = $scope.colorLocation(data.location);
         $scope.users.push(data);
       });
@@ -153,9 +151,8 @@
         title.title = $scope.queue + " | Stay A while";
       });
 
-      // Listen for a user chageing their information
+      // Listen for a user changeing their information
       socket.on('update', function (user) {
-        user.time = user.time/1000;
         console.log(user);
         for(var index in $scope.users) {
           if($scope.users[index].name === user.name) {
@@ -274,8 +271,8 @@
             console.log("Current time = " + Date.now());
             socket.emit('join',
             {
-              queueName:$scope.queue,
-              user:{location: $scope.location, comment: $scope.comment, help: $scope.help, time:Date.now()}
+              queueName: $scope.queue,
+              user: {location: $scope.location, comment: $scope.comment, help: $scope.help}
             });
             console.log("Called addUser");
           }
