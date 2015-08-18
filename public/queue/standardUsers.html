@@ -2,17 +2,20 @@
   <thead>
     <tr>
       <th class="hidden-xs">#</th>
-      <th ng-show="accessLevel">User</th>
+      <th>User</th>
       <th>Location</th>
       <th>Comment</th>
       <th>Time</th>
     </tr>
   </thead>
   <tbody>
-    <tr ng-repeat-start="user in users | filter:notHasBooking track by $index" ng-class="{'pointer' : accessLevel > 0, 'pulse' : user.gettingHelp, 'light-blue-background' : user.name === name, 'yellow-background' : user.completion && !user.help, 'red-background' : user.badLocation}" ng-click="changeVisibility(user.name)"  id="queue{{user.name}}Btn" ng-show="match(user)">
+    <tr ng-repeat-start="user in users | filter:notHasBooking track by $index" ng-class="{'pointer' : accessLevel > 0, 'pulse' : user.gettingHelp, 'yellow-background' : user.completion && !user.help, 'red-background' : user.badLocation}" ng-click="changeVisibility(user.name)"  id="queue{{user.name}}Btn" ng-show="match(user)">
       <td class="hidden-xs">{{ $index + 1 }}</td>
-      <td ng-show="accessLevel">
-        <span class="pull-left">{{ user.name }}</span>
+      <td>
+        <span class="pull-left">
+          <span class="glyphicon glyphicon-star text-blue" ng-show="user.name === name"></span>
+          {{ user.name }}
+        </span>
         <span class="pull-right hidden-xs">
           <i class="fi-stop" style="font-size: 1em; color: {{user.color}};"></i>
         </span>
@@ -39,7 +42,7 @@
           </button>
         </div>
         <div title="help" class="col-xs-2" ng-hide="user.gettingHelp">
-          <button class="green clickable frame center-content expand" ng-click="helpUser(user)" id="queueHelp{{user.name}}Btn">
+          <button class="blue clickable frame center-content expand" ng-click="helpUser(user)" id="queueHelp{{user.name}}Btn">
             <span class="glyphicon glyphicon-check"></span>
           </button>
         </div>
