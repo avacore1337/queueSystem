@@ -168,7 +168,7 @@
 		<h3 id="help">Help a user</h3>
 		<p>
 			By helping a user, you mark them using the green button with a checkmark accessed in the same way as you would access the button to <a href="/#/help#kick">kick</a> someone.
-			When a user is receiving help, they will start pulsing with a green color notifing any other assistant that they can move to the next person in the queue.
+			When a user is receiving help, they will start pulsing, notifing any other assistant that they can move to the next person in the queue.
 		</p>
 
 		<h3 id="badLocation">Bad location</h3>
@@ -187,7 +187,7 @@
 			Marking a user for completion is done by clicking the yellow button with a bookmark on it. The button is found at the same place as the one used to <a href="/#/help#kick">kick</a> a user. Once the button is clicked, a window will open up allowing the assistant to add an <strong>optional</strong> comment about what the completion contains. When you are happy with the comment you click <em>Submit</em> to save it. Upon marking a user for completion, the user is automatically kicked from the queue. If a task was added by the assistant, it can be found by <a href="/#/help#readMessages">reading the messages</a> about a user.
 		</p>
 		<p>
-			A user marked for completion will have an orange color the next time they enter the queue with the intention of presenting.
+			A user marked for completion will have a yellow color the next time they enter the queue with the intention of presenting.
 		</p>
 
 		<h3 id="addMessage">Add message</h3>
@@ -339,19 +339,24 @@
 		<p>
 			White and gray backgrounds indicates that the person is merely standing in the queueand the different colors are only used to make it easier to distinguish between the different rows.
 		</p>
-		<h4 id="blue" style="color: #90C3D4;">Blue</h4>
+		<h4 id="blueStar" style="color: #90C3D4;">Blue <span class="glyphicon glyphicon-star"></span></h4>
 		<p>
-			If a preson has blue background, that means it is you.
+			If a preson has a blue star next to their name, that means it is you.
 		</p>
-		<h4 id="greenPulsing" style="color: #B3F5B8;"><span style="background-color: #E3AF81;">Green pulsing</span></h4>
+		<h4 id="pulsing"><span style="background-color: #E3AF81;">Pulsing</span></h4>
 		<p>
-			When you see a person with a green pulsing background, that indicates that they are currently receiving help from an assistant.
+			When you see a person that keeps pulsing, that indicates that they are currently receiving help from an assistant.
 		</p>
-		<h4 id="orange" style="color: #D96518;">Orange</h4>
 		<p>
-			If you see a person with an orange background color, that means that the person was previously given a completion and has now come back to present their solution.
+			<em>
+				Note: We do realise that there is no specific color, do not be THAT person ...
+			</em>
 		</p>
-		<h4 id="red" style="color: #F82222;">Red</h4>
+		<h4 id="yellow" style="color: #ECD024;">Yellow</h4>
+		<p>
+			If you see a person with a yellow background color, that means that the person was previously given a completion and has now come back to present their solution.
+		</p>
+		<h4 id="red" style="color: #E54932;">Red</h4>
 		<p>
 			When a person has a red background color, that means that an assistant has told the person that they have to enter a more descriptive location so that the assistants can find the person.
 		</p>
