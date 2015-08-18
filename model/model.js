@@ -37,7 +37,7 @@ var queueSchema = new Schema({
 });
 
 // Updates the MOTD
-queueSchema.methods.addMOTD = function (message) {
+queueSchema.methods.setMOTD = function (message) {
   this.motd = message;
   this.save();
 };
@@ -83,6 +83,12 @@ queueSchema.methods.removeCompletion = function (username) {
   this.save();
 };
 
+// Removes all completions
+queueSchema.methods.clearCompletions = function (username) {
+  this.completions = [];
+  this.save();
+};
+
 // Returns true if the given user is in the queue, otherwise false
 queueSchema.methods.inQueue = function (username) {
   var ret = false;
@@ -124,7 +130,7 @@ queueSchema.methods.getUser = function (username) {
     if(this.queue[i].name === username){
       return this.queue[i];
     }
-  };
+  }
 };
 
 // takes a username as a parameter and removes the user form the queue
@@ -206,9 +212,6 @@ queueSchema.methods.show = function () {
 
 // empty the queue
 queueSchema.methods.purgeQueue = function () {
-  // this.queue.forEach(function (usr, i, queue) {
-  // });
-
   this.queue = [];
   this.save();
 };
@@ -265,6 +268,12 @@ queueSchema.methods.removeAssistantComments = function (name, sender, queue) {
   this.save();
 };
 
+// Removes all comments
+queueSchema.methods.clearAssistantComments = function () {
+  this.messages = [];
+  this.save();
+};
+
 // set a user as getting help
 queueSchema.methods.helpingQueuer = function (name, queue) {
   this.queue.forEach(function (usr, i, queue) {
@@ -291,4 +300,4 @@ queueSchema.methods.stopHelpingQueuer = function (name, queue) {
 
 var Queue = mongoose.model("Queue", queueSchema);
 
-module.exports = Queue
+module.exports = Queue;

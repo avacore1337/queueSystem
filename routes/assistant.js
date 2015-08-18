@@ -412,14 +412,14 @@ module.exports = function (socket, io) {
 
     // teacher/assistant-validation
     if (!(validate(sender, "teacher", queueName) || validate(sender, "assistant", queueName))) {
-      console.log("validation for addMOTD failed");
+      console.log("validation for setMOTD failed");
       //res.end();
       return;
     }
 
     // find the queue and save the MOTD to the queue in the database
     var queue = queueSystem.findQueue(queueName);
-    queue.addMOTD(MOTD);
+    queue.setMOTD(MOTD);
 
     console.log('\'' + MOTD + '\' added as a new MOTD in ' + queueName + '!');
 
@@ -435,7 +435,7 @@ module.exports = function (socket, io) {
 
     // teacher/assistant-validation
     if (!(validate(sender, "teacher", queueName) || validate(sender, "assistant", queueName))) {
-      console.log("validation for addMOTD failed");
+      console.log("validation for setMOTD failed");
       //res.end();
       return;
     }

@@ -238,7 +238,7 @@ module.exports = function (socket, io) {
     }
     queue.purgeQueue();
     queue.queue = [];
-    queue.addMOTD("");
+    queue.setMOTD("");
     queue.setInfo("");
 
     doOnQueue(queueName, 'hide');

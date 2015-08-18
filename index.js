@@ -48,16 +48,19 @@ io.on('connection', function (socket) {
   assistantsRoutes(socket, io);
 });
 
+var queueSystem = require('./model/queueSystem.js');
 var utils = require('./utils.js');
-// var scheduleForEveryNight = utils.scheduleForEveryNight;
-
-// scheduleForEveryNight(function () {
-//   queueSystem.forQueue(function (queue) {
-//     queue.purgeQueue();
-//     queue.purgeBookings();
-//   })
-//   queueSystem.updateAllBookings();
-// });
+var scheduleForEveryNight = utils.scheduleForEveryNight;
+scheduleForEveryNight(function () {
+  queueSystem.forQueue(function (queue) {
+    queue.purgeQueue();
+    queue.setMOTD("");
+    queue.clearAssistantComments();
+    queue.clearCompletions();
+    //queue.purgeBookings();
+  })
+  //queueSystem.updateAllBookings();
+});
 
 httpServer.listen(port, function () {
   console.log("server listening on port", port);

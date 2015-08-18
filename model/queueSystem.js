@@ -77,13 +77,11 @@ exports.forQueue = function (fn) {
  * @param {function} fn - The function to be called for every element in the list.
  */
 exports.userLeavesQueue = function (queue, userName, booking) {
-    queue.removeUser(userName);
-    if (booking) {
-      queue.removeBooking(userName);
-    }
+  queue.removeUser(userName);
+  if (booking) {
+    queue.removeBooking(userName);
   }
-
-
+};
 
 /**
  * Adds a superadmin to the system.
