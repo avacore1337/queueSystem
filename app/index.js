@@ -9,10 +9,11 @@ var MongoStore = require('connect-mongo')(expressSession);
 var sharedsession = require('express-socket.io-session');
 var port = 8080;
 var mongoose = require('mongoose');
+var request = require('request');
 
 mongoose.connect('mongodb://localhost/queueBase');
 
-app.use(express.static(__dirname + '/public'));
+app.use(express.static(__dirname + '../public'));
 app.use(bodyParser.urlencoded({
   extended: true
 }));
@@ -60,6 +61,59 @@ scheduleForEveryNight(function () {
     //queue.purgeBookings();
   })
   //queueSystem.updateAllBookings();
+});
+
+function getUID (ticket, callback) {
+  var url = 'https://login.kth.se/serviceValidate?ticket='+ ticket  + '&service=http://queue.csc.kth.se/auth';
+  request({ url: url}, function (err, response, body) {
+    if (err) {
+      console.log(err);
+    }
+    else{
+      var uid = "";
+      // console.log("statusCode:");
+      // console.log(response.statusCode);
+      // console.log(body);
+      var uidMatches = body.match(/u1[\d|\w]+/g);
+      if (uidMatches) {
+        uid = uidMatches[0];
+      }
+      else{
+        console.log("no match found");
+      }
+      callback(uid);
+    }
+  });
+}
+
+app.get('/auth', function(req, res) {
+  console.log('printing ticket data:');
+  console.log(req.query.ticket);
+  getUID(req.query.ticket, function (uid) {
+    console.log("uid:");
+    console.log(uid);
+    req.session.user.name = uid;
+    res.redirect('/#/list')
+  });
+});
+
+app.get('/login', function(req, res) {
+  res.redirect('https://login.kth.se/login?service=http://queue.csc.kth.se/auth');
+});
+app.get('/auth', function(req, res) {
+  console.log('printing ticket data:');
+  console.log(req.query.ticket);
+  getUID(req.query.ticket,function (err, response, body) {
+    if (err) {
+      console.log(err);
+    }
+    else{
+      console.log(response.statusCode);
+      console.log(body);
+      body = body.match(/u1[\d|\w]+/g)[0];
+      console.log(body);
+    }
+  });
 });
 
 httpServer.listen(port, function () {

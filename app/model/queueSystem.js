@@ -281,8 +281,8 @@ function setup() {
   newAdmin.save();
 
   newAdmin = new Admin({
-    name: "rwb",
-    username: "rwb"
+    name: "robertwb",
+    username: "robertwb"
   });
   adminList.push(newAdmin);
   newAdmin.save();

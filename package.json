@@ -21,7 +21,7 @@
   },
   "scripts": {
     "test": "runtest",
-    "start": "node --harmony index.js"
+    "start": "node --harmony app/index.js"
   },
   "author": "Robert Welin-Berger",
   "license": "mit"
