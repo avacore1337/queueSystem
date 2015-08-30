@@ -146,8 +146,8 @@ app.get('/auth', function(req, res) {
 });
 
 app.post('/API/setUser', function (req, res) {
-  req.session.user = req.body;
-  req.session.user.name = 'guest-' + req.session.user.name;
+  req.session.user = {};
+  req.session.user.name = 'guest-' + req.body.name;
   req.session.user.location = "";
 
   var ip = req.connection.remoteAddress;
