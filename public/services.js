@@ -110,8 +110,18 @@
         return loggedIn;
       },
 
-      clearName: function() {
-        username = void 0;
+      clearData: function() {
+        var admin = false;
+
+        var teacher = [];
+
+        var assistant = [];
+
+        var username = "";
+
+        var location = "";
+
+        var loggedIn = false;
       }
     };
   })

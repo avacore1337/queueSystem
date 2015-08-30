@@ -41,7 +41,7 @@
 					</ul>
 					<ul class="nav navbar-nav navbar-right">
 						<li class="unresponsive hidden-xs" id="indexNameTextField"><a class="unresponsive">{{name}}</a></li>
-						<li ng-hide="name" ng-click="redirect('login')" id="indexLogInBtn"><a style="cursor: pointer;">Log in</a></li>
+						<li ng-hide="name" ng-click="externalLink('login?target=' + location)" id="indexLogInBtn"><a style="cursor: pointer;">Log in</a></li>
 						<li ng-show="name" ng-click="logOut()" id="indexLogOutBtn"><a style="cursor: pointer;">Log out</a></li>
 					</ul>
 				</div><!-- /.navbar-collapse -->

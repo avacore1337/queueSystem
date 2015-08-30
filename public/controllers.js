@@ -207,17 +207,15 @@ queueControllers.controller('navigationController', ['$scope', '$location', 'Use
 
     // Loggin out
     $scope.logOut = function() {
-      http.post('setUser', {
-        name: "",
-        admin: false,
-        teacher: [],
-        assistant: []
-      }, function(response) {
-        user.clearName();
+      
+        user.clearData();
         $scope.name = "";
         console.log("logged out");
-        $location.path('list');
-      });
+        window.location = "logout"
+    };
+
+    $scope.externalLink = function(address){
+      window.location = address;
     };
 
     // This function should direct the user to the wanted page

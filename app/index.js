@@ -141,12 +141,13 @@ app.get('/auth', function(req, res) {
     console.log("uid:");
     console.log(uid);
     req.session.user.name = uid;
-    res.redirect('/#/' + req.session.user.loginTarget)
+    res.redirect('/#' + req.session.user.loginTarget)
   });
 });
 
 app.post('/API/setUser', function (req, res) {
   req.session.user = req.body;
+  req.session.user.name = 'guest-' + req.session.user.name;
   req.session.user.location = "";
 
   var ip = req.connection.remoteAddress;
@@ -161,8 +162,19 @@ app.post('/API/setUser', function (req, res) {
 
 app.get('/login', function(req, res) {
   console.log(req.query);
-  req.session.user.loginTarget = req.query.target;
+  req.session.user = {};
+  if (req.query.target) {
+    req.session.user.loginTarget = req.query.target;
+  }
+  else{
+    req.session.user.loginTarget = ""
+  }  
   res.redirect('https://login.kth.se/login?service=http://queue.csc.kth.se/auth');
+});
+
+app.get('/logout', function(req, res) {
+  req.session.destroy();
+  res.redirect('https://login.kth.se/logout');
 });
 
 httpServer.listen(port, function () {
