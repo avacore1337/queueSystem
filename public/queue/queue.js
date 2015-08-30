@@ -490,6 +490,10 @@
         $location.path('/' + address);
       };
 
+      $scope.externalLink = function(address){
+        window.location = address;
+      };
+
       // Return true if the booking is taking place approximately now
       $scope.soon = function(booking){
         return booking.time - Date.now() < TIME_BOOKING;

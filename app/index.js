@@ -141,7 +141,7 @@ app.get('/auth', function(req, res) {
     console.log("uid:");
     console.log(uid);
     req.session.user.name = uid;
-    res.redirect('/#/list')
+    res.redirect('/#/' + req.session.user.loginTarget)
   });
 });
 
@@ -160,6 +160,8 @@ app.post('/API/setUser', function (req, res) {
 });
 
 app.get('/login', function(req, res) {
+  console.log(req.query);
+  req.session.user.loginTarget = req.query.target;
   res.redirect('https://login.kth.se/login?service=http://queue.csc.kth.se/auth');
 });
 

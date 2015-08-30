@@ -11,7 +11,7 @@ router.get('/queueList', function (req, res) {
   var retList = [];
 
   queueSystem.forQueue(function (queue) {
-    console.log("trying to get length of " + queue.name + ": " + queue.queue.length);
+    // console.log("trying to get length of " + queue.name + ": " + queue.queue.length);
     retList.push({
       name: queue.name,
       length: queue.queue.length,
@@ -29,7 +29,7 @@ router.get('/queueList', function (req, res) {
 router.get('/queue/:queue', function (req, res) {
   res.setHeader('Content-Type', 'application/json');
   var queue = queueSystem.findQueue(req.params.queue);
-  console.log('queue ' + req.params.queue + ' requested');
+  // console.log('queue ' + req.params.queue + ' requested');
 
   //console.log(queue);
   res.status(200);
