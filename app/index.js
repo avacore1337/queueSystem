@@ -10,6 +10,7 @@ var sharedsession = require('express-socket.io-session');
 var port = 8080;
 var mongoose = require('mongoose');
 var request = require('request');
+var dns = require('dns');
 
 mongoose.connect('mongodb://localhost/queueBase');
 
@@ -61,6 +62,67 @@ scheduleForEveryNight(function () {
     //queue.purgeBookings();
   })
   //queueSystem.updateAllBookings();
+});
+
+function getHostname(ip, callback) {
+  try {
+    if (ip.indexOf("::ffff:") > -1) {
+      ip = ip.substring(7);
+    }
+
+    dns.reverse(ip, function (err, hostnames) {
+      if (err || !hostnames || !hostnames[0]) {
+        callback("");
+      } else{
+        callback(hostnames[0]);
+      }
+    });
+  } catch (err) {
+    callback("");
+  }
+}
+
+function getLocation (ip, callback) {
+  getHostname(ip, function (hostname) {
+    console.log("hostname = " + hostname);
+    var pattern = /(\.kth\.se)/g;
+    var result = hostname.match(pattern);
+    if (result) {
+      var location = hostname.split(".")[0].replace("-", " ").toLowerCase();
+      console.log("local location-variable = " + location);
+      // Test if they are at a recognized school computer
+      // Recognized computers are:
+      // E-house floor 4 : Blue, Red, Orange, Yellow, Green, Brown
+      // E-house floor 5 : Grey, Karmosin, White, Magenta, Violett, Turkos
+      // D-house floor 5 : Spel, Sport, Musik, Konst, Mat
+      pattern = /(blue|red|orange|yellow|green|brown|grey|karmosin|white|magenta|violett|turkos|spel|sport|musik|konst|mat)/g;
+      result = location.match(pattern);
+      if (result) {
+        console.log("local location-variable = " + location);
+        if (result == "mat") { // Do not add a third equal sign. (Result does not appear to be a string)
+          location = location.replace("mat", "mat ");
+        }
+        callback(location);
+      }
+      else{
+        callback("");
+      }
+    }
+  });
+}
+
+router.post('/setUser', function (req, res) {
+  req.session.user = req.body;
+  req.session.user.location = "";
+
+  var ip = req.connection.remoteAddress;
+  
+  getLocation(ip, function (location) {
+    req.session.user.location = location;
+    console.log("Is this happening before ?");
+    res.writeHead(200);
+    res.end();
+  });
 });
 
 function getUID (ticket, callback) {
