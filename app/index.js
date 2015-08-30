@@ -111,20 +111,6 @@ function getLocation (ip, callback) {
   });
 }
 
-router.post('/setUser', function (req, res) {
-  req.session.user = req.body;
-  req.session.user.location = "";
-
-  var ip = req.connection.remoteAddress;
-  
-  getLocation(ip, function (location) {
-    req.session.user.location = location;
-    console.log("Is this happening before ?");
-    res.writeHead(200);
-    res.end();
-  });
-});
-
 function getUID (ticket, callback) {
   var url = 'https://login.kth.se/serviceValidate?ticket='+ ticket  + '&service=http://queue.csc.kth.se/auth';
   request({ url: url}, function (err, response, body) {
@@ -159,23 +145,22 @@ app.get('/auth', function(req, res) {
   });
 });
 
+app.post('/API/setUser', function (req, res) {
+  req.session.user = req.body;
+  req.session.user.location = "";
+
+  var ip = req.connection.remoteAddress;
+  
+  getLocation(ip, function (location) {
+    req.session.user.location = location;
+    console.log("Is this happening before ?");
+    res.writeHead(200);
+    res.end();
+  });
+});
+
 app.get('/login', function(req, res) {
   res.redirect('https://login.kth.se/login?service=http://queue.csc.kth.se/auth');
-});
-app.get('/auth', function(req, res) {
-  console.log('printing ticket data:');
-  console.log(req.query.ticket);
-  getUID(req.query.ticket,function (err, response, body) {
-    if (err) {
-      console.log(err);
-    }
-    else{
-      console.log(response.statusCode);
-      console.log(body);
-      body = body.match(/u1[\d|\w]+/g)[0];
-      console.log(body);
-    }
-  });
 });
 
 httpServer.listen(port, function () {
