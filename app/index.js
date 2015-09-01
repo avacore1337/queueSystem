@@ -137,11 +137,17 @@ function getUID (ticket, callback) {
 app.get('/auth', function(req, res) {
   console.log('printing ticket data:');
   console.log(req.query.ticket);
+  req.session.user.location = "";
+  var ip = req.connection.remoteAddress;
   getUID(req.query.ticket, function (uid) {
     console.log("uid:");
     console.log(uid);
     req.session.user.name = uid;
-    res.redirect('/#' + req.session.user.loginTarget)
+    getLocation(ip, function (location) {
+      req.session.user.location = location;
+      console.log("Is this happening before ?");
+      res.redirect('/#' + req.session.user.loginTarget)
+    });
   });
 });
 

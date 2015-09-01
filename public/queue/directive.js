@@ -97,7 +97,7 @@ userDirective.directive('standardUsers', function(){
 		// Function to read comments about a user
 		$scope.readMessages = function(messages){
 			console.log("Called readMessages");
-			modals.listModal({title: "Commets", messages: messages});
+			modals.listModal({title: "Comments", messages: messages});
 		};
 
 		// Function to mark someone for completion
