@@ -87,8 +87,9 @@ function getLocation (ip, callback) {
     console.log("hostname = " + hostname);
     var pattern = /(\.kth\.se)/g;
     var result = hostname.match(pattern);
+    var location = "";
     if (result) {
-      var location = hostname.split(".")[0].replace("-", " ").toLowerCase();
+      var possibleLocation = hostname.split(".")[0].replace("-", " ").toLowerCase();
       console.log("local location-variable = " + location);
       // Test if they are at a recognized school computer
       // Recognized computers are:
@@ -96,18 +97,16 @@ function getLocation (ip, callback) {
       // E-house floor 5 : Grey, Karmosin, White, Magenta, Violett, Turkos
       // D-house floor 5 : Spel, Sport, Musik, Konst, Mat
       pattern = /(blue|red|orange|yellow|green|brown|grey|karmosin|white|magenta|violett|turkos|spel|sport|musik|konst|mat)/g;
-      result = location.match(pattern);
+      result = possibleLocation.match(pattern);
       if (result) {
+        location = possibleLocation;
         console.log("local location-variable = " + location);
         if (result == "mat") { // Do not add a third equal sign. (Result does not appear to be a string)
           location = location.replace("mat", "mat ");
         }
-        callback(location);
-      }
-      else{
-        callback("");
       }
     }
+    callback(location);
   });
 }
 
@@ -139,9 +138,9 @@ app.get('/auth', function(req, res) {
   console.log(req.query.ticket);
   req.session.user.location = "";
   var ip = req.connection.remoteAddress;
+  console.log("ip: " + ip);
   getUID(req.query.ticket, function (uid) {
-    console.log("uid:");
-    console.log(uid);
+    console.log("uid:" + uid);
     req.session.user.name = uid;
     getLocation(ip, function (location) {
       req.session.user.location = location;
