@@ -60,7 +60,7 @@ scheduleForEveryNight(function () {
     queue.clearAssistantComments();
     queue.clearCompletions();
     //queue.purgeBookings();
-  })
+  });
   //queueSystem.updateAllBookings();
 });
 

@@ -91,8 +91,8 @@ queueSchema.methods.clearCompletions = function (username) {
 
 // Returns true if the given user is in the queue, otherwise false
 queueSchema.methods.inQueue = function (username) {
-  for(var index in this.queue){
-    if(username === this.queue[index].name){
+  for(var i = 0; i < this.queue.length; i++){
+    if(username === this.queue[i].name){
       return true;
     }
   }
@@ -211,6 +211,17 @@ queueSchema.methods.show = function () {
 
 // empty the queue
 queueSchema.methods.purgeQueue = function () {
+  for(var i = 0; i < this.queue.length; i++){
+    var user = this.queue[i];
+    var stat = new Statistic({
+        name: user.name,
+        queue: this.name,
+        help: user.help,
+        leftQueue: true,
+        queueLength: 0,
+      });
+    stat.save();
+  }
   this.queue = [];
   this.save();
 };

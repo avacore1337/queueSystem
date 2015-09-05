@@ -160,7 +160,6 @@ module.exports = function (socket, io) {
     console.log("start: " + start);
     console.log("end: " + end);
     Statistic.getStatistics(queueName, start, end, function (err, statData) {
-      console.log(statData);
       socket.emit("statistics", statData);
       console.log("finished");
     });
@@ -173,7 +172,6 @@ module.exports = function (socket, io) {
     console.log("start: " + start);
     console.log("end: " + end);
     Statistic.getJSONStatistics(queueName, start, end, function (err, statData) {
-      console.log(statData);
       socket.emit("JSONStatistics", statData);
       console.log("finished");
     });

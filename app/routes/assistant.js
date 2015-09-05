@@ -245,15 +245,9 @@ module.exports = function (socket, io) {
     }
 
     var queue = queueSystem.findQueue(queueName);
-
-    while(queue.queue.length > 0){
-      queueSystem.userLeavesQueue(queue, queue.queue[0].name);
-    }
-
     queue.purgeQueue();
-    queue.queue = [];
 
-    console.log(req.queue + ' -list purged by ' + assistant);
+    console.log(queueName + ' -list purged by ' + assistant);
 
     io.to(queueName).emit('purge');
     io.to("lobby").emit('lobbypurge', queueName);

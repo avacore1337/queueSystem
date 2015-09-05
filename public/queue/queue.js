@@ -20,12 +20,6 @@
       var TIME_BOOKING = 1800000; // 30min in milliseconds
 
       $scope.loggedIn = user.isLoggedIn();
-      $scope.$on('$viewContentLoaded', function(event) {
-        $timeout(function() {
-          user.updateUserData();
-          $scope.loggedIn = user.isLoggedIn();
-        },0);
-      });
 
       $scope.queue = $routeParams.queue;
       $scope.info = "";
@@ -680,6 +674,14 @@
           return "transparent";
       }
     };
+
+    $scope.$on('$viewContentLoaded', function(event) {
+      $timeout(function() {
+        user.updateUserData();
+        $scope.loggedIn = user.isLoggedIn();
+      },1000);
+    });
+
   }])
 .directive('bookedUsers', function(){
   return {
