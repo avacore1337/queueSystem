@@ -95,9 +95,19 @@ userDirective.directive('standardUsers', function(){
 		};
 
 		// Function to read comments about a user
-		$scope.readMessages = function(messages){
-			console.log("Called readMessages");
-			modals.listModal({title: "Comments", messages: messages});
+		$scope.readMessages = function(messages, name){
+			if($scope.accessLevel > 0){
+				if( /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent) ) {
+					for(var i = 0; i < $scope.users.length; i++){
+						if($scope.users[i].name === name){
+							$scope.users[i].optionsActivated = !$scope.users[i].optionsActivated;
+							break;
+						}
+					}
+				}
+				console.log("Called readMessages");
+				modals.listModal({title: "Comments", messages: messages});
+			}
 		};
 
 		// Function to mark someone for completion

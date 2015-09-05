@@ -267,15 +267,8 @@ function setup() {
   globalMOTD.save();
 
   var newAdmin = new Admin({
-    name: "pernyb",
-    username: "pernyb"
-  });
-  adminList.push(newAdmin);
-  newAdmin.save();
-
-  newAdmin = new Admin({
-    name: "antbac",
-    username: "antbac"
+    name: "guest-antbac",
+    username: "guest-antbac"
   });
   adminList.push(newAdmin);
   newAdmin.save();
