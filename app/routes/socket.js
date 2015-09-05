@@ -121,6 +121,9 @@ module.exports = function (socket, io) {
     console.log("Validerande: " + JSON.stringify(socket.handshake.session.user));
 
     var queue = queueSystem.findQueue(queueName);
+    if (!queue.inQueue(name)) {
+      return;
+    }
 
     var user = queue.getUser(name);
     var stat = new Statistic({
