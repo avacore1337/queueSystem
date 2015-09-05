@@ -91,13 +91,12 @@ queueSchema.methods.clearCompletions = function (username) {
 
 // Returns true if the given user is in the queue, otherwise false
 queueSchema.methods.inQueue = function (username) {
-  var ret = false;
-    this.queue.forEach(function (user, i, queue) {
-    if (user.name === username) {
-      ret = true;
+  for(var index in this.queue){
+    if(username === this.queue[index].name){
+      return true;
     }
-  });
-  return ret;
+  }
+  return false;
 };
 
 // Updates the Info

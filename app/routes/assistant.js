@@ -246,8 +246,8 @@ module.exports = function (socket, io) {
 
     var queue = queueSystem.findQueue(queueName);
 
-    for (var i = queue.queue.length - 1; i >= 0; i--) { // TODO : While length > 0
-      queueSystem.userLeavesQueue(queue, queue.queue[i].name);
+    while(queue.queue.length > 0){
+      queueSystem.userLeavesQueue(queue, queue.queue[0].name);
     }
 
     queue.purgeQueue();
