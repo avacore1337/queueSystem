@@ -687,6 +687,7 @@
         matchToQueue();
         if(user.getLocation()){
           $scope.location = user.getLocation();
+          $scope.fixedLocation = true;
         }
       },1000);
     });
