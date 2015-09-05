@@ -22,41 +22,41 @@ statisticSchema.statics.getStatistics =  function (queue, start, end, callbackDo
 
   function(callback){
     Statistic.count({
-      queue: queue, 
-      leftQueue: true, 
-      help:true, 
+      queue: queue,
+      leftQueue: true,
+      help:true,
       time: {"$gte": start, "$lt": end}},
       function (err, amount) {
         if (err) return console.error(err);
-        console.log("peopleHelped:", amount)
+        console.log("peopleHelped:", amount);
         callback(null, amount);
-    })
+    });
   },
 
   function(callback){
     Statistic.count({
-      queue: queue, 
-      leftQueue: true, 
-      help:false, 
+      queue: queue,
+      leftQueue: true,
+      help:false,
       time: {"$gte": start, "$lt": end}},
       function (err, amount) {
         if (err) return console.error(err);
-        console.log("peoplePresented:", amount)
+        console.log("peoplePresented:", amount);
         callback(null, amount);
-    })
+    });
   },
 
   function(callback){
-    Statistic.count({queue: queue, 
-      leftQueue: false, 
+    Statistic.count({queue: queue,
+      leftQueue: false,
       time: {"$gte": start, "$lt": end}},
     function (err, amount) {
       callback(null, amount);
     });
   },
   function(callback){
-    Statistic.count({queue: queue, 
-      leftQueue: true, 
+    Statistic.count({queue: queue,
+      leftQueue: true,
       time: {"$gte": start, "$lt": end}},
     function (err, amount) {
       callback(null, amount);

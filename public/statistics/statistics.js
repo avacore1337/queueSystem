@@ -34,8 +34,8 @@
       // averageQueueTime
       // formatQueueTime(data.averageQueueTime);
       $scope.showData = true;
-      $scope.peopleHelped = data.peopleHelped; 
-      $scope.peoplePresented = data.peoplePresented; 
+      $scope.peopleHelped = data.peopleHelped;
+      $scope.peoplePresented = data.peoplePresented;
       $scope.leftInQueue = data.leftInQueue;
     });
 
