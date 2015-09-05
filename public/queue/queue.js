@@ -15,11 +15,17 @@
     }])
 
 
-  .controller('queueController', ['$scope', 'HttpService', '$routeParams', '$location', '$modal', 'WebSocketService', 'UserService', 'TitleService', 'ModalService',
-    function ($scope, http, $routeParams, $location, $modal, socket, user, title, modals) {
+  .controller('queueController', ['$scope', 'HttpService', '$routeParams', '$location', '$modal', 'WebSocketService', 'UserService', 'TitleService', 'ModalService', '$timeout',
+    function ($scope, http, $routeParams, $location, $modal, socket, user, title, modals, $timeout) {
       var TIME_BOOKING = 1800000; // 30min in milliseconds
 
       $scope.loggedIn = user.isLoggedIn();
+      $scope.$on('$viewContentLoaded', function(event) {
+        $timeout(function() {
+          user.updateUserData();
+          $scope.loggedIn = user.isLoggedIn();
+        },0);
+      });
 
       $scope.queue = $routeParams.queue;
       $scope.info = "";
@@ -607,7 +613,6 @@
       }catch(err) {
         result = null;
       }
-      console.log("result = " + result);
       switch(result) {
         case "blue":
           return "blue";
