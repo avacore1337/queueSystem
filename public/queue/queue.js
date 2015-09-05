@@ -53,6 +53,14 @@
         // $scope.bookedUsers = [{time:Date.now(), comment:"MVK redovisning", users:["antbac", "pernyb", "rwb"], length:"15min", location:"Blue 01"}];
         console.log($scope.bookedUsers);
         $scope.locked = response.locked;
+        matchToQueue();
+        if(response.motd){
+          $scope.MOTD = response.motd;
+          modals.getModal({title: "Message of the day", message: response.motd, sender: ""});
+        }
+      });
+
+      function matchToQueue () {
         for (var i = 0; i < $scope.users.length; i++) {
           $scope.users[i].color = $scope.colorLocation($scope.users[i].location);
           $scope.users[i].optionsActivated = false;
@@ -67,11 +75,7 @@
             $scope.help = $scope.users[i].help;
           }
         }
-        if(response.motd){
-          $scope.MOTD = response.motd;
-          modals.getModal({title: "Message of the day", message: response.motd, sender: ""});
-        }
-      });
+      }
 
       $scope.$watch(function() {
         return $scope.name;
@@ -680,7 +684,10 @@
         $scope.name = user.getName();
         $scope.loggedIn = user.isLoggedIn();
         $scope.accessLevel = user.accessLevelFor($scope.queue);
-        $scope.location = user.getLocation();
+        matchToQueue();
+        if(user.getLocation()){
+          $scope.location = user.getLocation();
+        }
       },1000);
     });
 
