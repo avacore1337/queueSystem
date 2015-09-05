@@ -31,37 +31,37 @@
     <tr></tr> <!-- Hack-solution -->
     <tr ng-repeat-end class="text-center" ng-show="accessLevel && user.optionsActivated" ng-dblclick="changeVisibilityDbl(user.name)">
       <td colspan="100%;">
-        <div title="kick user" class="col-xs-2">
+        <div title="kick user" class="col-xs-2"  style="padding-left: 0.15em; padding-right: 0.15em;">
           <button class="red clickable frame center-content expand" ng-click="kick(user)" id="queueRemoveUser{{user.name}}Btn">
             <span class="glyphicon glyphicon-remove"></span>
           </button>
         </div>
-        <div title="send message" class="col-xs-2">
+        <div title="send message" class="col-xs-2"  style="padding-left: 0.15em; padding-right: 0.15em;">
           <button class="yellow clickable frame center-content expand" ng-click="messageUser(user.name)" id="queueSendMessage{{user.name}}Btn">
             <span class="glyphicon glyphicon-envelope"></span>
           </button>
         </div>
-        <div title="help" class="col-xs-2" ng-hide="user.gettingHelp">
+        <div title="help" class="col-xs-2"  style="padding-left: 0.15em; padding-right: 0.15em;" ng-hide="user.gettingHelp">
           <button class="blue clickable frame center-content expand" ng-click="helpUser(user)" id="queueHelp{{user.name}}Btn">
             <span class="glyphicon glyphicon-check"></span>
           </button>
         </div>
-        <div title="stop helping" class="col-xs-2" ng-show="user.gettingHelp">
+        <div title="stop helping" class="col-xs-2"  style="padding-left: 0.15em; padding-right: 0.15em;" ng-show="user.gettingHelp">
           <button class="yellow clickable frame center-content expand" ng-click="stopHelpUser(user.name)" id="queueStopHelp{{user.name}}Btn">
             <span class="glyphicon glyphicon-check"></span>
           </button>
         </div>
-        <div title="bad location" class="col-xs-2">
+        <div title="bad location" class="col-xs-2"  style="padding-left: 0.15em; padding-right: 0.15em;">
           <button class="yellow clickable frame center-content expand" ng-click="badLocation(user)" id="queueBadLocation{{user.name}}Btn">
             <span class="glyphicon glyphicon-question-sign"></span>
           </button>
         </div>
-        <div title="completion" class="col-xs-2">
+        <div title="completion" class="col-xs-2"  style="padding-left: 0.15em; padding-right: 0.15em;">
           <button class="yellow clickable frame center-content expand" ng-click="completion(user.name)" id="queueCompletion{{user.name}}Btn">
             <span class="glyphicon glyphicon-bookmark"></span>
           </button>
         </div>
-        <div title="add comment" class="col-xs-2">
+        <div title="add comment" class="col-xs-2"  style="padding-left: 0.15em; padding-right: 0.15em;">
           <button class="yellow clickable frame center-content expand" ng-click="flag(user.name)" id="queueAddComment{{user.name}}Btn">
             <span class="glyphicon glyphicon-tag"></span>
           </button>

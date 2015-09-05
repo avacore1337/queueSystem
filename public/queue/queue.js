@@ -677,8 +677,10 @@
 
     $scope.$on('$viewContentLoaded', function(event) {
       $timeout(function() {
-        user.updateUserData();
+        $scope.name = user.getName();
         $scope.loggedIn = user.isLoggedIn();
+        $scope.accessLevel = user.accessLevelFor($scope.queue);
+        $scope.location = user.getLocation();
       },1000);
     });
 
