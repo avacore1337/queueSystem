@@ -2,7 +2,7 @@
 
   angular.module('queue')
 
-  .factory('UserService', function($http) {
+  .factory('UserService', function($rootScope, $http) {
 
     var admin = false;
 
@@ -27,6 +27,7 @@
         if(username){
           loggedIn = true;
         }
+        $rootScope.$broadcast('userUpdated');
       });
     }
 
