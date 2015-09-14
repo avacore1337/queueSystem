@@ -19,17 +19,6 @@
     function ($scope, http, $routeParams, $location, $modal, socket, user, title, modals, $timeout) {
       var TIME_BOOKING = 1800000; // 30min in milliseconds
 
-      $scope.$on('userUpdated', function () {
-        $scope.name = user.getName();
-        $scope.loggedIn = user.isLoggedIn();
-        $scope.accessLevel = user.accessLevelFor($scope.queue);
-        if(user.getLocation()){
-          $scope.location = user.getLocation();
-          $scope.fixedLocation = true;
-        }
-      });
-
-      console.log("Initializing loggedIn");
       $scope.loggedIn = user.isLoggedIn();
 
       $scope.queue = $routeParams.queue;
@@ -533,7 +522,7 @@
 
       // Return true if the person has a booking about now
       $scope.hasBooking = function(user){
-        var name = user.getName();
+        var name = user.name;
         for(var index in $scope.bookedUsers){
           var booking = $scope.bookedUsers[index];
           for(var i in booking.users){
@@ -689,6 +678,19 @@
           return "transparent";
       }
     };
+
+    $scope.$on('$viewContentLoaded', function(event) {
+      $timeout(function() {
+        $scope.name = user.getName();
+        $scope.loggedIn = user.isLoggedIn();
+        $scope.accessLevel = user.accessLevelFor($scope.queue);
+        matchToQueue();
+        if(user.getLocation()){
+          $scope.location = user.getLocation();
+          $scope.fixedLocation = true;
+        }
+      },1000);
+    });
 
   }])
 .directive('bookedUsers', function(){

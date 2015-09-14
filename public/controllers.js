@@ -193,8 +193,11 @@ queueControllers.controller('navigationController', ['$scope', '$location', 'Use
       console.log("Detected update to $location.path() (oldValue = " + oldValue + ", newValue = " + newValue + ")");
     });
 
-    $scope.$on('userUpdated', function () {
-      $scope.name = user.getName();
+    $scope.$watch(function() {
+      return user.getName();
+    }, function(newValue, oldValue) {
+      $scope.name = newValue;
+      console.log("Detected update to user.getName() (oldValue = " + oldValue + ", newValue = " + newValue + ")");
     });
 
     // Listen for the server setting a new server-message
@@ -208,7 +211,7 @@ queueControllers.controller('navigationController', ['$scope', '$location', 'Use
         user.clearData();
         $scope.name = "";
         console.log("logged out");
-        window.location = "logout";
+        window.location = "logout"
     };
 
     $scope.externalLink = function(address){
