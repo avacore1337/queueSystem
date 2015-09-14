@@ -28,6 +28,9 @@ module.exports = function (socket, io) {
   // user tries to join a queue with a "bad location"
   //  - do nothing in backend?
   socket.on('badLocation', function (req) {
+    if(socket.handshake.session.user === undefined){
+      return;
+    }
     var username = socket.handshake.session.user.name;
     var user = req.user;
     var queueName = req.queueName;
@@ -51,6 +54,9 @@ module.exports = function (socket, io) {
 
   // admin stops helping a user (marked in the queue)
   socket.on('stopHelp', function (req) {
+    if(socket.handshake.session.user === undefined){
+      return;
+    }
     var queueName = req.queueName;
     var username = socket.handshake.session.user.name;
 
@@ -76,6 +82,9 @@ module.exports = function (socket, io) {
 
   // teacher/assistant messages a user
   socket.on('messageUser', function (req) {
+    if(socket.handshake.session.user === undefined){
+      return;
+    }
     var queueName = req.queueName;
     var name = req.name;
     var message = req.message;
@@ -98,6 +107,9 @@ module.exports = function (socket, io) {
 
   // teacher/assistant emits to all users (teacher/assistant included)
   socket.on('broadcast', function (req) {
+    if(socket.handshake.session.user === undefined){
+      return;
+    }
     var queueName = req.queueName;
     var message = req.message;
     var sender = socket.handshake.session.user.name;
@@ -119,6 +131,9 @@ module.exports = function (socket, io) {
 
   // teacher/assistant emits to all teacher/assistant
   socket.on('broadcastFaculty', function (req) {
+    if(socket.handshake.session.user === undefined){
+      return;
+    }
     console.log("Recevie request to send message to faculty");
     var queueName = req.queueName;
     var message = req.message;
@@ -168,6 +183,9 @@ module.exports = function (socket, io) {
 
   // admin helps a user (marked in the queue)
   socket.on('help', function (req) {
+    if(socket.handshake.session.user === undefined){
+      return;
+    }
     var queueName = req.queueName;
     var username = req.username;
     var helper = socket.handshake.session.user.name;
@@ -193,6 +211,9 @@ module.exports = function (socket, io) {
 
   // user being kicked from queue
   socket.on('kick', function (req) {
+    if(socket.handshake.session.user === undefined){
+      return;
+    }
     var queueName = req.queueName;
     var user = req.user;
     var assistant = socket.handshake.session.user.name;
@@ -234,6 +255,9 @@ module.exports = function (socket, io) {
 
   // assistant/teacher purges a queue
   socket.on('purge', function (req) {
+    if(socket.handshake.session.user === undefined){
+      return;
+    }
     var queueName = req.queueName;
     var assistant = socket.handshake.session.user.name;
 
@@ -255,6 +279,9 @@ module.exports = function (socket, io) {
 
   // trying to schedule a lab session
   socket.on('addSchedule', function (req) {
+    if(socket.handshake.session.user === undefined){
+      return;
+    }
     var queueName = req.queueName;
     var username = socket.handshake.session.user.name;
 
@@ -270,6 +297,9 @@ module.exports = function (socket, io) {
 
   // trying to clear all schedules for a given queue
   socket.on('removeSchedules', function (req) {
+    if(socket.handshake.session.user === undefined){
+      return;
+    }
     var queueName = req.queueName;
     var username = socket.handshake.session.user.name;
 
@@ -288,6 +318,9 @@ module.exports = function (socket, io) {
 
   // admin locks a queue
   socket.on('lock', function (req) {
+    if(socket.handshake.session.user === undefined){
+      return;
+    }
     var queueName = req.queueName;
     var username = socket.handshake.session.user.name;
 
@@ -303,6 +336,9 @@ module.exports = function (socket, io) {
 
   // admin unlocks a queue
   socket.on('unlock', function (req) {
+    if(socket.handshake.session.user === undefined){
+      return;
+    }
     var queueName = req.queueName;
     var username = socket.handshake.session.user.name;
 
@@ -319,6 +355,9 @@ module.exports = function (socket, io) {
 
   // Add a comment about a user
   socket.on('flag', function (req) {
+    if(socket.handshake.session.user === undefined){
+      return;
+    }
     var username = req.name;
     var queueName = req.queueName;
     var sender = socket.handshake.session.user.name;
@@ -343,6 +382,9 @@ module.exports = function (socket, io) {
 
   // Remove all comments about a user
   socket.on('removeFlags', function (req) {
+    if(socket.handshake.session.user === undefined){
+      return;
+    }
     var username = req.name;
     var queueName = req.queueName;
     var sender = socket.handshake.session.user.name;
@@ -364,6 +406,9 @@ module.exports = function (socket, io) {
   });
 
   socket.on('completion', function (req) {
+    if(socket.handshake.session.user === undefined){
+      return;
+    }
     var queueName = req.queueName;
     var assistant = socket.handshake.session.user.name;
 
@@ -400,6 +445,9 @@ module.exports = function (socket, io) {
   });
 
   socket.on('setMOTD', function (req) {
+    if(socket.handshake.session.user === undefined){
+      return;
+    }
     var queueName = req.queueName;
     var MOTD = req.MOTD;
     var sender = socket.handshake.session.user.name;
@@ -423,6 +471,9 @@ module.exports = function (socket, io) {
   });
 
   socket.on('setInfo', function (req) {
+    if(socket.handshake.session.user === undefined){
+      return;
+    }
     var queueName = req.queueName;
     var info = req.info;
     var sender = socket.handshake.session.user.name;

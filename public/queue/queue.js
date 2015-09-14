@@ -533,7 +533,7 @@
 
       // Return true if the person has a booking about now
       $scope.hasBooking = function(user){
-        var name = user.getName();
+        var name = user.name;
         for(var index in $scope.bookedUsers){
           var booking = $scope.bookedUsers[index];
           for(var i in booking.users){
