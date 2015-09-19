@@ -42,7 +42,6 @@
       });
       socket.emit('listen', $scope.queue);
 
-      title.title = $scope.queue + " | Stay A While";
       $scope.name = user.getName();
       $scope.users = [];
       $scope.bookedUsers = [];
@@ -52,6 +51,7 @@
       $scope.location = user.getLocation();
       $scope.fixedLocation = $scope.location !== "";
       $scope.completionText = "";
+      title.title = "[" + $scope.users.length + "] " + $scope.queue + " | Stay A While";
 
       $scope.accessLevel = user.accessLevelFor($scope.queue);
 
@@ -59,6 +59,7 @@
       http.get('queue/' + $scope.queue, function(response) {
         console.log(response);
         $scope.users = response.queue;
+        title.title = "[" + $scope.users.length + "] " + $scope.queue + " | Stay A While";
         $scope.bookedUsers = response.bookings;
         $scope.info = response.info;
         // $scope.bookedUsers = [{time:Date.now(), comment:"MVK redovisning", users:["antbac", "pernyb", "rwb"], length:"15min", location:"Blue 01"}];
@@ -78,7 +79,7 @@
           if($scope.users[i].name === $scope.name){
             $scope.enqueued = true;
             $scope.gettingHelp = $scope.users[i].gettingHelp;
-            title.title = "["  + (i+1) + "] " + $scope.queue + " | Stay A while";
+            title.title = "["  + (i+1) + "/" + $scope.users.length + "] " + $scope.queue + " | Stay A while";
             if(!$scope.fixedLocation){
               $scope.location = $scope.users[i].location;
             }
@@ -118,13 +119,14 @@
 
       // Listen for the person joining a queue event.
       socket.on('join', function (data) {
-        console.log("joining");
-        if(data.name === $scope.name){
-          $scope.enqueued = true;
-          title.title = "["  + ($scope.users.length+1) + "] " + $scope.queue + " | Stay A while";
-        }
         data.color = $scope.colorLocation(data.location);
         $scope.users.push(data);
+        if(data.name === $scope.name){
+          $scope.enqueued = true;
+          title.title = "["  + $scope.users.length + "/" + $scope.users.length + "] " + $scope.queue + " | Stay A while";
+        }else{
+          title.title = "["  + $scope.users.length + "] " + $scope.queue + " | Stay A while";
+        }
       });
 
       // Listen for the person leaving a queue event.
@@ -138,7 +140,6 @@
           $scope.comment = '';
           $scope.help = true;
           $scope.gettingHelp = false;
-          title.title = $scope.queue + " | Stay A while";
         }
         for(var i = $scope.users.length - 1; i >= 0; i--) {
           if($scope.users[i].name === data.name) {
@@ -149,10 +150,12 @@
         if($scope.enqueued){
           for(var j = $scope.users.length - 1; j >= 0; j--) {
             if($scope.users[j].name === $scope.name) {
-              title.title = "["  + (j+1) + "] " + $scope.queue + " | Stay A while";
+              title.title = "["  + (j+1) + "/" + $scope.users.length + "] " + $scope.queue + " | Stay A while";
               break;
             }
           }
+        }else{
+          title.title = "["  + $scope.users.length + "] " + $scope.queue + " | Stay A while";
         }
       });
 
@@ -163,12 +166,12 @@
         $scope.comment = '';
         $scope.help = true;
         $scope.gettingHelp = false;
-        title.title = $scope.queue + " | Stay A while";
+        title.title = "[0] " + $scope.queue + " | Stay A while";
       });
 
       // Listen for a user changeing their information
       socket.on('update', function (user) {
-        console.log(user);
+        console.log("updating user : " + user);
         for(var index in $scope.users) {
           if($scope.users[index].name === user.name) {
             $scope.users[index] = user;
@@ -540,9 +543,6 @@
             var name1 = booking.users[i];
             if(name1 === name){
               if($scope.soon(booking)){
-                if($scope.name === name){
-                  title.title = $scope.queue + " | Stay A While";
-                }
                 return true;
               }
             }
