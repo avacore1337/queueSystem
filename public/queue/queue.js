@@ -51,9 +51,8 @@
       $scope.location = user.getLocation();
       $scope.fixedLocation = $scope.location !== "";
       $scope.completionText = "";
-      title.title = "[" + $scope.users.length + "] " + $scope.queue + " | Stay A While";
-
       $scope.accessLevel = user.accessLevelFor($scope.queue);
+      title.title = "[" + $scope.users.length + "] " + $scope.queue + " | Stay A While";
 
       $scope.locked = false;
       http.get('queue/' + $scope.queue, function(response) {
