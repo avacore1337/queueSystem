@@ -24,8 +24,8 @@
       <td>{{ user.comment }}</td>
       <td>
         <span class="pull-left" data-livestamp="{{user.time/1000}}"></span>
-        <span class="pull-right glyphicon glyphicon-search text-blue clickable" title="read messages" ng-show="accessLevel && user.messages.length" ng-click="readMessages(user.messages, user.name)" id="queueReadComment{{user.name}}Btn"></span>
-        <span class="pull-right glyphicon glyphicon-search text-light-gray" title="read messages" ng-show="accessLevel && !user.messages.length" id="queueCanNotReadComment{{user.name}}Btn"></span>
+        <span class="pull-right glyphicon glyphicon-search text-blue clickable" title="read messages" ng-show="accessLevel >= 1 && user.messages.length" ng-click="readMessages(user.messages, user.name)" id="queueReadComment{{user.name}}Btn"></span>
+        <span class="pull-right glyphicon glyphicon-search text-light-gray" title="read messages" ng-show="accessLevel >= 1 && !user.messages.length" id="queueCanNotReadComment{{user.name}}Btn"></span>
       </td>
     </tr>
     <tr></tr> <!-- Hack-solution -->

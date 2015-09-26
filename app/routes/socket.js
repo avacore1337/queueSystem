@@ -31,6 +31,9 @@ module.exports = function (socket, io) {
 
   // user joins queue
   socket.on('join', function (req) {
+    if(socket.handshake.session.user === undefined){
+      return;
+    }
     var queueName = req.queueName;
     var user = req.user;
     user.name = socket.handshake.session.user.name;
@@ -82,6 +85,9 @@ module.exports = function (socket, io) {
 
   // user gets updated
   socket.on('update', function (req) {
+    if(socket.handshake.session.user === undefined){
+      return;
+    }
     var queueName = req.queueName;
     var user = req.user;
     user.name = socket.handshake.session.user.name;
@@ -98,6 +104,9 @@ module.exports = function (socket, io) {
 
   // a user marks themself as getting help
   socket.on('receivingHelp', function (req) {
+    if(socket.handshake.session.user === undefined){
+      return;
+    }
     var queueName = req.queueName;
     var name = socket.handshake.session.user.name;
 
@@ -113,6 +122,9 @@ module.exports = function (socket, io) {
 
   // user leaves queue
   socket.on('leave', function (req) {
+    if(socket.handshake.session.user === undefined){
+      return;
+    }
     var queueName = req.queueName;
     var name = socket.handshake.session.user.name;
     var booking = req.booking;

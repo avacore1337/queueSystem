@@ -26,6 +26,9 @@ module.exports = function (socket, io) {
   }
 
   socket.on('addServerMessage', function (req) {
+    if(socket.handshake.session.user === undefined){
+      return;
+    }
     var message = req.message;
     var sender = socket.handshake.session.user.name;
     console.log("sender = " + sender);
@@ -46,6 +49,9 @@ module.exports = function (socket, io) {
   });
 
   socket.on('addQueue', function (req) {
+    if(socket.handshake.session.user === undefined){
+      return;
+    }
     console.log("Trying to add Queue!");
     var username = socket.handshake.session.user.name;
     // admin-validation
@@ -61,6 +67,9 @@ module.exports = function (socket, io) {
   });
 
   socket.on('removeQueue', function (req) {
+    if(socket.handshake.session.user === undefined){
+      return;
+    }
     console.log("Trying to remove Queue!");
 
     var username = socket.handshake.session.user.name;
@@ -81,6 +90,9 @@ module.exports = function (socket, io) {
   });
 
   socket.on('addAdmin', function (req) {
+    if(socket.handshake.session.user === undefined){
+      return;
+    }
     console.log("Trying to add Admin!");
 
     var name = socket.handshake.session.user.name;
@@ -102,6 +114,9 @@ module.exports = function (socket, io) {
   });
 
   socket.on('addTeacher', function (req) {
+    if(socket.handshake.session.user === undefined){
+      return;
+    }
     var queueName = req.queueName;
 
     var name = socket.handshake.session.user.name;
@@ -131,6 +146,9 @@ module.exports = function (socket, io) {
   });
 
   socket.on('addAssistant', function (req) {
+    if(socket.handshake.session.user === undefined){
+      return;
+    }
     var queueName = req.queueName;
 
     var name = socket.handshake.session.user.name;
@@ -161,6 +179,9 @@ module.exports = function (socket, io) {
 
   //
   socket.on('removeAdmin', function (req) {
+    if(socket.handshake.session.user === undefined){
+      return;
+    }
     console.log("Trying to remove Admin!");
 
     var username = socket.handshake.session.user.name;
@@ -180,6 +201,9 @@ module.exports = function (socket, io) {
 
   //
   socket.on('removeTeacher', function (req) {
+    if(socket.handshake.session.user === undefined){
+      return;
+    }
     var username = socket.handshake.session.user.name;
     var queueName = req.queueName;
 
@@ -202,6 +226,9 @@ module.exports = function (socket, io) {
 
   //
   socket.on('removeAssistant', function (req) {
+    if(socket.handshake.session.user === undefined){
+      return;
+    }
     var username = socket.handshake.session.user.name;
     var queueName = req.queueName;
 
@@ -223,6 +250,9 @@ module.exports = function (socket, io) {
   });
 
   socket.on('hide', function (req) {
+    if(socket.handshake.session.user === undefined){
+      return;
+    }
     var queueName = req.queueName;
     var username = socket.handshake.session.user.name;
 
@@ -245,6 +275,9 @@ module.exports = function (socket, io) {
   });
 
   socket.on('show', function (req) {
+    if(socket.handshake.session.user === undefined){
+      return;
+    }
     var queueName = req.queue;
     var username = socket.handshake.session.user.name;
 
