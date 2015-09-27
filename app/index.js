@@ -12,6 +12,11 @@ var mongoose = require('mongoose');
 var request = require('request');
 var dns = require('dns');
 
+var ldap = require('ldapjs-hotfix');
+var client = ldap.createClient({
+  url: 'ldaps://ldap.kth.se:636'
+});
+
 mongoose.connect('mongodb://localhost/queueBase');
 
 app.use(express.static(__dirname + '/../public'));
@@ -144,9 +149,18 @@ app.get('/auth', function(req, res) {
     req.session.user.location = "";
     req.session.user.loginTarget = ""
   }
+
   var ip = req.connection.remoteAddress;
   console.log("ip: " + ip);
   getUID(req.query.ticket, function (uid) {
+    
+    try{
+      getUsername(uid);
+    }
+    catch(err){
+      console.log(err);
+    }
+
     console.log("uid:" + uid);
     req.session.user.name = uid;
     getLocation(ip, function (location) {
@@ -192,6 +206,33 @@ app.get('/logout', function(req, res) {
   req.session.destroy();
   res.redirect('https://login.kth.se/logout');
 });
+
+function getUsername (ugKthid) {
+  var opts = {
+    filter: '(ugKthid=' + ugKthid + ')',
+    scope: 'sub'
+  };
+  client.search('ou=Unix,dc=kth,dc=se', opts, function(err, res) {
+    res.on('searchEntry', function(entry) {
+      // console.log('entry: ' + JSON.stringify(entry.object));
+      console.log('entry: ' + entry.object.givenName);
+      console.log('uid: ' + entry.object.uid);
+      // callback(entry.object.uid);
+    });
+    res.on('searchReference', function(referral) {
+      console.log('referral: ' + referral.uris.join());
+    });
+    res.on('error', function(err) {
+      console.error('error: ' + err.message);
+    });
+    res.on('end', function(result) {
+      console.log('status: ' + result.status);
+    });
+  });
+}
+
+
+  // ldapsearch -x -H ldaps://ldap.kth.se -b ou=Unix,dc=kth,dc=se uid=alba
 
 httpServer.listen(port, function () {
   console.log("server listening on port", port);
