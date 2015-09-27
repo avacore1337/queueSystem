@@ -193,7 +193,9 @@ module.exports = function (socket, io) {
   socket.on('setUser', function (req) {
     console.log("user_" + req.name);
     socket.join("user_" + req.name); // joina sitt eget rum, för privata meddelande etc
-    socket.handshake.session.user = req;
+    socket.handshake.session.user = {};
+    socket.handshake.session.user.location = "";
+    socket.handshake.session.user.name = "guest-" + req.name;
     console.log('Socket-setUser: ' + JSON.stringify(req));
     console.log('session is: ' + JSON.stringify(socket.handshake.session.user));
   });

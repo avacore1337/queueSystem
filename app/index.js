@@ -181,6 +181,10 @@ app.get('/login', function(req, res) {
   else{
     req.session.user.loginTarget = ""
   }  
+  res.redirect('login2');
+});
+
+app.get('/login2', function(req, res) {
   res.redirect('https://login.kth.se/login?service=http://queue.csc.kth.se/auth');
 });
 
