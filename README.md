@@ -6,7 +6,7 @@ It is still under development but it is running live as of September 2015.
 
 Installation guide:
 First of, local installs will work badly since the KTH-login system won't work
-unless your ip is on the whitelist.
+unless your ip is on the whitelist and they won't just add you without a good reason. 
 
 That being said, you can add a guest account as an admin by manipulating the
 source-code or entering it in the database directly. There is a section in
