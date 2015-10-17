@@ -57,9 +57,30 @@ userDirective.directive('standardUsers', function(){
 
 		// Function to send a message to a user
 		$scope.badLocation = function(user){
-			socket.emit('badLocation', {
-				queueName: $scope.queue,
-				user: user
+			modals.twoChoice({
+				title: "Bad Location",
+				buttonOne: {
+					text: "Unknown location",
+					type: "primary",
+					callback: function () {
+						socket.emit('badLocation', {
+							queueName: $scope.queue,
+							user: user,
+							type: "unknown"
+						});
+					}
+				},
+				buttonTwo: {
+					text: "Wrong location",
+					type: "info",
+					callback: function () {
+						socket.emit('badLocation', {
+							queueName: $scope.queue,
+							user: user,
+							type: "wrong"
+						});
+					}
+				},
 			});
 			console.log("Called badLocation");
 		};

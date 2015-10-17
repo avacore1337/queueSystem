@@ -25,8 +25,6 @@ module.exports = function (socket, io) {
     }
   }
 
-  // user tries to join a queue with a "bad location"
-  //  - do nothing in backend?
   socket.on('badLocation', function (req) {
     if(socket.handshake.session.user === undefined){
       return;
@@ -43,7 +41,7 @@ module.exports = function (socket, io) {
       return;
     }
 
-    io.to("user_" + user.name).emit('badLocation', {name: user.name, sender: username, queueName: queueName});
+    io.to("user_" + user.name).emit('badLocation', {name: user.name, sender: username, queueName: queueName, type: req.type});
     io.to(queueName).emit('update', user);
 
     var queue = queueSystem.findQueue(queueName);

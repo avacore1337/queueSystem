@@ -363,6 +363,41 @@
             }
           });
         },
+        twoChoice: function (args) {
+          var modalInstance = $modal.open({
+            templateUrl: 'modals/twoChoice.html',
+            controller: function ($scope, $modalInstance, title, buttonOne, buttonTwo) {
+              $scope.title = title;
+              $scope.buttonOne = buttonOne;
+              $scope.buttonTwo = buttonTwo;
+              $scope.funcOne = function () {
+                $modalInstance.close(true);
+              };
+              $scope.funcTwo = function () {
+                $modalInstance.close(false);
+              };
+            },
+            resolve: {
+              title: function () {
+                return args.title;
+              },
+              buttonOne: function () {
+                return args.buttonOne;
+              },
+              buttonTwo: function () {
+                return args.buttonTwo;
+              }
+            }
+          });
+
+          modalInstance.result.then(function (firstButton) {
+            if(firstButton){
+              args.buttonOne.callback();
+            }else{
+              args.buttonTwo.callback();
+            }
+          }, function () {});
+        },
         listModal: function (args) {
           var modalInstance = $modal.open({
             templateUrl: 'modals/listModal.html',

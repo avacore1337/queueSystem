@@ -262,9 +262,16 @@
 
       // Listen for a badLocation warning
       socket.on('badLocation', function (data) {
+        console.log(JSON.stringify(data));
+        var message = "";
+        if(data.type === "unknown"){
+          message = "The teaching assistant in '" + data.queueName + "' could not locate you. The teaching assistant won't try to find you again until you have updated your information.";
+        }else{
+          message = "You are currently located in the wrong room for a teaching assistant in " + data.queueName + " to come to you.";
+        }
         modals.getModal({
           title: "Unclear location",
-          message: "The teaching assistant in '" + data.queueName + "' could not locate you. The teaching assistant won't try to find you again until you have updated your information.",
+          message: message,
           sender: "- " + data.sender
         });
       });
