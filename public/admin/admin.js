@@ -41,9 +41,8 @@
       http.get('queueList', function(response){
         for (var i in response) {
           if(user.isAdmin() || user.isTeacher(response[i].name)){
-            http.get('queue/' + response[i].name, function(resp){ 
+            http.get('queue/' + response[i].name, function(resp){
               $scope.queues.push(resp);
-              $scope.queues = $scope.queues.sort(function(a, b) {return a.name.localeCompare(b.name);});
             });
           }
         }
@@ -140,7 +139,6 @@
     socket.on('addQueue', function (queue) {
       console.log("Backend wants to add the queue " + queue.name);
       $scope.queues.push(queue);
-      $scope.queues = $scope.queues.sort(function(a, b) {return a.name.localeCompare(b.name);});
     });
 
     // Listen for the person leaving a queue event.

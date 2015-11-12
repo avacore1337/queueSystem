@@ -59,7 +59,7 @@
 			</tr>
 		</thead>
 		<tbody>
-			<tr ng-repeat="queue in queues">
+			<tr ng-repeat="queue in queues | orderBy:'name'">
 				<td ng-class="{'text-light-gray' : queue.hiding}">{{queue.name}}</td>
 			</tr>
 		</tbody>

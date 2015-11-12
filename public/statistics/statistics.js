@@ -62,10 +62,12 @@
     // Queue selection
     $scope.queues = [];
     http.get('queueList', function(response) {
-      var temp = response.sort(function(a, b) {return a.name.localeCompare(b.name);});
-      for (var index in temp) {
-        if (user.isAdmin() || user.isTeacher(temp[index].name)) {
-          $scope.queues.push(temp[index].name);
+      //var temp = response.sort(function(a, b) {return a.name.localeCompare(b.name);});
+      for (var i in response) {
+        if(user.isAdmin() || user.isTeacher(response[i].name)){
+          http.get('queue/' + response[i].name, function(resp){
+            $scope.queues.push(resp.name);
+          });
         }
       }
     });

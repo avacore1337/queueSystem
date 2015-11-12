@@ -11,9 +11,7 @@ queueControllers.controller('listController', ['$scope', 'HttpService', '$locati
     title.title = "Stay A While";
     $scope.queues = [];
     http.get('queueList', function(response) {
-      $scope.queues = response.sort(function(a, b) {
-        return a.name.localeCompare(b.name);
-      });
+      $scope.queues = response;
       for (var index in $scope.queues) {
         http.get('queue/' + $scope.queues[index].name, apiGetQueue);
       }
