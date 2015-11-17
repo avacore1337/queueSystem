@@ -360,5 +360,5 @@ function readIn() {
 }
 
 
-setup(); // Use for setting up the test system
-//readIn(); //use this
+//setup(); // Use for setting up the test system
+readIn(); //use this
