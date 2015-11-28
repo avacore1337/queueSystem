@@ -155,14 +155,14 @@ app.get('/auth', function(req, res) {
   getUID(req.query.ticket, function (uid) {
     
     try{
-      getUsername(uid);
+      getUsername(uid, function(cn) { req.session.user.name = cn; });
     }
     catch(err){
       console.log(err);
     }
 
     console.log("uid:" + uid);
-    req.session.user.name = uid;
+    //req.session.user.name = uid;
     getLocation(ip, function (location) {
       req.session.user.location = location;
       console.log("Is this happening before ?");
@@ -207,7 +207,7 @@ app.get('/logout', function(req, res) {
   res.redirect('https://login.kth.se/logout');
 });
 
-function getUsername (ugKthid) {
+function getUsername (ugKthid, callback) {
   var opts = {
     filter: '(ugKthid=' + ugKthid + ')',
     scope: 'sub'
@@ -218,6 +218,7 @@ function getUsername (ugKthid) {
       console.log('entry: ' + entry.object.givenName);
       console.log('uid: ' + entry.object.uid);
       // callback(entry.object.uid);
+      callback(entry.object.cn);
     });
     res.on('searchReference', function(referral) {
       console.log('referral: ' + referral.uris.join());
