@@ -9,6 +9,27 @@ var Statistic = require("../model/statistic.js");
 
 module.exports = function (socket, io) {
 
+  function shortString (str, len) {
+    return str.length <= len ? str : str.substring(0, len - 3).concat("...");
+  }
+
+  function alterText (str) {
+    var counter = 0;
+    for (var i = 0; i < str.length; i++) {
+      if(str.charAt(i) === " " || str.charAt(i) === "\t" || str.charAt(i) === "\n") {
+        counter = 0;
+      }else{
+        if(counter > 20) {
+          str = [str.slice(0, i), " ", str.slice(i)].join("");
+          counter = 0;
+        }else{
+          counter++;
+        }
+      }
+    }
+    return str;
+  }
+
   console.log("connected");
   // Setup the ready route, join room and emit to room.
   socket.on('listen', function (req) {
@@ -36,6 +57,9 @@ module.exports = function (socket, io) {
     }
     var queueName = req.queueName;
     var user = req.user;
+    user.location = shortString(user.location, 30);
+    user.comment = shortString(user.comment, 140);
+    user.comment = alterText(user.comment);
     user.name = socket.handshake.session.user.name;
 
     var queue = queueSystem.findQueue(queueName);
@@ -90,6 +114,9 @@ module.exports = function (socket, io) {
     }
     var queueName = req.queueName;
     var user = req.user;
+    user.location = shortString(user.location, 30);
+    user.comment = shortString(user.comment, 140);
+    user.comment = alterText(user.comment);
     user.name = socket.handshake.session.user.name;
     user.badLocation = false;
 
