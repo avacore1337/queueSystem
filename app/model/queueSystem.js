@@ -88,10 +88,11 @@ exports.userLeavesQueue = function (queue, userName, booking) {
  * @param {String} name - The name of the user.
  * @param {String} username - The username of the user.
  */
-exports.addAdmin = function (name, username) {
+exports.addAdmin = function (name, username, addedBy) {
   var admin = new Admin({
     name: name,
-    username: username
+    username: username,
+    addedBy: addedBy
   });
   adminList.push(admin);
   admin.save();
@@ -268,14 +269,16 @@ function setup() {
 
   var newAdmin = new Admin({
     name: "guest-antbac",
-    username: "guest-antbac"
+    username: "guest-antbac",
+    addedBy: "antbac"
   });
   adminList.push(newAdmin);
   newAdmin.save();
 
   newAdmin = new Admin({
     name: "robertwb",
-    username: "robertwb"
+    username: "robertwb",
+    addedBy: "antbac"
   });
   adminList.push(newAdmin);
   newAdmin.save();

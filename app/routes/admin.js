@@ -103,13 +103,13 @@ module.exports = function (socket, io) {
       return;
     }
     var username = req.username;
-    queueSystem.addAdmin(username, username); //TODO should contain real name not username twice
+    queueSystem.addAdmin(username, username, name); //TODO should contain real name not username twice
 
     console.log(username + ' is a new admin!');
     io.to('admin').emit('addAdmin', {
       name: username,
       username: username,
-      addedBy: ''
+      addedBy: name
     });
   });
 
@@ -127,20 +127,20 @@ module.exports = function (socket, io) {
       return;
     }
 
-    var username = req.username;
-    var teacherName = username;
     var queue = queueSystem.findQueue(queueName);
-
     var newTeacher = new Admin({
-      name: teacherName,
-      username: username
+      name: req.username,
+      username: req.username,
+      addedBy: name
     });
     queue.addTeacher(newTeacher);
-    console.log(teacherName + ' is a new teacher!');
+
+    console.log(req.username + ' is a new teacher!');
 
     io.to('admin').emit('addTeacher', {
-      name: teacherName,
-      username: username,
+      name: req.username,
+      username: req.username,
+      addedBy: name,
       queueName: queueName
     });
   });
@@ -159,20 +159,20 @@ module.exports = function (socket, io) {
       return;
     }
 
-    var username = req.username;
-    var assistantName = username;
     var queue = queueSystem.findQueue(queueName);
     var newAssistant = new Admin({
-      name: assistantName,
-      username: username
+      name: req.username,
+      username: req.username,
+      addedBy: name
     });
     queue.addAssistant(newAssistant);
 
-    console.log(assistantName + ' is a new assistant!');
+    console.log(req.username + ' is a new assistant!');
 
     io.to('admin').emit('addAssistant', {
-      name: assistantName,
-      username: username,
+      name: req.username,
+      username: req.username,
+      addedBy: name,
       queueName: queueName
     });
   });

@@ -53,7 +53,7 @@
       console.log("adding assistant (from backend) queueName = " + data.queueName + ", name = " + data.name + ", username = " + data.username);
       var queue = getQueue(data.queueName);
       if(queue){
-        getQueue(data.queueName).assistant.push({name:data.name, username:data.username});
+        getQueue(data.queueName).assistant.push({name:data.name, username:data.username, addedBy: data.addedBy});
       }
     });
 
@@ -95,7 +95,7 @@
       console.log("adding teacher (from backend) queueName = " + data.queueName + ", name = " + data.name + ", username = " + data.username);
       var queue = getQueue(data.queueName);
       if(queue){
-        getQueue(data.queueName).teacher.push({name:data.name, username:data.username});
+        getQueue(data.queueName).teacher.push({name:data.name, username:data.username, addedBy: data.addedBy});
       }
     });
 
@@ -224,8 +224,7 @@
   $scope.addAdmin = function(){
     if($scope.newAdmin){
       socket.emit('addAdmin', {
-        username:$scope.newAdmin,
-        addedBy:$scope.name
+        username: $scope.newAdmin
       });
       console.log("Adding admin " + $scope.newAdmin);
       $scope.newAdmin = '';
@@ -243,9 +242,8 @@
     console.log("Trying to add a new teacher by the name '" + $scope.newTeacher + "'");
     if($scope.newTeacher){
       socket.emit('addTeacher', {
-        username:$scope.newTeacher,
-        queueName:$scope.selectedQueue.name,
-        addedBy:$scope.name
+        username: $scope.newTeacher,
+        queueName: $scope.selectedQueue.name
       });
       console.log("Adding teacher " + $scope.newTeacher + " in the queue " + $scope.selectedQueue.name);
       $scope.newTeacher = '';
@@ -263,9 +261,8 @@
   $scope.addAssistant = function(){
     if($scope.newAssistant){
       socket.emit('addAssistant', {
-        username:$scope.newAssistant,
-        queueName:$scope.selectedQueue.name,
-        addedBy:$scope.name
+        username: $scope.newAssistant,
+        queueName: $scope.selectedQueue.name
       });
       console.log("Adding assistant " + $scope.newAssistant  + " in the queue " + $scope.selectedQueue.name);
       $scope.newAssistant = '';
@@ -274,8 +271,8 @@
 
   $scope.removeAssistant = function(username){
     socket.emit('removeAssistant', {
-      username:username,
-      queueName:$scope.selectedQueue.name
+      username: username,
+      queueName: $scope.selectedQueue.name
     });
     console.log("Removing assistant " + name  + " in the queue " + $scope.selectedQueue.name);
   };
