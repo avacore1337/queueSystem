@@ -88,10 +88,11 @@ exports.userLeavesQueue = function (queue, userName, booking) {
  * @param {String} name - The name of the user.
  * @param {String} username - The username of the user.
  */
-exports.addAdmin = function (name, username, addedBy) {
+exports.addAdmin = function (realname, username, ugKthid, addedBy) {
   var admin = new Admin({
-    name: name,
+    realname: realname,
     username: username,
+    ugKthid: ugKthid,
     addedBy: addedBy
   });
   adminList.push(admin);
@@ -102,10 +103,10 @@ exports.addAdmin = function (name, username, addedBy) {
  * Removes a super admin.
  * @param {String} username - The username of the user.
  */
-exports.removeAdmin = function (username) {
+exports.removeAdmin = function (ugKthid) {
   for (var i = adminList.length - 1; i >= 0; i--) {
     var admin = adminList[i];
-    if (admin.username === username) {
+    if (admin.ugKthid === ugKthid) {
       adminList.splice(i, 1);
       admin.remove();
       break;
@@ -119,19 +120,19 @@ exports.getAdminList = function () {
 };
 
 /**
- * Validates if a user has the access rights to do the action on the 
+ * Validates if a user has the access rights to do the action on the
  * access level required for the given course
  * @param {String} userName - The name of the user.
  * @param {String} type - The needed access level - "super", "teacher" or "assistant".
  * @param {String} queueName - The name of the queue.
  */
-exports.validate = function(userName, type, queueName) {
+exports.validate = function(ugKthid, type, queueName) {
   if (type === "super") {
-    return validateSuper(userName);
+    return validateSuper(ugKthid);
   } else if (type === "teacher") {
-    return validateTeacher(userName, queueName);
+    return validateTeacher(ugKthid, queueName);
   } else if (type === "assistant") {
-    return validateAssistant(userName, queueName) || validateTeacher(userName,queueName);
+    return validateAssistant(ugKthid, queueName) || validateTeacher(ugKthid,queueName);
   }
 
   console.log("that privilege-type is not defined"); // temporary for error-solving
@@ -142,11 +143,11 @@ exports.validate = function(userName, type, queueName) {
  * Validates if a user has the access rights to do super admin level actions.
  * @param {String} userName - The name of the user.
  */
-function validateSuper(name) {
+function validateSuper(ugKthid) {
   var valid = false;
   for (var i = 0; i < adminList.length; i++) {
-    if (adminList[i].name === name) {
-      console.log(name + ' is a valid super-admin'); // temporary for error-solving
+    if (adminList[i].ugKthid === ugKthid) {
+      console.log(ugKthid + ' is a valid super-admin'); // temporary for error-solving
       valid = true;
     }
   }
@@ -159,11 +160,11 @@ function validateSuper(name) {
  * @param {String} userName - The name of the user.
  * @param {String} queueName - The name of the queue.
  */
-function validateTeacher(username, queueName) {
+function validateTeacher(ugKthid, queueName) {
   var valid = false;
   exports.findQueue(queueName).forTeacher(function(teacher) {
-    if (teacher.name === username) {
-      console.log(username + ' is a valid teacher'); // temporary for error-solving
+    if (teacher.ugKthid === ugKthid) {
+      console.log(ugKthid + ' is a valid teacher'); // temporary for error-solving
       valid = true;
      }
   });
@@ -176,11 +177,11 @@ function validateTeacher(username, queueName) {
  * @param {String} userName - The name of the user.
  * @param {String} queueName - The name of the queue.
  */
-function validateAssistant(username, queueName) {
+function validateAssistant(ugKthid, queueName) {
   var valid = false;
   exports.findQueue(queueName).forAssistant(function(assistant) {
-    if (assistant.name === username) {
-      console.log(username + ' is a valid assistant'); // temporary for error-solving
+    if (assistant.ugKthid === ugKthid) {
+      console.log(ugKthid + ' is a valid assistant'); // temporary for error-solving
       valid = true;
     }
   });
@@ -246,16 +247,12 @@ exports.getGlobalMOTD = function () {
 };
 
 /**
- * A function that spoofs data to make sure there is something to test the 
+ * A function that spoofs data to make sure there is something to test the
  * system with. Should be commented out in production.
  */
 function setup() {
   // list of queues to be used
   var tmpList = [
-    "dbas",
-    "inda",
-    "logik",
-    "numme",
     "mvk",
     "progp",
     "mdi"
@@ -268,16 +265,18 @@ function setup() {
   globalMOTD.save();
 
   var newAdmin = new Admin({
-    name: "guest-antbac",
+    realname: "anton-b",
     username: "guest-antbac",
+    ugKthid: "u1asonetuh",
     addedBy: "antbac"
   });
   adminList.push(newAdmin);
   newAdmin.save();
 
   newAdmin = new Admin({
-    name: "robertwb",
+    realname: "robert welin-berger",
     username: "robertwb",
+    ugKthid: "u101onteu",
     addedBy: "antbac"
   });
   adminList.push(newAdmin);
@@ -299,8 +298,11 @@ function setup() {
     // for every queue, create users
     var queues = Math.floor((Math.random() * 50) + 1);
     for (var j = 0; j < queues; j++) {
+      var rndName = Math.random().toString(36).substring(7);
       var newUser = new User({
-        name: Math.random().toString(36).substring(7),
+        username: "username-" + rndName,
+        ugKthid: "ug-" + rndName,
+        realname: "real-" + rndName,
         location: 'Green',
         comment: 'lab1',
         help: true,
@@ -310,8 +312,8 @@ function setup() {
       newQueue.addUser(newUser);
       newQueue.save();
       var newStatistic = new Statistic({
-        name: newUser.name,
-        queue: newQueue.name,
+        username: newUser.username,
+        queue: newQueue.username,
         startTime: newUser.startTime,
         action: ''
       });
@@ -329,7 +331,7 @@ function setup() {
 }
 
 /**
- * Loads all the data from the database at startup. 
+ * Loads all the data from the database at startup.
  * Make sure this runs at system start.
  */
 function readIn() {
@@ -338,7 +340,7 @@ function readIn() {
     queues.forEach(function(queue) {
       queueList.push(queue);
       // to make sure everything loads
-      console.log('Queue: ' + queue.name + ' loaded!');
+      console.log('Queue: ' + queue.username + ' loaded!');
     });
     // exports.updateAllBookings()
   });
@@ -348,7 +350,7 @@ function readIn() {
     admins.forEach(function(admin) {
       adminList.push(admin);
       // to make sure everything loads
-      console.log('Admin: ' + admin.name + ' loaded!');
+      console.log('Admin: ' + admin.username + ' loaded!');
     });
   });
 
@@ -362,6 +364,14 @@ function readIn() {
   });
 }
 
+// var newAdmin = new Admin({
+//   realname: "guest-robertwb",
+//   username: "guest-robertwb",
+//   ugKthid: "guest-robertwb",
+//   addedBy: "antbac"
+// });
+// adminList.push(newAdmin);
+// newAdmin.save();
 
-//setup(); // Use for setting up the test system
+// setup(); // Use for setting up the test system
 readIn(); //use this

@@ -4,11 +4,10 @@
 var queueSystem = require('../model/queueSystem.js');
 var validate = queueSystem.validate;
 
-var User = require("../model/user.js");
 var Statistic = require("../model/statistic.js");
 
 module.exports = function (socket, io) {
-    
+
   function doOnQueue(queueName, action) {
     var queue = queueSystem.findQueue(queueName);
     queue[action]();
@@ -29,25 +28,25 @@ module.exports = function (socket, io) {
     if(socket.handshake.session.user === undefined){
       return;
     }
-    var username = socket.handshake.session.user.name;
+    var ugKthid = socket.handshake.session.user.ugKthid;
     var user = req.user;
     var queueName = req.queueName;
     user.badLocation = true;
 
     // teacher/assistant-validation
-    if (!(validate(username, "teacher", queueName) || validate(username, "assistant", queueName))) {
+    if (!(validate(ugKthid, "teacher", queueName) || validate(ugKthid, "assistant", queueName))) {
       console.log("validation for badLocation failed");
       //res.end();
       return;
     }
 
-    io.to("user_" + user.name).emit('badLocation', {name: user.name, sender: username, queueName: queueName, type: req.type});
+    io.to("user_" + user.ugKthid).emit('badLocation', {ugKthid: user.ugKthid, sender: ugKthid, queueName: queueName, type: req.type});
     io.to(queueName).emit('update', user);
 
     var queue = queueSystem.findQueue(queueName);
     queue.updateUser(user);
 
-    console.log("Bad location at " + queueName + " for " + user.name);
+    console.log("Bad location at " + queueName + " for " + user.username);
   });
 
   // admin stops helping a user (marked in the queue)
@@ -56,25 +55,25 @@ module.exports = function (socket, io) {
       return;
     }
     var queueName = req.queueName;
-    var username = socket.handshake.session.user.name;
+    var ugKthid = socket.handshake.session.user.ugKthid;
 
     // teacher/assistant-validation
-    if (!(validate(username, "teacher", queueName) || validate(username, "assistant", queueName))) {
+    if (!(validate(ugKthid, "teacher", queueName) || validate(ugKthid, "assistant", queueName))) {
       console.log("validation for stopHelp failed");
       //res.end();
       return;
     }
 
-    var name = req.name;
+    var targetUgKthid = req.ugKthid;
     var queue = queueSystem.findQueue(queueName);
-    queue.stopHelpingQueuer(name, queueName);
+    queue.stopHelpingQueuer(targetUgKthid, queueName);
 
     io.to(queueName).emit('stopHelp', {
-      name: name,
-      helper: username
+      ugKthid: targetUgKthid,
+      helper: ugKthid
     });
 
-    console.log(name + ' is no longer getting help in ' + queueName);
+    console.log(targetUgKthid + ' is no longer getting help in ' + queueName);
   });
 
 
@@ -84,9 +83,7 @@ module.exports = function (socket, io) {
       return;
     }
     var queueName = req.queueName;
-    var name = req.name;
-    var message = req.message;
-    var sender = socket.handshake.session.user.name;
+    var sender = socket.handshake.session.user.ugKthid;
 
     // teacher/assistant-validation
     if (!(validate(sender, "teacher", queueName) || validate(sender, "assistant", queueName))) {
@@ -95,12 +92,15 @@ module.exports = function (socket, io) {
       return;
     }
 
-    io.to("user_" + name).emit('msg', {
+    var ugKthid = req.ugKthid;
+    var message = req.message;
+
+    io.to("user_" + ugKthid).emit('msg', {
       message: message,
       sender: sender
     });
 
-    console.log('user ' + name + ' was messaged from ' + sender + ' at ' + queueName + ' with: ' + message);
+    console.log('user ' + ugKthid + ' was messaged from ' + sender + ' at ' + queueName + ' with: ' + message);
   });
 
   // teacher/assistant emits to all users (teacher/assistant included)
@@ -110,7 +110,7 @@ module.exports = function (socket, io) {
     }
     var queueName = req.queueName;
     var message = req.message;
-    var sender = socket.handshake.session.user.name;
+    var sender = socket.handshake.session.user.ugKthid;
 
     // teacher/assistant-validation
     if (!(validate(sender, "teacher", queueName) || validate(sender, "assistant", queueName))) {
@@ -135,7 +135,7 @@ module.exports = function (socket, io) {
     console.log("Recevie request to send message to faculty");
     var queueName = req.queueName;
     var message = req.message;
-    var sender = socket.handshake.session.user.name;
+    var sender = socket.handshake.session.user.ugKthid;
 
     console.log("queueName = " + queueName);
     console.log("message = " + message);
@@ -155,26 +155,24 @@ module.exports = function (socket, io) {
     for (var i = teacherList.length - 1; i >= 0; i--) {
       var teacher = teacherList[i];
 
-      io.to("user_" + teacher.name).emit('msg', {
+      io.to("user_" + teacher.ugKthid).emit('msg', {
         message: message,
         sender: sender
       });
 
-      console.log("emiting teacher: " + "user_" + teacher.name);
+      console.log("emiting teacher: " + "user_" + teacher.ugKthid);
     }
 
     for (var index = assistantList.length - 1; i >= 0; i--) {
       var assistant = assistantList[index];
 
-      io.to("user_" + assistant.name).emit('msg', {
+      io.to("user_" + assistant.ugKthid).emit('msg', {
         message: message,
         sender: sender
       });
 
-      console.log("emiting assistant: " + assistant.name);
+      console.log("emiting assistant: " + assistant.ugKthid);
     }
-
-    //  io.to(queueName).emit('msg', {message: message, sender: username});
     console.log('emitTA in ' + queueName + ', msg: ' + message);
   });
 
@@ -185,8 +183,8 @@ module.exports = function (socket, io) {
       return;
     }
     var queueName = req.queueName;
-    var username = req.username;
-    var helper = socket.handshake.session.user.name;
+    var ugKthid = req.ugKthid;
+    var helper = socket.handshake.session.user.ugKthid;
 
     // teacher/assistant-validation
     if (!(validate(helper, "teacher", queueName) || validate(helper, "assistant", queueName))) {
@@ -196,14 +194,14 @@ module.exports = function (socket, io) {
     }
 
     var queue = queueSystem.findQueue(queueName);
-    queue.helpingQueuer(username, queueName);
+    queue.helpingQueuer(ugKthid, queueName);
 
     io.to(queueName).emit('help', {
-      name: username,
+      ugKthid: ugKthid,
       helper: helper
     });
 
-    console.log(username + ' is getting help in ' + queueName);
+    console.log(ugKthid + ' is getting help in ' + queueName);
   });
 
 
@@ -214,8 +212,8 @@ module.exports = function (socket, io) {
     }
     var queueName = req.queueName;
     var user = req.user;
-    var assistant = socket.handshake.session.user.name;
-    
+    var assistant = socket.handshake.session.user.ugKthid;
+
     // teacher/assistant-validation
     if (!(validate(assistant, "teacher", queueName) || validate(assistant, "assistant", queueName))) {
       console.log("validation for kick failed");
@@ -226,18 +224,18 @@ module.exports = function (socket, io) {
     var queue = queueSystem.findQueue(queueName);
 
     var stat = new Statistic({
-      name: user.name,
-      queue: queue.name,
+      username: user.username,
+      queue: queue.queueName,
       help: user.help,
       leftQueue: true,
       queueLength: queue.queue.length - 1,
     });
     stat.save();
 
-    queueSystem.userLeavesQueue(queue, user.name);
+    queueSystem.userLeavesQueue(queue, user.ugKthid);
     if (!user.help) {
       if (user.completion) {
-        queue.removeCompletion(user.name);
+        queue.removeCompletion(user.ugKthid);
       }
     }
 
@@ -246,7 +244,7 @@ module.exports = function (socket, io) {
     io.to(queueName).emit('leave', user);
     io.to("lobby").emit('lobbyleave', {
       queueName: queueName,
-      username: user.name
+      ugKthid: user.ugKthid
     });
   });
 
@@ -257,7 +255,7 @@ module.exports = function (socket, io) {
       return;
     }
     var queueName = req.queueName;
-    var assistant = socket.handshake.session.user.name;
+    var assistant = socket.handshake.session.user.ugKthid;
 
     // teacher/assistant-validation
     if (!(validate(assistant, "teacher", queueName) || validate(assistant, "assistant", queueName))) {
@@ -281,10 +279,10 @@ module.exports = function (socket, io) {
       return;
     }
     var queueName = req.queueName;
-    var username = socket.handshake.session.user.name;
+    var ugKthid = socket.handshake.session.user.ugKthid;
 
     // admin/teacher-validation
-    if (!(validate(username, "teacher", queueName) || validate(username, "assistant", queueName))) {
+    if (!(validate(ugKthid, "teacher", queueName) || validate(ugKthid, "assistant", queueName))) {
       console.log("validation for lock failed");
       //res.end();
       return;
@@ -299,10 +297,10 @@ module.exports = function (socket, io) {
       return;
     }
     var queueName = req.queueName;
-    var username = socket.handshake.session.user.name;
+    var ugKthid = socket.handshake.session.user.ugKthid;
 
     // admin/teacher-validation
-    if (!(validate(username, "teacher", queueName) || validate(username, "assistant", queueName))) {
+    if (!(validate(ugKthid, "teacher", queueName) || validate(ugKthid, "assistant", queueName))) {
       console.log("validation for lock failed");
       //res.end();
       return;
@@ -320,10 +318,10 @@ module.exports = function (socket, io) {
       return;
     }
     var queueName = req.queueName;
-    var username = socket.handshake.session.user.name;
+    var ugKthid = socket.handshake.session.user.ugKthid;
 
     // admin/teacher-validation
-    if (!(validate(username, "teacher", queueName) || validate(username, "assistant", queueName))) {
+    if (!(validate(ugKthid, "teacher", queueName) || validate(ugKthid, "assistant", queueName))) {
       console.log("validation for lock failed");
       //res.end();
       return;
@@ -338,10 +336,10 @@ module.exports = function (socket, io) {
       return;
     }
     var queueName = req.queueName;
-    var username = socket.handshake.session.user.name;
+    var ugKthid = socket.handshake.session.user.ugKthid;
 
     // admin/teacher-validation
-    if (!(validate(username, "teacher", queueName) || validate(username, "assistant", queueName))) {
+    if (!(validate(ugKthid, "teacher", queueName) || validate(ugKthid, "assistant", queueName))) {
       console.log("validation for unlock failed");
       //res.end();
       return;
@@ -356,9 +354,9 @@ module.exports = function (socket, io) {
     if(socket.handshake.session.user === undefined){
       return;
     }
-    var username = req.name;
+    var ugKthid = req.ugKthid;
     var queueName = req.queueName;
-    var sender = socket.handshake.session.user.name;
+    var sender = socket.handshake.session.user.ugKthid;
     var message = req.message;
 
     // teacher/assistant-validation
@@ -369,11 +367,11 @@ module.exports = function (socket, io) {
     }
 
     var queue = queueSystem.findQueue(queueName);
-    queue.addAssistantComment(username, sender, queueName, message);
+    queue.addAssistantComment(ugKthid, sender, queueName, message);
 
     console.log('flagged');
     io.to(queueName).emit('flag', {
-      name: username,
+      ugKthid: ugKthid,
       message: message
     });
   });
@@ -383,9 +381,9 @@ module.exports = function (socket, io) {
     if(socket.handshake.session.user === undefined){
       return;
     }
-    var username = req.name;
+    var ugKthid = req.ugKthid;
     var queueName = req.queueName;
-    var sender = socket.handshake.session.user.name;
+    var sender = socket.handshake.session.user.ugKthid;
 
     // teacher/assistant-validation
     if (!(validate(sender, "teacher", queueName) || validate(sender, "assistant", queueName))) {
@@ -395,11 +393,11 @@ module.exports = function (socket, io) {
     }
 
     var queue = queueSystem.findQueue(queueName);
-    queue.removeAssistantComments(username, sender, queueName);
+    queue.removeAssistantComments(ugKthid, sender, queueName);
 
     console.log('removed flags');
     io.to(queueName).emit('removeFlags', {
-      name: username
+      ugKthid: ugKthid
     });
   });
 
@@ -408,7 +406,7 @@ module.exports = function (socket, io) {
       return;
     }
     var queueName = req.queueName;
-    var assistant = socket.handshake.session.user.name;
+    var assistant = socket.handshake.session.user.ugKthid;
 
     // teacher/assistant-validation
     if (!(validate(assistant, "teacher", queueName) || validate(assistant, "assistant", queueName))) {
@@ -425,18 +423,18 @@ module.exports = function (socket, io) {
     var queue = queueSystem.findQueue(queueName);
     queue.addCompletion(completion);
 
-    queueSystem.userLeavesQueue(queue, completion.name, false); // TODO : should take a variable 'booking' instead of hardcoding 'false'
+    queueSystem.userLeavesQueue(queue, completion.ugKthid, false); // TODO : should take a variable 'booking' instead of hardcoding 'false'
 
-    console.log('completion set for user : ' + completion.name);
+    console.log('completion set for user : ' + completion.ugKthid);
     io.to(queueName).emit('leave', {
-      name: completion.name
+      ugKthid: completion.ugKthid
     });
     io.to("lobby").emit('lobbyleave', {
       queueName: queueName,
-      username: completion.name
+      ugKthid: completion.ugKthid
     });
     if (completion.task) {
-      io.to("user_" + completion.name).emit('completion', {
+      io.to("user_" + completion.ugKthid).emit('completion', {
         message: completion.task
       });
     }
@@ -448,7 +446,7 @@ module.exports = function (socket, io) {
     }
     var queueName = req.queueName;
     var MOTD = req.MOTD;
-    var sender = socket.handshake.session.user.name;
+    var sender = socket.handshake.session.user.ugKthid;
 
     // teacher/assistant-validation
     if (!(validate(sender, "teacher", queueName) || validate(sender, "assistant", queueName))) {
@@ -474,7 +472,7 @@ module.exports = function (socket, io) {
     }
     var queueName = req.queueName;
     var info = req.info;
-    var sender = socket.handshake.session.user.name;
+    var sender = socket.handshake.session.user.ugKthid;
 
     // teacher/assistant-validation
     if (!(validate(sender, "teacher", queueName) || validate(sender, "assistant", queueName))) {

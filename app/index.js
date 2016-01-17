@@ -147,13 +147,13 @@ app.get('/auth', function(req, res) {
   else{
     req.session.user = {};
     req.session.user.location = "";
-    req.session.user.loginTarget = ""
+    req.session.user.loginTarget = "";
   }
 
   var ip = req.connection.remoteAddress;
   console.log("ip: " + ip);
   getUID(req.query.ticket, function (uid) {
-    
+
     try{
       getUsername(uid);
     }
@@ -162,22 +162,26 @@ app.get('/auth', function(req, res) {
     }
 
     console.log("uid:" + uid);
-    req.session.user.name = uid;
+    req.session.user.realname = uid;
+    req.session.user.username = uid;
+    req.session.user.ugKthid = uid;
     getLocation(ip, function (location) {
       req.session.user.location = location;
       console.log("Is this happening before ?");
-      res.redirect('/#' + req.session.user.loginTarget)
+      res.redirect('/#' + req.session.user.loginTarget);
     });
   });
 });
 
 app.post('/API/setUser', function (req, res) {
   req.session.user = {};
-  req.session.user.name = 'guest-' + req.body.name;
+  req.session.user.realname = '' + req.body.realname;
+  req.session.user.username = 'guest-' + req.body.realname;
+  req.session.user.ugKthid = 'guest-' + req.body.realname;
   req.session.user.location = "";
 
   var ip = req.connection.remoteAddress;
-  
+
   getLocation(ip, function (location) {
     req.session.user.location = location;
     console.log("Is this happening before ?");
@@ -193,8 +197,8 @@ app.get('/login', function(req, res) {
     req.session.user.loginTarget = req.query.target;
   }
   else{
-    req.session.user.loginTarget = ""
-  }  
+    req.session.user.loginTarget = "";
+  }
   res.redirect('login2');
 });
 

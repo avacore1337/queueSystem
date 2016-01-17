@@ -51,11 +51,11 @@ router.get('/serverMessage', function (req, res) {
   res.end(JSON.stringify(ret));
 });
 
-function teacherForQueues(username) {
+function teacherForQueues(ugKthid) {
   var teacherList = [];
   queueSystem.forQueue(function (queue) {
     queue.forTeacher(function (teacher) {
-      if (teacher.name === username) {
+      if (teacher.ugKthid === ugKthid) {
         teacherList.push(queue.name);
       }
     });
@@ -63,11 +63,11 @@ function teacherForQueues(username) {
   return teacherList;
 }
 
-function assistantForQueues(username) {
+function assistantForQueues(ugKthid) {
   var assistantList = [];
   queueSystem.forQueue(function (queue) {
     queue.forAssistant(function (assistant) {
-      if (assistant.name === username) {
+      if (assistant.ugKthid === ugKthid) {
         assistantList.push(queue.name);
       }
     });
@@ -134,13 +134,17 @@ router.get('/userData', function (req, res) {
     var ip = req.connection.remoteAddress;
     getLocation(ip, function (location) {
       req.session.user.location = location;
-      var username = req.session.user.name;
-      var teacherList = teacherForQueues(username);
-      var assistantList = assistantForQueues(username);
-      var admin = validate(username, "super");
+      var ugKthid = req.session.user.ugKthid;
+      var realname = req.session.user.realname;
+      var username = req.session.user.username;
+      var teacherList = teacherForQueues(ugKthid);
+      var assistantList = assistantForQueues(ugKthid);
+      var admin = validate(ugKthid, "super");
 
       res.json({
-        name: username,
+        ugKthid: ugKthid,
+        realname: realname,
+        username: username,
         admin: admin,
         teacher: teacherList,
         assistant: assistantList,

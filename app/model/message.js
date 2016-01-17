@@ -6,7 +6,7 @@ var Schema = mongoose.Schema;
 
 // Schema used for completions
 var messageSchema = new Schema({
-  name: String,
+  ugKthid: String,
   message: String
 });
 

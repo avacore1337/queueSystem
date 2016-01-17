@@ -7,7 +7,9 @@ var Schema = mongoose.Schema;
 
 // Schema used for users in the queues
 var userSchema = new Schema({
-  name: String,
+  username: String,
+  ugKthid: String,
+  realname: String,
   location: String,
   startTime: { type: Number, default: Date.now },
   messages: [String],
@@ -21,7 +23,9 @@ var userSchema = new Schema({
 // creates a JSON-object from the schema
 userSchema.methods.toJSON = function () {
   return {
-    name: this.name,
+    realname: this.realname,
+    username: this.username,
+    ugKthid: this.ugKthid,
     location: this.location,
     time: this.startTime,
     messages: this.messages,

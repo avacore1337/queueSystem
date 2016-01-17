@@ -40,9 +40,9 @@
 						<li ng-show="accessLevel() > 1" ng-click="redirect('statistics')" ng-class="location == '/statistics' ? 'active' : ''" id="indexStatisticsBtn"><a style="cursor: pointer;">Statistics</a></li>
 					</ul>
 					<ul class="nav navbar-nav navbar-right">
-						<li class="unresponsive hidden-xs" id="indexNameTextField"><a class="unresponsive">{{name}}</a></li>
-						<li ng-hide="name" ng-click="externalLink('login?target=' + location)" id="indexLogInBtn"><a style="cursor: pointer;">Log in</a></li>
-						<li ng-show="name" ng-click="logOut()" id="indexLogOutBtn"><a style="cursor: pointer;">Log out</a></li>
+						<li class="unresponsive hidden-xs" id="indexNameTextField"><a class="unresponsive">{{realname}}</a></li>
+						<li ng-hide="realname" ng-click="externalLink('login?target=' + location)" id="indexLogInBtn"><a style="cursor: pointer;">Log in</a></li>
+						<li ng-show="realname" ng-click="logOut()" id="indexLogOutBtn"><a style="cursor: pointer;">Log out</a></li>
 					</ul>
 				</div><!-- /.navbar-collapse -->
 			</div><!-- /.container-fluid -->

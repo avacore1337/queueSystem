@@ -30,11 +30,11 @@ module.exports = function (socket, io) {
       return;
     }
     var message = req.message;
-    var sender = socket.handshake.session.user.name;
-    console.log("sender = " + sender);
+    var ugKthid = socket.handshake.session.user.ugKthid;
+    console.log("sender = " + ugKthid);
 
     // teacher/assistant-validation
-    if (!validate(sender, "super", "")) {
+    if (!validate(ugKthid, "super", "")) {
       console.log("validation for addServerMessage failed");
       //res.end();
       return;
@@ -53,9 +53,9 @@ module.exports = function (socket, io) {
       return;
     }
     console.log("Trying to add Queue!");
-    var username = socket.handshake.session.user.name;
+    var ugKthid = socket.handshake.session.user.ugKthid;
     // admin-validation
-    if (!validate(username, "super", "queue")) {
+    if (!validate(ugKthid, "super", "queue")) {
       console.log("validation for addQueue failed");
       //res.end();
       return;
@@ -72,11 +72,11 @@ module.exports = function (socket, io) {
     }
     console.log("Trying to remove Queue!");
 
-    var username = socket.handshake.session.user.name;
+    var ugKthid = socket.handshake.session.user.ugKthid;
     var queueName = req.queueName;
 
     // admin/teacher-validation
-    if (!(validate(username, "super", "queue") || validate(username, "teacher", queueName))) {
+    if (!(validate(ugKthid, "super", "queue") || validate(ugKthid, "teacher", queueName))) {
       console.log("validation for removeQueue failed");
       //res.end();
       return;
@@ -94,22 +94,24 @@ module.exports = function (socket, io) {
       return;
     }
     console.log("Trying to add Admin!");
-
-    var name = socket.handshake.session.user.name;
+    var user = socket.handshake.session.user;
+    var ugKthid = user.ugKthid;
     // admin-validation
-    if (!validate(name, "super", "queue")) {
+    if (!validate(ugKthid, "super", "queue")) {
       console.log("validation for addAdmin failed");
       //res.end();
       return;
     }
     var username = req.username;
-    queueSystem.addAdmin(username, username, name); //TODO should contain real name not username twice
+    //@TODO needs to fetch all the data from the ldap server.
+    queueSystem.addAdmin(username, username, username, user.username); //TODO should contain real name not username twice
 
     console.log(username + ' is a new admin!');
     io.to('admin').emit('addAdmin', {
-      name: username,
+      realname: username,
       username: username,
-      addedBy: name
+      ugKthid: username,
+      addedBy: user.username
     });
   });
 
@@ -118,10 +120,10 @@ module.exports = function (socket, io) {
       return;
     }
     var queueName = req.queueName;
-
-    var name = socket.handshake.session.user.name;
+    var user = socket.handshake.session.user;
+    var ugKthid = user.ugKthid;
     // admin/teacher-validation
-    if (!(validate(name, "super", "queue") || validate(name, "teacher", queueName))) {
+    if (!(validate(ugKthid, "super", "queue") || validate(ugKthid, "teacher", queueName))) {
       console.log("validation for addTeacher failed");
       //res.end();
       return;
@@ -129,18 +131,20 @@ module.exports = function (socket, io) {
 
     var queue = queueSystem.findQueue(queueName);
     var newTeacher = new Admin({
-      name: req.username,
+      realname: req.username,
       username: req.username,
-      addedBy: name
+      ugKthid: req.username,
+      addedBy: user.username
     });
     queue.addTeacher(newTeacher);
 
     console.log(req.username + ' is a new teacher!');
 
     io.to('admin').emit('addTeacher', {
-      name: req.username,
+      realname: req.username,
       username: req.username,
-      addedBy: name,
+      ugKthid: req.username,
+      addedBy: user.username,
       queueName: queueName
     });
   });
@@ -151,9 +155,10 @@ module.exports = function (socket, io) {
     }
     var queueName = req.queueName;
 
-    var name = socket.handshake.session.user.name;
+    var user = socket.handshake.session.user;
+    var ugKthid = user.ugKthid;
     // admin/teacher-validation
-    if (!(validate(name, "super", "queue") || validate(name, "teacher", queueName))) {
+    if (!(validate(ugKthid, "super", "queue") || validate(ugKthid, "teacher", queueName))) {
       console.log("validation for addAssistant failed");
       //res.end();
       return;
@@ -161,18 +166,20 @@ module.exports = function (socket, io) {
 
     var queue = queueSystem.findQueue(queueName);
     var newAssistant = new Admin({
-      name: req.username,
+      realname: req.username,
       username: req.username,
-      addedBy: name
+      ugKthid: req.username,
+      addedBy: user.username
     });
     queue.addAssistant(newAssistant);
 
     console.log(req.username + ' is a new assistant!');
 
     io.to('admin').emit('addAssistant', {
-      name: req.username,
+      realname: req.username,
       username: req.username,
-      addedBy: name,
+      ugKthid: req.username,
+      addedBy: user.username,
       queueName: queueName
     });
   });
@@ -184,19 +191,19 @@ module.exports = function (socket, io) {
     }
     console.log("Trying to remove Admin!");
 
-    var username = socket.handshake.session.user.name;
+    var ugKthid = socket.handshake.session.user.ugKthid;
 
     // admin-validation
-    if (!validate(username, "super", "queue")) {
+    if (!validate(ugKthid, "super", "queue")) {
       console.log("validation for removeAdmin failed");
       //res.end();
       return;
     }
 
-    var admin = req.username;
-    queueSystem.removeAdmin(admin);
-    console.log(admin + ' is a removed from admin!');
-    io.to('admin').emit('removeAdmin', admin);
+    var adminUgkthid = req.ugKthid;
+    queueSystem.removeAdmin(adminUgkthid);
+    console.log(adminUgkthid + ' is a removed from admin!');
+    io.to('admin').emit('removeAdmin', adminUgkthid);
   });
 
   //
@@ -204,22 +211,22 @@ module.exports = function (socket, io) {
     if(socket.handshake.session.user === undefined){
       return;
     }
-    var username = socket.handshake.session.user.name;
+    var ugKthid = socket.handshake.session.user.ugKthid;
     var queueName = req.queueName;
 
     // admin/teacher-validation
-    if (!(validate(username, "super", "queue") || validate(username, "teacher", queueName))) {
-      console.log("validation for addAssistant failed");
+    if (!(validate(ugKthid, "super", "queue") || validate(ugKthid, "teacher", queueName))) {
+      console.log("validation for removeTeacher failed");
       //res.end();
       return;
     }
 
-    var teacher = req.username;
+    var teacherugKthid = req.ugKthid;
     var queue = queueSystem.findQueue(queueName);
-    queue.removeTeacher(teacher);
-    console.log(teacher + ' is a removed as a teacher in ' + queueName + '!');
+    queue.removeTeacher(teacherugKthid);
+    console.log(teacherugKthid + ' is a removed as a teacher in ' + queueName + '!');
     io.to('admin').emit('removeTeacher', {
-      username: teacher,
+      ugKthid: teacherugKthid,
       queueName: queueName
     });
   });
@@ -229,22 +236,22 @@ module.exports = function (socket, io) {
     if(socket.handshake.session.user === undefined){
       return;
     }
-    var username = socket.handshake.session.user.name;
+    var ugKthid = socket.handshake.session.user.ugKthid;
     var queueName = req.queueName;
 
     // admin/teacher-validation
-    if (!(validate(username, "super", "queue") || validate(username, "teacher", queueName))) {
-      console.log("validation for addAssistant failed");
+    if (!(validate(ugKthid, "super", "queue") || validate(ugKthid, "teacher", queueName))) {
+      console.log("validation for removeAssistant failed");
       //res.end();
       return;
     }
 
-    var assistant = req.username;
+    var assistantUgKthid = req.ugKthid;
     var queue = queueSystem.findQueue(queueName);
-    queue.removeAssistant(assistant);
-    console.log(assistant + ' is removed as a assistant in ' + queueName + '!');
+    queue.removeAssistant(assistantUgKthid);
+    console.log(assistantUgKthid + ' is removed as a assistant in ' + queueName + '!');
     io.to('admin').emit('removeAssistant', {
-      username: assistant,
+      ugKthid: assistantUgKthid,
       queueName: queueName
     });
   });
@@ -254,11 +261,11 @@ module.exports = function (socket, io) {
       return;
     }
     var queueName = req.queueName;
-    var username = socket.handshake.session.user.name;
+    var ugKthid = socket.handshake.session.user.ugKthid;
 
     // admin/teacher-validation
-    if (!(validate(username, "super", "queue") || validate(username, "teacher", queueName))) {
-      console.log("Current user " + username + " is not a teacher for that queue or an admin.");
+    if (!(validate(ugKthid, "super", "queue") || validate(ugKthid, "teacher", queueName))) {
+      console.log("Current user " + ugKthid + " is not a teacher for that queue or an admin.");
       return;
     }
 
@@ -279,10 +286,10 @@ module.exports = function (socket, io) {
       return;
     }
     var queueName = req.queue;
-    var username = socket.handshake.session.user.name;
+    var ugKthid = socket.handshake.session.user.ugKthid;
 
     // admin/teacher-validation
-    if (!(validate(username, "super", "queue") || validate(username, "teacher", queueName))) {
+    if (!(validate(ugKthid, "super", "queue") || validate(ugKthid, "teacher", queueName))) {
       console.log("validation for show failed");
       //res.end();
       return;

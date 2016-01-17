@@ -3,7 +3,7 @@
     'ui.bootstrap',
     'ngRoute'
     ])
-  
+
   .config(['$routeProvider',
     function($routeProvider) {
       $routeProvider.
@@ -24,7 +24,7 @@
 
       title.title = "Admin | Stay A While";
       console.log("Entered admin.html");
-      $scope.name = user.getName();
+      $scope.realname = user.getName();
       $scope.selectedQueue = undefined;
       $scope.dropdown = undefined;
       $scope.admins = [];
@@ -50,20 +50,20 @@
 
     // Listen for an assistant being added to a queue.
     socket.on('addAssistant', function (data) {
-      console.log("adding assistant (from backend) queueName = " + data.queueName + ", name = " + data.name + ", username = " + data.username);
+      console.log("adding assistant (from backend) queueName = " + data.queueName + ", realname = " + data.realname + ", username = " + data.username);
       var queue = getQueue(data.queueName);
       if(queue){
-        getQueue(data.queueName).assistant.push({name:data.name, username:data.username, addedBy: data.addedBy});
+        getQueue(data.queueName).assistant.push({realname:data.realname, username:data.username, ugKthid:data.ugKthid, addedBy: data.addedBy});
       }
     });
 
     // Listen for a teacher being added to a queue.
     socket.on('removeAssistant', function (data) {
-      console.log("Backend wants to remove the assistant " + data.username + " from the queue " + data.queueName);
+      console.log("Backend wants to remove the assistant " + data.ugKthid + " from the queue " + data.queueName);
       for (var i = $scope.queues.length - 1; i >= 0; i--) {
         if($scope.queues[i].name === data.queueName){
           for (var j = $scope.queues[i].assistant.length - 1; j >= 0; j--) {
-            if($scope.queues[i].assistant[j].username === data.username){
+            if($scope.queues[i].assistant[j].ugKthid === data.ugKthid){
               $scope.queues[i].assistant.splice(j, 1);
               break;
             }
@@ -76,14 +76,14 @@
     // Listen for an teacher being added to a queue.
     socket.on('addAdmin', function (admin) {
       $scope.admins.push(admin);
-      console.log("adding admin (from backend) name = " + admin.name + ", username = " + admin.username + ", addedBy = " + admin.addedBy);
+      console.log("adding admin (from backend) name = " + admin.realname + ", username = " + admin.username + ", addedBy = " + admin.addedBy);
     });
 
     // Listen for an teacher being added to a queue.
-    socket.on('removeAdmin', function (username) {
-      console.log("Backend wants to remove the admin " + username);
+    socket.on('removeAdmin', function (ugKthid) {
+      console.log("Backend wants to remove the admin " + ugKthid);
       for (var i = $scope.admins.length - 1; i >= 0; i--) {
-        if($scope.admins[i].username === username){
+        if($scope.admins[i].ugKthid === ugKthid){
           $scope.admins.splice(i, 1);
           break;
         }
@@ -92,20 +92,20 @@
 
     // Listen for an teacher being added to a queue.
     socket.on('addTeacher', function (data) {
-      console.log("adding teacher (from backend) queueName = " + data.queueName + ", name = " + data.name + ", username = " + data.username);
+      console.log("adding teacher (from backend) queueName = " + data.queueName + ", realname = " + data.realname + ", username = " + data.username);
       var queue = getQueue(data.queueName);
       if(queue){
-        getQueue(data.queueName).teacher.push({name:data.name, username:data.username, addedBy: data.addedBy});
+        getQueue(data.queueName).teacher.push({realname:data.realname, username:data.username, ugKthid:data.ugKthid, addedBy: data.addedBy});
       }
     });
 
     // Listen for an teacher being added to a queue.
     socket.on('removeTeacher', function (data) {
-      console.log("Backend wants to remove the teacher " + data.username + " from the queue " + data.queueName);
+      console.log("Backend wants to remove the teacher " + data.ugKthid + " from the queue " + data.queueName);
       for (var i = $scope.queues.length - 1; i >= 0; i--) {
         if($scope.queues[i].name === data.queueName){
           for (var j = $scope.queues[i].teacher.length - 1; j >= 0; j--) {
-            if($scope.queues[i].teacher[j].username === data.username){
+            if($scope.queues[i].teacher[j].ugKthid === data.ugKthid){
               $scope.queues[i].teacher.splice(j, 1);
               break;
             }
@@ -231,11 +231,11 @@
     }
   };
 
-  $scope.removeAdmin = function(username){
+  $scope.removeAdmin = function(ugKthid){
     socket.emit('removeAdmin', {
-      username:username
+      ugKthid:ugKthid
     });
-    console.log("Removing admin " + username);
+    console.log("Removing admin " + ugKthid);
   };
 
   $scope.addTeacher = function(){
@@ -250,12 +250,12 @@
     }
   };
 
-  $scope.removeTeacher = function(username){
+  $scope.removeTeacher = function(ugKthid){
     socket.emit('removeTeacher', {
-      username:username,
+      ugKthid:ugKthid,
       queueName:$scope.selectedQueue.name
     });
-    console.log("Removing teacher " + name + " in the queue " + $scope.selectedQueue.name);
+    console.log("Removing teacher " + ugKthid + " in the queue " + $scope.selectedQueue.name);
   };
 
   $scope.addAssistant = function(){
@@ -269,12 +269,12 @@
     }
   };
 
-  $scope.removeAssistant = function(username){
+  $scope.removeAssistant = function(ugKthid){
     socket.emit('removeAssistant', {
-      username: username,
+      ugKthid: ugKthid,
       queueName: $scope.selectedQueue.name
     });
-    console.log("Removing assistant " + name  + " in the queue " + $scope.selectedQueue.name);
+    console.log("Removing assistant " + ugKthid  + " in the queue " + $scope.selectedQueue.name);
   };
 
   $scope.setServerMessage = function(){

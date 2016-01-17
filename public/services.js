@@ -12,13 +12,19 @@
 
     var username = "";
 
+    var realname = "";
+
+    var ugKthid = "";
+
     var location = "";
 
     var loggedIn = false;
 
     function updateUserData() {
       $http.get('/API/userData').success(function(response) {
-        username = response.name;
+        username = response.username;
+        ugKthid = response.ugKthid;
+        realname = response.realname;
         admin = response.admin;
         teacher = response.teacher;
         assistant = response.assistant;
@@ -46,30 +52,20 @@
       getName: function() {
         return username;
       },
-
-      setName: function(name) {
-        username = name;
+      getRealname: function() {
+        return realname;
+      },
+      getUgKthid: function() {
+        return ugKthid;
       },
 
       isAdmin: function() {
         return admin;
       },
 
-      setAdmin: function(bool) {
-        admin = bool;
-      },
-
       isTeacher: isTeacher,
 
-      setTeacher: function(list) {
-        teacher = list;
-      },
-
       isAssistant: isAssistant,
-
-      setAssistant: function(list) {
-        assistant = list;
-      },
 
       getLocation: function() {
         return location;
@@ -181,7 +177,7 @@
 
   .factory('UserListService', ['HttpService', 'WebSocketService', '$modal',
     function(http, socket, $modal) {
-    
+
     var userList = [];
 
     // Listen for the person joining a queue event.
@@ -465,7 +461,7 @@
               $scope.length.setHours(2);
               $scope.length.setMinutes(0);
               $scope.length.setSeconds(0);
-              
+
               // When the lab starts
               $scope.from = new Date();
               $scope.from.setHours(0);
@@ -475,7 +471,7 @@
               // The steps the timepickers will use
               $scope.hstep = 1;
               $scope.mstep = 1;
-              
+
               $scope.open = function() {
                 $timeout(function() {
                   $scope.opened = true;

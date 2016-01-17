@@ -32,6 +32,7 @@
       socket.emit('listen', $scope.queue);
 
       $scope.name = user.getName();
+      $scope.ugKthid = user.getUgKthid();
       $scope.users = [];
       $scope.bookedUsers = [];
       $scope.enqueued = false;
@@ -64,7 +65,7 @@
         for (var i = 0; i < $scope.users.length; i++) {
           $scope.users[i].color = $scope.colorLocation($scope.users[i].location);
           $scope.users[i].optionsActivated = false;
-          if($scope.users[i].name === $scope.name){
+          if($scope.users[i].ugKthid === $scope.ugKthid){
             $scope.enqueued = true;
             $scope.gettingHelp = $scope.users[i].gettingHelp;
             title.title = "["  + (i+1) + "/" + $scope.users.length + "] " + $scope.queue + " | Stay A while";
@@ -109,7 +110,7 @@
       socket.on('join', function (data) {
         data.color = $scope.colorLocation(data.location);
         $scope.users.push(data);
-        if(data.name === $scope.name){
+        if(data.ugKthid === $scope.ugKthid){
           $scope.enqueued = true;
           title.title = "["  + $scope.users.length + "/" + $scope.users.length + "] " + $scope.queue + " | Stay A while";
         }else{
@@ -120,7 +121,7 @@
       // Listen for the person leaving a queue event.
       socket.on('leave', function (data) {
         console.log("Backend wants the following to leave the queue: " + JSON.stringify(data));
-        if(data.name === $scope.name){
+        if(data.ugKthid === $scope.ugKthid){
           if(!$scope.help){
             $scope.completionText = "";
           }
@@ -130,14 +131,14 @@
           $scope.gettingHelp = false;
         }
         for(var i = $scope.users.length - 1; i >= 0; i--) {
-          if($scope.users[i].name === data.name) {
+          if($scope.users[i].ugKthid === data.ugKthid) {
             $scope.users.splice(i, 1);
             break;
           }
         }
         if($scope.enqueued){
           for(var j = $scope.users.length - 1; j >= 0; j--) {
-            if($scope.users[j].name === $scope.name) {
+            if($scope.users[j].ugKthid === $scope.ugKthid) {
               title.title = "["  + (j+1) + "/" + $scope.users.length + "] " + $scope.queue + " | Stay A while";
               break;
             }
@@ -161,7 +162,7 @@
       socket.on('update', function (user) {
         console.log("updating user : " + user);
         for(var index in $scope.users) {
-          if($scope.users[index].name === user.name) {
+          if($scope.users[index].ugKthid === user.ugKthid) {
             $scope.users[index] = user;
             $scope.users[index].color = $scope.colorLocation($scope.users[index].location);
             break;
@@ -177,9 +178,9 @@
 
       // Listen for a user getting flagged
       socket.on('flag', function (data) {
-        console.log("Flaggin " + data.name);
+        console.log("Flaggin " + data.ugKthid);
         for(var i = $scope.users.length - 1; i >= 0; i--) {
-          if($scope.users[i].name === data.name) {
+          if($scope.users[i].ugKthid === data.ugKthid) {
             if($scope.users[i].messages === undefined){
               $scope.users[i].messages = [data.message];
             }else{
@@ -193,9 +194,9 @@
 
       // Listen for a user getting their flags removed
       socket.on('removeFlags', function (data) {
-        console.log("Removing flags for user " + data.name);
+        console.log("Removing flags for user " + data.ugKthid);
         for(var i = $scope.users.length - 1; i >= 0; i--) {
-          if($scope.users[i].name === data.name) {
+          if($scope.users[i].ugKthid === data.ugKthid) {
             $scope.users[i].messages = [];
             break;
           }
@@ -204,11 +205,11 @@
 
       // Listen for a person getting help.
       socket.on('help', function (data) {
-        if(data.name === $scope.name){
+        if(data.ugKthid === $scope.ugKthid){
           $scope.gettingHelp = true;
         }
         for(var i = 0; i < $scope.users.length; i++){
-          if($scope.users[i].name === data.name){
+          if($scope.users[i].ugKthid === data.ugKthid){
             $scope.users[i].gettingHelp = true;
             if(data.helper){
               $scope.users[i].helper = data.helper;
@@ -220,11 +221,11 @@
 
       // Listen for a person no longer getting help.
       socket.on('stopHelp', function (data) {
-        if(data.name === $scope.name){
+        if(data.ugKthid === $scope.ugKthid){
           $scope.gettingHelp = false;
         }
         for(var i = 0; i < $scope.users.length; i++){
-          if($scope.users[i].name === data.name){
+          if($scope.users[i].ugKthid === data.ugKthid){
             $scope.users[i].gettingHelp = false;
             $scope.users[i].helper = data.helper;
             break;
@@ -303,12 +304,6 @@
       // Leave the queue
       $scope.leave = function(){
         var wasBooked = false;
-        if($scope.hasBooking({name:user.getName()})){
-          var booking = getBooking(user.getName());
-          if($scope.soon(booking)){
-            wasBooked = true;
-          }
-        }
         socket.emit('leave', {
           queueName: $scope.queue,
           help: $scope.help,
@@ -457,20 +452,23 @@
       };
 
       // When an admin wants to see the admin options
-      $scope.changeVisibility = function(name){
+      $scope.changeVisibility = function(ugKthid){
+        console.log(ugKthid);
         if($scope.accessLevel > 0){
           if( /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent) ) {
+            console.log("compare");
             for(var i = 0; i < $scope.users.length; i++){
-              if($scope.users[i].name === name){
+              if($scope.users[i].ugKthid === ugKthid){
                 $scope.users[i].optionsActivated = !$scope.users[i].optionsActivated;
                 break;
               }
             }
           }else{
-            if($scope.lastClick === name){
+            console.log("compare2");
+            if($scope.lastClick === ugKthid){
               if(Date.now() - $scope.clickTime <= 500){
                 for(var j = 0; j < $scope.users.length; j++){
-                  if($scope.users[j].name === name){
+                  if($scope.users[j].ugKthid === ugKthid){
                     $scope.users[j].optionsActivated = !$scope.users[j].optionsActivated;
                     break;
                   }
@@ -479,7 +477,7 @@
                 $scope.clickTime = Date.now();
               }
             }else{
-              $scope.lastClick = name;
+              $scope.lastClick = ugKthid;
               $scope.clickTime = Date.now();
             }
           }
@@ -488,9 +486,9 @@
 
       // When an admin wants to see the admin options
       // (This method is to prevent hiding the row when on a phone)
-      $scope.changeVisibilityDbl = function(name){
+      $scope.changeVisibilityDbl = function(ugKthid){
         for(var i = 0; i < $scope.users.length; i++){
-          if($scope.users[i].name === name){
+          if($scope.users[i].ugKthid === ugKthid){
             $scope.users[i].optionsActivated = !$scope.users[i].optionsActivated;
             break;
           }
@@ -547,10 +545,10 @@
       };
 
       // Returns true if the given person is queueing at the moment, otherwise false
-      function present (name) {
+      function present (ugKthid) {
         for(var index in $scope.users){
-          var name1 = $scope.users[index].name;
-          if(name === name1){
+          var ugKthid1 = $scope.users[index].ugKthid;
+          if(ugKthid === ugKthid1){
             return true;
           }
         }
@@ -571,7 +569,7 @@
         return undefined;
       }
 
-      // Returns an array of the groupmembers locations, empty if noone is queueing
+      // Returns an array of the groupmembers locations, empty if noone is queueing #bookingsystem!
       $scope.getLocations = function(group){
         console.log("Entered getLocations");
         var retList = [];
@@ -610,7 +608,7 @@
     $scope.colorLocation = function (location) {
       location = location.toLowerCase();
       pattern = /(blue|blå|red|röd|orange|yellow|gul|green|grön|brown|brun|grey|gray|grå|karmosin|white|vit|magenta|violett|turkos|turquoise|game|play|spel|sport|music|musik|art|konst|food|mat)/g;
-      
+
       var result = "";
       try {
         result = location.match(pattern)[0];
@@ -688,6 +686,7 @@
     $scope.$on('$viewContentLoaded', function(event) {
       $timeout(function() {
         $scope.name = user.getName();
+        $scope.ugKthid = user.getUgKthid();
         $scope.loggedIn = user.isLoggedIn();
         $scope.accessLevel = user.accessLevelFor($scope.queue);
         matchToQueue();

@@ -36,9 +36,10 @@ module.exports = function (socket, io) {
     console.log('a user added to ' + req);
     socket.join(req);
     try {
-      console.log("Current user = " + JSON.stringify(socket.handshake.session.user.name));
-      if (socket.handshake.session.user.name) { // TODO : Temporary fix
-        socket.join('user_' + socket.handshake.session.user.name);
+      var ugKthid = socket.handshake.session.user.ugKthid;
+      console.log("Current user = " + JSON.stringify(ugKthid));
+      if (ugKthid) { // TODO : Temporary fix
+        socket.join('user_' + ugKthid);
       }
     } catch (err) {
       console.log("User is not logged in.");
@@ -60,18 +61,22 @@ module.exports = function (socket, io) {
     user.location = shortString(user.location, 30);
     user.comment = shortString(user.comment, 140);
     user.comment = alterText(user.comment);
-    user.name = socket.handshake.session.user.name;
+    user.ugKthid = socket.handshake.session.user.ugKthid;
+    user.username = socket.handshake.session.user.username;
+    user.realname = socket.handshake.session.user.realname;
 
     var queue = queueSystem.findQueue(queueName);
 
-    if (queue.inQueue(user.name)) {
+    if (queue.inQueue(user.ugKthid)) {
       return;
     }
 
     console.log('A user joined to ' + queueName);
 
     var newUser = new User({
-      name: user.name,
+      username: user.username,
+      ugKthid: user.ugKthid,
+      realname: user.realname,
       location: user.location,
       comment: user.comment,
       help: user.help
@@ -79,30 +84,30 @@ module.exports = function (socket, io) {
 
     // Set the variable 'completion' to true if they have a completion and want to present
     if (!newUser.help) {
-      if (queue.hasCompletion(newUser.name)) {
+      if (queue.hasCompletion(newUser.ugKthid)) {
         newUser.completion = true;
       }
     }
 
     // Append the messages added about this user
-    newUser.messages = queue.getMessagesFor(newUser.name);
+    newUser.messages = queue.getMessagesFor(newUser.ugKthid);
 
     var stat = new Statistic({
-      name: user.name,
+      username: user.username,
       queue: queue.name,
       help: user.help,
       leftQueue: false,
       queueLength: queue.queue.length,
     });
     stat.save();
-    
+
     queue.addUser(newUser);
 
     console.log("User : " + JSON.stringify(newUser) + " wants to join the queue.");
     io.to(queueName).emit('join', newUser);
     io.to("lobby").emit('lobbyjoin', {
       queueName: queueName,
-      username: newUser.name
+      ugKthid: newUser.ugKthid
     });
 
   });
@@ -117,7 +122,9 @@ module.exports = function (socket, io) {
     user.location = shortString(user.location, 30);
     user.comment = shortString(user.comment, 140);
     user.comment = alterText(user.comment);
-    user.name = socket.handshake.session.user.name;
+    user.ugKthid = socket.handshake.session.user.ugKthid;
+    user.realname = socket.handshake.session.user.realname;
+    user.username = socket.handshake.session.user.username;
     user.badLocation = false;
 
     console.log(JSON.stringify(user)); // check which uses is given --- need the one doing the action and the one who is "actioned"
@@ -126,7 +133,7 @@ module.exports = function (socket, io) {
 
     var course = queueSystem.findQueue(queueName);
     course.updateUser(user);
-    io.to(queueName).emit('update', course.getUser(user.name));
+    io.to(queueName).emit('update', course.getUser(user.ugKthid));
   });
 
   // a user marks themself as getting help
@@ -135,16 +142,16 @@ module.exports = function (socket, io) {
       return;
     }
     var queueName = req.queueName;
-    var name = socket.handshake.session.user.name;
+    var ugKthid = socket.handshake.session.user.ugKthid;
 
     var course = queueSystem.findQueue(queueName);
-    course.helpingQueuer(name, queueName);
+    course.helpingQueuer(ugKthid, queueName);
 
     io.to(queueName).emit('help', {
-      name: name
+      ugKthid: ugKthid
     });
 
-    console.log(name + ' is getting help in ' + queueName);
+    console.log(ugKthid + ' is getting help in ' + queueName);
   });
 
   // user leaves queue
@@ -153,20 +160,20 @@ module.exports = function (socket, io) {
       return;
     }
     var queueName = req.queueName;
-    var name = socket.handshake.session.user.name;
+    var ugKthid = socket.handshake.session.user.ugKthid;
     var booking = req.booking;
 
-    console.log(name); // check which uses is given --- need the one doing the action and the one who is "actioned"
+    console.log(ugKthid); // check which uses is given --- need the one doing the action and the one who is "actioned"
     console.log("Validerande: " + JSON.stringify(socket.handshake.session.user));
 
     var queue = queueSystem.findQueue(queueName);
-    if (!queue.inQueue(name)) {
+    if (!queue.inQueue(ugKthid)) {
       return;
     }
 
-    var user = queue.getUser(name);
+    var user = queue.getUser(ugKthid);
     var stat = new Statistic({
-      name: name,
+      username: user.username,
       queue: queue.name,
       help: user.help,
       leftQueue: true,
@@ -174,21 +181,21 @@ module.exports = function (socket, io) {
     });
     stat.save();
 
-    queueSystem.userLeavesQueue(queue, name, booking);
+    queueSystem.userLeavesQueue(queue, ugKthid, booking);
     if (!user.help) {
-      if (queue.hasCompletion(name)) {
-        queue.removeCompletion(name); // TODO : This function does not exist
+      if (queue.hasCompletion(ugKthid)) {
+        queue.removeCompletion(ugKthid); // TODO : This function does not exist
       }
     }
 
     console.log('a user left ' + queueName);
 
     io.to(queueName).emit('leave', {
-      name: name
+      ugKthid: ugKthid
     });
     io.to("lobby").emit('lobbyleave', {
       queueName: queueName,
-      username: name
+      ugKthid: ugKthid
     });
   });
 
@@ -218,11 +225,13 @@ module.exports = function (socket, io) {
 
   // TODO : This has been changed to only have them join a room based on their ID, no more session interaction
   socket.on('setUser', function (req) {
-    console.log("user_" + req.name);
-    socket.join("user_" + req.name); // joina sitt eget rum, för privata meddelande etc
+    console.log("user_" + req.ugKthid);
+    socket.join("user_" + req.ugKthid); // joina sitt eget rum, för privata meddelande etc
     socket.handshake.session.user = {};
     socket.handshake.session.user.location = "";
-    socket.handshake.session.user.name = "guest-" + req.name;
+    socket.handshake.session.user.realname = '' + req.realname;
+    socket.handshake.session.user.username = "guest-" + req.realname;
+    socket.handshake.session.user.ugKthid = "guest-" + req.realname;
     console.log('Socket-setUser: ' + JSON.stringify(req));
     console.log('session is: ' + JSON.stringify(socket.handshake.session.user));
   });

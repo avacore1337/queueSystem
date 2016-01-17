@@ -5,9 +5,9 @@ var mongoose = require('mongoose');
 var Schema = mongoose.Schema;
 var async = require('async');
 
-// Schema used for statistics 
+// Schema used for statistics
 var statisticSchema = new Schema({
-  name: String,
+  username: String,
   queue: String,
   time: { type: Number, default: Date.now },
   help: String,
@@ -79,17 +79,17 @@ statisticSchema.statics.getStatistics =  function (queue, start, end, callbackDo
   }],
 
   function(err, results){
-    console.log("res data",results)
+    console.log("res data",results);
     callbackDo(null, {peopleHelped: results[0], peoplePresented: results[1], leftInQueue: (results[2] - results[3] + results[4])});
   });
-}
+};
 
 statisticSchema.statics.getJSONStatistics =  function (queue, start, end, callback){
   Statistic.find({ queue: queue }).
   where('time').gte(start).lt(end).
-  select({name: 1, queue: 1, queueLength: 1, help: 1, leftQueue: 1, time: 1}).
+  select({username: 1, queue: 1, queueLength: 1, help: 1, leftQueue: 1, time: 1}).
   exec(callback);
-}
+};
 
 var Statistic = mongoose.model("UserStatistic", statisticSchema);
 module.exports = Statistic;

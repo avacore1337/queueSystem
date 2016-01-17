@@ -35,10 +35,10 @@ queueControllers.controller('listController', ['$scope', 'HttpService', '$locati
       console.log("A user joined (lobby) " + data.queueName);
       var queue = getQueue(data.queueName);
       queue.queue.push({
-        name: data.username
+        ugKthid: data.ugKthid
       });
       queue.length++;
-      if (data.username === user.getName()) {
+      if (data.ugKthid === user.getUgKthid()) {
         getQueue(data.queueName).position = getQueue(data.queueName).length;
       }
     });
@@ -49,7 +49,7 @@ queueControllers.controller('listController', ['$scope', 'HttpService', '$locati
       var queue = getQueue(data.queueName);
       queue.length--;
       for (var i in queue.queue) {
-        if (queue.queue[i].name === data.username) {
+        if (queue.queue[i].ugKthid === data.ugKthid) {
           queue.queue.splice(i, 1);
           if (parseInt(i, 10) + 1 === queue.position) {
             queue.position = -1;
@@ -160,7 +160,7 @@ queueControllers.controller('loginController', ['$scope', '$location', 'HttpServ
 
     $scope.done = function() {
       console.log("Reached done()");
-      http.post('setUser', {name: $scope.name}, function(response) {
+      http.post('setUser', {realname: $scope.name}, function(response) {
         http.get('serverMessage', function(resp){
           if(resp.serverMessage){
             console.log("There is a serverMessage");
@@ -170,7 +170,7 @@ queueControllers.controller('loginController', ['$scope', '$location', 'HttpServ
         $location.path('list');
       });
       socket.emit('setUser', {
-        name: $scope.name,
+        realname: $scope.name,
         admin: $scope.type === 'admin'
       });
       console.log("I set the user with socket");
@@ -182,7 +182,7 @@ queueControllers.controller('loginController', ['$scope', '$location', 'HttpServ
 queueControllers.controller('navigationController', ['$scope', '$location', 'UserService', 'HttpService', 'ModalService', 'WebSocketService',
   function($scope, $location, user, http, modals, socket) {
     $scope.location = $location.path();
-    $scope.name = user.getName();
+    $scope.realname = user.getRealname();
 
     $scope.$watch(function() {
       return $location.path();
@@ -192,10 +192,10 @@ queueControllers.controller('navigationController', ['$scope', '$location', 'Use
     });
 
     $scope.$watch(function() {
-      return user.getName();
+      return user.getRealname();
     }, function(newValue, oldValue) {
-      $scope.name = newValue;
-      console.log("Detected update to user.getName() (oldValue = " + oldValue + ", newValue = " + newValue + ")");
+      $scope.realname = newValue;
+      console.log("Detected update to user.getRealname() (oldValue = " + oldValue + ", newValue = " + newValue + ")");
     });
 
     // Listen for the server setting a new server-message
@@ -205,11 +205,11 @@ queueControllers.controller('navigationController', ['$scope', '$location', 'Use
 
     // Loggin out
     $scope.logOut = function() {
-      
+
         user.clearData();
-        $scope.name = "";
+        $scope.realname = "";
         console.log("logged out");
-        window.location = "logout"
+        window.location = "logout";
     };
 
     $scope.externalLink = function(address){

@@ -6,8 +6,9 @@ var Schema = mongoose.Schema;
 
 // Schema used for admins, teachers and teacher assistans
 var adminSchema = new Schema({
-  name: String,
   username: String,
+  ugKthid: String,
+  realname: String,
   addedBy: { type: String, default: '' }
 });
 

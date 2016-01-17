@@ -43,11 +43,11 @@ queueSchema.methods.setMOTD = function (message) {
 };
 
 // Returns true if the given user has a completion, otherwise false
-queueSchema.methods.hasCompletion = function (username) {
+queueSchema.methods.hasCompletion = function (ugKthid) {
   var ret = false;
   this.completions.forEach(function (completion, i, completions) {
     console.log("Current completion : " + JSON.stringify(completion));
-    if (completion.name === username) {
+    if (completion.ugKthid === ugKthid) {
       ret = true;
     }
   });
@@ -55,11 +55,11 @@ queueSchema.methods.hasCompletion = function (username) {
 };
 
 // Returns true if the given user has a completion, otherwise false
-queueSchema.methods.getMessagesFor = function (username) {
+queueSchema.methods.getMessagesFor = function (ugKthid) {
   var retList = [];
   this.messages.forEach(function (message, i, messages) {
-    if (message.name === username) {
-      console.log("Found a message for user '" + username + "', it is : " + JSON.stringify(message));
+    if (message.ugKthid === ugKthid) {
+      console.log("Found a message for user '" + ugKthid + "', it is : " + JSON.stringify(message));
       retList.push(message.message);
     }
   });
@@ -68,31 +68,31 @@ queueSchema.methods.getMessagesFor = function (username) {
 
 // Adds a new completion
 queueSchema.methods.addCompletion = function (completion) {
-  this.completions.push({name: completion.name, assistant: completion.assistant});
+  this.completions.push({ugKthid: completion.ugKthid, assistant: completion.assistant});
   if(completion.task){
-    this.messages.push({name: completion.name, message: completion.task});
+    this.messages.push({ugKthid: completion.ugKthid, message: completion.task});
   }
   this.save();
 };
 
 // Removes the completion for the given user
-queueSchema.methods.removeCompletion = function (username) {
+queueSchema.methods.removeCompletion = function (ugKthid) {
   this.completions = this.completions.filter(function (completion) {
-    return completion.name !== username;
+    return completion.ugKthid !== ugKthid;
   });
   this.save();
 };
 
 // Removes all completions
-queueSchema.methods.clearCompletions = function (username) {
+queueSchema.methods.clearCompletions = function (ugKthid) {
   this.completions = [];
   this.save();
 };
 
 // Returns true if the given user is in the queue, otherwise false
-queueSchema.methods.inQueue = function (username) {
+queueSchema.methods.inQueue = function (ugKthid) {
   for(var i = 0; i < this.queue.length; i++){
-    if(username === this.queue[i].name){
+    if(ugKthid === this.queue[i].ugKthid){
       return true;
     }
   }
@@ -124,29 +124,29 @@ queueSchema.methods.forTeacher = function (fn) {
   this.teacher.forEach(fn);
 };
 
-queueSchema.methods.getUser = function (username) {
+queueSchema.methods.getUser = function (ugKthid) {
   for (var i = 0; i < this.queue.length; i++) {
-    if(this.queue[i].name === username){
+    if(this.queue[i].ugKthid === ugKthid){
       return this.queue[i];
     }
   }
 };
 
-// takes a username as a parameter and removes the user form the queue
-queueSchema.methods.removeUser = function (username) {
+// takes a ugKthid as a parameter and removes the user form the queue
+queueSchema.methods.removeUser = function (ugKthid) {
   this.queue = this.queue.filter(function (user) {
-    return user.name !== username;
+    return user.ugKthid !== ugKthid;
   });
   this.save();
 };
 
-// takes a username as a parameter and removes the booking from the queue
+// takes a ugKthid as a parameter and removes the booking from the queue
 // not tested yet
-queueSchema.methods.removeBooking = function (username) {
+queueSchema.methods.removeBooking = function (ugKthid) {
   for (var i = 0; i < this.bookings.length; i++) {
     var remove = false;
     for (var j = 0; j < this.bookings[i].users.length; j++) {
-      if (this.bookings[i].users[j] === username) {
+      if (this.bookings[i].users[j] === ugKthid) {
         remove = true;
       }
       if (remove) {
@@ -163,10 +163,10 @@ queueSchema.methods.addTeacher = function (teacher) {
   this.save();
 };
 
-// takes a username as a parameter and removes the user form the queue
-queueSchema.methods.removeTeacher = function (username) {
+// takes a ugKthid as a parameter and removes the user form the queue
+queueSchema.methods.removeTeacher = function (ugKthid) {
   this.teacher = this.teacher.filter(function (teacher) {
-    return teacher.name !== username;
+    return teacher.ugKthid !== ugKthid;
   });
   this.save();
 };
@@ -177,10 +177,10 @@ queueSchema.methods.addAssistant = function (assistant) {
   this.save();
 };
 
-// takes a username as a parameter and removes the user form the queue
-queueSchema.methods.removeAssistant = function (username) {
+// takes a ugKthid as a parameter and removes the user form the queue
+queueSchema.methods.removeAssistant = function (ugKthid) {
   this.assistant = this.assistant.filter(function (assistant) {
-    return assistant.name !== username;
+    return assistant.ugKthid !== ugKthid;
   });
   this.save();
 };
@@ -214,13 +214,14 @@ queueSchema.methods.purgeQueue = function () {
   for(var i = 0; i < this.queue.length; i++){
     var user = this.queue[i];
     var stat = new Statistic({
-        name: user.name,
+        username: user.username,
         queue: this.name,
         help: user.help,
         leftQueue: true,
         queueLength: 0,
       });
     stat.save();
+    user.remove();
   }
   this.queue = [];
   this.save();
@@ -241,7 +242,7 @@ queueSchema.methods.forUser = function (fn) {
 // parameter "user" is the replacing user
 queueSchema.methods.updateUser = function (user) {
   this.queue.forEach(function (usr, i, queue) {
-    if (usr.name === user.name) {
+    if (usr.ugKthid === user.ugKthid) {
       queue[i].comment = user.comment;
       queue[i].location = user.location;
       queue[i].badLocation = false;
@@ -251,10 +252,10 @@ queueSchema.methods.updateUser = function (user) {
 };
 
 // set a comment from a assistant to a user (comment regarding help given by the assistant)
-queueSchema.methods.addAssistantComment = function (name, sender, queue, message) {
-  this.messages.push({name: name, message: message});
+queueSchema.methods.addAssistantComment = function (ugKthid, sender, queue, message) {
+  this.messages.push({ugKthid: ugKthid, message: message});
   this.queue.forEach(function (usr, i, queue) {
-    if (usr.name === name) {
+    if (usr.ugKthid === ugKthid) {
       var user = usr;
       user.messages.push(message);
       lodash.extend(queue[i], user);
@@ -264,12 +265,12 @@ queueSchema.methods.addAssistantComment = function (name, sender, queue, message
 };
 
 // Remove comments about a user
-queueSchema.methods.removeAssistantComments = function (name, sender, queue) {
+queueSchema.methods.removeAssistantComments = function (ugKthid, sender, queue) {
   this.messages = this.messages.filter(function (message) {
-    return message.name !== name;
+    return message.ugKthid !== ugKthid;
   });
   this.queue.forEach(function (usr, i, queue) {
-    if (usr.name === name) {
+    if (usr.ugKthid === ugKthid) {
       var user = usr;
       user.messages = [];
       lodash.extend(queue[i], user);
@@ -285,9 +286,9 @@ queueSchema.methods.clearAssistantComments = function () {
 };
 
 // set a user as getting help
-queueSchema.methods.helpingQueuer = function (name, queue) {
+queueSchema.methods.helpingQueuer = function (ugKthid, queue) {
   this.queue.forEach(function (usr, i, queue) {
-    if (usr.name === name) {
+    if (usr.ugKthid === ugKthid) {
       var user = usr;
       user.gettingHelp = true;
       lodash.extend(queue[i], user);
@@ -297,9 +298,9 @@ queueSchema.methods.helpingQueuer = function (name, queue) {
 };
 
 // set a user as no longer getting help
-queueSchema.methods.stopHelpingQueuer = function (name, queue) {
+queueSchema.methods.stopHelpingQueuer = function (ugKthid, queue) {
   this.queue.forEach(function (usr, i, queue) {
-    if (usr.name === name) {
+    if (usr.ugKthid === ugKthid) {
       var user = usr;
       user.gettingHelp = false;
       lodash.extend(queue[i], user);
