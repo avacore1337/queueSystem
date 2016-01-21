@@ -340,7 +340,7 @@ function readIn() {
     queues.forEach(function(queue) {
       queueList.push(queue);
       // to make sure everything loads
-      console.log('Queue: ' + queue.username + ' loaded!');
+      console.log('Queue: ' + queue.name + ' loaded!');
     });
     // exports.updateAllBookings()
   });

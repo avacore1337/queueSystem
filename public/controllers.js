@@ -17,12 +17,12 @@ queueControllers.controller('listController', ['$scope', 'HttpService', '$locati
       }
     });
 
-    function apiGetQueue(resp) {
-      var queue = getQueue(resp.name);
+    function apiGetQueue(response) {
+      var queue = getQueue(response.name);
       queue.position = -1;
-      queue.queue = resp.queue;
+      queue.queue = response.queue;
       for (var i in queue.queue) {
-        if (queue.queue[i].name === user.getName()) {
+        if (queue.queue[i].ugKthid === user.getUgKthid()) {
           queue.position = parseInt(i, 10) + 1;
           break;
         }

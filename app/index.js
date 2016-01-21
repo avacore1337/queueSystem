@@ -176,7 +176,7 @@ app.get('/auth', function(req, res) {
 app.post('/API/setUser', function (req, res) {
   req.session.user = {};
   req.session.user.realname = '' + req.body.realname;
-  req.session.user.username = 'guest-' + req.body.realname;
+  req.session.user.username = 'guestname-' + req.body.realname;
   req.session.user.ugKthid = 'guest-' + req.body.realname;
   req.session.user.location = "";
 

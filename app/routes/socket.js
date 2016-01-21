@@ -230,7 +230,7 @@ module.exports = function (socket, io) {
     socket.handshake.session.user = {};
     socket.handshake.session.user.location = "";
     socket.handshake.session.user.realname = '' + req.realname;
-    socket.handshake.session.user.username = "guest-" + req.realname;
+    socket.handshake.session.user.username = "guestname-" + req.realname;
     socket.handshake.session.user.ugKthid = "guest-" + req.realname;
     console.log('Socket-setUser: ' + JSON.stringify(req));
     console.log('session is: ' + JSON.stringify(socket.handshake.session.user));
