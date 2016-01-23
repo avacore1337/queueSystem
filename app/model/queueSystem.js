@@ -265,10 +265,10 @@ function setup() {
   globalMOTD.save();
 
   var newAdmin = new Admin({
-    realname: "anton-b",
-    username: "guest-antbac",
-    ugKthid: "u1asonetuh",
-    addedBy: "antbac"
+    realname: "Anton Bäckström",
+    username: "antbac",
+    ugKthid: "u18dlezv",
+    addedBy: "root"
   });
   adminList.push(newAdmin);
   newAdmin.save();
@@ -276,8 +276,8 @@ function setup() {
   newAdmin = new Admin({
     realname: "robert welin-berger",
     username: "robertwb",
-    ugKthid: "u101onteu",
-    addedBy: "antbac"
+    ugKthid: "u101x961",
+    addedBy: "root"
   });
   adminList.push(newAdmin);
   newAdmin.save();

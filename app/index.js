@@ -157,7 +157,7 @@ app.get('/auth', function(req, res) {
       req.session.user.username = username;
       console.log("worked");
 
-      // TODO implement username lookup fallback 
+      // TODO implement username lookup fallback
       // catch(err){
       //   console.log(err);
       //   req.session.user.realname = uid;
@@ -181,7 +181,14 @@ app.post('/API/setUser', function (req, res) {
   req.session.user = {};
   req.session.user.realname = '' + req.body.realname;
   req.session.user.username = 'guestname-' + req.body.realname;
-  req.session.user.ugKthid = 'guest-' + req.body.realname;
+  console.log("The argv is:");
+  console.log(process.argv);
+  if (process.argv[2] == "test") {
+    req.session.user.ugKthid = req.body.realname;
+  }
+  else{
+    req.session.user.ugKthid = 'guest-' + req.body.realname;
+  }
   req.session.user.location = "";
 
   var ip = req.connection.remoteAddress;

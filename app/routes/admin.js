@@ -124,7 +124,7 @@ module.exports = function (socket, io) {
     }
     console.log("Trying to add Admin!");
     var user = socket.handshake.session.user;
-    var ugKthid = user.ugKthid;
+    var ugKthid = user.ugKthid.toLowerCase();
     // admin-validation
     if (!validate(ugKthid, "super", "queue")) {
       console.log("validation for addAdmin failed");
@@ -136,6 +136,12 @@ module.exports = function (socket, io) {
     getUgKthid(req.username, function(cn, ugKthid) {
       console.log(cn);
       console.log(ugKthid);
+
+      for (var i = 0; i < queueSystem.admin.length; i++) {
+        if(queueSystem.admin[i].ugKthid === ugKthid){
+        return;
+        }
+      }
       queueSystem.addAdmin(cn, req.username, ugKthid, user.username); //TODO should contain real name not username twice
 
       console.log(req.username + ' is a new admin!');
@@ -154,7 +160,7 @@ module.exports = function (socket, io) {
     }
     var queueName = req.queueName;
     var user = socket.handshake.session.user;
-    var ugKthid = user.ugKthid;
+    var ugKthid = user.ugKthid.toLowerCase();
     // admin/teacher-validation
     if (!(validate(ugKthid, "super", "queue") || validate(ugKthid, "teacher", queueName))) {
       console.log("validation for addTeacher failed");
@@ -166,6 +172,11 @@ module.exports = function (socket, io) {
       console.log(cn);
       console.log(ugKthid);
       var queue = queueSystem.findQueue(queueName);
+      for (var i = 0; i < queue.teacher.length; i++) {
+        if(queue.teacher[i].ugKthid === ugKthid){
+        return;
+        }
+      }
       var newTeacher = new Admin({
         realname: cn,
         username: req.username,
@@ -193,7 +204,7 @@ module.exports = function (socket, io) {
     var queueName = req.queueName;
 
     var user = socket.handshake.session.user;
-    var ugKthid = user.ugKthid;
+    var ugKthid = user.ugKthid.toLowerCase();
     // admin/teacher-validation
     if (!(validate(ugKthid, "super", "queue") || validate(ugKthid, "teacher", queueName))) {
       console.log("validation for addAssistant failed");
@@ -204,6 +215,11 @@ module.exports = function (socket, io) {
       console.log(cn);
       console.log(ugKthid);
       var queue = queueSystem.findQueue(queueName);
+      for (var i = 0; i < queue.teacher.length; i++) {
+        if(queue.teacher[i].ugKthid === ugKthid){
+        return;
+        }
+      }
       var newAssistant = new Admin({
         realname: cn,
         username: req.username,
