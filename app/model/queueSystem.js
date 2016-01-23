@@ -86,9 +86,16 @@ exports.userLeavesQueue = function (queue, userName, booking) {
 /**
  * Adds a superadmin to the system.
  * @param {String} name - The name of the user.
+ * @param {String} realname - The real name (cn) of the user.
  * @param {String} username - The username of the user.
+ * @param {String} ugKthid - The unique unchanging id of the user.
  */
 exports.addAdmin = function (realname, username, ugKthid, addedBy) {
+  for (var i = 0; i < adminList.length; i++) {
+    if(adminList[i].ugKthid === ugKthid){
+    return false;
+    }
+  }
   var admin = new Admin({
     realname: realname,
     username: username,
@@ -97,6 +104,7 @@ exports.addAdmin = function (realname, username, ugKthid, addedBy) {
   });
   adminList.push(admin);
   admin.save();
+  return true;
 };
 
 /**

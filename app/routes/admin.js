@@ -136,13 +136,10 @@ module.exports = function (socket, io) {
     getUgKthid(req.username, function(cn, ugKthid) {
       console.log(cn);
       console.log(ugKthid);
-
-      for (var i = 0; i < queueSystem.admin.length; i++) {
-        if(queueSystem.admin[i].ugKthid === ugKthid){
+      if(!queueSystem.addAdmin(cn, req.username, ugKthid, user.username)){
+        console.log(req.username + " already exists");
         return;
-        }
       }
-      queueSystem.addAdmin(cn, req.username, ugKthid, user.username); //TODO should contain real name not username twice
 
       console.log(req.username + ' is a new admin!');
       io.to('admin').emit('addAdmin', {
@@ -172,18 +169,16 @@ module.exports = function (socket, io) {
       console.log(cn);
       console.log(ugKthid);
       var queue = queueSystem.findQueue(queueName);
-      for (var i = 0; i < queue.teacher.length; i++) {
-        if(queue.teacher[i].ugKthid === ugKthid){
-        return;
-        }
-      }
       var newTeacher = new Admin({
         realname: cn,
         username: req.username,
         ugKthid: ugKthid,
         addedBy: user.username
       });
-      queue.addTeacher(newTeacher);
+      if(!queue.addTeacher(newTeacher)){
+        console.log(req.username + " already exists");
+        return;
+      }
 
       console.log(req.username + ' is a new teacher!');
 
@@ -215,18 +210,16 @@ module.exports = function (socket, io) {
       console.log(cn);
       console.log(ugKthid);
       var queue = queueSystem.findQueue(queueName);
-      for (var i = 0; i < queue.teacher.length; i++) {
-        if(queue.teacher[i].ugKthid === ugKthid){
-        return;
-        }
-      }
       var newAssistant = new Admin({
         realname: cn,
         username: req.username,
         ugKthid: ugKthid,
         addedBy: user.username
       });
-      queue.addAssistant(newAssistant);
+      if (!queue.addAssistant(newAssistant)){
+        console.log(req.username + " already exists");
+        return;
+      }
 
       console.log(req.username + ' is a new assistant!');
 

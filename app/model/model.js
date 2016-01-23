@@ -159,8 +159,14 @@ queueSchema.methods.removeBooking = function (ugKthid) {
 
 // takes a user as a parameter and adds to the queue
 queueSchema.methods.addTeacher = function (teacher) {
+  for (var i = 0; i < this.teacher.length; i++) {
+    if(this.teacher[i].ugKthid === teacher.ugKthid){
+    return false;
+    }
+  }
   this.teacher.push(teacher);
   this.save();
+  return true;
 };
 
 // takes a ugKthid as a parameter and removes the user form the queue
@@ -173,8 +179,14 @@ queueSchema.methods.removeTeacher = function (ugKthid) {
 
 // takes a user as a parameter and adds to the queue
 queueSchema.methods.addAssistant = function (assistant) {
+  for (var i = 0; i < this.assistant.length; i++) {
+    if(this.assistant[i].ugKthid === assistant.ugKthid){
+      return false;
+    }
+  }
   this.assistant.push(assistant);
   this.save();
+  return true;
 };
 
 // takes a ugKthid as a parameter and removes the user form the queue
