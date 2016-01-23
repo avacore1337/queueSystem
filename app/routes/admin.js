@@ -3,10 +3,39 @@
 
 var queueSystem = require('../model/queueSystem.js');
 var validate = queueSystem.validate;
+var ldap = require('ldapjs-hotfix');
 
 var Admin = require("../model/admin.js"); // databas stuff
 
 module.exports = function (socket, io) {
+
+  function getUsername (ugKthid, callback) {
+    var opts = {
+      filter: '(ugKthid=' + ugKthid + ')',
+      scope: 'sub'
+    };
+    var client = ldap.createClient({
+      url: 'ldaps://ldap.kth.se:636'
+    });
+    client.search('ou=Unix,dc=kth,dc=se', opts, function(err, res) {
+      res.on('searchEntry', function(entry) {
+        // console.log('entry: ' + JSON.stringify(entry.object));
+        console.log('entry: ' + entry.object.givenName);
+        console.log('uid: ' + entry.object.uid);
+        callback(entry.object.cn, entry.object.uid);
+      });
+      res.on('searchReference', function(referral) {
+        console.log('referral: ' + referral.uris.join());
+      });
+      res.on('error', function(err) {
+        console.error('error: ' + err.message);
+      });
+      res.on('end', function(result) {
+        console.log('status: ' + result.status);
+      });
+    });
+  }
+
 
   // TODO remove duplicated
   function doOnQueue(queueName, action) {
@@ -129,6 +158,10 @@ module.exports = function (socket, io) {
       return;
     }
 
+    getUsername(req.username, function(cn, username) {
+      console.log(cn);
+      console.log(username);
+    });
     var queue = queueSystem.findQueue(queueName);
     var newTeacher = new Admin({
       realname: req.username,

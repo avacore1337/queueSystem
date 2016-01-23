@@ -13,9 +13,6 @@ var request = require('request');
 var dns = require('dns');
 
 var ldap = require('ldapjs-hotfix');
-var client = ldap.createClient({
-  url: 'ldaps://ldap.kth.se:636'
-});
 
 mongoose.connect('mongodb://localhost/queueBase');
 
@@ -155,15 +152,18 @@ app.get('/auth', function(req, res) {
   getUID(req.query.ticket, function (uid) {
 
     try{
-      getUsername(uid);
+      getUsername(uid, function(cn, username) {
+        req.session.user.realname = cn;
+        req.session.user.username = username;
+      });
     }
     catch(err){
       console.log(err);
+      req.session.user.realname = uid;
+      req.session.user.username = uid;
     }
 
     console.log("uid:" + uid);
-    req.session.user.realname = uid;
-    req.session.user.username = uid;
     req.session.user.ugKthid = uid;
     getLocation(ip, function (location) {
       req.session.user.location = location;
@@ -211,17 +211,20 @@ app.get('/logout', function(req, res) {
   res.redirect('https://login.kth.se/logout');
 });
 
-function getUsername (ugKthid) {
+function getUsername (ugKthid, callback) {
   var opts = {
     filter: '(ugKthid=' + ugKthid + ')',
     scope: 'sub'
   };
+  var client = ldap.createClient({
+    url: 'ldaps://ldap.kth.se:636'
+  });
   client.search('ou=Unix,dc=kth,dc=se', opts, function(err, res) {
     res.on('searchEntry', function(entry) {
       // console.log('entry: ' + JSON.stringify(entry.object));
       console.log('entry: ' + entry.object.givenName);
       console.log('uid: ' + entry.object.uid);
-      // callback(entry.object.uid);
+      callback(entry.object.cn, entry.object.uid);
     });
     res.on('searchReference', function(referral) {
       console.log('referral: ' + referral.uris.join());
