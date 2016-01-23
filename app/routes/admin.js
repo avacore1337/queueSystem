@@ -9,9 +9,9 @@ var Admin = require("../model/admin.js"); // databas stuff
 
 module.exports = function (socket, io) {
 
-  function getUsername (ugKthid, callback) {
+  function getUgKthid (uid, callback) {
     var opts = {
-      filter: '(ugKthid=' + ugKthid + ')',
+      filter: '(uid=' + uid + ')',
       scope: 'sub'
     };
     var client = ldap.createClient({
@@ -21,8 +21,8 @@ module.exports = function (socket, io) {
       res.on('searchEntry', function(entry) {
         // console.log('entry: ' + JSON.stringify(entry.object));
         console.log('entry: ' + entry.object.givenName);
-        console.log('uid: ' + entry.object.uid);
-        callback(entry.object.cn, entry.object.uid);
+        console.log('ugKthid: ' + entry.object.ugKthid);
+        callback(entry.object.cn, entry.object.ugKthid);
       });
       res.on('searchReference', function(referral) {
         console.log('referral: ' + referral.uris.join());
@@ -131,16 +131,20 @@ module.exports = function (socket, io) {
       //res.end();
       return;
     }
-    var username = req.username;
     //@TODO needs to fetch all the data from the ldap server.
-    queueSystem.addAdmin(username, username, username, user.username); //TODO should contain real name not username twice
 
-    console.log(username + ' is a new admin!');
-    io.to('admin').emit('addAdmin', {
-      realname: username,
-      username: username,
-      ugKthid: username,
-      addedBy: user.username
+    getUgKthid(req.username, function(cn, ugKthid) {
+      console.log(cn);
+      console.log(ugKthid);
+      queueSystem.addAdmin(cn, req.username, ugKthid, user.username); //TODO should contain real name not username twice
+
+      console.log(req.username + ' is a new admin!');
+      io.to('admin').emit('addAdmin', {
+        realname: cn,
+        username: req.username,
+        ugKthid: ugKthid,
+        addedBy: user.username
+      });
     });
   });
 
@@ -158,27 +162,27 @@ module.exports = function (socket, io) {
       return;
     }
 
-    getUsername(req.username, function(cn, username) {
+    getUgKthid(req.username, function(cn, ugKthid) {
       console.log(cn);
-      console.log(username);
-    });
-    var queue = queueSystem.findQueue(queueName);
-    var newTeacher = new Admin({
-      realname: req.username,
-      username: req.username,
-      ugKthid: req.username,
-      addedBy: user.username
-    });
-    queue.addTeacher(newTeacher);
+      console.log(ugKthid);
+      var queue = queueSystem.findQueue(queueName);
+      var newTeacher = new Admin({
+        realname: cn,
+        username: req.username,
+        ugKthid: ugKthid,
+        addedBy: user.username
+      });
+      queue.addTeacher(newTeacher);
 
-    console.log(req.username + ' is a new teacher!');
+      console.log(req.username + ' is a new teacher!');
 
-    io.to('admin').emit('addTeacher', {
-      realname: req.username,
-      username: req.username,
-      ugKthid: req.username,
-      addedBy: user.username,
-      queueName: queueName
+      io.to('admin').emit('addTeacher', {
+        realname: cn,
+        username: req.username,
+        ugKthid: ugKthid,
+        addedBy: user.username,
+        queueName: queueName
+      });
     });
   });
 
@@ -196,24 +200,27 @@ module.exports = function (socket, io) {
       //res.end();
       return;
     }
+    getUgKthid(req.username, function(cn, ugKthid) {
+      console.log(cn);
+      console.log(ugKthid);
+      var queue = queueSystem.findQueue(queueName);
+      var newAssistant = new Admin({
+        realname: cn,
+        username: req.username,
+        ugKthid: ugKthid,
+        addedBy: user.username
+      });
+      queue.addAssistant(newAssistant);
 
-    var queue = queueSystem.findQueue(queueName);
-    var newAssistant = new Admin({
-      realname: req.username,
-      username: req.username,
-      ugKthid: req.username,
-      addedBy: user.username
-    });
-    queue.addAssistant(newAssistant);
+      console.log(req.username + ' is a new assistant!');
 
-    console.log(req.username + ' is a new assistant!');
-
-    io.to('admin').emit('addAssistant', {
-      realname: req.username,
-      username: req.username,
-      ugKthid: req.username,
-      addedBy: user.username,
-      queueName: queueName
+      io.to('admin').emit('addAssistant', {
+        realname: cn,
+        username: req.username,
+        ugKthid: ugKthid,
+        addedBy: user.username,
+        queueName: queueName
+      });
     });
   });
 

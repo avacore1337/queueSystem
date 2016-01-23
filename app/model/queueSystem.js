@@ -365,10 +365,10 @@ function readIn() {
 }
 
 // var newAdmin = new Admin({
-//   realname: "guest-robertwb",
-//   username: "guest-robertwb",
-//   ugKthid: "guest-robertwb",
-//   addedBy: "antbac"
+//   realname: "Robert Welin-Berger",
+//   username: "robertwb",
+//   ugKthid: "u101x961",
+//   addedBy: "root"
 // });
 // adminList.push(newAdmin);
 // newAdmin.save();

@@ -151,24 +151,28 @@ app.get('/auth', function(req, res) {
   console.log("ip: " + ip);
   getUID(req.query.ticket, function (uid) {
 
-    try{
-      getUsername(uid, function(cn, username) {
-        req.session.user.realname = cn;
-        req.session.user.username = username;
-      });
-    }
-    catch(err){
-      console.log(err);
-      req.session.user.realname = uid;
-      req.session.user.username = uid;
-    }
 
-    console.log("uid:" + uid);
-    req.session.user.ugKthid = uid;
-    getLocation(ip, function (location) {
-      req.session.user.location = location;
-      console.log("Is this happening before ?");
-      res.redirect('/#' + req.session.user.loginTarget);
+    getUsername(uid, function(cn, username) {
+      req.session.user.realname = cn;
+      req.session.user.username = username;
+      console.log("worked");
+
+      // TODO implement username lookup fallback 
+      // catch(err){
+      //   console.log(err);
+      //   req.session.user.realname = uid;
+      //   req.session.user.username = uid;
+      //   console.log("failed");
+      // }
+      console.log(req.session.user);
+      console.log("uid:" + uid);
+      req.session.user.ugKthid = uid;
+      getLocation(ip, function (location) {
+        req.session.user.location = location;
+        console.log("Is this happening before ?");
+        res.redirect('/#' + req.session.user.loginTarget);
+      });
+
     });
   });
 });
@@ -222,7 +226,7 @@ function getUsername (ugKthid, callback) {
   client.search('ou=Unix,dc=kth,dc=se', opts, function(err, res) {
     res.on('searchEntry', function(entry) {
       // console.log('entry: ' + JSON.stringify(entry.object));
-      console.log('entry: ' + entry.object.givenName);
+      console.log('entry: ' + entry.object.cn);
       console.log('uid: ' + entry.object.uid);
       callback(entry.object.cn, entry.object.uid);
     });
