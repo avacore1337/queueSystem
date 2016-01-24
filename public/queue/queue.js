@@ -23,7 +23,7 @@
 
       $scope.queue = $routeParams.queue;
       $scope.info = "";
-
+      
       $scope.$on('$destroy', function (event) {
         socket.removeAllListeners();
         console.log("Leaving " + $scope.queue);
@@ -115,6 +115,10 @@
           title.title = "["  + $scope.users.length + "/" + $scope.users.length + "] " + $scope.queue + " | Stay A while";
         }else{
           title.title = "["  + $scope.users.length + "] " + $scope.queue + " | Stay A while";
+        }
+        if($scope.users.length === 1 && user.accessLevelFor($scope.queue) > 0 && !document.hasFocus()){
+          var audio = new Audio('../sounds/DingLing.mp3');
+          audio.play();
         }
       });
 
