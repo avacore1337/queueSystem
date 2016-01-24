@@ -52,7 +52,7 @@
           <input type="text" ng-hide="enqueued" ng-model="comment" placeholder="Laboration 1" onfocus="this.placeholder = ''" onblur="this.placeholder = 'Laboration 1'" class="col-xs-12" style="height: 3em; margin-bottom: 2%;" id="queueCommentInputField">
           <i class="text-white" ng-hide="comment || enqueued">&nbsp;&nbsp;Required</i>
         </div>
-        
+
         <div ng-hide="enqueued">
           <br ng-show="comment"><br ng-show="comment">
           <span class="col-xs-6">
@@ -134,6 +134,20 @@
               <button class="blue clickable center-content frame expand" ng-show="accessLevel && locked" ng-click="unlock()" id="queueUnlockQueueBtn">
                 <span class="glyphicon glyphicon-lock"></span>
                 Unlock queue
+              </button>
+            </li>
+
+            <li>
+              <button class="yellow clickable center-content frame expand" ng-show="accessLevel && ding" ng-click="dingOff()" id="queueDingOnBtn">
+                <span class="glyphicon glyphicon-volume-off"></span>
+                Sound Off
+              </button>
+            </li>
+
+            <li>
+              <button class="yellow clickable center-content frame expand" ng-show="accessLevel && !ding" ng-click="dingOn()" id="queueDingOffBtn">
+                <span class="glyphicon glyphicon-volume-up"></span>
+                Sound On
               </button>
             </li>
 <!--

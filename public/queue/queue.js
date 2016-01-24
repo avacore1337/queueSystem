@@ -23,7 +23,7 @@
 
       $scope.queue = $routeParams.queue;
       $scope.info = "";
-      
+
       $scope.$on('$destroy', function (event) {
         socket.removeAllListeners();
         console.log("Leaving " + $scope.queue);
@@ -38,6 +38,7 @@
       $scope.enqueued = false;
       $scope.gettingHelp = false;
       $scope.help = true;
+      $scope.ding = true;
       $scope.location = user.getLocation();
       $scope.fixedLocation = $scope.location !== "";
       $scope.completionText = "";
@@ -116,7 +117,7 @@
         }else{
           title.title = "["  + $scope.users.length + "] " + $scope.queue + " | Stay A while";
         }
-        if($scope.users.length === 1 && user.accessLevelFor($scope.queue) > 0 && !document.hasFocus()){
+        if($scope.users.length === 1 && user.accessLevelFor($scope.queue) > 0 && !document.hasFocus() && $scope.ding){
           var audio = new Audio('../sounds/DingLing.mp3');
           audio.play();
         }
@@ -355,6 +356,17 @@
         console.log("Called unlock");
       };
 
+      // This function should unlock the queue, alowing people to join the queue
+      $scope.dingOn = function(){
+        $scope.ding = true;
+        console.log("Called dingOn");
+      };
+
+      // This function should unlock the queue, alowing people to join the queue
+      $scope.dingOff = function(){
+        $scope.ding = false;
+        console.log("Called dingOff");
+      };
       // This function allows the user to schedule labs (times when the queue will be unlocked)
       $scope.schedule = function(){
         modals.scheduleModal({
