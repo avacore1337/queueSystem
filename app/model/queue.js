@@ -270,7 +270,8 @@ queueSchema.methods.purgeQueue = function () {
         presentAmount: 0
       });
     stat.save();
-    user.remove();
+    console.log(this.queue[i].remove());
+    this.save();
   }
   this.queue = [];
   this.save();
