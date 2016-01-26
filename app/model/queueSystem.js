@@ -10,17 +10,15 @@ var schedule = require('node-schedule');
 var request = require('request');
 var http = require('http');
 
-var Queue = require("./model.js"); // databas stuff
+var Queue = require("./queue.js");
 var User = require("./user.js");
 var Admin = require("./admin.js");
 var Statistic = require("./statistic.js");
 var GlobalMOTD = require("./globalMOTD.js");
 
-
 var queueList = [];
 var adminList = [];
 var globalMOTD;
-exports.statisticsList = [];
 
 /**
  * Creates a queue with the given name.
@@ -70,17 +68,6 @@ exports.findQueue = function(name) {
  */
 exports.forQueue = function (fn) {
   queueList.forEach(fn);
-};
-
-/**
- * Wrapper for the array For each for the queueList array.
- * @param {function} fn - The function to be called for every element in the list.
- */
-exports.userLeavesQueue = function (queue, userName, booking) {
-  queue.removeUser(userName);
-  if (booking) {
-    queue.removeBooking(userName);
-  }
 };
 
 /**
@@ -322,10 +309,12 @@ function setup() {
       var newStatistic = new Statistic({
         username: newUser.username,
         queue: newQueue.username,
-        startTime: newUser.startTime,
-        action: ''
+        help: newUser.help,
+        leftQueue: true,
+        queueLength: newQueue.queue.length,
+        helpAmount: newQueue.queue.length,
+        presentAmount: 0,
       });
-      exports.statisticsList.push(newStatistic);
       newStatistic.save();
 
       //---------------------------------------------------------------------------------------

@@ -5,9 +5,10 @@
   'ui.bootstrap',
   'queue.queue',
   'admin.admin',
-  'statistics.statistics'
+  'statistics.statistics',
+  'googlechart'
   ]);
-  
+
   app.config(['$routeProvider',
   function($routeProvider) {
     $routeProvider.

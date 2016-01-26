@@ -92,15 +92,6 @@ module.exports = function (socket, io) {
     // Append the messages added about this user
     newUser.messages = queue.getMessagesFor(newUser.ugKthid);
 
-    var stat = new Statistic({
-      username: user.username,
-      queue: queue.name,
-      help: user.help,
-      leftQueue: false,
-      queueLength: queue.queue.length,
-    });
-    stat.save();
-
     queue.addUser(newUser);
 
     console.log("User : " + JSON.stringify(newUser) + " wants to join the queue.");
@@ -161,7 +152,6 @@ module.exports = function (socket, io) {
     }
     var queueName = req.queueName;
     var ugKthid = socket.handshake.session.user.ugKthid;
-    var booking = req.booking;
 
     console.log(ugKthid); // check which uses is given --- need the one doing the action and the one who is "actioned"
     console.log("Validerande: " + JSON.stringify(socket.handshake.session.user));
@@ -172,16 +162,7 @@ module.exports = function (socket, io) {
     }
 
     var user = queue.getUser(ugKthid);
-    var stat = new Statistic({
-      username: user.username,
-      queue: queue.name,
-      help: user.help,
-      leftQueue: true,
-      queueLength: queue.queue.length,
-    });
-    stat.save();
-
-    queueSystem.userLeavesQueue(queue, ugKthid, booking);
+    queue.removeUser(ugKthid);
     if (!user.help) {
       if (queue.hasCompletion(ugKthid)) {
         queue.removeCompletion(ugKthid); // TODO : This function does not exist

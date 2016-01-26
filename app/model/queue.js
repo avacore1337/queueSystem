@@ -42,6 +42,17 @@ queueSchema.methods.setMOTD = function (message) {
   this.save();
 };
 
+//calculates the amount of people that are requesting help
+queueSchema.methods.calculateHelp = function () {
+  var helpCount = 0;
+  for (var i = 0; i < this.queue.length; i++) {
+    if(this.queue[i].help){
+      helpCount += 1;
+    }
+  }
+  return helpCount;
+};
+
 // Returns true if the given user has a completion, otherwise false
 queueSchema.methods.hasCompletion = function (ugKthid) {
   var ret = false;
@@ -107,6 +118,18 @@ queueSchema.methods.setInfo = function (message) {
 
 // takes a user as a parameter and adds to the queue
 queueSchema.methods.addUser = function (user) {
+  var helpCount = this.calculateHelp();
+  var stat = new Statistic({
+    username: user.username,
+    queue: this.name,
+    help: user.help,
+    leftQueue: false,
+    queueLength: this.queue.length,
+    helpAmount: helpCount,
+    presentAmount: this.queue.length - helpCount
+  });
+  // console.log(stat);
+  stat.save();
   this.queue.push(user);
   this.save();
 };
@@ -134,6 +157,18 @@ queueSchema.methods.getUser = function (ugKthid) {
 
 // takes a ugKthid as a parameter and removes the user form the queue
 queueSchema.methods.removeUser = function (ugKthid) {
+  var helpCount = this.calculateHelp();
+  var user = this.getUser(ugKthid);
+  var stat = new Statistic({
+    username: user.username,
+    queue: this.name,
+    help: user.help,
+    leftQueue: true,
+    queueLength: this.queue.length,
+    helpAmount: helpCount,
+    presentAmount: this.queue.length - helpCount
+  });
+  stat.save();
   this.queue = this.queue.filter(function (user) {
     return user.ugKthid !== ugKthid;
   });
@@ -231,6 +266,8 @@ queueSchema.methods.purgeQueue = function () {
         help: user.help,
         leftQueue: true,
         queueLength: 0,
+        helpAmount: 0,
+        presentAmount: 0
       });
     stat.save();
     user.remove();
@@ -257,8 +294,7 @@ queueSchema.methods.updateUser = function (user) {
     if (usr.ugKthid === user.ugKthid) {
       queue[i].comment = user.comment;
       queue[i].location = user.location;
-      queue[i].badLocation = false;
-    }
+      queue[i].badLocation = user.badLocation;    }
   });
   this.save();
 };

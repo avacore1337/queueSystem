@@ -220,19 +220,9 @@ module.exports = function (socket, io) {
       //res.end();
       return;
     }
-
     var queue = queueSystem.findQueue(queueName);
+    queue.removeUser(user.ugKthid);
 
-    var stat = new Statistic({
-      username: user.username,
-      queue: queue.queueName,
-      help: user.help,
-      leftQueue: true,
-      queueLength: queue.queue.length - 1,
-    });
-    stat.save();
-
-    queueSystem.userLeavesQueue(queue, user.ugKthid);
     if (!user.help) {
       if (user.completion) {
         queue.removeCompletion(user.ugKthid);

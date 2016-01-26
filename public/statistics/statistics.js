@@ -3,7 +3,7 @@
     'ui.bootstrap',
     'ngRoute'
     ])
-  
+
   .config(['$routeProvider',
     function($routeProvider) {
       $routeProvider.
@@ -16,16 +16,146 @@
 
   .controller('statisticsController', ['$scope', 'HttpService', 'WebSocketService', 'TitleService', 'UserService',
   function($scope, http, socket, title, user) {
+    $scope.chartObject = {
+      "type": "LineChart",
+      "displayed": false,
+      "data": {
+        "cols": [
+          {
+            "id": "datetime-id",
+            "label": "Datetime",
+            "type": "datetime",
+            "p": {}
+          },
+          {
+            "id": "total-id",
+            "label": "Total",
+            "type": "number",
+            "p": {}
+          },
+          {
+            "id": "help-id",
+            "label": "Help",
+            "type": "number",
+            "p": {}
+          },
+          {
+            "id": "present-id",
+            "label": "Present",
+            "type": "number",
+            "p": {}
+          },
+          {
+            "id": "",
+            "role": "tooltip",
+            "type": "string",
+            "p": {
+              "role": "tooltip",
+              "html": true
+            }
+          }
+        ],
+        "rows": [
+          // {
+          //   "c": [
+          //     {"v": new Date(1453727779700)},
+          //     {"v": 5},
+          //     {"v": 3},
+          //     {"v": 2}
+          //   ]
+          // },
+          // {
+          //   "c": [
+          //     {"v": new Date(1453727781424)},
+          //     {"v": 8},
+          //     {"v": 5},
+          //     {"v": 3}
+          //   ]
+          // },
+          // {
+          //   "c": [
+          //     {"v": new Date(1453727783020)},
+          //     {"v": 3},
+          //     {"v": 2},
+          //     {"v": 1}
+          //   ]
+          // },
+          // {
+          //   "c": [
+          //     {"v": new Date(1453727784402)},
+          //     {"v": 2},
+          //     {"v": 2},
+          //     {"v": 0}
+          //   ]
+          // },
+          // {
+          //   "c": [
+          //     {"v": new Date(1453727784888)},
+          //     {"v": 3},
+          //     {"v": 3},
+          //     {"v": 0}
+          //   ]
+          // },
+          // {
+          //   "c": [
+          //     {"v": new Date(1453727786983)},
+          //     {"v": 4},
+          //     {"v": 3},
+          //     {"v": 1}
+          //   ]
+          // }
+        ]
+      },
+      "options": {
+        "title": "Queue Length",
+        "isStacked": "true",
+        "fill": 20,
+        "displayExactValues": true,
+        "vAxis": {
+          "title": "Students",
+          "gridlines": {
+            "count": 5
+          }
+        },
+        "hAxis": {
+          "title": "Date"
+        },
+        "tooltip": {
+          "isHtml": true
+        }
+      },
+      "formatters": {},
+      "view": {
+        "columns": [
+          0,
+          1,
+          2,
+          3,
+        ]
+      }
+    };
+
     $scope.$on('$destroy', function (event) {
       socket.removeAllListeners();
     });
-    
+
     title.title = "Statistics | Stay A While";
     $scope.name = user.getName();
-    
+
     socket.on('JSONStatistics', function(data) {
-      console.log("The server gave me some raw statistics =)");
-      console.log(data);
+      $scope.chartObject.data.rows = [];
+      for (i = 0; i < data.length; i++) {
+        $scope.chartObject.data.rows.push({
+          "c": [
+            {"v": new Date(data[i].time)},
+            {"v": data[i].queueLength},
+            {"v": data[i].helpAmount},
+            {"v": data[i].presentAmount}
+          ]
+        });
+      }
+      // console.log("The server gave me some raw statistics =)");
+      // console.log(data);
       $scope.rawJSON = JSON.stringify(data);
       $scope.showJSONField = true;
     });

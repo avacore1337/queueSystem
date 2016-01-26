@@ -13,6 +13,8 @@ var statisticSchema = new Schema({
   help: String,
   leftQueue: { type: Boolean, default: false },
   queueLength: { type: Number, default: 0},
+  helpAmount: { type: Number, default: 0},
+  presentAmount: { type: Number, default: 0},
 });
 
 statisticSchema.index({time: 1});
@@ -87,7 +89,7 @@ statisticSchema.statics.getStatistics =  function (queue, start, end, callbackDo
 statisticSchema.statics.getJSONStatistics =  function (queue, start, end, callback){
   Statistic.find({ queue: queue }).
   where('time').gte(start).lt(end).
-  select({username: 1, queue: 1, queueLength: 1, help: 1, leftQueue: 1, time: 1}).
+  select({username: 1, queue: 1, queueLength: 1, helpAmount:1, presentAmount:1, help: 1, leftQueue: 1, time: 1}).
   exec(callback);
 };
 

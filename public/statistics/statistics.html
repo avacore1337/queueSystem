@@ -6,7 +6,7 @@
   <div ng-show="accessLevel() > 1">
     <div class="row">
       <!-- Dropdown of queues -->
-      
+
       <div class="col-md-2 col-md-offset-2">
         <h4>Queue</h4>
 
@@ -82,12 +82,15 @@
       </table>
 
       <!-- Raw JSON data -->
-    </div>  
+    </div>
     <div class="col-xs-12">
       <br>
       <div ng-show="showJSONField">
         <textarea class="col-xs-12" id="rawJSONTextArea" ng-model="rawJSON" rows="10"></textarea>
       </div>
+    </div>
+    <div class="col-xs-12">
+      <div google-chart chart="chartObject" style="{{cssStyle}}"></div>
     </div>
   </div>
 </div>
