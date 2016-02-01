@@ -135,14 +135,20 @@ button.frame
   border: solid #FFFFFF 1px;
 }
 
-table.table-striped > tbody > tr:nth-child(even).pulse {
-  background-color: #C5E7FF;
+table.table-striped > tbody > tr:nth-child(odd).pulse > td {
+  background-color: #B5DAF5;
+}
+
+table.table-striped > tbody > tr:nth-child(odd).pulse {
   -webkit-animation: pulse 2s infinite;
   -moz-animation: pulse 2s infinite;
 }
 
-table.table-striped > tbody > tr:nth-child(odd).pulse {
-  background-color: #B5DAF5;
+table.table-striped > tbody > tr:nth-child(odd).pulse > td {
+  background-color: #C5E7FF;
+}
+
+table.table-striped > tbody > tr:nth-child(even).pulse {
   -webkit-animation: pulse 2s infinite;
   -moz-animation: pulse 2s infinite;
 }
