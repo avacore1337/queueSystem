@@ -135,7 +135,14 @@ button.frame
   border: solid #FFFFFF 1px;
 }
 
-table.table-striped > tbody > tr.pulse {
+table.table-striped > tbody > tr:nth-child(even).pulse {
+  background-color: #C5E7FF;
+  -webkit-animation: pulse 2s infinite;
+  -moz-animation: pulse 2s infinite;
+}
+
+table.table-striped > tbody > tr:nth-child(odd).pulse {
+  background-color: #B5DAF5;
   -webkit-animation: pulse 2s infinite;
   -moz-animation: pulse 2s infinite;
 }
@@ -198,7 +205,7 @@ button:focus
   text-align: center;
   background-color: transparent;
 }
-.navbar > .container .navbar-brand-centered, 
+.navbar > .container .navbar-brand-centered,
 .navbar > .container-fluid .navbar-brand-centered
 {
   margin-left: -80px;
@@ -218,7 +225,7 @@ button:focus
   color: #FFFFFF;
 }
 .navbar-default .navbar-nav > .active > a:hover
-{    
+{
   background-color: #1C65EB;
 }
 .nav.navbar-nav.navbar-right > li > .unresponsive:hover
@@ -316,7 +323,7 @@ img
     margin: 15px 0;
   }
   /* since 3.1.0 */
-  .navbar-collapse.collapse.in { 
+  .navbar-collapse.collapse.in {
     display: block!important;
   }
   .collapsing {
