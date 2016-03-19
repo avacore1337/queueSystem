@@ -335,11 +335,12 @@ queueSchema.methods.clearAssistantComments = function () {
 };
 
 // set a user as getting help
-queueSchema.methods.helpingQueuer = function (ugKthid, queue) {
+queueSchema.methods.helpingQueuer = function (ugKthid, queue, helper) {
   this.queue.forEach(function (usr, i, queue) {
     if (usr.ugKthid === ugKthid) {
       var user = usr;
       user.gettingHelp = true;
+      user.helper = helper;
       lodash.extend(queue[i], user);
     }
   });
@@ -352,6 +353,7 @@ queueSchema.methods.stopHelpingQueuer = function (ugKthid, queue) {
     if (usr.ugKthid === ugKthid) {
       var user = usr;
       user.gettingHelp = false;
+      user.helper = "";
       lodash.extend(queue[i], user);
     }
   });

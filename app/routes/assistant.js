@@ -194,7 +194,7 @@ module.exports = function (socket, io) {
     }
 
     var queue = queueSystem.findQueue(queueName);
-    queue.helpingQueuer(ugKthid, queueName);
+    queue.helpingQueuer(ugKthid, queueName, helper);
 
     io.to(queueName).emit('help', {
       ugKthid: ugKthid,

@@ -136,7 +136,7 @@ module.exports = function (socket, io) {
     var ugKthid = socket.handshake.session.user.ugKthid;
 
     var course = queueSystem.findQueue(queueName);
-    course.helpingQueuer(ugKthid, queueName);
+    course.helpingQueuer(ugKthid, queueName, "");
 
     io.to(queueName).emit('help', {
       ugKthid: ugKthid
