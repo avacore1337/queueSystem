@@ -149,10 +149,11 @@ module.exports = function (socket, io) {
     }
 
     var queue = queueSystem.findQueue(queueName);
+    queue.addChatMessage(sender, message);
     var teacherList = queue.teacher;
     var assistantList = queue.assistant;
 
-    for (var i = teacherList.length - 1; i >= 0; i--) {
+    for (var i = 0; i < teacherList.length; i++) {
       var teacher = teacherList[i];
 
       io.to("user_" + teacher.ugKthid).emit('msg', {
@@ -162,9 +163,8 @@ module.exports = function (socket, io) {
 
       console.log("emiting teacher: " + "user_" + teacher.ugKthid);
     }
-
-    for (var index = assistantList.length - 1; i >= 0; i--) {
-      var assistant = assistantList[index];
+    for (i = 0; i < assistantList.length; i++) {
+      var assistant = assistantList[i];
 
       io.to("user_" + assistant.ugKthid).emit('msg', {
         message: message,

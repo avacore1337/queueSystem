@@ -18,8 +18,12 @@ var Admin = require('./admin.js');
 var adminSchema = Admin.schema;
 var Completion = require('./completion.js');
 var completionSchema = Completion.schema;
+var chatMessage = require('./completion.js');
+var completionSchema = chatMessage.schema;
 var Message = require('./message.js');
 var messageSchema = Message.schema;
+var chatMessage = require('./chatMessage.js');
+var chatMessageSchema = chatMessage.schema;
 
 // Schema used for queues
 var queueSchema = new Schema({
@@ -33,13 +37,21 @@ var queueSchema = new Schema({
   teacher: {type:[adminSchema], default: []},
   assistant: {type:[adminSchema], default: []},
   completions: {type:[completionSchema], default: []},
-  messages: {type:[messageSchema], default: []}
+  messages: {type:[messageSchema], default: []},
+  chatMessages: {type:[chatMessageSchema], default: []}
 });
 
 // Updates the MOTD
 queueSchema.methods.setMOTD = function (message) {
   this.motd = message;
   this.save();
+};
+
+queueSchema.methods.addChatMessage = function (sender, message) {
+  this.chatMessages.push({
+    sender: sender,
+    message: message
+    });
 };
 
 //calculates the amount of people that are requesting help

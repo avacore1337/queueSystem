@@ -26,6 +26,20 @@ router.get('/queueList', function (req, res) {
   console.log('list of queues requested');
 });
 
+router.get('/chatHistory/:queue', function (req, res) {
+  var ugKthid = req.session.user.ugKthid;
+  var queueName = req.params.queue;
+  // admin/teacher-validation
+  if (!(validate(ugKthid, "teacher", queueName) || validate(ugKthid, "assistant", queueName))) {
+    console.log("validation for lock failed");
+    //res.end();
+    return;
+  }
+
+  res.json(queueSystem.findQueue(queueName).chatMessages);
+  console.log('list of queues requested');
+});
+
 // returns the queue-list
 router.get('/queue/:queue', function (req, res) {
   res.setHeader('Content-Type', 'application/json');
