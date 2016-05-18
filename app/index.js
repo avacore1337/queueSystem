@@ -119,16 +119,23 @@ function getUID (ticket, callback) {
       console.log(err);
     }
     else{
+      console.log(body)
       var uid = "";
       // console.log("statusCode:");
       // console.log(response.statusCode);
       // console.log(body);
-      var uidMatches = body.match(/u1[\d|\w]+/g);
-      if (uidMatches) {
-        uid = uidMatches[0];
+      var failure = body.match("authenticationFailure");
+      if (failure) {
+        console.log("well, that failed")
       }
       else{
-        console.log("no match found");
+        var uidMatches = body.match(/u1[\d|\w]+/g);
+        if (uidMatches) {
+          uid = uidMatches[0];
+        }
+        else{
+          console.log("no match found");
+        }
       }
       callback(uid);
     }
