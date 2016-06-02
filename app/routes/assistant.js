@@ -49,6 +49,33 @@ module.exports = function (socket, io) {
     console.log("Bad location at " + queueName + " for " + user.username);
   });
 
+  socket.on('putUser', function (req) {
+    if(socket.handshake.session.user === undefined){
+      return;
+    }
+    var ugKthid = socket.handshake.session.user.ugKthid;
+    var user = req.user;
+    var queueName = req.queueName;
+
+    // teacher/assistant-validation
+    if (!(validate(ugKthid, "teacher", queueName) || validate(ugKthid, "assistant", queueName))) {
+      console.log("validation for badLocation failed");
+      //res.end();
+      return;
+    }
+
+    io.to(queueName).emit('join', newUser);
+    io.to("lobby").emit('lobbyjoin', {
+      queueName: queueName,
+      ugKthid: newUser.ugKthid
+    });
+
+    var queue = queueSystem.findQueue(queueName);
+    queue.addUser(user);
+
+    console.log("Assistant insert in " + queueName + " for " + user.username);
+  });
+
   // admin stops helping a user (marked in the queue)
   socket.on('stopHelp', function (req) {
     if(socket.handshake.session.user === undefined){
