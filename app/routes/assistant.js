@@ -12,7 +12,7 @@ module.exports = function (socket, io) {
     var queue = queueSystem.findQueue(queueName);
     queue[action]();
 
-    console.log('trying to ' + action + ' ' + queueName);
+    // console.log('trying to ' + action + ' ' + queueName);
 
     io.to(queueName).emit(action);
     io.to("lobby").emit("lobby" + action, queueName);
@@ -35,7 +35,7 @@ module.exports = function (socket, io) {
 
     // teacher/assistant-validation
     if (!(validate(ugKthid, "teacher", queueName) || validate(ugKthid, "assistant", queueName))) {
-      console.log("validation for badLocation failed");
+      // console.log("validation for badLocation failed");
       //res.end();
       return;
     }
@@ -46,7 +46,7 @@ module.exports = function (socket, io) {
     var queue = queueSystem.findQueue(queueName);
     queue.updateUser(user);
 
-    console.log("Bad location at " + queueName + " for " + user.username);
+    // console.log("Bad location at " + queueName + " for " + user.username);
   });
 
   socket.on('putUser', function (req) {
@@ -59,7 +59,7 @@ module.exports = function (socket, io) {
 
     // teacher/assistant-validation
     if (!(validate(ugKthid, "teacher", queueName) || validate(ugKthid, "assistant", queueName))) {
-      console.log("validation for badLocation failed");
+      // console.log("validation for badLocation failed");
       //res.end();
       return;
     }
@@ -73,7 +73,7 @@ module.exports = function (socket, io) {
     var queue = queueSystem.findQueue(queueName);
     queue.addUser(newUser);
 
-    console.log("Assistant insert in " + queueName + " for " + newUser.username);
+    // console.log("Assistant insert in " + queueName + " for " + newUser.username);
   });
 
   // admin stops helping a user (marked in the queue)
@@ -86,7 +86,7 @@ module.exports = function (socket, io) {
 
     // teacher/assistant-validation
     if (!(validate(ugKthid, "teacher", queueName) || validate(ugKthid, "assistant", queueName))) {
-      console.log("validation for stopHelp failed");
+      // console.log("validation for stopHelp failed");
       //res.end();
       return;
     }
@@ -100,7 +100,7 @@ module.exports = function (socket, io) {
       helper: ugKthid
     });
 
-    console.log(targetUgKthid + ' is no longer getting help in ' + queueName);
+    // console.log(targetUgKthid + ' is no longer getting help in ' + queueName);
   });
 
 
@@ -114,7 +114,7 @@ module.exports = function (socket, io) {
 
     // teacher/assistant-validation
     if (!(validate(sender, "teacher", queueName) || validate(sender, "assistant", queueName))) {
-      console.log("validation for messageUser failed");
+      // console.log("validation for messageUser failed");
       //res.end();
       return;
     }
@@ -127,7 +127,7 @@ module.exports = function (socket, io) {
       sender: sender
     });
 
-    console.log('user ' + ugKthid + ' was messaged from ' + sender + ' at ' + queueName + ' with: ' + message);
+    // console.log('user ' + ugKthid + ' was messaged from ' + sender + ' at ' + queueName + ' with: ' + message);
   });
 
   // teacher/assistant emits to all users (teacher/assistant included)
@@ -141,7 +141,7 @@ module.exports = function (socket, io) {
 
     // teacher/assistant-validation
     if (!(validate(sender, "teacher", queueName) || validate(sender, "assistant", queueName))) {
-      console.log("validation for broadcast failed");
+      // console.log("validation for broadcast failed");
       //res.end();
       return;
     }
@@ -151,7 +151,7 @@ module.exports = function (socket, io) {
       sender: sender
     });
 
-    console.log('emit in ' + queueName + ', msg: ' + message);
+    // console.log('emit in ' + queueName + ', msg: ' + message);
   });
 
   // teacher/assistant emits to all teacher/assistant
@@ -159,18 +159,18 @@ module.exports = function (socket, io) {
     if(socket.handshake.session.user === undefined){
       return;
     }
-    console.log("Recevie request to send message to faculty");
+    // console.log("Recevie request to send message to faculty");
     var queueName = req.queueName;
     var message = req.message;
     var sender = socket.handshake.session.user.ugKthid;
 
-    console.log("queueName = " + queueName);
-    console.log("message = " + message);
-    console.log("sender = " + sender);
+    // console.log("queueName = " + queueName);
+    // console.log("message = " + message);
+    // console.log("sender = " + sender);
 
     // teacher/assistant-validation
     if (!(validate(sender, "teacher", queueName) || validate(sender, "assistant", queueName))) {
-      console.log("validation for broadcast failed");
+      // console.log("validation for broadcast failed");
       //res.end();
       return;
     }
@@ -188,7 +188,7 @@ module.exports = function (socket, io) {
         sender: sender
       });
 
-      console.log("emiting teacher: " + "user_" + teacher.ugKthid);
+      // console.log("emiting teacher: " + "user_" + teacher.ugKthid);
     }
     for (i = 0; i < assistantList.length; i++) {
       var assistant = assistantList[i];
@@ -198,9 +198,9 @@ module.exports = function (socket, io) {
         sender: sender
       });
 
-      console.log("emiting assistant: " + assistant.ugKthid);
+      // console.log("emiting assistant: " + assistant.ugKthid);
     }
-    console.log('emitTA in ' + queueName + ', msg: ' + message);
+    // console.log('emitTA in ' + queueName + ', msg: ' + message);
   });
 
 
@@ -215,7 +215,7 @@ module.exports = function (socket, io) {
 
     // teacher/assistant-validation
     if (!(validate(helper, "teacher", queueName) || validate(helper, "assistant", queueName))) {
-      console.log("validation for help failed");
+      // console.log("validation for help failed");
       //res.end();
       return;
     }
@@ -228,7 +228,7 @@ module.exports = function (socket, io) {
       helper: helper
     });
 
-    console.log(ugKthid + ' is getting help in ' + queueName);
+    // console.log(ugKthid + ' is getting help in ' + queueName);
   });
 
 
@@ -243,7 +243,7 @@ module.exports = function (socket, io) {
 
     // teacher/assistant-validation
     if (!(validate(assistant, "teacher", queueName) || validate(assistant, "assistant", queueName))) {
-      console.log("validation for kick failed");
+      // console.log("validation for kick failed");
       //res.end();
       return;
     }
@@ -256,7 +256,7 @@ module.exports = function (socket, io) {
       }
     }
 
-    console.log('a user was kicked from ' + queueName);
+    // console.log('a user was kicked from ' + queueName);
 
     io.to(queueName).emit('leave', user);
     io.to("lobby").emit('lobbyleave', {
@@ -276,7 +276,7 @@ module.exports = function (socket, io) {
 
     // teacher/assistant-validation
     if (!(validate(assistant, "teacher", queueName) || validate(assistant, "assistant", queueName))) {
-      console.log("validation for purge failed");
+      // console.log("validation for purge failed");
       //res.end();
       return;
     }
@@ -284,7 +284,7 @@ module.exports = function (socket, io) {
     var queue = queueSystem.findQueue(queueName);
     queue.purgeQueue();
 
-    console.log(queueName + ' -list purged by ' + assistant);
+    // console.log(queueName + ' -list purged by ' + assistant);
 
     io.to(queueName).emit('purge');
     io.to("lobby").emit('lobbypurge', queueName);
@@ -300,12 +300,12 @@ module.exports = function (socket, io) {
 
     // admin/teacher-validation
     if (!(validate(ugKthid, "teacher", queueName) || validate(ugKthid, "assistant", queueName))) {
-      console.log("validation for lock failed");
+      // console.log("validation for lock failed");
       //res.end();
       return;
     }
 
-    console.log("Validation successful. Would have scheduled: " + JSON.stringify(req.schedule));
+    // console.log("Validation successful. Would have scheduled: " + JSON.stringify(req.schedule));
   });
 
   // trying to clear all schedules for a given queue
@@ -318,12 +318,12 @@ module.exports = function (socket, io) {
 
     // admin/teacher-validation
     if (!(validate(ugKthid, "teacher", queueName) || validate(ugKthid, "assistant", queueName))) {
-      console.log("validation for lock failed");
+      // console.log("validation for lock failed");
       //res.end();
       return;
     }
 
-    console.log("Validation successful. Would have cleared the schedule for : " + queueName);
+    // console.log("Validation successful. Would have cleared the schedule for : " + queueName);
   });
 
   //===============================================================
@@ -339,7 +339,7 @@ module.exports = function (socket, io) {
 
     // admin/teacher-validation
     if (!(validate(ugKthid, "teacher", queueName) || validate(ugKthid, "assistant", queueName))) {
-      console.log("validation for lock failed");
+      // console.log("validation for lock failed");
       //res.end();
       return;
     }
@@ -357,7 +357,7 @@ module.exports = function (socket, io) {
 
     // admin/teacher-validation
     if (!(validate(ugKthid, "teacher", queueName) || validate(ugKthid, "assistant", queueName))) {
-      console.log("validation for unlock failed");
+      // console.log("validation for unlock failed");
       //res.end();
       return;
     }
@@ -378,7 +378,7 @@ module.exports = function (socket, io) {
 
     // teacher/assistant-validation
     if (!(validate(sender, "teacher", queueName) || validate(sender, "assistant", queueName))) {
-      console.log("validation for flag failed");
+      // console.log("validation for flag failed");
       //res.end();
       return;
     }
@@ -386,7 +386,7 @@ module.exports = function (socket, io) {
     var queue = queueSystem.findQueue(queueName);
     queue.addAssistantComment(ugKthid, sender, queueName, message);
 
-    console.log('flagged');
+    // console.log('flagged');
     io.to(queueName).emit('flag', {
       ugKthid: ugKthid,
       message: message
@@ -404,7 +404,7 @@ module.exports = function (socket, io) {
 
     // teacher/assistant-validation
     if (!(validate(sender, "teacher", queueName) || validate(sender, "assistant", queueName))) {
-      console.log("validation for flag failed");
+      // console.log("validation for flag failed");
       //res.end();
       return;
     }
@@ -412,7 +412,7 @@ module.exports = function (socket, io) {
     var queue = queueSystem.findQueue(queueName);
     queue.removeAssistantComments(ugKthid, sender, queueName);
 
-    console.log('removed flags');
+    // console.log('removed flags');
     io.to(queueName).emit('removeFlags', {
       ugKthid: ugKthid
     });
@@ -427,7 +427,7 @@ module.exports = function (socket, io) {
 
     // teacher/assistant-validation
     if (!(validate(assistant, "teacher", queueName) || validate(assistant, "assistant", queueName))) {
-      console.log("validation for completion failed");
+      // console.log("validation for completion failed");
       //res.end();
       return;
     }
@@ -435,14 +435,14 @@ module.exports = function (socket, io) {
     var completion = req.completion;
     completion.assistant = assistant;
 
-    console.log("Added the following completion: " + JSON.stringify(completion));
+    // console.log("Added the following completion: " + JSON.stringify(completion));
 
     var queue = queueSystem.findQueue(queueName);
     queue.addCompletion(completion);
 
     queueSystem.userLeavesQueue(queue, completion.ugKthid, false); // TODO : should take a variable 'booking' instead of hardcoding 'false'
 
-    console.log('completion set for user : ' + completion.ugKthid);
+    // console.log('completion set for user : ' + completion.ugKthid);
     io.to(queueName).emit('leave', {
       ugKthid: completion.ugKthid
     });
@@ -467,7 +467,7 @@ module.exports = function (socket, io) {
 
     // teacher/assistant-validation
     if (!(validate(sender, "teacher", queueName) || validate(sender, "assistant", queueName))) {
-      console.log("validation for setMOTD failed");
+      // console.log("validation for setMOTD failed");
       //res.end();
       return;
     }
@@ -476,7 +476,7 @@ module.exports = function (socket, io) {
     var queue = queueSystem.findQueue(queueName);
     queue.setMOTD(MOTD);
 
-    console.log('\'' + MOTD + '\' added as a new MOTD in ' + queueName + '!');
+    // console.log('\'' + MOTD + '\' added as a new MOTD in ' + queueName + '!');
 
     io.to(queueName).emit('setMOTD', {
       MOTD: MOTD
@@ -493,7 +493,7 @@ module.exports = function (socket, io) {
 
     // teacher/assistant-validation
     if (!(validate(sender, "teacher", queueName) || validate(sender, "assistant", queueName))) {
-      console.log("validation for setMOTD failed");
+      // console.log("validation for setMOTD failed");
       //res.end();
       return;
     }
@@ -502,7 +502,7 @@ module.exports = function (socket, io) {
     var queue = queueSystem.findQueue(queueName);
     queue.setInfo(info);
 
-    console.log('\'' + info + '\' added as a new info in ' + queueName + '!');
+    // console.log('\'' + info + '\' added as a new info in ' + queueName + '!');
 
     io.to(queueName).emit('setInfo', {
       info: info
