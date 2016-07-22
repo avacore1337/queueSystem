@@ -195,7 +195,7 @@ exports.updateAllBookings = function () {
     if (queue.bookings.length === 0) {
       fetchBookings(queue.name,function (err, response, body) {
         if (!err && response.statusCode === 200) {
-          console.log(response);
+          // console.log(response);
           // console.log("course: " + queue.name + " Got response: ");
           // console.log(body);
           for (var j = 0; j < body.length; j++) {
