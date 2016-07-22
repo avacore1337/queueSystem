@@ -86,13 +86,13 @@ function getHostname(ip, callback) {
 
 function getLocation (ip, callback) {
   getHostname(ip, function (hostname) {
-    console.log("hostname = " + hostname);
+    // console.log("hostname = " + hostname);
     var pattern = /(\.kth\.se)/g;
     var result = hostname.match(pattern);
     var location = "";
     if (result) {
       var possibleLocation = hostname.split(".")[0].replace("-", " ").toLowerCase();
-      console.log("local location-variable = " + location);
+      // console.log("local location-variable = " + location);
       // Test if they are at a recognized school computer
       // Recognized computers are:
       // E-house floor 4 : Blue, Red, Orange, Yellow, Green, Brown
@@ -102,7 +102,7 @@ function getLocation (ip, callback) {
       result = possibleLocation.match(pattern);
       if (result) {
         location = possibleLocation;
-        console.log("local location-variable = " + location);
+        // console.log("local location-variable = " + location);
         if (result == "mat") { // Do not add a third equal sign. (Result does not appear to be a string)
           location = location.replace("mat", "mat ");
         }
@@ -119,7 +119,7 @@ function getUID (ticket, callback) {
       console.log(err);
     }
     else{
-      console.log(body)
+      // console.log(body);
       var uid = "";
       // console.log("statusCode:");
       // console.log(response.statusCode);
@@ -143,8 +143,8 @@ function getUID (ticket, callback) {
 }
 
 app.get('/auth', function(req, res) {
-  console.log('printing ticket data:');
-  console.log(req.query.ticket);
+  // console.log('printing ticket data:');
+  // console.log(req.query.ticket);
   if(req.session.user){
     req.session.user.location = "";
   }
@@ -155,14 +155,14 @@ app.get('/auth', function(req, res) {
   }
 
   var ip = req.connection.remoteAddress;
-  console.log("ip: " + ip);
+  // console.log("ip: " + ip);
   getUID(req.query.ticket, function (uid) {
 
 
     getUsername(uid, function(cn, username) {
       req.session.user.realname = cn;
       req.session.user.username = username;
-      console.log("worked");
+      // console.log("worked");
 
       // TODO implement username lookup fallback
       // catch(err){
@@ -171,12 +171,12 @@ app.get('/auth', function(req, res) {
       //   req.session.user.username = uid;
       //   console.log("failed");
       // }
-      console.log(req.session.user);
-      console.log("uid:" + uid);
+      // console.log(req.session.user);
+      // console.log("uid:" + uid);
       req.session.user.ugKthid = uid;
       getLocation(ip, function (location) {
         req.session.user.location = location;
-        console.log("Is this happening before ?");
+        // console.log("Is this happening before ?");
         res.redirect('/#' + req.session.user.loginTarget);
       });
 
@@ -188,8 +188,8 @@ app.post('/API/setUser', function (req, res) {
   req.session.user = {};
   req.session.user.realname = '' + req.body.realname;
   req.session.user.username = 'guestname-' + req.body.realname;
-  console.log("The argv is:");
-  console.log(process.argv);
+  // console.log("The argv is:");
+  // console.log(process.argv);
   if (process.argv[2] == "test") {
     req.session.user.ugKthid = req.body.realname;
   }
@@ -209,7 +209,7 @@ app.post('/API/setUser', function (req, res) {
 });
 
 app.get('/login', function(req, res) {
-  console.log(req.query);
+  // console.log(req.query);
   req.session.user = {};
   if (req.query.target) {
     req.session.user.loginTarget = req.query.target;
@@ -240,8 +240,8 @@ function getUsername (ugKthid, callback) {
   client.search('ou=Unix,dc=kth,dc=se', opts, function(err, res) {
     res.on('searchEntry', function(entry) {
       // console.log('entry: ' + JSON.stringify(entry.object));
-      console.log('entry: ' + entry.object.cn);
-      console.log('uid: ' + entry.object.uid);
+      // console.log('entry: ' + entry.object.cn);
+      // console.log('uid: ' + entry.object.uid);
       callback(entry.object.cn, entry.object.uid);
     });
     res.on('searchReference', function(referral) {
