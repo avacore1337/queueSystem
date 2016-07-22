@@ -12,7 +12,7 @@ router.get('/queueList', function (req, res) {
   var retList = [];
 
   queueSystem.forQueue(function (queue) {
-    // console.log("trying to get length of " + queue.name + ": " + queue.queue.length);
+    console.log("trying to get length of " + queue.name + ": " + queue.queue.length);
     retList.push({
       name: queue.name,
       length: queue.queue.length,
@@ -23,7 +23,7 @@ router.get('/queueList', function (req, res) {
 
   res.setHeader('Content-Type', 'application/json');
   res.end(JSON.stringify(retList));
-  console.log('list of queues requested');
+  // console.log('list of queues requested');
 });
 
 router.get('/chatHistory/:queue', function (req, res) {
@@ -31,13 +31,13 @@ router.get('/chatHistory/:queue', function (req, res) {
   var queueName = req.params.queue;
   // admin/teacher-validation
   if (!(validate(ugKthid, "teacher", queueName) || validate(ugKthid, "assistant", queueName))) {
-    console.log("validation for lock failed");
+    // console.log("validation for lock failed");
     //res.end();
     return;
   }
 
   res.json(queueSystem.findQueue(queueName).chatMessages);
-  console.log('list of queues requested');
+  // console.log('list of queues requested');
 });
 
 // returns the queue-list
@@ -110,13 +110,13 @@ function getHostname(ip, callback) {
 
 function getLocation (ip, callback) {
   getHostname(ip, function (hostname) {
-    console.log("hostname = " + hostname);
+    // console.log("hostname = " + hostname);
     var pattern = /(\.kth\.se)/g;
     var result = hostname.match(pattern);
     var location = "";
     if (result) {
       var possibleLocation = hostname.split(".")[0].replace("-", " ").toLowerCase();
-      console.log("local location-variable = " + location);
+      // console.log("local location-variable = " + location);
       // Test if they are at a recognized school computer
       // Recognized computers are:
       // E-house floor 4 : Blue, Red, Orange, Yellow, Green, Brown
@@ -126,7 +126,7 @@ function getLocation (ip, callback) {
       result = possibleLocation.match(pattern);
       if (result) {
         location = possibleLocation;
-        console.log("local location-variable = " + location);
+        // console.log("local location-variable = " + location);
         if (result == "mat") { // Do not add a third equal sign. (Result does not appear to be a string)
           location = location.replace("mat", "mat ");
         }
@@ -138,12 +138,12 @@ function getLocation (ip, callback) {
 
 // TODO: add a list of admin
 router.get('/userData', function (req, res) {
-  console.log("user data: ");
+  // console.log("user data: ");
   if (req.session.user === undefined) {
-    console.log("not logged in yet");
+    // console.log("not logged in yet");
     res.json();
   } else {
-    console.log("userData - logged in: " + JSON.stringify(req.session.user));
+    // console.log("userData - logged in: " + JSON.stringify(req.session.user));
 
     var ip = req.connection.remoteAddress;
     getLocation(ip, function (location) {

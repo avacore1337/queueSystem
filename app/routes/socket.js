@@ -30,24 +30,24 @@ module.exports = function (socket, io) {
     return str;
   }
 
-  console.log("connected");
+  // console.log("connected");
   // Setup the ready route, join room and emit to room.
   socket.on('listen', function (req) {
-    console.log('a user added to ' + req);
+    // console.log('a user added to ' + req);
     socket.join(req);
     try {
       var ugKthid = socket.handshake.session.user.ugKthid;
-      console.log("Current user = " + JSON.stringify(ugKthid));
+      // console.log("Current user = " + JSON.stringify(ugKthid));
       if (ugKthid) { // TODO : Temporary fix
         socket.join('user_' + ugKthid);
       }
     } catch (err) {
-      console.log("User is not logged in.");
+      // console.log("User is not logged in.");
     }
   });
 
   socket.on('stopListening', function (req) {
-    console.log('a user left ' + req);
+    // console.log('a user left ' + req);
     socket.leave(req);
   });
 
@@ -71,7 +71,7 @@ module.exports = function (socket, io) {
       return;
     }
 
-    console.log('A user joined to ' + queueName);
+    // console.log('A user joined to ' + queueName);
 
     var newUser = new User({
       username: user.username,
@@ -94,7 +94,7 @@ module.exports = function (socket, io) {
 
     queue.addUser(newUser);
 
-    console.log("User : " + JSON.stringify(newUser) + " wants to join the queue.");
+    // console.log("User : " + JSON.stringify(newUser) + " wants to join the queue.");
     io.to(queueName).emit('join', newUser);
     io.to("lobby").emit('lobbyjoin', {
       queueName: queueName,
@@ -118,9 +118,9 @@ module.exports = function (socket, io) {
     user.username = socket.handshake.session.user.username;
     user.badLocation = false;
 
-    console.log(JSON.stringify(user)); // check which uses is given --- need the one doing the action and the one who is "actioned"
+    // console.log(JSON.stringify(user)); // check which uses is given --- need the one doing the action and the one who is "actioned"
 
-    console.log('a was updated in ' + queueName);
+    // console.log('a was updated in ' + queueName);
 
     var course = queueSystem.findQueue(queueName);
     course.updateUser(user);
@@ -142,7 +142,7 @@ module.exports = function (socket, io) {
       ugKthid: ugKthid
     });
 
-    console.log(ugKthid + ' is getting help in ' + queueName);
+    // console.log(ugKthid + ' is getting help in ' + queueName);
   });
 
   // user leaves queue
@@ -153,8 +153,8 @@ module.exports = function (socket, io) {
     var queueName = req.queueName;
     var ugKthid = socket.handshake.session.user.ugKthid;
 
-    console.log(ugKthid); // check which uses is given --- need the one doing the action and the one who is "actioned"
-    console.log("Validerande: " + JSON.stringify(socket.handshake.session.user));
+    // console.log(ugKthid); // check which uses is given --- need the one doing the action and the one who is "actioned"
+    // console.log("Validerande: " + JSON.stringify(socket.handshake.session.user));
 
     var queue = queueSystem.findQueue(queueName);
     if (!queue.inQueue(ugKthid)) {
@@ -169,7 +169,7 @@ module.exports = function (socket, io) {
       }
     }
 
-    console.log('a user left ' + queueName);
+    // console.log('a user left ' + queueName);
 
     io.to(queueName).emit('leave', {
       ugKthid: ugKthid
@@ -184,11 +184,11 @@ module.exports = function (socket, io) {
     var start = req.start;
     var end = req.end;
     var queueName = req.queueName;
-    console.log("start: " + start);
-    console.log("end: " + end);
+    // console.log("start: " + start);
+    // console.log("end: " + end);
     Statistic.getStatistics(queueName, start, end, function (err, statData) {
       socket.emit("statistics", statData);
-      console.log("finished");
+      // console.log("finished");
     });
   });
 
@@ -196,25 +196,25 @@ module.exports = function (socket, io) {
     var start = req.start;
     var end = req.end;
     var queueName = req.queueName;
-    console.log("start: " + start);
-    console.log("end: " + end);
+    // console.log("start: " + start);
+    // console.log("end: " + end);
     Statistic.getJSONStatistics(queueName, start, end, function (err, statData) {
       socket.emit("JSONStatistics", statData);
-      console.log("finished");
+      // console.log("finished");
     });
   });
 
   // TODO : This has been changed to only have them join a room based on their ID, no more session interaction
   socket.on('setUser', function (req) {
-    console.log("user_" + req.ugKthid);
+    // console.log("user_" + req.ugKthid);
     socket.join("user_" + req.ugKthid); // joina sitt eget rum, för privata meddelande etc
     socket.handshake.session.user = {};
     socket.handshake.session.user.location = "";
     socket.handshake.session.user.realname = '' + req.realname;
     socket.handshake.session.user.username = "guestname-" + req.realname;
     socket.handshake.session.user.ugKthid = "guest-" + req.realname;
-    console.log('Socket-setUser: ' + JSON.stringify(req));
-    console.log('session is: ' + JSON.stringify(socket.handshake.session.user));
+    // console.log('Socket-setUser: ' + JSON.stringify(req));
+    // console.log('session is: ' + JSON.stringify(socket.handshake.session.user));
   });
 
 };
