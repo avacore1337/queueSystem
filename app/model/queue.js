@@ -44,7 +44,9 @@ var queueSchema = new Schema({
 // Updates the MOTD
 queueSchema.methods.setMOTD = function (message) {
   this.motd = message;
-  this.save();
+  this.save(function(err){
+    console.log(err);
+  });
 };
 
 queueSchema.methods.addChatMessage = function (sender, message) {
@@ -95,7 +97,9 @@ queueSchema.methods.addCompletion = function (completion) {
   if(completion.task){
     this.messages.push({ugKthid: completion.ugKthid, message: completion.task});
   }
-  this.save();
+  this.save(function(err){
+    console.log(err);
+  });
 };
 
 // Removes the completion for the given user
@@ -103,13 +107,17 @@ queueSchema.methods.removeCompletion = function (ugKthid) {
   this.completions = this.completions.filter(function (completion) {
     return completion.ugKthid !== ugKthid;
   });
-  this.save();
+  this.save(function(err){
+    console.log(err);
+  });
 };
 
 // Removes all completions
 queueSchema.methods.clearCompletions = function (ugKthid) {
   this.completions = [];
-  this.save();
+  this.save(function(err){
+    console.log(err);
+  });
 };
 
 // Returns true if the given user is in the queue, otherwise false
@@ -125,7 +133,9 @@ queueSchema.methods.inQueue = function (ugKthid) {
 // Updates the Info
 queueSchema.methods.setInfo = function (message) {
   this.info = message;
-  this.save();
+  this.save(function(err){
+    console.log(err);
+  });
 };
 
 // takes a user as a parameter and adds to the queue
@@ -141,14 +151,20 @@ queueSchema.methods.addUser = function (user) {
     presentAmount: this.queue.length - helpCount
   });
   // console.log(stat);
-  stat.save();
+  stat.save(function(err){
+    console.log(err);
+  });
   this.queue.push(user);
-  this.save();
+  this.save(function(err){
+    console.log(err);
+  });
 };
 
 queueSchema.methods.addBooking = function (bookingData) {
   this.bookings.push(bookingData);
-  this.save();
+  this.save(function(err){
+    console.log(err);
+  });
 };
 
 queueSchema.methods.forAssistant = function (fn) {
@@ -180,11 +196,15 @@ queueSchema.methods.removeUser = function (ugKthid) {
     helpAmount: helpCount,
     presentAmount: this.queue.length - helpCount
   });
-  stat.save();
+  stat.save(function(err){
+    console.log(err);
+  });
   this.queue = this.queue.filter(function (user) {
     return user.ugKthid !== ugKthid;
   });
-  this.save();
+  this.save(function(err){
+    console.log(err);
+  });
 };
 
 // takes a ugKthid as a parameter and removes the booking from the queue
@@ -201,7 +221,9 @@ queueSchema.methods.removeBooking = function (ugKthid) {
       }
     }
   }
-  this.save();
+  this.save(function(err){
+    console.log(err);
+  });
 };
 
 // takes a user as a parameter and adds to the queue
@@ -212,7 +234,9 @@ queueSchema.methods.addTeacher = function (teacher) {
     }
   }
   this.teacher.push(teacher);
-  this.save();
+  this.save(function(err){
+    console.log(err);
+  });
   return true;
 };
 
@@ -221,7 +245,9 @@ queueSchema.methods.removeTeacher = function (ugKthid) {
   this.teacher = this.teacher.filter(function (teacher) {
     return teacher.ugKthid !== ugKthid;
   });
-  this.save();
+  this.save(function(err){
+    console.log(err);
+  });
 };
 
 // takes a user as a parameter and adds to the queue
@@ -232,7 +258,9 @@ queueSchema.methods.addAssistant = function (assistant) {
     }
   }
   this.assistant.push(assistant);
-  this.save();
+  this.save(function(err){
+    console.log(err);
+  });
   return true;
 };
 
@@ -241,31 +269,41 @@ queueSchema.methods.removeAssistant = function (ugKthid) {
   this.assistant = this.assistant.filter(function (assistant) {
     return assistant.ugKthid !== ugKthid;
   });
-  this.save();
+  this.save(function(err){
+    console.log(err);
+  });
 };
 
 // locks the queue
 queueSchema.methods.lock = function () {
   this.locked = true;
-  this.save();
+  this.save(function(err){
+    console.log(err);
+  });
 };
 
 // unlocks the queue
 queueSchema.methods.unlock = function () {
   this.locked = false;
-  this.save();
+  this.save(function(err){
+    console.log(err);
+  });
 };
 
 // hide the schema
 queueSchema.methods.hide = function () {
   this.hiding = true;
-  this.save();
+  this.save(function(err){
+    console.log(err);
+  });
 };
 
 // show the schema
 queueSchema.methods.show = function () {
   this.hiding = false;
-  this.save();
+  this.save(function(err){
+    console.log(err);
+  });
 };
 
 // empty the queue
@@ -281,24 +319,34 @@ queueSchema.methods.purgeQueue = function () {
         helpAmount: 0,
         presentAmount: 0
       });
-    stat.save();
+    stat.save(function(err){
+      console.log(err);
+    });
     console.log(this.queue[i].remove());
-    this.save();
+    this.save(function(err){
+      console.log(err);
+    });
   }
   this.queue = [];
-  this.save();
+  this.save(function(err){
+    console.log(err);
+  });
 };
 
 // empty the queue
 queueSchema.methods.purgeBookings = function () {
   this.bookings = [];
-  this.save();
+  this.save(function(err){
+    console.log(err);
+  });
 };
 
 // takes a function "fn" and applies it on every user
 queueSchema.methods.forUser = function (fn) {
   this.queue.forEach(fn);
-  this.save();
+  this.save(function(err){
+    console.log(err);
+  });
 };
 
 // parameter "user" is the replacing user
@@ -309,7 +357,9 @@ queueSchema.methods.updateUser = function (user) {
       queue[i].location = user.location;
       queue[i].badLocation = user.badLocation;    }
   });
-  this.save();
+  this.save(function(err){
+    console.log(err);
+  });
 };
 
 // set a comment from a assistant to a user (comment regarding help given by the assistant)
@@ -322,7 +372,9 @@ queueSchema.methods.addAssistantComment = function (ugKthid, sender, queue, mess
       lodash.extend(queue[i], user);
     }
   });
-  this.save();
+  this.save(function(err){
+    console.log(err);
+  });
 };
 
 // Remove comments about a user
@@ -337,13 +389,17 @@ queueSchema.methods.removeAssistantComments = function (ugKthid, sender, queue) 
       lodash.extend(queue[i], user);
     }
   });
-  this.save();
+  this.save(function(err){
+    console.log(err);
+  });
 };
 
 // Removes all comments
 queueSchema.methods.clearAssistantComments = function () {
   this.messages = [];
-  this.save();
+  this.save(function(err){
+    console.log(err);
+  });
 };
 
 // set a user as getting help
@@ -356,7 +412,9 @@ queueSchema.methods.helpingQueuer = function (ugKthid, queue, helper) {
       lodash.extend(queue[i], user);
     }
   });
-  this.save();
+  this.save(function(err){
+    console.log(err);
+  });
 };
 
 // set a user as no longer getting help
@@ -369,7 +427,9 @@ queueSchema.methods.stopHelpingQueuer = function (ugKthid, queue) {
       lodash.extend(queue[i], user);
     }
   });
-  this.save();
+  this.save(function(err){
+    console.log(err);
+  });
 };
 
 var Queue = mongoose.model("Queue", queueSchema);
