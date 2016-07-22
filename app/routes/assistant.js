@@ -54,7 +54,7 @@ module.exports = function (socket, io) {
       return;
     }
     var ugKthid = socket.handshake.session.user.ugKthid;
-    var user = req.user;
+    var newUser = req.user;
     var queueName = req.queueName;
 
     // teacher/assistant-validation
@@ -71,9 +71,9 @@ module.exports = function (socket, io) {
     });
 
     var queue = queueSystem.findQueue(queueName);
-    queue.addUser(user);
+    queue.addUser(newUser);
 
-    console.log("Assistant insert in " + queueName + " for " + user.username);
+    console.log("Assistant insert in " + queueName + " for " + newUser.username);
   });
 
   // admin stops helping a user (marked in the queue)
