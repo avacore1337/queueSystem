@@ -31,7 +31,7 @@ exports.addQueue = function (name) {
   queueList.push(newQueue);
   newQueue.save();
 
-  console.log(name + ' is getting created as ' + JSON.stringify(newQueue));
+  // console.log(name + ' is getting created as ' + JSON.stringify(newQueue));
   return newQueue;
 };
 
@@ -130,7 +130,7 @@ exports.validate = function(ugKthid, type, queueName) {
     return validateAssistant(ugKthid, queueName) || validateTeacher(ugKthid,queueName);
   }
 
-  console.log("that privilege-type is not defined"); // temporary for error-solving
+  // console.log("that privilege-type is not defined"); // temporary for error-solving
   return false;
 };
 
@@ -142,7 +142,7 @@ function validateSuper(ugKthid) {
   var valid = false;
   for (var i = 0; i < adminList.length; i++) {
     if (adminList[i].ugKthid === ugKthid) {
-      console.log(ugKthid + ' is a valid super-admin'); // temporary for error-solving
+      // console.log(ugKthid + ' is a valid super-admin'); // temporary for error-solving
       valid = true;
     }
   }
@@ -159,7 +159,7 @@ function validateTeacher(ugKthid, queueName) {
   var valid = false;
   exports.findQueue(queueName).forTeacher(function(teacher) {
     if (teacher.ugKthid === ugKthid) {
-      console.log(ugKthid + ' is a valid teacher'); // temporary for error-solving
+      // console.log(ugKthid + ' is a valid teacher'); // temporary for error-solving
       valid = true;
      }
   });
@@ -176,7 +176,7 @@ function validateAssistant(ugKthid, queueName) {
   var valid = false;
   exports.findQueue(queueName).forAssistant(function(assistant) {
     if (assistant.ugKthid === ugKthid) {
-      console.log(ugKthid + ' is a valid assistant'); // temporary for error-solving
+      // console.log(ugKthid + ' is a valid assistant'); // temporary for error-solving
       valid = true;
     }
   });
@@ -191,15 +191,15 @@ exports.updateAllBookings = function () {
     queueList[index].purgeBookings();
   }
   exports.forQueue(function (queue) {
-    console.log("updateing: " + queue.name);
+    // console.log("updateing: " + queue.name);
     if (queue.bookings.length === 0) {
       fetchBookings(queue.name,function (err, response, body) {
         if (!err && response.statusCode === 200) {
-          // console.log(response);
-          console.log("course: " + queue.name + " Got response: ");
-          console.log(body);
+          console.log(response);
+          // console.log("course: " + queue.name + " Got response: ");
+          // console.log(body);
           for (var j = 0; j < body.length; j++) {
-            console.log("creating bookings");
+            // console.log("creating bookings");
             var users = [];
             for (var i = 0; i < body[j].otherUsers.length; i++) {
               if(body[j].otherUsers[i] !== ""){
@@ -216,7 +216,7 @@ exports.updateAllBookings = function () {
           }
         }
         else{
-          console.log(err);
+          // console.log(err);
         }
       });
     }
@@ -323,7 +323,7 @@ function setup() {
       //---------------------------------------------------------------------------------------
     }
 
-    console.log(queue + " " + newQueue.queue.length); // temporary for error-solving
+    // console.log(queue + " " + newQueue.queue.length); // temporary for error-solving
   }
 }
 
@@ -337,7 +337,7 @@ function readIn() {
     queues.forEach(function(queue) {
       queueList.push(queue);
       // to make sure everything loads
-      console.log('Queue: ' + queue.name + ' loaded!');
+      // console.log('Queue: ' + queue.name + ' loaded!');
     });
     // exports.updateAllBookings()
   });
@@ -347,7 +347,7 @@ function readIn() {
     admins.forEach(function(admin) {
       adminList.push(admin);
       // to make sure everything loads
-      console.log('Admin: ' + admin.username + ' loaded!');
+      // console.log('Admin: ' + admin.username + ' loaded!');
     });
   });
 
@@ -355,7 +355,7 @@ function readIn() {
   GlobalMOTD.find(function(err, globals) {
     globals.forEach(function(global) {
       // to make sure everything loads
-      console.log('Globals: ' + global + '!');
+      // console.log('Globals: ' + global + '!');
       globalMOTD = global;
     });
   });
