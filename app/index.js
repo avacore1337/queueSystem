@@ -37,7 +37,7 @@ io.use(sharedsession(session));
 var db = mongoose.connection;
 db.on('error', console.error.bind(console, 'connection error:'));
 db.once('open', function callback() {
-  console.log("db open!");
+  // console.log("db open!");
 });
 
 var router = require('./routes/httpRoutes.js');
@@ -116,7 +116,7 @@ function getUID (ticket, callback) {
   var url = 'https://login.kth.se/serviceValidate?ticket='+ ticket  + '&service=http://queue.csc.kth.se/auth';
   request({ url: url}, function (err, response, body) {
     if (err) {
-      console.log(err);
+      console.log("err", err);
     }
     else{
       // console.log(body);
@@ -202,7 +202,7 @@ app.post('/API/setUser', function (req, res) {
 
   getLocation(ip, function (location) {
     req.session.user.location = location;
-    console.log("Is this happening before ?");
+    // console.log("Is this happening before ?");
     res.writeHead(200);
     res.end();
   });

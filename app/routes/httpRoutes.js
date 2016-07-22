@@ -12,7 +12,7 @@ router.get('/queueList', function (req, res) {
   var retList = [];
 
   queueSystem.forQueue(function (queue) {
-    console.log("trying to get length of " + queue.name + ": " + queue.queue.length);
+    // console.log("trying to get length of " + queue.name + ": " + queue.queue.length);
     retList.push({
       name: queue.name,
       length: queue.queue.length,

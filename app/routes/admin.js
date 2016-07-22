@@ -19,7 +19,7 @@ module.exports = function (socket, io) {
     });
     client.search('ou=Unix,dc=kth,dc=se', opts, function(err, res) {
       res.on('searchEntry', function(entry) {
-        console.log('entry: ' + JSON.stringify(entry.object));
+        // console.log('entry: ' + JSON.stringify(entry.object));
         // console.log('entry: ' + entry.object.givenName);
         // console.log('ugKthid: ' + entry.object.ugKthid);
         callback(entry.object.cn, entry.object.ugKthid);
