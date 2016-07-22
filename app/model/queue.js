@@ -76,7 +76,7 @@ queueSchema.methods.calculateHelp = function () {
 queueSchema.methods.hasCompletion = function (ugKthid) {
   var ret = false;
   this.completions.forEach(function (completion, i, completions) {
-    console.log("Current completion : " + JSON.stringify(completion));
+    // console.log("Current completion : " + JSON.stringify(completion));
     if (completion.ugKthid === ugKthid) {
       ret = true;
     }
@@ -89,7 +89,7 @@ queueSchema.methods.getMessagesFor = function (ugKthid) {
   var retList = [];
   this.messages.forEach(function (message, i, messages) {
     if (message.ugKthid === ugKthid) {
-      console.log("Found a message for user '" + ugKthid + "', it is : " + JSON.stringify(message));
+      // console.log("Found a message for user '" + ugKthid + "', it is : " + JSON.stringify(message));
       retList.push(message.message);
     }
   });
@@ -289,7 +289,7 @@ queueSchema.methods.purgeQueue = function () {
         presentAmount: 0
       });
     stat.save();
-    console.log(this.queue[i].remove());
+    this.queue[i].remove();
     this.save();
   }
   this.queue = [];
