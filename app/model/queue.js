@@ -41,13 +41,13 @@ var queueSchema = new Schema({
   chatMessages: {type:[chatMessageSchema], default: []}
 });
 
-queueSchema.post('save', function(error, doc, next) {
-  if (error) {
-    console.log(error);
-  } else {
-    next(error);
-  }
-});
+// queueSchema.post('save', function(error, doc, next) {
+//   if (error) {
+//     console.log("err:", error);
+//   } else {
+//     next(error);
+//   }
+// });
 // Updates the MOTD
 queueSchema.methods.setMOTD = function (message) {
   this.motd = message;
