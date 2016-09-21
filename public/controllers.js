@@ -249,3 +249,9 @@ queueControllers.controller('TitleController', ['$scope', 'TitleService',
     });
   }
 ]);
+
+queueControllers.controller('399Controller', ['$scope',
+  function($scope) {
+    window.location = "http://queue.csc.kth.se:43677/";
+  }
+]);
