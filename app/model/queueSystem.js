@@ -250,7 +250,8 @@ function setup() {
   var tmpList = [
     "mvk",
     "progp",
-    "mdi"
+    "mdi",
+    "Dasak"
   ];
 
   globalMOTD = new GlobalMOTD({

@@ -122,7 +122,7 @@ queueControllers.controller('listController', ['$scope', 'HttpService', '$locati
       if (!$scope.search) {
         return false;
       }
-      return !(new RegExp($scope.search).test(queueName));
+      return !(new RegExp($scope.search.toLowerCase()).test(queueName.toLowerCase()));
     };
 
   }
