@@ -126,7 +126,7 @@ function getUID (ticket, callback) {
       // console.log(body);
       var failure = body.match("authenticationFailure");
       if (failure) {
-        console.log("well, that failed")
+        console.log("well, that failed");
       }
       else{
         var uidMatches = body.match(/u1[\d|\w]+/g);
@@ -157,7 +157,10 @@ app.get('/auth', function(req, res) {
   var ip = req.connection.remoteAddress;
   // console.log("ip: " + ip);
   getUID(req.query.ticket, function (uid) {
-
+      if(uid === ""){
+          res.redirect('/#' + req.session.user.loginTarget);
+          return;
+      }
 
     getUsername(uid, function(cn, username) {
       req.session.user.realname = cn;
