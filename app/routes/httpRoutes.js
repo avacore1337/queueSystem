@@ -110,7 +110,6 @@ function getHostname(ip, callback) {
 
 function getLocation (ip, callback) {
   getHostname(ip, function (hostname) {
-    // console.log("hostname = " + hostname);
     var pattern = /(\.kth\.se)/g;
     var result = hostname.match(pattern);
     var location = "";
@@ -122,13 +121,20 @@ function getLocation (ip, callback) {
       // E-house floor 4 : Blue, Red, Orange, Yellow, Green, Brown
       // E-house floor 5 : Grey, Karmosin, White, Magenta, Violett, Turkos
       // D-house floor 5 : Spel, Sport, Musik, Konst, Mat
-      pattern = /(blue|red|orange|yellow|green|brown|grey|karmosin|white|magenta|violett|turkos|spel|sport|musik|konst|mat)/g;
+      // Kista : ka 650, ka d4
+      pattern = /(blue|red|orange|yellow|green|brown|grey|karmosin|white|magenta|violett|turkos|spel|sport|musik|konst|mat|ka\s650|ka\sd4)/g;
       result = possibleLocation.match(pattern);
       if (result) {
         location = possibleLocation;
         // console.log("local location-variable = " + location);
         if (result == "mat") { // Do not add a third equal sign. (Result does not appear to be a string)
           location = location.replace("mat", "mat ");
+        }
+        else if (result == "ka 650") { // Do not add a third equal sign. (Result does not appear to be a string)
+          location = location.replace("ka 650", "Ka-209");
+        }
+        else if (result == "ka d4") { // Do not add a third equal sign. (Result does not appear to be a string)
+          location = location.replace("ka d4", "Ka-309");
         }
       }
     }
