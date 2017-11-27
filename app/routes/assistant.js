@@ -440,7 +440,7 @@ module.exports = function (socket, io) {
     var queue = queueSystem.findQueue(queueName);
     queue.addCompletion(completion);
 
-    queueSystem.userLeavesQueue(queue, completion.ugKthid, false); // TODO : should take a variable 'booking' instead of hardcoding 'false'
+    queueSystem.userLeavesQueue(queue, completion.ugKthid);
 
     // console.log('completion set for user : ' + completion.ugKthid);
     io.to(queueName).emit('leave', {

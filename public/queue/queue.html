@@ -19,17 +19,11 @@
   <div class="row">
     <!-- Queues -->
     <div class="col-md-9 col-md-push-3">
-      <!-- No booked or normal users in queue -->
-      <h4 ng-hide="(users | filter:notHasBooking).length || (bookedUsers | filter: attending | filter: soon).length">This queue is empty</h4>
 
-      <!-- Users with bookings -->
-      <div ng-show="(bookedUsers | filter: attending | filter: soon).length">
-        <booked-users></booked-users>
-      </div>
+      <h4 ng-hide="users.length">This queue is empty</h4>
 
-      <!-- Users without bookings -->
-      <div ng-show="(users | filter:notHasBooking).length">
-        <standard-users></standard-users>
+      <div ng-show="users.length">
+        <users></users>
       </div>
     </div>
 
@@ -74,7 +68,7 @@
           <span class="glyphicon glyphicon-plus"></span>
           Join queue
         </button>
-        <button class="blue clickable center-content frame expand" ng-show="enqueued && !gettingHelp" ng-click="receivingHelp()" id="queueReceivingHelpBtn">
+        <button class="blue clickable center-content frame expand" ng-show="enqueued && !receivingHelp" ng-click="receivingHelp()" id="queueReceivingHelpBtn">
           <span class="glyphicon glyphicon-check"></span>
           Receiving help
         </button>
@@ -168,10 +162,7 @@
           Log in
         </button>
       </div>
-      <div class="row buffer"></div>
-      <div ng-show="completionText" style="border: 2px dotted black; padding: 0.3em; border-radius: 6px;">
-        {{completionText}}
-      </div>
+      <!-- <div class="row buffer"></div> -->
     </div>
   </div>
 </div>

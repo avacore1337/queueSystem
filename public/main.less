@@ -72,12 +72,7 @@ span.text-light-gray
 {
   color: @light-gray;
 }
-table.table-striped.booked > tbody > tr:nth-child(odd) > td{
- background-color: #4FF07F;
-}
-table.table-striped.booked > tbody > tr:nth-child(even) > td{
- background-color: #47FF70;
-}
+
 button.text-white,
 span.text-white,
 i.text-white
@@ -135,53 +130,12 @@ button.frame
   border: solid #FFFFFF 1px;
 }
 
-table.table-striped > tbody > tr:nth-child(odd).pulse > td {
-  background-color: #B5DAF5;
+table.table-striped > tbody > tr:nth-child(odd).receivingHelp > td {
+  background-color: #4FF07F;
 }
 
-table.table-striped > tbody > tr:nth-child(odd).pulse {
-  -webkit-animation: pulse 2s infinite;
-  -moz-animation: pulse 2s infinite;
-}
-
-table.table-striped > tbody > tr:nth-child(even).pulse > td {
-  background-color: #C5E7FF;
-}
-
-table.table-striped > tbody > tr:nth-child(even).pulse {
-  -webkit-animation: pulse 2s infinite;
-  -moz-animation: pulse 2s infinite;
-}
-
-@-webkit-keyframes pulse
-{
-  0% {-webkit-transform: scale(1);}
-  50% {-webkit-transform: scale(0.98);}
-}
-
-@-moz-keyframes pulse
-{
-  0% {transform: scale(1);}
-  5% {transform: scale(0.9922);}
-  10% {transform: scale(0.9845);}
-  15% {transform: scale(0.9773);}
-  20% {transform: scale(0.9706);}
-  25% {transform: scale(0.9646);}
-  30% {transform: scale(0.9595);}
-  35% {transform: scale(0.9554);}
-  40% {transform: scale(0.9524);}
-  45% {transform: scale(0.9506);}
-  50% {transform: scale(0.95);}
-  55% {transform: scale(0.9506);}
-  60% {transform: scale(0.9524);}
-  65% {transform: scale(0.9554);}
-  70% {transform: scale(0.9595);}
-  75% {transform: scale(0.9646);}
-  80% {transform: scale(0.9706);}
-  85% {transform: scale(0.9773);}
-  90% {transform: scale(0.9845);}
-  95% {transform: scale(0.9922);}
-  100% {transform: scale(1);}
+table.table-striped > tbody > tr:nth-child(even).receivingHelp > td {
+  background-color: #47FF70;
 }
 
 .left-divider

@@ -9,7 +9,7 @@
     </tr>
   </thead>
   <tbody>
-    <tr ng-repeat-start="user in users | filter:notHasBooking track by $index" ng-class="{'pointer' : accessLevel > 0, 'pulse' : user.gettingHelp, 'yellow-background' : user.completion && !user.help, 'red-background' : user.badLocation}" ng-click="changeVisibility(user.ugKthid)"  id="queue{{user.ugKthid}}Btn" ng-show="match(user)">
+    <tr ng-repeat-start="user in users track by $index" ng-class="{'pointer' : accessLevel > 0, 'receivingHelp' : user.receivingHelp, 'yellow-background' : user.completion && !user.help, 'red-background' : user.badLocation}" ng-click="changeVisibility(user.ugKthid)"  id="queue{{user.ugKthid}}Btn" ng-show="match(user)">
       <td class="hidden-xs">{{ $index + 1 }}</td>
       <td ng-show="accessLevel >= 0">
         <span class="pull-left">
@@ -31,39 +31,29 @@
     <tr></tr> <!-- Hack-solution -->
     <tr ng-repeat-end class="text-center" ng-show="accessLevel && user.optionsActivated" ng-dblclick="changeVisibilityDbl(user.ugKthid)">
       <td colspan="100%;">
-        <div title="kick user" class="col-xs-2"  style="padding-left: 0.15em; padding-right: 0.15em;">
-          <button class="red clickable frame center-content expand" ng-click="kick(user)" id="queueRemoveUser{{user.ugKthid}}Btn">
-            <span class="glyphicon glyphicon-remove"></span>
-          </button>
-        </div>
-        <div title="send message" class="col-xs-2"  style="padding-left: 0.15em; padding-right: 0.15em;">
-          <button class="yellow clickable frame center-content expand" ng-click="messageUser(user.ugKthid)" id="queueSendMessage{{user.ugKthid}}Btn">
-            <span class="glyphicon glyphicon-envelope"></span>
-          </button>
-        </div>
-        <div title="help" class="col-xs-2"  style="padding-left: 0.15em; padding-right: 0.15em;" ng-hide="user.gettingHelp">
+        <div title="help" class="col-xs-3"  style="padding-left: 0.15em; padding-right: 0.15em;" ng-hide="user.receivingHelp">
           <button class="blue clickable frame center-content expand" ng-click="helpUser(user)" id="queueHelp{{user.ugKthid}}Btn">
             <span class="glyphicon glyphicon-check"></span>
           </button>
         </div>
-        <div title="stop helping" class="col-xs-2"  style="padding-left: 0.15em; padding-right: 0.15em;" ng-show="user.gettingHelp">
+        <div title="stop helping" class="col-xs-3"  style="padding-left: 0.15em; padding-right: 0.15em;" ng-show="user.receivingHelp">
           <button class="yellow clickable frame center-content expand" ng-click="stopHelpUser(user.ugKthid)" id="queueStopHelp{{user.ugKthid}}Btn">
             <span class="glyphicon glyphicon-check"></span>
           </button>
         </div>
-        <div title="bad location" class="col-xs-2"  style="padding-left: 0.15em; padding-right: 0.15em;">
+        <div title="send message" class="col-xs-3"  style="padding-left: 0.15em; padding-right: 0.15em;">
+          <button class="yellow clickable frame center-content expand" ng-click="messageUser(user.ugKthid)" id="queueSendMessage{{user.ugKthid}}Btn">
+            <span class="glyphicon glyphicon-envelope"></span>
+          </button>
+        </div>
+        <div title="bad location" class="col-xs-3"  style="padding-left: 0.15em; padding-right: 0.15em;">
           <button class="yellow clickable frame center-content expand" ng-click="badLocation(user)" id="queueBadLocation{{user.ugKthid}}Btn">
             <span class="glyphicon glyphicon-question-sign"></span>
           </button>
         </div>
-        <div title="completion" class="col-xs-2"  style="padding-left: 0.15em; padding-right: 0.15em;">
-          <button class="yellow clickable frame center-content expand" ng-click="completion(user.ugKthid)" id="queueCompletion{{user.ugKthid}}Btn">
-            <span class="glyphicon glyphicon-bookmark"></span>
-          </button>
-        </div>
-        <div title="add comment" class="col-xs-2"  style="padding-left: 0.15em; padding-right: 0.15em;">
-          <button class="yellow clickable frame center-content expand" ng-click="flag(user.ugKthid)" id="queueAddComment{{user.ugKthid}}Btn">
-            <span class="glyphicon glyphicon-tag"></span>
+        <div title="kick user" class="col-xs-3"  style="padding-left: 0.15em; padding-right: 0.15em;">
+          <button class="red clickable frame center-content expand" ng-click="kick(user)" id="queueRemoveUser{{user.ugKthid}}Btn">
+            <span class="glyphicon glyphicon-remove"></span>
           </button>
         </div>
       </td>

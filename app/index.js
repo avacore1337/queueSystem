@@ -59,11 +59,7 @@ scheduleForEveryNight(function () {
   queueSystem.forQueue(function (queue) {
     queue.purgeQueue();
     queue.setMOTD("");
-    queue.clearAssistantComments();
-    queue.clearCompletions();
-    //queue.purgeBookings();
   });
-  //queueSystem.updateAllBookings();
 });
 
 function getHostname(ip, callback) {

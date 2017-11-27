@@ -226,7 +226,7 @@
     socket.on('help', function (data) {
       for(var index in userList) {
         if(userList[i].name === data.name) {
-          $scope.users[i].gettingHelp = true;
+          $scope.users[i].receivingHelp = true;
           break;
         }
       }

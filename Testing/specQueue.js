@@ -21,11 +21,11 @@ var ta = 'pernyb';
 
  function userLogIn(userName){
   element(by.id('indexLogInBtn')).isDisplayed().then(function(isVisible) {
-      if (isVisible){  
+      if (isVisible){
         element(by.id('indexLogInBtn')).click();
-      } else {  
+      } else {
         element(by.id('indexLogOutBtn')).click();
-        element(by.id('indexLogInBtn')).click();  
+        element(by.id('indexLogInBtn')).click();
       }
     });
   element(by.id('loginInputField')).sendKeys(userName);
@@ -111,10 +111,6 @@ it('a User should be able to leave a joined queue.', function() {
     expect(element(by.id('queue'+name+'Btn')).isPresent()).toBeFalsy();
   });
 
-it('Joining a queue with a booked time slot', function(){
- //TODO
-});
-
 it('The Student class will have the possibility the change their own data in the form of location commment and personal comment.', function() {
     userLogIn(name);
     userJoinQueue('dbas');
@@ -145,7 +141,7 @@ it('The TA class is able to, by interaction, ‘Kick’ a User from the Queue', 
   expect(element(by.id('queue'+name+'Btn')).isPresent()).toBeFalsy();
   });
 
-it('TA is able to use the interaction ‘Lock’ or ‘Unlock’ with a queue', function(){  
+it('TA is able to use the interaction ‘Lock’ or ‘Unlock’ with a queue', function(){
  userLogIn(ta);
  $('#listdbasBtn').click();
  closeMOTD();

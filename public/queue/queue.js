@@ -17,8 +17,6 @@
 
   .controller('queueController', ['$scope', 'HttpService', '$routeParams', '$location', '$modal', 'WebSocketService', 'UserService', 'TitleService', 'ModalService', '$timeout',
     function ($scope, http, $routeParams, $location, $modal, socket, user, title, modals, $timeout) {
-      var TIME_BOOKING = 1800000; // 30min in milliseconds
-
       $scope.loggedIn = user.isLoggedIn();
 
       $scope.queue = $routeParams.queue;
@@ -34,9 +32,8 @@
       $scope.name = user.getName();
       $scope.ugKthid = user.getUgKthid();
       $scope.users = [];
-      $scope.bookedUsers = [];
       $scope.enqueued = false;
-      $scope.gettingHelp = false;
+      $scope.receivingHelp = false;
       $scope.help = true;
       $scope.ding = true;
       $scope.location = user.getLocation();
@@ -50,10 +47,7 @@
         console.log(response);
         $scope.users = response.queue;
         title.title = "[" + $scope.users.length + "] " + $scope.queue + " | Stay A While";
-        $scope.bookedUsers = response.bookings;
         $scope.info = response.info;
-        // $scope.bookedUsers = [{time:Date.now(), comment:"MVK redovisning", users:["antbac", "pernyb", "rwb"], length:"15min", location:"Blue 01"}];
-        console.log($scope.bookedUsers);
         $scope.locked = response.locked;
         matchToQueue();
         if(response.motd){
@@ -68,7 +62,7 @@
           $scope.users[i].optionsActivated = false;
           if($scope.users[i].ugKthid === $scope.ugKthid){
             $scope.enqueued = true;
-            $scope.gettingHelp = $scope.users[i].gettingHelp;
+            $scope.receivingHelp = $scope.users[i].receivingHelp;
             title.title = "["  + (i+1) + "/" + $scope.users.length + "] " + $scope.queue + " | Stay A while";
             if(!$scope.fixedLocation){
               $scope.location = $scope.users[i].location;
@@ -133,7 +127,7 @@
           $scope.enqueued = false;
           $scope.comment = '';
           $scope.help = true;
-          $scope.gettingHelp = false;
+          $scope.receivingHelp = false;
         }
         for(var i = $scope.users.length - 1; i >= 0; i--) {
           if($scope.users[i].ugKthid === data.ugKthid) {
@@ -159,7 +153,7 @@
         $scope.enqueued = false;
         $scope.comment = '';
         $scope.help = true;
-        $scope.gettingHelp = false;
+        $scope.receivingHelp = false;
         title.title = "[0] " + $scope.queue + " | Stay A while";
       });
 
@@ -211,11 +205,11 @@
       // Listen for a person getting help.
       socket.on('help', function (data) {
         if(data.ugKthid === $scope.ugKthid){
-          $scope.gettingHelp = true;
+          $scope.receivingHelp = true;
         }
         for(var i = 0; i < $scope.users.length; i++){
           if($scope.users[i].ugKthid === data.ugKthid){
-            $scope.users[i].gettingHelp = true;
+            $scope.users[i].receivingHelp = true;
             if(data.helper){
               $scope.users[i].helper = data.helper;
             }
@@ -227,11 +221,11 @@
       // Listen for a person no longer getting help.
       socket.on('stopHelp', function (data) {
         if(data.ugKthid === $scope.ugKthid){
-          $scope.gettingHelp = false;
+          $scope.receivingHelp = false;
         }
         for(var i = 0; i < $scope.users.length; i++){
           if($scope.users[i].ugKthid === data.ugKthid){
-            $scope.users[i].gettingHelp = false;
+            $scope.users[i].receivingHelp = false;
             $scope.users[i].helper = data.helper;
             break;
           }
@@ -308,11 +302,8 @@
 
       // Leave the queue
       $scope.leave = function(){
-        var wasBooked = false;
         socket.emit('leave', {
-          queueName: $scope.queue,
-          help: $scope.help,
-          booking: wasBooked
+          queueName: $scope.queue
         });
         console.log("Called leave");
       };
@@ -521,45 +512,6 @@
         window.location = address;
       };
 
-      // Return true if the booking is taking place approximately now
-      $scope.soon = function(booking){
-        return booking.time - Date.now() < TIME_BOOKING;
-      };
-
-      // Return true if any of the people in the group is in the queue
-      $scope.attending = function(booking){
-        var group = booking.users;
-        for(var index in group){
-          var name = group[index];
-          if(present(name)){
-            return true;
-          }
-        }
-        return false;
-      };
-
-      // Return true if the person does not have a booking about now
-      $scope.notHasBooking = function(user){
-        return !$scope.hasBooking(user);
-      };
-
-      // Return true if the person has a booking about now
-      $scope.hasBooking = function(user){
-        var name = user.name;
-        for(var index in $scope.bookedUsers){
-          var booking = $scope.bookedUsers[index];
-          for(var i in booking.users){
-            var name1 = booking.users[i];
-            if(name1 === name){
-              if($scope.soon(booking)){
-                return true;
-              }
-            }
-          }
-        }
-        return false;
-      };
-
       // Returns true if the given person is queueing at the moment, otherwise false
       function present (ugKthid) {
         for(var index in $scope.users){
@@ -571,37 +523,6 @@
         return false;
       }
 
-      // Returns true if the given person is queueing at the moment, otherwise false
-      function getBooking (name) {
-        for(var index in $scope.bookedUsers){
-          var booking = $scope.bookedUsers[index];
-          for(var i in booking.users){
-            var name1 = booking.users[i];
-            if(name1 === name){
-              return booking;
-            }
-          }
-        }
-        return undefined;
-      }
-
-      // Returns an array of the groupmembers locations, empty if noone is queueing #bookingsystem!
-      $scope.getLocations = function(group){
-        console.log("Entered getLocations");
-        var retList = [];
-        for(var i in group){
-          var name = group[i];
-          for(var j in $scope.users){
-            var name1 = $scope.users[j].name;
-            if(name === name1){
-              retList.push($scope.users[j].location);
-              break;
-            }
-          }
-        }
-        return retList;
-      };
-
       // This function checks if a person in the normal queue matches the search-string.
       $scope.match = function (user) {
         if(!$scope.search){
@@ -609,15 +530,6 @@
         }
         var regEx = new RegExp($scope.search.toLowerCase());
         return regEx.test(user.location.toLowerCase()) || regEx.test(user.comment.toLowerCase());
-      };
-
-      // This function checks if a person in the booked queue matches the search-string.
-      $scope.matchBooked = function (user) {
-        if(!$scope.search){
-          return true;
-        }
-        var regEx = new RegExp($scope.search.toLowerCase());
-        return (regEx.test(user.name.toLowerCase()) || regEx.test(user.location.toLowerCase()) ||  regEx.test(user.comment.toLowerCase()) ||  regEx.test(user.time.toLowerCase()));
       };
 
       // Gives the color for the square besides a users location
@@ -713,11 +625,5 @@
       },1000);
     });
 
-  }])
-.directive('bookedUsers', function(){
-  return {
-    restrict: 'E',
-    templateUrl: 'queue/bookedUsers.html'
-  };
-});
+  }]);
 })();

@@ -153,9 +153,6 @@ module.exports = function (socket, io) {
     var queueName = req.queueName;
     var ugKthid = socket.handshake.session.user.ugKthid;
 
-    // console.log(ugKthid); // check which uses is given --- need the one doing the action and the one who is "actioned"
-    // console.log("Validerande: " + JSON.stringify(socket.handshake.session.user));
-
     var queue = queueSystem.findQueue(queueName);
     if (!queue.inQueue(ugKthid)) {
       return;

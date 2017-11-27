@@ -12,8 +12,6 @@ var Statistic = require('./statistic.js');
 
 var User = require('./user.js');
 var userSchema = User.schema;
-var Booking = require('./booking.js');
-var bookingSchema = Booking.schema;
 var Admin = require('./admin.js');
 var adminSchema = Admin.schema;
 var Completion = require('./completion.js');
@@ -33,7 +31,6 @@ var queueSchema = new Schema({
   motd: { type: String, default: "You can do it!" },
   info: { type: String, default: "Lorem Ipsum !!" },
   queue: {type:[userSchema], default: []},
-  bookings: {type:[bookingSchema], default: []},
   teacher: {type:[adminSchema], default: []},
   assistant: {type:[adminSchema], default: []},
   completions: {type:[completionSchema], default: []},
@@ -147,11 +144,6 @@ queueSchema.methods.addUser = function (user) {
   this.save();
 };
 
-queueSchema.methods.addBooking = function (bookingData) {
-  this.bookings.push(bookingData);
-  this.save();
-};
-
 queueSchema.methods.forAssistant = function (fn) {
   this.assistant.forEach(fn);
 };
@@ -185,23 +177,6 @@ queueSchema.methods.removeUser = function (ugKthid) {
   this.queue = this.queue.filter(function (user) {
     return user.ugKthid !== ugKthid;
   });
-  this.save();
-};
-
-// takes a ugKthid as a parameter and removes the booking from the queue
-// not tested yet
-queueSchema.methods.removeBooking = function (ugKthid) {
-  for (var i = 0; i < this.bookings.length; i++) {
-    var remove = false;
-    for (var j = 0; j < this.bookings[i].users.length; j++) {
-      if (this.bookings[i].users[j] === ugKthid) {
-        remove = true;
-      }
-      if (remove) {
-        this.bookings.splice(i, 1);
-      }
-    }
-  }
   this.save();
 };
 
@@ -290,12 +265,6 @@ queueSchema.methods.purgeQueue = function () {
   this.save();
 };
 
-// empty the queue
-queueSchema.methods.purgeBookings = function () {
-  this.bookings = [];
-  this.save();
-};
-
 // takes a function "fn" and applies it on every user
 queueSchema.methods.forUser = function (fn) {
   this.queue.forEach(fn);
@@ -352,7 +321,7 @@ queueSchema.methods.helpingQueuer = function (ugKthid, queue, helper) {
   this.queue.forEach(function (usr, i, queue) {
     if (usr.ugKthid === ugKthid) {
       var user = usr;
-      user.gettingHelp = true;
+      user.receivingHelp = true;
       user.helper = helper;
       lodash.extend(queue[i], user);
     }
@@ -365,7 +334,7 @@ queueSchema.methods.stopHelpingQueuer = function (ugKthid, queue) {
   this.queue.forEach(function (usr, i, queue) {
     if (usr.ugKthid === ugKthid) {
       var user = usr;
-      user.gettingHelp = false;
+      user.receivingHelp = false;
       user.helper = "";
       lodash.extend(queue[i], user);
     }
