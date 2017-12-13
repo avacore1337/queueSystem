@@ -64,7 +64,7 @@ module.exports = function (socket, io) {
     user.ugKthid = socket.handshake.session.user.ugKthid;
     user.username = socket.handshake.session.user.username;
     user.realname = socket.handshake.session.user.realname;
-
+    console.log(user.username);
     var queue = queueSystem.findQueue(queueName);
 
     if (queue.inQueue(user.ugKthid)) {
@@ -81,17 +81,6 @@ module.exports = function (socket, io) {
       comment: user.comment,
       help: user.help
     });
-
-    // Set the variable 'completion' to true if they have a completion and want to present
-    if (!newUser.help) {
-      if (queue.hasCompletion(newUser.ugKthid)) {
-        newUser.completion = true;
-      }
-    }
-
-    // Append the messages added about this user
-    newUser.messages = queue.getMessagesFor(newUser.ugKthid);
-
     queue.addUser(newUser);
 
     // console.log("User : " + JSON.stringify(newUser) + " wants to join the queue.");
@@ -160,11 +149,6 @@ module.exports = function (socket, io) {
 
     var user = queue.getUser(ugKthid);
     queue.removeUser(ugKthid);
-    if (!user.help) {
-      if (queue.hasCompletion(ugKthid)) {
-        queue.removeCompletion(ugKthid); // TODO : This function does not exist
-      }
-    }
 
     // console.log('a user left ' + queueName);
 

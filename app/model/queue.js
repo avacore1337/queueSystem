@@ -14,14 +14,6 @@ var User = require('./user.js');
 var userSchema = User.schema;
 var Admin = require('./admin.js');
 var adminSchema = Admin.schema;
-var Completion = require('./completion.js');
-var completionSchema = Completion.schema;
-var chatMessage = require('./completion.js');
-var completionSchema = chatMessage.schema;
-var Message = require('./message.js');
-var messageSchema = Message.schema;
-var chatMessage = require('./chatMessage.js');
-var chatMessageSchema = chatMessage.schema;
 
 // Schema used for queues
 var queueSchema = new Schema({
@@ -32,10 +24,7 @@ var queueSchema = new Schema({
   info: { type: String, default: "Lorem Ipsum !!" },
   queue: {type:[userSchema], default: []},
   teacher: {type:[adminSchema], default: []},
-  assistant: {type:[adminSchema], default: []},
-  completions: {type:[completionSchema], default: []},
-  messages: {type:[messageSchema], default: []},
-  chatMessages: {type:[chatMessageSchema], default: []}
+  assistant: {type:[adminSchema], default: []}
 });
 
 
@@ -43,13 +32,6 @@ var queueSchema = new Schema({
 queueSchema.methods.setMOTD = function (message) {
   this.motd = message;
   this.save();
-};
-
-queueSchema.methods.addChatMessage = function (sender, message) {
-  this.chatMessages.push({
-    sender: sender,
-    message: message
-    });
 };
 
 //calculates the amount of people that are requesting help
@@ -61,53 +43,6 @@ queueSchema.methods.calculateHelp = function () {
     }
   }
   return helpCount;
-};
-
-// Returns true if the given user has a completion, otherwise false
-queueSchema.methods.hasCompletion = function (ugKthid) {
-  var ret = false;
-  this.completions.forEach(function (completion, i, completions) {
-    // console.log("Current completion : " + JSON.stringify(completion));
-    if (completion.ugKthid === ugKthid) {
-      ret = true;
-    }
-  });
-  return ret;
-};
-
-// Returns true if the given user has a completion, otherwise false
-queueSchema.methods.getMessagesFor = function (ugKthid) {
-  var retList = [];
-  this.messages.forEach(function (message, i, messages) {
-    if (message.ugKthid === ugKthid) {
-      // console.log("Found a message for user '" + ugKthid + "', it is : " + JSON.stringify(message));
-      retList.push(message.message);
-    }
-  });
-  return retList;
-};
-
-// Adds a new completion
-queueSchema.methods.addCompletion = function (completion) {
-  this.completions.push({ugKthid: completion.ugKthid, assistant: completion.assistant});
-  if(completion.task){
-    this.messages.push({ugKthid: completion.ugKthid, message: completion.task});
-  }
-  this.save();
-};
-
-// Removes the completion for the given user
-queueSchema.methods.removeCompletion = function (ugKthid) {
-  this.completions = this.completions.filter(function (completion) {
-    return completion.ugKthid !== ugKthid;
-  });
-  this.save();
-};
-
-// Removes all completions
-queueSchema.methods.clearCompletions = function (ugKthid) {
-  this.completions = [];
-  this.save();
 };
 
 // Returns true if the given user is in the queue, otherwise false
@@ -279,40 +214,6 @@ queueSchema.methods.updateUser = function (user) {
       queue[i].location = user.location;
       queue[i].badLocation = user.badLocation;    }
   });
-  this.save();
-};
-
-// set a comment from a assistant to a user (comment regarding help given by the assistant)
-queueSchema.methods.addAssistantComment = function (ugKthid, sender, queue, message) {
-  this.messages.push({ugKthid: ugKthid, message: message});
-  this.queue.forEach(function (usr, i, queue) {
-    if (usr.ugKthid === ugKthid) {
-      var user = usr;
-      user.messages.push(message);
-      lodash.extend(queue[i], user);
-    }
-  });
-  this.save();
-};
-
-// Remove comments about a user
-queueSchema.methods.removeAssistantComments = function (ugKthid, sender, queue) {
-  this.messages = this.messages.filter(function (message) {
-    return message.ugKthid !== ugKthid;
-  });
-  this.queue.forEach(function (usr, i, queue) {
-    if (usr.ugKthid === ugKthid) {
-      var user = usr;
-      user.messages = [];
-      lodash.extend(queue[i], user);
-    }
-  });
-  this.save();
-};
-
-// Removes all comments
-queueSchema.methods.clearAssistantComments = function () {
-  this.messages = [];
   this.save();
 };
 

@@ -12,12 +12,10 @@ var userSchema = new Schema({
   realname: String,
   location: String,
   startTime: { type: Number, default: Date.now },
-  messages: [String],
   receivingHelp: { type: Boolean, default: false },
   helper: { type: String, default: '' },
   help: Boolean,
   comment: { type: String, default: '' },
-  completion: { type: Boolean, default: false },
   badLocation: { type: Boolean, default: false }
 });
 
@@ -29,24 +27,12 @@ userSchema.methods.toJSON = function () {
     ugKthid: this.ugKthid,
     location: this.location,
     time: this.startTime,
-    messages: this.messages,
     receivingHelp: this.receivingHelp,
     helper: this.helper,
     help: this.help,
     comment: this.comment,
-    completion: this.completion,
     badLocation: this.badLocation
   };
-};
-
-// Adds a comment about the user
-userSchema.methods.addMesssage = function (message) {
-  this.messages.push(message);
-};
-
-// Removes all the messages about the user
-userSchema.methods.removeMesssages = function () {
-  this.messages = [];
 };
 
 var User = mongoose.model("User", userSchema);

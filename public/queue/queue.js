@@ -24,7 +24,7 @@
 
       $scope.$on('$destroy', function (event) {
         socket.removeAllListeners();
-        console.log("Leaving " + $scope.queue);
+        // console.log("Leaving " + $scope.queue);
         socket.emit('stopListening', $scope.queue);
       });
       socket.emit('listen', $scope.queue);
@@ -38,13 +38,12 @@
       $scope.ding = true;
       $scope.location = user.getLocation();
       $scope.fixedLocation = $scope.location !== "";
-      $scope.completionText = "";
       $scope.accessLevel = user.accessLevelFor($scope.queue);
       title.title = "[" + $scope.users.length + "] " + $scope.queue + " | Stay A While";
 
       $scope.locked = false;
       http.get('queue/' + $scope.queue, function(response) {
-        console.log(response);
+        // console.log(response);
         $scope.users = response.queue;
         title.title = "[" + $scope.users.length + "] " + $scope.queue + " | Stay A While";
         $scope.info = response.info;
@@ -119,11 +118,8 @@
 
       // Listen for the person leaving a queue event.
       socket.on('leave', function (data) {
-        console.log("Backend wants the following to leave the queue: " + JSON.stringify(data));
+        // console.log("Backend wants the following to leave the queue: " + JSON.stringify(data));
         if(data.ugKthid === $scope.ugKthid){
-          if(!$scope.help){
-            $scope.completionText = "";
-          }
           $scope.enqueued = false;
           $scope.comment = '';
           $scope.help = true;
@@ -159,7 +155,7 @@
 
       // Listen for a user changeing their information
       socket.on('update', function (user) {
-        console.log("updating user : " + user);
+        // console.log("updating user : " + user);
         for(var index in $scope.users) {
           if($scope.users[index].ugKthid === user.ugKthid) {
             $scope.users[index] = user;
@@ -171,13 +167,13 @@
 
       // Listen for a message.
       socket.on('msg', function (data) {
-        console.log("Received message : " + data);
+        // console.log("Received message : " + data);
         modals.getModal({title: "Message", message: data.message, sender: "- " + data.sender});
       });
 
       // Listen for a user getting flagged
       socket.on('flag', function (data) {
-        console.log("Flaggin " + data.ugKthid);
+        // console.log("Flaggin " + data.ugKthid);
         for(var i = $scope.users.length - 1; i >= 0; i--) {
           if($scope.users[i].ugKthid === data.ugKthid) {
             if($scope.users[i].messages === undefined){
@@ -185,7 +181,7 @@
             }else{
               $scope.users[i].messages.push(data.message);
             }
-            console.log("Pushed the message : " + data.message);
+            // console.log("Pushed the message : " + data.message);
             break;
           }
         }
@@ -193,7 +189,7 @@
 
       // Listen for a user getting their flags removed
       socket.on('removeFlags', function (data) {
-        console.log("Removing flags for user " + data.ugKthid);
+        // console.log("Removing flags for user " + data.ugKthid);
         for(var i = $scope.users.length - 1; i >= 0; i--) {
           if($scope.users[i].ugKthid === data.ugKthid) {
             $scope.users[i].messages = [];
@@ -232,21 +228,15 @@
         }
       });
 
-      // Listen for a message about receiving a completion-text
-      socket.on('completion', function (data) {
-        console.log("data.message = " + data.message);
-        $scope.completionText = data.message;
-      });
-
       // Listen for a new MOTD.
       socket.on('setMOTD', function (MOTD) {
-        console.log("Backend wants to add the MOTD : " + JSON.stringify(MOTD));
+        // console.log("Backend wants to add the MOTD : " + JSON.stringify(MOTD));
         $scope.MOTD = MOTD.MOTD;
       });
 
       // Listen for new queue-info.
       socket.on('setInfo', function (Info) {
-        console.log("Backend wants to change the queue-info to : " + JSON.stringify(Info));
+        // console.log("Backend wants to change the queue-info to : " + JSON.stringify(Info));
         $scope.info = Info.info;
       });
 
@@ -262,7 +252,7 @@
 
       // Listen for a badLocation warning
       socket.on('badLocation', function (data) {
-        console.log(JSON.stringify(data));
+        // console.log(JSON.stringify(data));
         var message = "";
         if(data.type === "unknown"){
           message = "The teaching assistant in '" + data.queueName + "' could not locate you. The teaching assistant won't try to find you again until you have updated your information.";
@@ -281,13 +271,13 @@
           if($scope.location === ""){
             alert("You must enter a location.");
           }else{
-            console.log("Current time = " + Date.now());
+            // console.log("Current time = " + Date.now());
             socket.emit('join',
             {
               queueName: $scope.queue,
               user: {location: $scope.location, comment: $scope.comment, help: $scope.help}
             });
-            console.log("Called addUser");
+            // console.log("Called addUser");
           }
         }
       };
@@ -297,7 +287,7 @@
         {
           queueName: $scope.queue
         });
-        console.log("Called receivingHelp");
+        // console.log("Called receivingHelp");
       };
 
       // Leave the queue
@@ -305,19 +295,19 @@
         socket.emit('leave', {
           queueName: $scope.queue
         });
-        console.log("Called leave");
+        // console.log("Called leave");
       };
 
       // This function should remove every person in the queue
       $scope.purge = function(){
-        console.log("Called purge");
+        // console.log("Called purge");
         modals.confirmModal({
           title: "Are you sure you want to remove everyone in the queue?",
           text: "",
           confirmButton: {
             text: "Yes, kick them all out.",
             callback: function () {
-              console.log("Purging the queue");
+              // console.log("Purging the queue");
               socket.emit('purge', {
                 queueName:$scope.queue
               });
@@ -332,11 +322,11 @@
 
       // This function should lock the queue, preventing anyone from queueing
       $scope.lock = function(){
-        console.log("Called lock");
+        // console.log("Called lock");
         socket.emit('lock', {
           queueName:$scope.queue
         });
-        console.log("Leaving lock");
+        // console.log("Leaving lock");
       };
 
       // This function should unlock the queue, alowing people to join the queue
@@ -344,19 +334,19 @@
         socket.emit('unlock', {
           queueName:$scope.queue
         });
-        console.log("Called unlock");
+        // console.log("Called unlock");
       };
 
       // This function should unlock the queue, alowing people to join the queue
       $scope.dingOn = function(){
         $scope.ding = true;
-        console.log("Called dingOn");
+        // console.log("Called dingOn");
       };
 
       // This function should unlock the queue, alowing people to join the queue
       $scope.dingOff = function(){
         $scope.ding = false;
-        console.log("Called dingOff");
+        // console.log("Called dingOff");
       };
       // This function allows the user to schedule labs (times when the queue will be unlocked)
       $scope.schedule = function(){
@@ -373,15 +363,15 @@
 
       // Function to send a message to every user in the queue
       $scope.broadcast = function(){
-        console.log("Called broadcast");
+        // console.log("Called broadcast");
         modals.submitModal({
           title: "Enter a message to broadcast",
           placeholder: "",
           buttonText: "Broadcast",
           callback: function (message) {
-            console.log("Sending message");
+            // console.log("Sending message");
             if(message){
-              console.log("Message is = " + message);
+              // console.log("Message is = " + message);
               socket.emit('broadcast', {
                 queueName: $scope.queue,
                 message: message
@@ -393,16 +383,16 @@
 
       // Function to send a message to every TA handeling the queue
       $scope.broadcastTA = function(){
-        console.log("Called broadcast");
+        // console.log("Called broadcast");
         modals.submitModal({
           title: "Enter a message to broadcast to TAs",
           placeholder: "",
           buttonText: "Broadcast",
           callback: function (message) {
-            console.log("Sending message");
+            // console.log("Sending message");
             if(message){
-              console.log("Sending message");
-              console.log("$scope.queue = " + $scope.queue);
+              // console.log("Sending message");
+              // console.log("$scope.queue = " + $scope.queue);
               socket.emit('broadcastFaculty', {
                 queueName:$scope.queue,
                 message:message
@@ -414,7 +404,7 @@
 
       // Function to add am essage of the day
       $scope.setMOTD = function(){
-        console.log("Called setMOTD");
+        // console.log("Called setMOTD");
         modals.setModal({
           title: "Enter a new message of the day",
           placeholder: $scope.MOTD ? "Current MOTD: " + $scope.MOTD : "",
@@ -437,7 +427,7 @@
 
       // Function to add am essage of the day
       $scope.setInfo = function(){
-        console.log("Called setInfo");
+        // console.log("Called setInfo");
         modals.setModal({
           title: "Enter new queue info",
           placeholder: "",
@@ -460,10 +450,10 @@
 
       // When an admin wants to see the admin options
       $scope.changeVisibility = function(ugKthid){
-        console.log(ugKthid);
+        // console.log(ugKthid);
         if($scope.accessLevel > 0){
           if( /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent) ) {
-            console.log("compare");
+            // console.log("compare");
             for(var i = 0; i < $scope.users.length; i++){
               if($scope.users[i].ugKthid === ugKthid){
                 $scope.users[i].optionsActivated = !$scope.users[i].optionsActivated;
@@ -471,7 +461,7 @@
               }
             }
           }else{
-            console.log("compare2");
+            // console.log("compare2");
             if($scope.lastClick === ugKthid){
               if(Date.now() - $scope.clickTime <= 500){
                 for(var j = 0; j < $scope.users.length; j++){

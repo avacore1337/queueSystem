@@ -117,9 +117,9 @@ function getLocation (ip, callback) {
 function getUID (ticket, callback) {
   var url = 'https://login.kth.se/serviceValidate?ticket='+ ticket  + '&service=http://queue.csc.kth.se/auth';
   request({ url: url}, function (err, response, body) {
-    if (err) {
-      console.log("err", err);
-    }
+    // if (err) {
+    //   console.log("err", err);
+    // }
     else{
       // console.log(body);
       var uid = "";
@@ -127,17 +127,17 @@ function getUID (ticket, callback) {
       // console.log(response.statusCode);
       // console.log(body);
       var failure = body.match("authenticationFailure");
-      if (failure) {
-        console.log("well, that failed");
-      }
+      // if (failure) {
+      //   console.log("well, that failed");
+      // }
       else{
         var uidMatches = body.match(/u1[\d|\w]+/g);
         if (uidMatches) {
           uid = uidMatches[0];
         }
-        else{
-          console.log("no match found");
-        }
+        // else{
+        //   console.log("no match found");
+        // }
       }
       callback(uid);
     }

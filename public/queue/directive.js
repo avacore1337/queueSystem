@@ -15,18 +15,18 @@ userDirective.directive('standardUsers', function(){
 				queueName:$scope.queue,
 				user: user
 			});
-			console.log("Called kick");
+			// console.log("Called kick");
 		};
 
 		$scope.messageUser = function (ugKthid) {
-			console.log("Entered messageUser");
+			// console.log("Entered messageUser");
 			modals.submitModal({
 				title: "Enter a message to " + ugKthid,
 				placeholder: "",
 				buttonText: "Send",
 				callback: function (message) {
 					if(message){
-						console.log("Sending message now");
+						// console.log("Sending message now");
 						socket.emit('messageUser', {
 							queueName: $scope.queue,
 							ugKthid: ugKthid,
@@ -43,7 +43,7 @@ userDirective.directive('standardUsers', function(){
 				queueName: $scope.queue,
 				ugKthid: user.ugKthid
 			});
-			console.log("Called helpUser");
+			// console.log("Called helpUser");
 		};
 
 		// Mark the user as no longer being helped
@@ -52,7 +52,7 @@ userDirective.directive('standardUsers', function(){
 				queueName: $scope.queue,
 				ugKthid: ugKthid
 			});
-			console.log("Called stopHelpUser");
+			// console.log("Called stopHelpUser");
 		};
 
 		// Function to send a message to a user
@@ -82,12 +82,12 @@ userDirective.directive('standardUsers', function(){
 					}
 				},
 			});
-			console.log("Called badLocation");
+			// console.log("Called badLocation");
 		};
 
 		// Function to add a message about that user
 		$scope.flag = function(ugKthid){
-			console.log("Entered flag");
+			// console.log("Entered flag");
 			modals.setModal({
 				title: "Enter a comment about " + ugKthid,
 				placeholder: "",
@@ -126,28 +126,8 @@ userDirective.directive('standardUsers', function(){
 						}
 					}
 				}
-				console.log("Called readMessages");
+				// console.log("Called readMessages");
 				modals.listModal({title: "Comments", messages: messages});
 			}
-		};
-
-		// Function to mark someone for completion
-		$scope.completion = function(ugKthid){
-			console.log("Called completion");
-			modals.submitModal({
-				title: "Enter a task for " + ugKthid + " to complete",
-				placeholder: "",
-				buttonText: "Submit",
-				callback: function (message) {
-					console.log("Applying completion now");
-					socket.emit('completion', {
-						queueName: $scope.queue,
-						completion: {
-							ugKthid: ugKthid,
-							task: message
-						}
-					});
-				}
-			});
 		};
 }]);

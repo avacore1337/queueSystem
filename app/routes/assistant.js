@@ -176,7 +176,6 @@ module.exports = function (socket, io) {
     }
 
     var queue = queueSystem.findQueue(queueName);
-    queue.addChatMessage(sender, message);
     var teacherList = queue.teacher;
     var assistantList = queue.assistant;
 
@@ -249,12 +248,6 @@ module.exports = function (socket, io) {
     }
     var queue = queueSystem.findQueue(queueName);
     queue.removeUser(user.ugKthid);
-
-    if (!user.help) {
-      if (user.completion) {
-        queue.removeCompletion(user.ugKthid);
-      }
-    }
 
     // console.log('a user was kicked from ' + queueName);
 
@@ -416,45 +409,6 @@ module.exports = function (socket, io) {
     io.to(queueName).emit('removeFlags', {
       ugKthid: ugKthid
     });
-  });
-
-  socket.on('completion', function (req) {
-    if(socket.handshake.session.user === undefined){
-      return;
-    }
-    var queueName = req.queueName;
-    var assistant = socket.handshake.session.user.ugKthid;
-
-    // teacher/assistant-validation
-    if (!(validate(assistant, "teacher", queueName) || validate(assistant, "assistant", queueName))) {
-      // console.log("validation for completion failed");
-      //res.end();
-      return;
-    }
-
-    var completion = req.completion;
-    completion.assistant = assistant;
-
-    // console.log("Added the following completion: " + JSON.stringify(completion));
-
-    var queue = queueSystem.findQueue(queueName);
-    queue.addCompletion(completion);
-
-    queueSystem.userLeavesQueue(queue, completion.ugKthid);
-
-    // console.log('completion set for user : ' + completion.ugKthid);
-    io.to(queueName).emit('leave', {
-      ugKthid: completion.ugKthid
-    });
-    io.to("lobby").emit('lobbyleave', {
-      queueName: queueName,
-      ugKthid: completion.ugKthid
-    });
-    if (completion.task) {
-      io.to("user_" + completion.ugKthid).emit('completion', {
-        message: completion.task
-      });
-    }
   });
 
   socket.on('setMOTD', function (req) {

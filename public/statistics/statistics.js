@@ -204,10 +204,10 @@
 
     $scope.selectedQueue = undefined;
     $scope.selectQueue = function(queue) {
-      console.log("Selected queue : " + queue);
+      // console.log("Selected queue : " + queue);
       $scope.selectedQueue = queue;
       document.getElementById('dropdown').innerHTML = queue;
-      console.log("selected queue = " + $scope.selectedQueue);
+      // console.log("selected queue = " + $scope.selectedQueue);
     };
 
     // Date
@@ -243,7 +243,7 @@
       if(newValue < $scope.fromTime){
         $scope.toTime = $scope.fromTime;
       }
-      console.log("Detected update to $scope.toTime (oldValue = " + oldValue + ", newValue = " + newValue + ")");
+      // console.log("Detected update to $scope.toTime (oldValue = " + oldValue + ", newValue = " + newValue + ")");
     });
 
     $scope.$watch(function() {
@@ -252,7 +252,7 @@
       if(newValue > $scope.toTime){
         $scope.fromTime = $scope.toTime;
       }
-      console.log("Detected update to $scope.fromTime (oldValue = " + oldValue + ", newValue = " + newValue + ")");
+      // console.log("Detected update to $scope.fromTime (oldValue = " + oldValue + ", newValue = " + newValue + ")");
     });
 
     // Statistics
@@ -263,7 +263,7 @@
         end: $scope.toTime.getTime(),
         user: $scope.name
       });
-      console.log("Requested statistics");
+      // console.log("Requested statistics");
     };
 
     $scope.getJSONStatistics = function() {
@@ -273,7 +273,7 @@
         end: $scope.toTime.getTime(),
         user: $scope.name
       });
-      console.log("Requested statistics");
+      // console.log("Requested statistics");
     };
 
     $scope.accessLevel = function() {

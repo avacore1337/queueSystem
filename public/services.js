@@ -182,7 +182,7 @@
 
     // Listen for the person joining a queue event.
     socket.on('join', function (data) {
-      console.log("joined: " +data );
+      // console.log("joined: " +data );
       userList.push({name:data.name, location:data.location, comment:data.comment, time:data.time/1000});
     });
 
@@ -486,9 +486,9 @@
                 temp.setHours($scope.from.getHours() + $scope.length.getHours());
                 temp.setMinutes($scope.from.getMinutes() + $scope.length.getMinutes());
                 temp.setSeconds(0);
-                console.log("from = " + $scope.from);
-                console.log("to = " + temp);
-                console.log("length = " + $scope.length.getHours() + ":" + $scope.length.getMinutes());
+                // console.log("from = " + $scope.from);
+                // console.log("to = " + temp);
+                // console.log("length = " + $scope.length.getHours() + ":" + $scope.length.getMinutes());
                 $modalInstance.close({confirmation: true, schedule:[{start: $scope.from, end: temp}]});
               };
             },

@@ -23,7 +23,7 @@
       socket.emit('listen', 'admin');
 
       title.title = "Admin | Stay A While";
-      console.log("Entered admin.html");
+      // console.log("Entered admin.html");
       $scope.realname = user.getName();
       $scope.selectedQueue = undefined;
       $scope.dropdown = undefined;
@@ -50,7 +50,7 @@
 
     // Listen for an assistant being added to a queue.
     socket.on('addAssistant', function (data) {
-      console.log("adding assistant (from backend) queueName = " + data.queueName + ", realname = " + data.realname + ", username = " + data.username);
+      // console.log("adding assistant (from backend) queueName = " + data.queueName + ", realname = " + data.realname + ", username = " + data.username);
       var queue = getQueue(data.queueName);
       if(queue){
         getQueue(data.queueName).assistant.push({realname:data.realname, username:data.username, ugKthid:data.ugKthid, addedBy: data.addedBy});
@@ -59,7 +59,7 @@
 
     // Listen for a teacher being added to a queue.
     socket.on('removeAssistant', function (data) {
-      console.log("Backend wants to remove the assistant " + data.ugKthid + " from the queue " + data.queueName);
+      // console.log("Backend wants to remove the assistant " + data.ugKthid + " from the queue " + data.queueName);
       for (var i = $scope.queues.length - 1; i >= 0; i--) {
         if($scope.queues[i].name === data.queueName){
           for (var j = $scope.queues[i].assistant.length - 1; j >= 0; j--) {
@@ -76,12 +76,12 @@
     // Listen for an teacher being added to a queue.
     socket.on('addAdmin', function (admin) {
       $scope.admins.push(admin);
-      console.log("adding admin (from backend) name = " + admin.realname + ", username = " + admin.username + ", addedBy = " + admin.addedBy);
+      // console.log("adding admin (from backend) name = " + admin.realname + ", username = " + admin.username + ", addedBy = " + admin.addedBy);
     });
 
     // Listen for an teacher being added to a queue.
     socket.on('removeAdmin', function (ugKthid) {
-      console.log("Backend wants to remove the admin " + ugKthid);
+      // console.log("Backend wants to remove the admin " + ugKthid);
       for (var i = $scope.admins.length - 1; i >= 0; i--) {
         if($scope.admins[i].ugKthid === ugKthid){
           $scope.admins.splice(i, 1);
@@ -92,7 +92,7 @@
 
     // Listen for an teacher being added to a queue.
     socket.on('addTeacher', function (data) {
-      console.log("adding teacher (from backend) queueName = " + data.queueName + ", realname = " + data.realname + ", username = " + data.username);
+      // console.log("adding teacher (from backend) queueName = " + data.queueName + ", realname = " + data.realname + ", username = " + data.username);
       var queue = getQueue(data.queueName);
       if(queue){
         getQueue(data.queueName).teacher.push({realname:data.realname, username:data.username, ugKthid:data.ugKthid, addedBy: data.addedBy});
@@ -101,7 +101,7 @@
 
     // Listen for an teacher being added to a queue.
     socket.on('removeTeacher', function (data) {
-      console.log("Backend wants to remove the teacher " + data.ugKthid + " from the queue " + data.queueName);
+      // console.log("Backend wants to remove the teacher " + data.ugKthid + " from the queue " + data.queueName);
       for (var i = $scope.queues.length - 1; i >= 0; i--) {
         if($scope.queues[i].name === data.queueName){
           for (var j = $scope.queues[i].teacher.length - 1; j >= 0; j--) {
@@ -117,7 +117,7 @@
 
     // Listen for a queue being hided.
     socket.on('hide', function (queue) {
-      console.log("I will go to sleep (because backend)");
+      // console.log("I will go to sleep (because backend)");
       for (var i = $scope.queues.length - 1; i >= 0; i--) {
         if(queue === $scope.queues[i].name){
           $scope.queues[i].hiding = true;
@@ -127,7 +127,7 @@
 
     // Listen for a queue being showd.
     socket.on('show', function (queue) {
-      console.log("I will wake up (because backend)");
+      // console.log("I will wake up (because backend)");
       for (var i = $scope.queues.length - 1; i >= 0; i--) {
         if(queue === $scope.queues[i].name){
           $scope.queues[i].hiding = false;
@@ -137,13 +137,13 @@
 
     // Listen for a queue being added.
     socket.on('addQueue', function (queue) {
-      console.log("Backend wants to add the queue " + queue.name);
+      // console.log("Backend wants to add the queue " + queue.name);
       $scope.queues.push(queue);
     });
 
     // Listen for the person leaving a queue event.
     socket.on('removeQueue', function (queue) {
-      console.log("Backend wants to remove queue " + queue);
+      // console.log("Backend wants to remove queue " + queue);
       for (var i = $scope.queues.length - 1; i >= 0; i--) {
         if(queue === $scope.queues[i].name){
           $scope.queues.splice(i, 1);
@@ -153,7 +153,7 @@
 
     // Listen for the person leaving a queue event.
     socket.on('newServerMessage', function (message) {
-      console.log("Backend wants to change the server-message to " + message);
+      // console.log("Backend wants to change the server-message to " + message);
       $scope.serverMessage = message;
     });
 
@@ -175,7 +175,7 @@
     };
 
     $scope.removeQueue = function(){
-      console.log("Called removeQueue");
+      // console.log("Called removeQueue");
       modals.confirmModal({
         title: "Delete queue",
         text: "Are you sure that you wish to remove " + $scope.selectedQueue.name + " permanently?",
@@ -183,7 +183,7 @@
           socket.emit('removeQueue', {
             queueName:$scope.selectedQueue.name
           });
-          console.log("Trying to delete queue " + $scope.selectedQueue.name);
+          // console.log("Trying to delete queue " + $scope.selectedQueue.name);
           document.getElementById('dropdown').innerHTML = "Select Queue";
           $scope.selectedQueue = undefined;
         }},
@@ -192,7 +192,7 @@
     };
 
     $scope.hideQueue = function(){
-      console.log("Called hideQueue");
+      // console.log("Called hideQueue");
       modals.confirmModal({
         title: "Hide queue",
         text: "Are you sure that you wish to hide " + $scope.selectedQueue.name + "? This means that only teachers and admins can enter and see the queue.",
@@ -200,14 +200,14 @@
           socket.emit('hide', {
             queueName: $scope.selectedQueue.name
           });
-          console.log("Trying to hide queue " + $scope.selectedQueue.name);
+          // console.log("Trying to hide queue " + $scope.selectedQueue.name);
         }},
         declineButton: {text: "No, keep it visible.", callback: function () {}}
       });
     };
 
   $scope.showQueue = function(){
-    console.log("Called showQueue");
+    // console.log("Called showQueue");
     modals.confirmModal({
       title: "Show queue",
       text: "Are you sure that you wish to show " + $scope.selectedQueue.name + "? This means that anyone can see and enter the queue.",
@@ -215,7 +215,7 @@
         socket.emit('show', {
           queue:$scope.selectedQueue.name
         });
-        console.log("Trying to show queue " + $scope.selectedQueue.name);
+        // console.log("Trying to show queue " + $scope.selectedQueue.name);
       }},
       declineButton: {text: "No, keep it from prying eyes.", callback: function () {}}
     });
@@ -226,7 +226,7 @@
       socket.emit('addAdmin', {
         username: $scope.newAdmin
       });
-      console.log("Adding admin " + $scope.newAdmin);
+      // console.log("Adding admin " + $scope.newAdmin);
       $scope.newAdmin = '';
     }
   };
@@ -235,17 +235,17 @@
     socket.emit('removeAdmin', {
       ugKthid:ugKthid
     });
-    console.log("Removing admin " + ugKthid);
+    // console.log("Removing admin " + ugKthid);
   };
 
   $scope.addTeacher = function(){
-    console.log("Trying to add a new teacher by the name '" + $scope.newTeacher + "'");
+    // console.log("Trying to add a new teacher by the name '" + $scope.newTeacher + "'");
     if($scope.newTeacher){
       socket.emit('addTeacher', {
         username: $scope.newTeacher,
         queueName: $scope.selectedQueue.name
       });
-      console.log("Adding teacher " + $scope.newTeacher + " in the queue " + $scope.selectedQueue.name);
+      // console.log("Adding teacher " + $scope.newTeacher + " in the queue " + $scope.selectedQueue.name);
       $scope.newTeacher = '';
     }
   };
@@ -255,7 +255,7 @@
       ugKthid:ugKthid,
       queueName:$scope.selectedQueue.name
     });
-    console.log("Removing teacher " + ugKthid + " in the queue " + $scope.selectedQueue.name);
+    // console.log("Removing teacher " + ugKthid + " in the queue " + $scope.selectedQueue.name);
   };
 
   $scope.addAssistant = function(){
@@ -264,7 +264,7 @@
         username: $scope.newAssistant,
         queueName: $scope.selectedQueue.name
       });
-      console.log("Adding assistant " + $scope.newAssistant  + " in the queue " + $scope.selectedQueue.name);
+      // console.log("Adding assistant " + $scope.newAssistant  + " in the queue " + $scope.selectedQueue.name);
       $scope.newAssistant = '';
     }
   };
@@ -274,11 +274,11 @@
       ugKthid: ugKthid,
       queueName: $scope.selectedQueue.name
     });
-    console.log("Removing assistant " + ugKthid  + " in the queue " + $scope.selectedQueue.name);
+    // console.log("Removing assistant " + ugKthid  + " in the queue " + $scope.selectedQueue.name);
   };
 
   $scope.setServerMessage = function(){
-    console.log("Called setServerMessage");
+    // console.log("Called setServerMessage");
     modals.setModal({
       title: "Enter a message to show users upon loggin in",
       placeholder: $scope.serverMessage ? "Current server-message: " + $scope.serverMessage : "",
@@ -306,7 +306,7 @@
   $scope.selectQueue = function(queue){
     $scope.selectedQueue = queue;
     document.getElementById('dropdown').innerHTML = queue.name;
-    console.log("selected queue = " + $scope.selectedQueue.name);
+    // console.log("selected queue = " + $scope.selectedQueue.name);
   };
 
   $scope.accessLevel = function() {

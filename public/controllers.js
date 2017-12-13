@@ -32,7 +32,7 @@ queueControllers.controller('listController', ['$scope', 'HttpService', '$locati
 
     // Listen for a person joining a queue.
     socket.on('lobbyjoin', function(data) {
-      console.log("A user joined (lobby) " + data.queueName);
+      // console.log("A user joined (lobby) " + data.queueName);
       var queue = getQueue(data.queueName);
       queue.queue.push({
         ugKthid: data.ugKthid
@@ -45,7 +45,7 @@ queueControllers.controller('listController', ['$scope', 'HttpService', '$locati
 
     // Listen for a person leaving a queue.
     socket.on('lobbyleave', function(data) {
-      console.log("A user left (lobby) " + data.queueName);
+      // console.log("A user left (lobby) " + data.queueName);
       var queue = getQueue(data.queueName);
       queue.length--;
       for (var i in queue.queue) {
@@ -63,7 +63,7 @@ queueControllers.controller('listController', ['$scope', 'HttpService', '$locati
 
     // Listen for queue geting purged.
     socket.on('lobbypurge', function(queueName) {
-      console.log(queueName + " was purged (lobby)");
+      // console.log(queueName + " was purged (lobby)");
       var queue = getQueue(queueName);
       queue.length = 0;
       queue.queue = [];
@@ -72,25 +72,25 @@ queueControllers.controller('listController', ['$scope', 'HttpService', '$locati
 
     // Listen for a queue being locked.
     socket.on('lobbylock', function(queue) {
-      console.log(queue + " was locked (lobby)");
+      // console.log(queue + " was locked (lobby)");
       getQueue(queue).locked = true;
     });
 
     // Listen for a queue being unlocked.
     socket.on('lobbyunlock', function(queue) {
-      console.log(queue + " was unlocked (lobby)");
+      // console.log(queue + " was unlocked (lobby)");
       getQueue(queue).locked = false;
     });
 
     // Listen for a queue going to sleep.
     socket.on('lobbyhide', function(queue) {
-      console.log(queue + " was sent to sleep (lobby)");
+      // console.log(queue + " was sent to sleep (lobby)");
       getQueue(queue).hiding = true;
     });
 
     // Listen for a queue waking up.
     socket.on('lobbyshow', function(queue) {
-      console.log(queue + " was awoken (lobby)");
+      // console.log(queue + " was awoken (lobby)");
       getQueue(queue).hiding = false;
     });
 
@@ -103,9 +103,9 @@ queueControllers.controller('listController', ['$scope', 'HttpService', '$locati
     }
       // This function should direct the user to the wanted page
     $scope.redirect = function(queue) {
-      console.log("Trying to enter queue : " + queue.name);
+      // console.log("Trying to enter queue : " + queue.name);
       if (!queue.locked || $scope.accessLevel(queue.name) > 0) {
-        console.log("Allowed to enter queue : " + queue.name);
+        // console.log("Allowed to enter queue : " + queue.name);
         $location.hash("");
         $location.path('/queue/' + queue.name);
       }
@@ -131,11 +131,11 @@ queueControllers.controller('listController', ['$scope', 'HttpService', '$locati
 queueControllers.controller('aboutController', ['$scope', 'TitleService', 'HttpService',
   function($scope, title, http) {
     title.title = "About | Stay A While";
-    console.log('entered about.html');
+    // console.log('entered about.html');
     $scope.contributors = {StayAWhile:[], QWait:[]};
     http.get('../aboutData.json', function(data) {
-      console.log("Aboutdata: ");
-      console.log(data);
+      // console.log("Aboutdata: ");
+      // console.log(data);
       $scope.contributors = data;
     });
   }
@@ -144,9 +144,9 @@ queueControllers.controller('aboutController', ['$scope', 'TitleService', 'HttpS
 queueControllers.controller('helpController', ['$scope', 'TitleService', 'UserService',
   function($scope, title, user) {
     title.title = "Help | Stay A While";
-    console.log('entered help.html');
+    // console.log('entered help.html');
     $scope.accessLevel = user.accessLevel();
-    console.log("$scope.accessLevel = " + $scope.accessLevel);
+    // console.log("$scope.accessLevel = " + $scope.accessLevel);
   }
 ]);
 
@@ -159,11 +159,11 @@ queueControllers.controller('loginController', ['$scope', '$location', 'HttpServ
     title.title = "Log in | Stay A While";
 
     $scope.done = function() {
-      console.log("Reached done()");
+      // console.log("Reached done()");
       http.post('setUser', {realname: $scope.name}, function(response) {
         http.get('serverMessage', function(resp){
           if(resp.serverMessage){
-            console.log("There is a serverMessage");
+            // console.log("There is a serverMessage");
             modals.getModal({title: "Server message", message: resp.serverMessage, sender: ""});
           }
         });
@@ -173,7 +173,7 @@ queueControllers.controller('loginController', ['$scope', '$location', 'HttpServ
         realname: $scope.name,
         admin: $scope.type === 'admin'
       });
-      console.log("I set the user with socket");
+      // console.log("I set the user with socket");
     };
 
   }
@@ -188,14 +188,14 @@ queueControllers.controller('navigationController', ['$scope', '$location', 'Use
       return $location.path();
     }, function(newValue, oldValue) {
       $scope.location = newValue;
-      console.log("Detected update to $location.path() (oldValue = " + oldValue + ", newValue = " + newValue + ")");
+      // console.log("Detected update to $location.path() (oldValue = " + oldValue + ", newValue = " + newValue + ")");
     });
 
     $scope.$watch(function() {
       return user.getRealname();
     }, function(newValue, oldValue) {
       $scope.realname = newValue;
-      console.log("Detected update to user.getRealname() (oldValue = " + oldValue + ", newValue = " + newValue + ")");
+      // console.log("Detected update to user.getRealname() (oldValue = " + oldValue + ", newValue = " + newValue + ")");
     });
 
     // Listen for the server setting a new server-message
@@ -208,7 +208,7 @@ queueControllers.controller('navigationController', ['$scope', '$location', 'Use
 
         user.clearData();
         $scope.realname = "";
-        console.log("logged out");
+        // console.log("logged out");
         window.location = "logout";
     };
 
@@ -221,7 +221,7 @@ queueControllers.controller('navigationController', ['$scope', '$location', 'Use
       $location.hash("");
       $location.path('/' + address);
       $scope.location = $location.path();
-      console.log("location = " + $scope.location);
+      // console.log("location = " + $scope.location);
     };
 
     $scope.accessLevel = function() {
@@ -239,7 +239,7 @@ queueControllers.controller('navigationController', ['$scope', '$location', 'Use
 
 queueControllers.controller('TitleController', ['$scope', 'TitleService',
   function($scope, title) {
-    console.log(title);
+    // console.log(title);
     $scope.title = title.title;
 
     $scope.$watch(function() {

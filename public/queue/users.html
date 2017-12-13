@@ -9,7 +9,7 @@
     </tr>
   </thead>
   <tbody>
-    <tr ng-repeat-start="user in users track by $index" ng-class="{'pointer' : accessLevel > 0, 'receivingHelp' : user.receivingHelp, 'yellow-background' : user.completion && !user.help, 'red-background' : user.badLocation}" ng-click="changeVisibility(user.ugKthid)"  id="queue{{user.ugKthid}}Btn" ng-show="match(user)">
+    <tr ng-repeat-start="user in users track by $index" ng-class="{'pointer' : accessLevel > 0, 'receivingHelp' : user.receivingHelp, 'red-background' : user.badLocation}" ng-click="changeVisibility(user.ugKthid)"  id="queue{{user.ugKthid}}Btn" ng-show="match(user)">
       <td class="hidden-xs">{{ $index + 1 }}</td>
       <td ng-show="accessLevel >= 0">
         <span class="pull-left">
