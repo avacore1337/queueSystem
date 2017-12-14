@@ -15,18 +15,15 @@ userDirective.directive('standardUsers', function(){
 				queueName:$scope.queue,
 				user: user
 			});
-			// console.log("Called kick");
 		};
 
 		$scope.messageUser = function (ugKthid) {
-			// console.log("Entered messageUser");
 			modals.submitModal({
 				title: "Enter a message to " + ugKthid,
 				placeholder: "",
 				buttonText: "Send",
 				callback: function (message) {
 					if(message){
-						// console.log("Sending message now");
 						socket.emit('messageUser', {
 							queueName: $scope.queue,
 							ugKthid: ugKthid,
@@ -43,7 +40,6 @@ userDirective.directive('standardUsers', function(){
 				queueName: $scope.queue,
 				ugKthid: user.ugKthid
 			});
-			// console.log("Called helpUser");
 		};
 
 		// Mark the user as no longer being helped
@@ -52,7 +48,6 @@ userDirective.directive('standardUsers', function(){
 				queueName: $scope.queue,
 				ugKthid: ugKthid
 			});
-			// console.log("Called stopHelpUser");
 		};
 
 		// Function to send a message to a user
@@ -82,52 +77,5 @@ userDirective.directive('standardUsers', function(){
 					}
 				},
 			});
-			// console.log("Called badLocation");
-		};
-
-		// Function to add a message about that user
-		$scope.flag = function(ugKthid){
-			// console.log("Entered flag");
-			modals.setModal({
-				title: "Enter a comment about " + ugKthid,
-				placeholder: "",
-				setButton: {
-					text: "Add comment",
-					callback: function (message) {
-						if(message){
-							socket.emit('flag', {
-								queueName: $scope.queue,
-								ugKthid: ugKthid,
-								message: message
-							});
-						}
-					}
-				},
-				removeButton: {
-					text: "Delete comments",
-					callback: function (message) {
-						socket.emit('removeFlags', {
-							queueName: $scope.queue,
-							ugKthid: ugKthid
-						});
-					}
-				},
-			});
-		};
-
-		// Function to read comments about a user
-		$scope.readMessages = function(messages, ugKthid){
-			if($scope.accessLevel > 0){
-				if( /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent) ) {
-					for(var i = 0; i < $scope.users.length; i++){
-						if($scope.users[i].ugKthid === ugKthid){
-							$scope.users[i].optionsActivated = !$scope.users[i].optionsActivated;
-							break;
-						}
-					}
-				}
-				// console.log("Called readMessages");
-				modals.listModal({title: "Comments", messages: messages});
-			}
 		};
 }]);

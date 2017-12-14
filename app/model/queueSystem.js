@@ -122,15 +122,12 @@ exports.getAdminList = function () {
  * @param {String} queueName - The name of the queue.
  */
 exports.validate = function(ugKthid, type, queueName) {
-  if (type === "super") {
+  if (type === "super")
     return validateSuper(ugKthid);
-  } else if (type === "teacher") {
+  if (type === "teacher")
     return validateTeacher(ugKthid, queueName);
-  } else if (type === "assistant") {
+  if (type === "assistant")
     return validateAssistant(ugKthid, queueName) || validateTeacher(ugKthid,queueName);
-  }
-
-  // console.log("that privilege-type is not defined"); // temporary for error-solving
   return false;
 };
 
@@ -139,14 +136,10 @@ exports.validate = function(ugKthid, type, queueName) {
  * @param {String} userName - The name of the user.
  */
 function validateSuper(ugKthid) {
-  var valid = false;
-  for (var i = 0; i < adminList.length; i++) {
-    if (adminList[i].ugKthid === ugKthid) {
-      // console.log(ugKthid + ' is a valid super-admin'); // temporary for error-solving
-      valid = true;
-    }
-  }
-  return valid;
+  for (let admin of adminList)
+    if (admin === ugKthid)
+      return true;
+  return false;
 }
 
 /**
@@ -159,7 +152,6 @@ function validateTeacher(ugKthid, queueName) {
   var valid = false;
   exports.findQueue(queueName).forTeacher(function(teacher) {
     if (teacher.ugKthid === ugKthid) {
-      // console.log(ugKthid + ' is a valid teacher'); // temporary for error-solving
       valid = true;
      }
   });
@@ -176,7 +168,6 @@ function validateAssistant(ugKthid, queueName) {
   var valid = false;
   exports.findQueue(queueName).forAssistant(function(assistant) {
     if (assistant.ugKthid === ugKthid) {
-      // console.log(ugKthid + ' is a valid assistant'); // temporary for error-solving
       valid = true;
     }
   });
@@ -208,7 +199,6 @@ function setup() {
   globalMOTD = new GlobalMOTD({
     message: "Hello World!"
   });
-
   globalMOTD.save();
 
   var newAdmin = new Admin({
@@ -239,10 +229,8 @@ function setup() {
     newQueue.save();
 
     //---------------------------------------------------------------------------------------
-    /*TEST*/
+    // Create some random users and add them to the queues
     var randomTime = Date.now() - Math.random() * 3 * 1000000;
-    //---------------------------------------------------------------------------------------
-    // for every queue, create users
     var queues = Math.floor((Math.random() * 50) + 1);
     for (var j = 0; j < queues; j++) {
       var rndName = Math.random().toString(36).substring(7);
@@ -252,11 +240,12 @@ function setup() {
         realname: "real-" + rndName,
         location: 'Green',
         comment: 'lab1',
-        help: true,
+        help: Math.floor((Math.random() * 2)) === 0 ? true : false,
         startTime: randomTime
       });
       newQueue.addUser(newUser);
       newQueue.save();
+
       var newStatistic = new Statistic({
         username: newUser.username,
         queue: newQueue.username,
@@ -268,13 +257,8 @@ function setup() {
       });
       newStatistic.save();
 
-      //---------------------------------------------------------------------------------------
-      /*TEST*/
       randomTime += Math.random() * 5 * 10000;
-      //---------------------------------------------------------------------------------------
     }
-
-    // console.log(queue + " " + newQueue.queue.length); // temporary for error-solving
   }
 }
 
@@ -287,8 +271,6 @@ function readIn() {
   Queue.find(function(err, queues) {
     queues.forEach(function(queue) {
       queueList.push(queue);
-      // to make sure everything loads
-      // console.log('Queue: ' + queue.name + ' loaded!');
     });
   });
 
@@ -296,29 +278,16 @@ function readIn() {
   Admin.find(function(err, admins) {
     admins.forEach(function(admin) {
       adminList.push(admin);
-      // to make sure everything loads
-      // console.log('Admin: ' + admin.username + ' loaded!');
     });
   });
 
   // All the queues
   GlobalMOTD.find(function(err, globals) {
     globals.forEach(function(global) {
-      // to make sure everything loads
-      // console.log('Globals: ' + global + '!');
       globalMOTD = global;
     });
   });
 }
-
-// var newAdmin = new Admin({
-//   realname: "Robert Welin-Berger",
-//   username: "robertwb",
-//   ugKthid: "u101x961",
-//   addedBy: "root"
-// });
-// adminList.push(newAdmin);
-// newAdmin.save();
 
 setup(); // Use for setting up the test system
 //readIn(); //use this

@@ -218,12 +218,11 @@ queueSchema.methods.updateUser = function (user) {
 };
 
 // set a user as getting help
-queueSchema.methods.helpingQueuer = function (ugKthid, queue, helper) {
+queueSchema.methods.helpingQueuer = function (ugKthid, queue) {
   this.queue.forEach(function (usr, i, queue) {
     if (usr.ugKthid === ugKthid) {
       var user = usr;
       user.receivingHelp = true;
-      user.helper = helper;
       lodash.extend(queue[i], user);
     }
   });
@@ -236,7 +235,6 @@ queueSchema.methods.stopHelpingQueuer = function (ugKthid, queue) {
     if (usr.ugKthid === ugKthid) {
       var user = usr;
       user.receivingHelp = false;
-      user.helper = "";
       lodash.extend(queue[i], user);
     }
   });

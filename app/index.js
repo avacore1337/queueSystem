@@ -120,7 +120,7 @@ function getUID (ticket, callback) {
     // if (err) {
     //   console.log("err", err);
     // }
-    else{
+    // else{
       // console.log(body);
       var uid = "";
       // console.log("statusCode:");
@@ -130,7 +130,7 @@ function getUID (ticket, callback) {
       // if (failure) {
       //   console.log("well, that failed");
       // }
-      else{
+      // else{
         var uidMatches = body.match(/u1[\d|\w]+/g);
         if (uidMatches) {
           uid = uidMatches[0];
@@ -138,9 +138,9 @@ function getUID (ticket, callback) {
         // else{
         //   console.log("no match found");
         // }
-      }
+      // }
       callback(uid);
-    }
+    // }
   });
 }
 

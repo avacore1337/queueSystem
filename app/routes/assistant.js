@@ -96,8 +96,7 @@ module.exports = function (socket, io) {
     queue.stopHelpingQueuer(targetUgKthid, queueName);
 
     io.to(queueName).emit('stopHelp', {
-      ugKthid: targetUgKthid,
-      helper: ugKthid
+      ugKthid: targetUgKthid
     });
 
     // console.log(targetUgKthid + ' is no longer getting help in ' + queueName);
@@ -220,11 +219,10 @@ module.exports = function (socket, io) {
     }
 
     var queue = queueSystem.findQueue(queueName);
-    queue.helpingQueuer(ugKthid, queueName, helper);
+    queue.helpingQueuer(ugKthid, queueName);
 
     io.to(queueName).emit('help', {
-      ugKthid: ugKthid,
-      helper: helper
+      ugKthid: ugKthid
     });
 
     // console.log(ugKthid + ' is getting help in ' + queueName);

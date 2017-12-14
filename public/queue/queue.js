@@ -43,7 +43,6 @@
 
       $scope.locked = false;
       http.get('queue/' + $scope.queue, function(response) {
-        // console.log(response);
         $scope.users = response.queue;
         title.title = "[" + $scope.users.length + "] " + $scope.queue + " | Stay A While";
         $scope.info = response.info;
@@ -206,9 +205,6 @@
         for(var i = 0; i < $scope.users.length; i++){
           if($scope.users[i].ugKthid === data.ugKthid){
             $scope.users[i].receivingHelp = true;
-            if(data.helper){
-              $scope.users[i].helper = data.helper;
-            }
             break;
           }
         }
@@ -222,7 +218,6 @@
         for(var i = 0; i < $scope.users.length; i++){
           if($scope.users[i].ugKthid === data.ugKthid){
             $scope.users[i].receivingHelp = false;
-            $scope.users[i].helper = data.helper;
             break;
           }
         }

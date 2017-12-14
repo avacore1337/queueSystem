@@ -13,7 +13,6 @@ var userSchema = new Schema({
   location: String,
   startTime: { type: Number, default: Date.now },
   receivingHelp: { type: Boolean, default: false },
-  helper: { type: String, default: '' },
   help: Boolean,
   comment: { type: String, default: '' },
   badLocation: { type: Boolean, default: false }
@@ -28,7 +27,6 @@ userSchema.methods.toJSON = function () {
     location: this.location,
     time: this.startTime,
     receivingHelp: this.receivingHelp,
-    helper: this.helper,
     help: this.help,
     comment: this.comment,
     badLocation: this.badLocation
