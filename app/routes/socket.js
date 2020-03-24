@@ -58,7 +58,7 @@ module.exports = function (socket, io) {
     }
     var queueName = req.queueName;
     var user = req.user;
-    user.location = shortString(user.location, 30);
+    user.location = shortString(user.location, 50);
     user.comment = shortString(user.comment, 140);
     user.comment = alterText(user.comment);
     user.ugKthid = socket.handshake.session.user.ugKthid;
@@ -110,7 +110,7 @@ module.exports = function (socket, io) {
     }
     var queueName = req.queueName;
     var user = req.user;
-    user.location = shortString(user.location, 30);
+    user.location = shortString(user.location, 50);
     user.comment = shortString(user.comment, 140);
     user.comment = alterText(user.comment);
     user.ugKthid = socket.handshake.session.user.ugKthid;
