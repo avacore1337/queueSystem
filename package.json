@@ -11,7 +11,7 @@
     "express-session": "^1.11.2",
     "express-socket.io-session": "^1.2.6",
     "lodash": "^3.8.0",
-    "mongoose": "^4.0.3",
+    "mongoose": "^5.9.6",
     "ldapjs-hotfix": "^0.7.3",
     "node-schedule": "^0.2.8",
     "request": "^2.56.0",
