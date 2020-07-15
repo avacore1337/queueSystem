@@ -10,7 +10,7 @@
     "express": "^4.12.3",
     "express-session": "^1.11.2",
     "express-socket.io-session": "^1.2.6",
-    "lodash": "^3.8.0",
+    "lodash": "^4.17.19",
     "mongoose": "^4.0.3",
     "ldapjs-hotfix": "^0.7.3",
     "node-schedule": "^0.2.8",
